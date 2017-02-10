@@ -1,0 +1,81 @@
+<?php
+
+/**
+ * Part of the Antares Project package.
+ *
+ * NOTICE OF LICENSE
+ *
+ * Licensed under the 3-clause BSD License.
+ *
+ * This source file is subject to the 3-clause BSD License that is
+ * bundled with this package in the LICENSE file.
+ *
+ * @package    Antares Core
+ * @version    0.9.0
+ * @author     Antares Team
+ * @license    BSD License (3-clause)
+ * @copyright  (c) 2017, Antares Project
+ * @link       http://antaresproject.io
+ */
+
+
+namespace Antares\Brands\TestCase;
+
+use Mockery as m;
+use Antares\Brands\BrandsServiceProvider;
+use Antares\Testbench\TestCase;
+
+class BrandsServiceProviderTest extends TestCase
+{
+
+    /**
+     * Setup the test environment.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+    }
+
+    /**
+     * Teardown the test environment.
+     */
+    public function tearDown()
+    {
+        m::close();
+    }
+
+    /**
+     * Test Antares\Support\MessagesServiceProvider::register() method.
+     *
+     * @test
+     */
+    public function testRegisterMethod()
+    {
+        $app           = $this->app;
+        $app['events'] = m::mock('\Illuminate\Contracts\Events\Dispatcher');
+        $app['files']  = m::mock('\Illuminate\Filesystem\Filesystem');
+        $stub          = new BrandsServiceProvider($app);
+        $stub->register();
+        $this->assertInstanceOf('\Antares\Brands\Model\Brands', $app['antares.brand']);
+        $this->assertInstanceOf('\Antares\Brands\BrandsTeller', $app['antares.brands']);
+    }
+
+    /**
+     * Test Antares\Notifier\NotifierServiceProvider::boot() method.
+     *
+     * @test
+     */
+    public function testThrowExceptionWhenBootMethodAndInvalidMock()
+    {
+//        $app               = $this->app;
+//        $app['events']     = m::mock('\Illuminate\Contracts\Events\Dispatcher');
+//        $app['files']      = m::mock('\Illuminate\Filesystem\Filesystem');
+//        $translator        = m::mock('\Illuminate\Translation\Translator');
+//        $translator->shouldReceive('addNamespace')->withAnyArgs()->andReturnSelf();
+//        $app['translator'] = $translator;
+//        $stub              = new BrandsServiceProvider($app);
+//        $stub->register();
+//        $stub->bootExtensionComponents();
+    }
+
+}

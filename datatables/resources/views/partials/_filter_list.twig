@@ -1,0 +1,8 @@
+{% for item in dataProvider %}
+    <li class="mdl-js-button mdl-js-ripple-effect datatables-filter-item {{ item.name==value ? 'mdl-disabled' :'' }}" >        
+        <input type="hidden" name="value" value="{{ item.name }}" class="filter-value" />        
+        <a href="#" title="{{ item.name|capitalize }}" rel="{{ name|str_slug~'-'~item.name|str_slug }}">                        
+            <span>{{ item.name|capitalize }}</span>
+        </a>
+    </li>
+{% endfor %}

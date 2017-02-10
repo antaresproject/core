@@ -1,0 +1,15 @@
+<div class="ddown ddown--filter-edit ddown--left mr24 ddown__shorty ">
+    <div class = "card-filter__sgl ddown__init datatables-card-filter" rel="{{ rel }}" column="{{ column }}" value="{{ values is iterable ? values|join(',') :values }}" route="{{ route }}">
+        <span>{{  name|raw }}</span>
+        <i class="zmdi zmdi-close datatable-disable-activated-filter" ></i>
+    </div>
+    <div class="ddown__content ">
+        <div class="ddown__arrow "></div>
+        <ul class="ddown__menu ddown__menu--innerpadd">
+            <li class="ddown__label ">
+                <span>Filter By</span>
+            </li>
+            {{ instance.render({'rel':rel,'value':value,'name':name,'config':config})|raw }}                  
+        </ul>
+    </div>
+</div>
