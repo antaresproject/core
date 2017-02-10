@@ -1,0 +1,54 @@
+<?php
+
+/**
+ * Part of the Antares Project package.
+ *
+ * NOTICE OF LICENSE
+ *
+ * Licensed under the 3-clause BSD License.
+ *
+ * This source file is subject to the 3-clause BSD License that is
+ * bundled with this package in the LICENSE file.
+ *
+ * @package    Antares Core
+ * @version    0.9.0
+ * @author     Antares Team
+ * @license    BSD License (3-clause)
+ * @copyright  (c) 2017, Antares Project
+ * @link       http://antaresproject.io
+ */
+
+
+namespace Antares\Foundation\Bootstrap\TestCase;
+
+use Mockery as m;
+use Antares\Testing\TestCase;
+
+class UserAccessPolicyTest extends TestCase
+{
+
+    /**
+     * Test Antares\Users\Bootstrap\UserAccessPolicy::bootstrap()
+     * method.
+     *
+     * @test
+     */
+    public function testBootstrapMethod()
+    {
+        $this->app->make('Antares\Users\Bootstrap\UserAccessPolicy')->bootstrap($this->app);
+
+        $this->assertEquals(['Guest'], $this->app['auth']->roles());
+
+        $user     = m::mock('\Antares\Model\User[getRoles]');
+        $user->id = 1;
+
+        $user->shouldReceive('getRoles')->once()->andReturn([
+            'Administrator',
+        ]);
+
+        $this->assertEquals(
+                ['Administrator'], $this->app['events']->until('antares.auth: roles', [$user, []])
+        );
+    }
+
+}

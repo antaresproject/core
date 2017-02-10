@@ -1,0 +1,12 @@
+{% if dataProvider is not empty %}
+    <select data-selectAR="true" class="mr24" name="select" id="{{ id }}">
+        <option value="0" {{ selected==0 ? 'selected="selected"': '' }}>
+            {{ default }}
+        </option>
+        {% for id,name in dataProvider %}
+            <option value="{{ id }}" {{ id==selected ? 'selected="selected"': '' }}>
+                {{ name }}
+            </option>
+        {% endfor %}        
+    </select>
+{% endif %}
