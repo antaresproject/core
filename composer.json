@@ -1,6 +1,30 @@
 {
     "name": "antaresproject/core",
-    "description": "Antares Core",
+    "description": "Antares Project Core Implemenation. Most important project layer, this is the heart for your app. ACL, notifiter, console, geoip, areas, utils and many more...",
+    "homepage": "http://antaresproject.io",
+    "keywords": [
+        "php",
+        "laravel",
+        "support",
+        "html",
+        "licensing",
+        "security",
+        "extension",
+        "twig",
+        "core",
+        "asset-pipeline",
+        "assets",
+        "utils",
+        "notifier",
+        "foundation",
+        "acl",
+        "users",
+        "form-validation",
+        "authorization",
+        "form-builder",
+        "antares-project"
+    ],
+    "license": "BSD 3-Clause",
     "authors": [
         {
             "name": "Antares Team",
