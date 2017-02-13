@@ -1,0 +1,24 @@
+before_commands:
+    - 'composer install --prefer-dist --no-interaction'
+filter:
+    paths:
+        - 'src/*'
+    excluded_paths:
+        - 'tests/*'
+tools:
+    php_analyzer: true
+    php_mess_detector: true
+    php_code_sniffer:
+        config:
+            standard: PSR2
+    php_code_coverage:
+        config_path: phpunit.xml
+    php_cpd:
+        excluded_dirs:
+            - tests
+    php_loc:
+        excluded_dirs:
+            - tests
+    php_pdepend:
+        excluded_dirs:
+            - tests
