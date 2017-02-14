@@ -14,6 +14,7 @@
         "torann/geoip": "0.2.*@dev",
         "davejamesmiller/laravel-breadcrumbs": "dev-master",
         "tijsverkoyen/css-to-inline-styles": "~1.2",
+        "linfo/linfo": "dev-master",
         "twig/twig": "~1.15|~2.0",
         "laravolt/avatar": "^1.0@dev",
         "thomaswelton/laravel-gravatar": "~1.0",
