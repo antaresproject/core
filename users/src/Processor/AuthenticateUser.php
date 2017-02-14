@@ -72,6 +72,7 @@ class AuthenticateUser extends Authenticate implements Command
 //        });
 
         $validation = $this->validator->on('login')->with($input);
+
         // Validate user login, if any errors is found redirect it back to
         // login page with the errors.
         if ($validation->fails()) {

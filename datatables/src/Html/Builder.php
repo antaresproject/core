@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Datatables\Html;
 
 use Antares\Asset\JavaScriptDecorator;
@@ -404,6 +403,7 @@ EOD;
         if (!empty($this->selects)) {
             $return .= implode('', $this->selects);
         }
+
         if ($this->searchable) {
             $value  = (($value  = $this->getGlobalSearchValue()) !== false) ? $value : '';
             $return .= '<div class="search-box search-box--dark search-box--big mr50">
@@ -416,7 +416,12 @@ EOD;
                     </form>
                 </div>';
         }
-        $return  .= '</div>';
+
+        $return .= '</div>';
+        $result = event(strtolower(class_basename($this->datatable)) . '.datatables.top.center', [&$return]);
+        $return .= isset($result[0]) ? $result[0] : '';
+        ;
+
         $filters = $this->filterAdapter->getFilters();
 
 
@@ -515,7 +520,9 @@ EOD;
             $this->addFilter($filter, $query);
         }
 
-        $this->attributes = array_merge($this->attributes, ["deferLoading" => $totalItemsCount, 'iDisplayLength' => $this->datatable->perPage]);
+
+
+        $this->attributes = array_merge($this->attributes, ["deferLoading" => $totalItemsCount, 'iDisplayLength' => $this->datatable->getPerPage()]);
         return $this;
     }
 

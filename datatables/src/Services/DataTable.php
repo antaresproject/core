@@ -24,6 +24,7 @@ namespace Antares\Datatables\Services;
 use Yajra\Datatables\Services\DataTable as BaseDataTableService;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Contracts\View\Factory as ViewFactory;
+use Antares\Datatables\Session\PerPage;
 use Illuminate\Support\Facades\Event;
 use Antares\Datatables\Html\Builder;
 use Antares\Datatables\Datatables;
@@ -55,15 +56,24 @@ abstract class DataTable extends BaseDataTableService
     protected $tableActions = [];
 
     /**
-     * DataTable constructor.
+     * PerPage adapter instance
      *
-     * @param \Yajra\Datatables\Datatables       $datatables
-     * @param \Illuminate\Contracts\View\Factory $viewFactory
+     * @var PerPage 
      */
-    public function __construct(Datatables $datatables, ViewFactory $viewFactory)
+    protected $perPageAdapter = null;
+
+    /**
+     * Construct
+     *
+     * @param Datatables       $datatables
+     * @param ViewFactory $viewFactory
+     * @param PerPage $perPageAdapter
+     */
+    public function __construct(Datatables $datatables, ViewFactory $viewFactory, PerPage $perPageAdapter = null)
     {
-        $this->datatables  = $datatables;
-        $this->viewFactory = $viewFactory;
+        $this->datatables     = $datatables;
+        $this->viewFactory    = $viewFactory;
+        $this->perPageAdapter = is_null($perPageAdapter) ? app(PerPage::class) : $perPageAdapter;
     }
 
     /**
@@ -131,11 +141,22 @@ abstract class DataTable extends BaseDataTableService
         if ($finalQuery instanceof Collection) {
             return $finalQuery;
         }
+        $perPage = $this->getPerPage();
         if (!$request->ajax()) {
-            return $finalQuery->skip($request['start'])->take((int) $request['length'] > 0 ? $request['length'] : $this->perPage);
+            return $finalQuery->skip($request['start'])->take($perPage);
         }
 
         return $finalQuery;
+    }
+
+    /**
+     * Gets perPage attribute
+     * 
+     * @return mixed
+     */
+    public function getPerPage()
+    {
+        return $this->perPageAdapter->get($this);
     }
 
     /**
