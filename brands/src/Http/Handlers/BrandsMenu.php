@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\Http\Handlers;
 
 use Antares\Foundation\Support\MenuHandler;
@@ -66,7 +65,7 @@ class BrandsMenu extends MenuHandler
      */
     public function authorize(Guard $auth)
     {
-        return true;
+        return !$auth->guest();
     }
 
 }
