@@ -10,8 +10,7 @@
     "require": {
         "php": ">=5.5.9",
         "yajra/laravel-datatables-oracle": "6.15.2",
-        "aarondfrancis/urlcrypt": "0.2.*",
-        "linfo/linfo": "dev-master",
+        "aarondfrancis/urlcrypt": "0.2.*",        
         "torann/geoip": "0.2.*@dev",
         "davejamesmiller/laravel-breadcrumbs": "dev-master",
         "tijsverkoyen/css-to-inline-styles": "~1.2",
