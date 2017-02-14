@@ -20,6 +20,7 @@
         "thomaswelton/laravel-gravatar": "~1.0",
         "symfony/filesystem": ">=2.4"
     },
+    "minimum-stability": "dev",
     "autoload": {
         "files": [
             "html/src/Support/helpers.php",
