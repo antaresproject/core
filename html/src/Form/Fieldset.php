@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Html\Form;
 
 use Antares\Contracts\Html\Form\Fieldset as FieldsetContract;
@@ -331,6 +330,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
                     ->setPresenter($this->control->getPresenter());
 
             $field = $control->buildFieldByType($cont->type, $row, $cont);
+            $cont->setModel($row);
             if (($value = $cont->getValue()) !== false) {
                 $field->value($value);
             }

@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Model;
 
 use Antares\Contracts\Comments\Commentable;
@@ -196,7 +195,7 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
     public function scopeClients(Builder $query)
     {
         $query->with('roles')->whereNotNull('tbl_users.id')->whereHas('roles', function ($query) {
-            $query->whereIn('tbl_roles.name', ['member']);
+            $query->whereIn('tbl_roles.name', ['member', 'users', 'user']);
         });
 
 

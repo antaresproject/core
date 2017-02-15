@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Datatables;
 
 use Antares\Users\Http\Filter\UserCreatedAtFilter;
@@ -226,6 +225,7 @@ class Users extends DataTable
                 ->get()
                 ->lists('counter', 'status')
                 ->toArray();
+
 
 
         $selected = app('request')->ajax() ? null : 1;

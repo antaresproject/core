@@ -240,17 +240,28 @@ class User extends Processor implements UserCreatorCommand, UserRemoverCommand, 
         $user->lastname  = $input['lastname'];
         $user->email     = $input['email'];
 
+
+
         $this->fireEvent($beforeEvent, [$user]);
         $this->fireEvent('saving', [$user]);
 
-        DB::transaction(function () use ($user) {
+        DB::beginTransaction();
+
+        try {
             $roles = ($user->exists) ? $user->roles->lists('id')->toArray() : Role::members()->get()->lists('id')->toArray();
             $user->save();
             $user->roles()->sync($roles);
-        });
+        } catch (Exception $ex) {
+            DB::rollBack();
+            throw $ex;
+        }
+        DB::commit();
+
+
 
         $this->fireEvent($afterEvent, [$user]);
         $this->fireEvent('saved', [$user]);
+
 
         return true;
     }
