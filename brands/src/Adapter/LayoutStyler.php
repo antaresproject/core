@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\Adapter;
 
 use Antares\Brands\Contracts\StylerAdapter;
@@ -113,7 +112,7 @@ class LayoutStyler extends AbstractAdapter implements StylerAdapter
             $return .= ".timeline li a { color:" . $value . " !important;}\n";
             $return .= ".tbl-c .billevo-table tr.is-selected td,.tbl-c .billevo-table tr.ui-selected td,.tbl-c .billevo-table tr.ui-selecting td { border-bottom: 1px solid " . $value . "!important;}\n";
             $return .= ".icheckbox_billevo.checked { background-color: " . $value . "!important;}\n";
-            $return .= ".tbl-c table tr td a { color: " . $value . "!important;}\n";
+            $return .= ".tbl-c table tr td a,.ddown.ddown--columns li.col-is-visible a,.ddown.ddown--columns li.col-is-visible a:after { color: " . $value . "!important;}\n";
 
             $return .= ".timeline li.timeline__entry--ok:before { color:" . $value . " !important;}\n";
             $return .= ".ddown.ddown--brand .ddown__menu li.is-selected .flex-block, .ddown.ddown--brand .ddown__menu li.is-selected .flex-block .flex-block__title { color:" . $value . " !important;}\n";

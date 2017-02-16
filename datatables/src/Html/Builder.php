@@ -20,22 +20,23 @@
 
 namespace Antares\Datatables\Html;
 
-use Antares\Asset\JavaScriptDecorator;
-use Antares\Asset\JavaScriptExpression;
 use Antares\Datatables\Contracts\DatatabledContract;
-use Antares\Html\Support\FormBuilder;
-use Antares\Html\HtmlBuilder;
+use Antares\Datatables\Adapter\ColumnFilterAdapter;
+use Yajra\Datatables\Html\Builder as BaseBuilder;
+use Antares\Datatables\Adapter\FilterAdapter;
 use Illuminate\Contracts\Config\Repository;
+use Antares\Asset\JavaScriptExpression;
+use Antares\Asset\JavaScriptDecorator;
 use Illuminate\Contracts\View\Factory;
-use Illuminate\Http\JsonResponse;
+use Antares\Html\Support\FormBuilder;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Collection;
-use Yajra\Datatables\Html\Builder as BaseBuilder;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Events\Dispatcher;
 use Yajra\Datatables\Html\Column;
 use Antares\Support\Expression;
-use Illuminate\Events\Dispatcher;
 use Illuminate\Routing\Router;
-use Antares\Datatables\Adapter\FilterAdapter;
+use Antares\Html\HtmlBuilder;
 
 class Builder extends BaseBuilder
 {
@@ -89,7 +90,27 @@ class Builder extends BaseBuilder
      */
     protected $query;
 
-    /** @var array * */
+    /**
+     * Column filter adapter instance
+     *
+     * @var ColumnFilterAdapter 
+     */
+    protected $columnFilterAdapter;
+
+    /**
+     * Datatable behaviors container
+     *
+     * @var array 
+     */
+    protected $behaviors = [
+        'column_filters' => false
+    ];
+
+    /**
+     * Table attributes container
+     *
+     * @var array 
+     */
     protected $tableAttributes = [
         'class'       => 'table dataTable billevo-table',
         'id'          => 'dataTableBuilder',
@@ -104,8 +125,8 @@ class Builder extends BaseBuilder
         'bLengthChange'  => true,
         'bInfo'          => false,
         "columnDefs"     => [
-        //"targets"   => 'no-sort',
-        //"orderable" => false,
+//"targets"   => 'no-sort',
+//"orderable" => false,
         ],
         "serverSide"     => true,
         "dom"            => '<"dt-area-top"i>rt<"dt-area-bottom pagination pagination--type2" fpL><"clear">',
@@ -207,8 +228,11 @@ class Builder extends BaseBuilder
                 ->add('gridstack', '/webpack/view_datatables.js', ['webpack_gridstack', 'app_cache'])
                 ->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
 
+
+        $columns = $this->hasColumnFilter() ? $this->getColumnFilterAdapter()->getColumns()->toArray() : $this->collection->toArray();
+
         $args      = array_merge(
-                $this->attributes, ['ajax' => $this->ajax, 'columns' => $this->collection->toArray(),]
+                $this->attributes, ['ajax' => $this->ajax, 'columns' => $columns]
         );
         $searching = (($value     = $this->getGlobalSearchValue()) !== false) ? "data.search.value=instance.find('.mdl-textfield__input').val();" : '';
         $ajax      = <<<EOD
@@ -258,8 +282,16 @@ EOD;
             }");
 
         $args['initComplete'] = new JavaScriptExpression(isset($args['initComplete']) ? $args['initComplete'] : $this->initComplete());
-        $args['columnDefs'][] = new JavaScriptExpression('{ responsivePriority:0, targets: -1 }');
-        $parameters           = JavaScriptDecorator::decorate($args);
+        $args['columnDefs'][] = new JavaScriptExpression('{ responsivePriority:0, targets: -1 },{
+                "targets": [ 0 ],
+                "visible": false
+            },
+            {
+                "targets": [ 1 ],
+                "visible": false
+            }');
+
+        $parameters = JavaScriptDecorator::decorate($args);
 
         $variables = JavaScriptDecorator::decorate([
                     'table' => new JavaScriptExpression('$("#' . $id . '")'),
@@ -406,7 +438,7 @@ EOD;
 
         if ($this->searchable) {
             $value  = (($value  = $this->getGlobalSearchValue()) !== false) ? $value : '';
-            $return .= '<div class="search-box search-box--dark search-box--big mr50">
+            $return .= '<div class="search-box search-box--dark search-box--big ml25 mr50">
                     <i class="zmdi zmdi-search"></i>
                     <form action="#">
                         <div class="search-box__mdl-textfield mdl-textfield mdl-js-textfield w260" >
@@ -416,12 +448,9 @@ EOD;
                     </form>
                 </div>';
         }
-
-        $return .= '</div>';
-        $result = event(strtolower(class_basename($this->datatable)) . '.datatables.top.center', [&$return]);
-        $return .= isset($result[0]) ? $result[0] : '';
-        ;
-
+        $return  .= '</div><div class="card-ctrls__right">';
+        $result  = event(strtolower(class_basename($this->datatable)) . '.datatables.top.center', [&$return]);
+        $return  .= isset($result[0]) ? $result[0] : '';
         $filters = $this->filterAdapter->getFilters();
 
 
@@ -432,12 +461,16 @@ EOD;
             }
             $filters = $this->filterAdapter->getFilters();
         }
-        if ($hasMassActions or $filters) {
-            $return .= '<div class="card-ctrls__right">';
+
+        if ($this->hasColumnFilter()) {
+            $return .= $this->getColumnFilterAdapter();
         }
         if ($filters) {
-            $return .= '<div id="filter-save-url" data-url=' . handles('antares/foundation::datatables/filters/save') . '></div>' . $filters;
+            $return .= '<div id="filter-save-url" data-url=' . handles('antares/foundation::datatables/filters/save') . '></div><div class="ddown ctrls__right ml10 ">' . $filters . '</div>';
         }
+
+
+
         if ($hasMassActions) {
             $return .= '
                 <div class="ddown ddown--left">
@@ -450,14 +483,41 @@ EOD;
             }
             $return .= '</ul></div></div>';
         }
-        if ($hasMassActions or $filters) {
-            $return .= '</div>';
-        }
+        return $return . '</div></div>';
+    }
 
-        if ($this->searchable or $hasMassActions) {
-            $return .= '</div>';
+    /**
+     * Adds column filter adapter instance
+     * 
+     * @return $this
+     */
+    public function addColumnFilter()
+    {
+        array_set($this->behaviors, 'column_filters', true);
+        return $this;
+    }
+
+    /**
+     * Whether datatable has colum filter
+     * 
+     * @return boolean
+     */
+    protected function hasColumnFilter()
+    {
+        return array_get($this->behaviors, 'column_filters', false);
+    }
+
+    /**
+     * Gets colum filter adapter instance
+     * 
+     * @return ColumnFilterAdapter
+     */
+    protected function getColumnFilterAdapter()
+    {
+        if (is_null($this->columnFilterAdapter)) {
+            $this->columnFilterAdapter = app(ColumnFilterAdapter::class, [$this->collection, get_class($this->datatable)]);
         }
-        return $return;
+        return $this->columnFilterAdapter;
     }
 
     /**

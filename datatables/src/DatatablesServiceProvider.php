@@ -18,10 +18,10 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Datatables;
 
 use Yajra\Datatables\DatatablesServiceProvider as SupportDatatablesServiceProvider;
+use Illuminate\Routing\Router;
 
 class DatatablesServiceProvider extends SupportDatatablesServiceProvider
 {
@@ -38,13 +38,18 @@ class DatatablesServiceProvider extends SupportDatatablesServiceProvider
     }
 
     /**
-     * booting service provider
+     * Booting service provider
      */
     public function boot()
     {
         $path = realpath(__DIR__ . '/../');
         $this->loadViewsFrom("{$path}/resources/views", 'datatables-helpers');
         $this->mergeConfigFrom("{$path}/resources/config/config.php", 'datatables-config');
+
+
+        $this->app->make('antares.app')->namespaced(null, function (Router $router) {
+            require __DIR__ . DIRECTORY_SEPARATOR . 'backend.php';
+        });
     }
 
 }

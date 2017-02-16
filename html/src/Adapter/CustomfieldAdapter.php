@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Html\Adapter;
 
 use Antares\Contracts\Html\Form\Fieldset;
@@ -64,7 +63,7 @@ class CustomfieldAdapter
         }
 
         if (extension_active('customfields')) {
-            $map   = config('antares/customfields::map');
+            $map   = config('antares/customfields::map', []);
             $types = [];
             foreach ($map as $type => $classnames) {
                 foreach ($classnames as $classname) {
