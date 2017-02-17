@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Datatables\Engines;
 
 use Closure;
@@ -509,7 +508,7 @@ class QueryBuilderEngine extends BaseEngine
     public function paging()
     {
         $this->query->skip($this->request['start'])
-                ->take((int) $this->request['length'] > 0 ? $this->request['length'] : 10);
+                ->take((int) $this->request['length'] > 0 ? $this->request['length'] : 25);
     }
 
     /**

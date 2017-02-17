@@ -66,7 +66,6 @@ class Session
             $session->put($key, $perPage);
             $session->save();
         }
-
         return $session->get($key);
     }
 

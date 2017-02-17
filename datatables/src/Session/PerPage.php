@@ -33,11 +33,13 @@ class PerPage extends Session
      */
     public function get(DataTable $datatable)
     {
+
         if (!$this->request->hasSession()) {
             return;
         }
-        $key = $this->getSessionKey(get_class($datatable));
-        return $this->getFromSession($key, (int) request('length', $datatable->perPage));
+        $key     = $this->getSessionKey(get_class($datatable));
+        $perPage = $this->getFromSession($key, (int) request('length', $datatable->perPage));
+        return is_null($perPage) ? 10 : $perPage;
     }
 
 }

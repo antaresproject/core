@@ -231,6 +231,7 @@ class Builder extends BaseBuilder
 
         $columns = $this->hasColumnFilter() ? $this->getColumnFilterAdapter()->getColumns()->toArray() : $this->collection->toArray();
 
+        array_set($this->attributes, 'iDisplayLength', $this->datatable->getPerPage());
         $args      = array_merge(
                 $this->attributes, ['ajax' => $this->ajax, 'columns' => $columns]
         );
@@ -282,14 +283,7 @@ EOD;
             }");
 
         $args['initComplete'] = new JavaScriptExpression(isset($args['initComplete']) ? $args['initComplete'] : $this->initComplete());
-        $args['columnDefs'][] = new JavaScriptExpression('{ responsivePriority:0, targets: -1 },{
-                "targets": [ 0 ],
-                "visible": false
-            },
-            {
-                "targets": [ 1 ],
-                "visible": false
-            }');
+        $args['columnDefs'][] = new JavaScriptExpression('{ responsivePriority:0, targets: -1 }');
 
         $parameters = JavaScriptDecorator::decorate($args);
 
@@ -579,8 +573,6 @@ EOD;
         foreach ($filters as $filter) {
             $this->addFilter($filter, $query);
         }
-
-
 
         $this->attributes = array_merge($this->attributes, ["deferLoading" => $totalItemsCount, 'iDisplayLength' => $this->datatable->getPerPage()]);
         return $this;

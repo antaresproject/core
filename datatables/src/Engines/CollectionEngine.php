@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Datatables\Engines;
 
 use Closure;
@@ -219,7 +218,7 @@ class CollectionEngine extends BaseEngine
     public function paging()
     {
         $this->collection = $this->collection->slice(
-                $this->request['start'], (int) $this->request['length'] > 0 ? $this->request['length'] : 10
+                $this->request['start'], (int) $this->request['length'] > 0 ? $this->request['length'] : 25
         );
     }
 
