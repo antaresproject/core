@@ -420,12 +420,8 @@ EOD;
         $hasMassActions = $this->hasMassActions();
 
 
-        $return = '<div class="tbl-c">';
-        if ($this->searchable or $hasMassActions) {
-            $return .= '<div class="card-ctrls mt24">';
-        }
+        $return = '<div class="tbl-c"><div class="card-ctrls mt24"><div class="card-ctrls__left">';
 
-        $return .= '<div class="card-ctrls__left">';
         if (!empty($this->selects)) {
             $return .= implode('', $this->selects);
         }
@@ -442,7 +438,9 @@ EOD;
                     </form>
                 </div>';
         }
-        $return  .= '</div><div class="card-ctrls__right">';
+        $return .= '</div>';
+        $return .= '<div class="card-ctrls__right">';
+
         $result  = event(strtolower(class_basename($this->datatable)) . '.datatables.top.center', [&$return]);
         $return  .= isset($result[0]) ? $result[0] : '';
         $filters = $this->filterAdapter->getFilters();
@@ -463,11 +461,8 @@ EOD;
             $return .= '<div id="filter-save-url" data-url=' . handles('antares/foundation::datatables/filters/save') . '></div><div class="ddown ctrls__right ml10 ">' . $filters . '</div>';
         }
 
-
-
         if ($hasMassActions) {
-            $return .= '
-                <div class="ddown ddown--left">
+            $return .= '<div class="ddown ddown--left">
                     <div class="ddown__init btn--dropdown btn btn--capitalize btn--md btn--primary mdl-js-button is-disabled ml8" id="table-ma" disabled>' . trans('antares/foundation::label.with_selected') . '</div>                    
                     <div class="ddown__content">
                     <div class="ddown__arrow"></div>

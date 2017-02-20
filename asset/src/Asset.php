@@ -18,10 +18,7 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Asset;
-
-use Antares\Support\Str;
 
 class Asset
 {
@@ -310,10 +307,11 @@ class Asset
         $filename = 'packages/' . str_replace(['/', '}', '{', '?'], '_', uri()) . '.js';
         $path     = public_path($filename);
         $input    = implode(PHP_EOL, array_merge($internals, $this->dispatcher->scripts('inline', $this->assets, $this->path)));
-        //$jsMin    = new JSMin($input);
-        //file_put_contents($path, $jsMin->min());
-        file_put_contents($path, $input);
+        $jsMin    = new JSMin($input);
+        file_put_contents($path, $jsMin->min());
         $return[] = '<script  src="' . asset($filename) . '?t=' . time() . '" ></script>';
+
+
 
         return implode(PHP_EOL, $return);
     }
