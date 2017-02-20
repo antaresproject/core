@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Asset\TestCase;
 
 use Mockery as m;
@@ -32,7 +31,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
-        m::close();
+        //m::close();
     }
 
     /**

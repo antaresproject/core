@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\TestCase;
 
 use Mockery as m;
@@ -54,7 +53,8 @@ class BrandsServiceProviderTest extends TestCase
         $app           = $this->app;
         $app['events'] = m::mock('\Illuminate\Contracts\Events\Dispatcher');
         $app['files']  = m::mock('\Illuminate\Filesystem\Filesystem');
-        $stub          = new BrandsServiceProvider($app);
+
+        $stub = new BrandsServiceProvider($app);
         $stub->register();
         $this->assertInstanceOf('\Antares\Brands\Model\Brands', $app['antares.brand']);
         $this->assertInstanceOf('\Antares\Brands\BrandsTeller', $app['antares.brands']);

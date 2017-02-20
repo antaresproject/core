@@ -18,11 +18,11 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Auth\TestCase;
 
+use Illuminate\Auth\Events\Authenticated;
+use Antares\Auth\SessionGuard as Guard;
 use Mockery as m;
-use Antares\Auth\Guard;
 
 class GuardTest extends \PHPUnit_Framework_TestCase
 {
@@ -49,6 +49,13 @@ class GuardTest extends \PHPUnit_Framework_TestCase
     private $events = null;
 
     /**
+     * The request instance.
+     *
+     * @var \Illuminate\Http\Request
+     */
+    private $request = null;
+
+    /**
      * Setup the test environment.
      */
     public function setUp()
@@ -56,6 +63,7 @@ class GuardTest extends \PHPUnit_Framework_TestCase
         $this->provider = m::mock('\Illuminate\Contracts\Auth\UserProvider');
         $this->session  = m::mock('\Illuminate\Session\Store');
         $this->events   = m::mock('\Illuminate\Contracts\Events\Dispatcher');
+        $this->request  = m::mock('\Illuminate\Http\Request');
     }
 
     /**
@@ -66,7 +74,7 @@ class GuardTest extends \PHPUnit_Framework_TestCase
         unset($this->provider);
         unset($this->session);
         unset($this->events);
-
+        unset($this->request);
         m::close();
     }
 
@@ -85,7 +93,7 @@ class GuardTest extends \PHPUnit_Framework_TestCase
         $events->shouldReceive('forget')->once()->with('antares.auth: roles')->andReturn(null)
                 ->shouldReceive('listen')->once()->with('antares.auth: roles', $callback)->andReturn(null);
 
-        $stub = new Guard($this->provider, $this->session);
+        $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
 
         $stub->setup($callback);
@@ -100,19 +108,26 @@ class GuardTest extends \PHPUnit_Framework_TestCase
     {
         $events = $this->events;
 
-        $user = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
+        $user        = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
+        $user->roles = new \Illuminate\Support\Collection([
+            ['id' => 0, 'name' => 'admin'],
+            ['id' => 1, 'name' => 'user']
+        ]);
 
         $user->shouldReceive('getAuthIdentifier')->once()->andReturn(1);
 
-        $events->shouldReceive('until')->once()
-                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor']);
 
-        $stub = new Guard($this->provider, $this->session);
+
+        $events->shouldReceive('until')->once()
+                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'user']);
+
+        $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
 
-        $expected = ['admin', 'editor'];
+        $expected = ['admin', 'user'];
         $output   = $stub->roles();
+
 
         $this->assertEquals($expected, $output);
     }
@@ -126,14 +141,16 @@ class GuardTest extends \PHPUnit_Framework_TestCase
     {
         $events = $this->events;
 
-        $user = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
-
+        $user        = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
+        $user->roles = new \Illuminate\Support\Collection([
+            ['id' => 0, 'name' => 'Guest'],
+        ]);
         $user->shouldReceive('getAuthIdentifier')->once()->andReturn(1);
 
         $events->shouldReceive('until')->once()
                 ->with('antares.auth: roles', m::any())->andReturn(null);
 
-        $stub = new Guard($this->provider, $this->session);
+        $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
 
@@ -152,23 +169,26 @@ class GuardTest extends \PHPUnit_Framework_TestCase
     {
         $events = $this->events;
 
-        $user = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
-
+        $user        = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
+        $user->roles = new \Illuminate\Support\Collection([
+            ['id' => 0, 'name' => 'admin'],
+            ['id' => 1, 'name' => 'user'],
+        ]);
         $user->shouldReceive('getAuthIdentifier')->times(5)->andReturn(1);
 
         $events->shouldReceive('until')->once()
-                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor']);
+                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'user']);
 
-        $stub = new Guard($this->provider, $this->session);
+        $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
 
         $this->assertTrue($stub->is('admin'));
-        $this->assertTrue($stub->is('editor'));
-        $this->assertFalse($stub->is('user'));
+        $this->assertTrue($stub->is('user'));
+        $this->assertFalse($stub->is('reseller'));
 
-        $this->assertTrue($stub->is(['admin', 'editor']));
-        $this->assertFalse($stub->is(['admin', 'user']));
+        $this->assertTrue($stub->is(['admin', 'user']));
+        $this->assertFalse($stub->is(['admin', 'reseller']));
     }
 
     /**
@@ -179,8 +199,11 @@ class GuardTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsMethodWhenInvalidRolesIsReturned()
     {
-        $events = $this->events;
-        $user   = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
+        $events      = $this->events;
+        $user        = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
+        $user->roles = new \Illuminate\Support\Collection([
+            ['id' => 0, 'name' => 'foo'],
+        ]);
 
         $user->shouldReceive('getAuthIdentifier')->times(5)->andReturn(1);
 
@@ -188,7 +211,7 @@ class GuardTest extends \PHPUnit_Framework_TestCase
                 ->with('antares.auth: roles', m::any())->once()
                 ->andReturn('foo');
 
-        $stub = new Guard($this->provider, $this->session);
+        $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
 
@@ -209,20 +232,19 @@ class GuardTest extends \PHPUnit_Framework_TestCase
     {
         $events = $this->events;
 
-        $user = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
-
+        $user        = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
+        $user->roles = new \Illuminate\Support\Collection([['id' => 0, 'name' => 'admin'], ['id' => 1, 'name' => 'user'], ['id' => 2, 'name' => 'editor'],]);
         $user->shouldReceive('getAuthIdentifier')->times(3)->andReturn(1);
 
-        $events->shouldReceive('until')->once()
-                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor']);
+        $events->shouldReceive('until')->once()->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor']);
 
-        $stub = new Guard($this->provider, $this->session);
+        $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
 
         $this->assertTrue($stub->isAny(['admin', 'user']));
         $this->assertTrue($stub->isAny(['user', 'editor']));
-        $this->assertFalse($stub->isAny(['superadmin', 'user']));
+        $this->assertFalse($stub->isAny(['superadmin', 'superuser']));
     }
 
     /**
@@ -233,16 +255,16 @@ class GuardTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsAnyMethodWhenInvalidRolesIsReturned()
     {
-        $events = $this->events;
-        $user   = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
-
+        $events      = $this->events;
+        $user        = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
+        $user->roles = new \Illuminate\Support\Collection();
         $user->shouldReceive('getAuthIdentifier')->twice()->andReturn(1);
 
         $events->shouldReceive('until')
-                ->with('antares.auth: roles', m::any())->once()
+                ->with('antares.auth: roles', m::any())->twice()
                 ->andReturn('foo');
 
-        $stub = new Guard($this->provider, $this->session);
+        $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
 
@@ -259,14 +281,16 @@ class GuardTest extends \PHPUnit_Framework_TestCase
     {
         $events = $this->events;
 
-        $user = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
-
-        $user->shouldReceive('getAuthIdentifier')->times(5)->andReturn(1);
+        $user        = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
+        $user->roles = new \Illuminate\Support\Collection([
+            ['id' => 0, 'name' => 'admin'],
+        ]);
+        $user->shouldReceive('getAuthIdentifier')->times(4)->andReturn(1);
 
         $events->shouldReceive('until')->once()
                 ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor']);
 
-        $stub = new Guard($this->provider, $this->session);
+        $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
 
@@ -275,7 +299,6 @@ class GuardTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($stub->isNot('admin'));
 
         $this->assertTrue($stub->isNot(['superadmin', 'user']));
-        $this->assertFalse($stub->isNot(['admin', 'editor']));
     }
 
     /**
@@ -286,16 +309,16 @@ class GuardTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsNotMethodWhenInvalidRolesIsReturned()
     {
-        $events = $this->events;
-        $user   = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
-
+        $events      = $this->events;
+        $user        = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
+        $user->roles = new \Illuminate\Support\Collection();
         $user->shouldReceive('getAuthIdentifier')->times(5)->andReturn(1);
 
         $events->shouldReceive('until')
-                ->with('antares.auth: roles', m::any())->once()
+                ->with('antares.auth: roles', m::any())->times(5)
                 ->andReturn('foo');
 
-        $stub = new Guard($this->provider, $this->session);
+        $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
 
@@ -316,14 +339,16 @@ class GuardTest extends \PHPUnit_Framework_TestCase
     {
         $events = $this->events;
 
-        $user = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
-
+        $user        = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
+        $user->roles = new \Illuminate\Support\Collection([
+            ['id' => 0, 'name' => 'editor']
+        ]);
         $user->shouldReceive('getAuthIdentifier')->times(3)->andReturn(1);
 
         $events->shouldReceive('until')->once()
                 ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor']);
 
-        $stub = new Guard($this->provider, $this->session);
+        $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
 
@@ -340,16 +365,18 @@ class GuardTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsNotAnyMethodWhenInvalidRolesIsReturned()
     {
-        $events = $this->events;
-        $user   = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
-
+        $events      = $this->events;
+        $user        = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
+        $user->roles = new \Illuminate\Support\Collection([
+            ['id' => 0, 'name' => 'administrator']
+        ]);
         $user->shouldReceive('getAuthIdentifier')->twice()->andReturn(1);
 
         $events->shouldReceive('until')
                 ->with('antares.auth: roles', m::any())->once()
                 ->andReturn('foo');
 
-        $stub = new Guard($this->provider, $this->session);
+        $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
 
@@ -364,23 +391,30 @@ class GuardTest extends \PHPUnit_Framework_TestCase
      */
     public function testLogoutMethod()
     {
-        $events   = $this->events;
-        $provider = $this->provider;
-        $session  = $this->session;
-        $cookie   = m::mock('\Illuminate\Contracts\Cookie\QueueingFactory');
+        $events           = $this->events;
+        $provider         = $this->provider;
+        $session          = $this->session;
+        $request          = $this->request;
+        $cookie           = m::mock('\Illuminate\Contracts\Cookie\QueueingFactory');
+        $request->cookies = $cookie;
 
         $events->shouldReceive('until')->never()
                 ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor'])
-                ->shouldReceive('fire')->once()
-                ->with('auth.logout', m::any())->andReturn(['admin', 'editor']);
-        $provider->shouldReceive('updateRememberToken')->once();
-        $session->shouldReceive('remove')->once()->andReturn(null);
+                ->shouldReceive('dispatch')
+                ->with(m::type('\Illuminate\Auth\Events\Logout'))->andReturnNull()
+                ->shouldReceive('fire')
+                ->withAnyArgs('auth.logout', m::any())->andReturn(['admin', 'editor']);
+        $provider->shouldReceive('updateRememberToken');
+        $session->shouldReceive('remove')->andReturnNull();
 
-        $stub = new Guard($provider, $session);
+        $stub = new Guard('web', $this->provider, $this->session, $request);
         $stub->setDispatcher($events);
         $stub->setCookieJar($cookie);
-        $cookie->shouldReceive('queue')->once()->andReturn($cookie)
-                ->shouldReceive('forget')->once()->andReturn(null);
+
+        $cookie->shouldReceive('get')->andReturn('remember_web_' . sha1(get_class($stub)))
+                ->shouldReceive('queue')->andReturn($cookie)
+                ->shouldReceive('forget')->andReturn(null);
+
 
         $refl      = new \ReflectionObject($stub);
         $user      = $refl->getProperty('user');
@@ -391,8 +425,8 @@ class GuardTest extends \PHPUnit_Framework_TestCase
 
         $userStub = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
 
-        $userStub->shouldReceive('getAuthIdentifier')->once()->andReturn(1)
-                ->shouldReceive('setRememberToken')->once();
+        $userStub->shouldReceive('getAuthIdentifier')->andReturn(1)
+                ->shouldReceive('setRememberToken');
 
         $user->setValue($stub, $userStub);
         $userRoles->setValue($stub, [1 => ['admin', 'editor']]);

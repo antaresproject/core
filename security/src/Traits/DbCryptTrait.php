@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Security\Traits;
 
 use Illuminate\Support\Facades\Schema;
@@ -74,7 +73,7 @@ trait DbCryptTrait
     private function getPackage()
     {
         $reflection = new ReflectionClass(get_called_class());
-        return app('antares.extension.finder')->resolveNamespace($reflection->getFileName(), true);
+        return bound('antares.extension.finder') ? app('antares.extension.finder')->resolveNamespace($reflection->getFileName(), true) : null;
     }
 
     /**

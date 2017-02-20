@@ -18,10 +18,9 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\TestCase;
 
-use Antares\Brands\Composers\BrandSelectorPlaceHolder;
+use Antares\Brands\Composers\BrandPlaceHolder;
 use Antares\Testbench\TestCase;
 use Antares\Widget\WidgetManager;
 use Mockery as m;
@@ -40,8 +39,8 @@ class BrandSelectorPlaceHolderTest extends TestCase
     public function testConstruct()
     {
         $brandsSelectorHandlerMock = m::mock('\Antares\Brands\Http\Handlers\BrandsSelectorHandler');
-        $stub                      = new BrandSelectorPlaceHolder($this->app, $brandsSelectorHandlerMock);
-        $this->assertEquals(get_class($stub), 'Antares\Brands\Composers\BrandSelectorPlaceHolder');
+        $stub                      = new BrandPlaceHolder($this->app, $brandsSelectorHandlerMock);
+        $this->assertEquals(get_class($stub), 'Antares\Brands\Composers\BrandPlaceHolder');
     }
 
     /**
@@ -55,7 +54,7 @@ class BrandSelectorPlaceHolderTest extends TestCase
         $this->app['Illuminate\Contracts\View\Factory'] = $viewFactory;
         $brandsSelectorHandlerMock                      = m::mock('\Antares\Brands\Http\Handlers\BrandsSelectorHandler');
         $brandsSelectorHandlerMock->shouldReceive('handle')->andReturnSelf();
-        $stub                                           = new BrandSelectorPlaceHolder($this->app, $brandsSelectorHandlerMock);
+        $stub                                           = new BrandPlaceHolder($this->app, $brandsSelectorHandlerMock);
         $this->assertNull($stub->onBootExtension());
     }
 

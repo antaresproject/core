@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\Composers;
 
 class BrandPlaceHolder
@@ -29,7 +28,9 @@ class BrandPlaceHolder
      */
     public function onBootExtension()
     {
-        $brand = app('antares.memory')->make('primary')->get('brand');
+        $brand = app('antares.memory')
+                ->make('primary')
+                ->get('brand');
         return app('antares.widget')->make('placeholder.brands')->add('brands')->value(view('antares/foundation::brands.brand', ['brand' => $brand]));
     }
 

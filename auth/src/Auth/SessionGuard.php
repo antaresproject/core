@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Auth;
 
 use Illuminate\Support\Arr;

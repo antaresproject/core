@@ -18,13 +18,6 @@ ratings:
   paths:
   - "**.php"
 exclude_paths:
-- bootstrap/
-- build/
-- builds/
-- public/
-- storage/
-- src/
-- resources/codeclimate/
-- resources/laravolt/
-- resources/messages/
-- resources/themes/
+- testbench/
+- tests/
+- testing/

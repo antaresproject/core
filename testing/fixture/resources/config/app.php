@@ -18,10 +18,7 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 return [
-
     /*
       |--------------------------------------------------------------------------
       | Application Environment
@@ -125,7 +122,6 @@ return [
       |
      */
     'providers'       => [
-
         /*
          * Laravel Framework Service Providers...
          */
@@ -157,7 +153,6 @@ return [
         Antares\Memory\MemoryServiceProvider::class,
         Antares\Messages\MessagesServiceProvider::class,
         Antares\Notifier\NotifierServiceProvider::class,
-        Antares\Optimize\OptimizeServiceProvider::class,
         Antares\Auth\Passwords\PasswordResetServiceProvider::class,
         Antares\Publisher\PublisherServiceProvider::class,
         Antares\Foundation\Providers\SupportServiceProvider::class,
@@ -170,7 +165,6 @@ return [
         Yajra\Datatables\DatatablesServiceProvider::class,
         Antares\Testbench\Providers\TwigServiceProvider::class,
         DaveJamesMiller\Breadcrumbs\ServiceProvider::class,
-        Nqxcode\LuceneSearch\ServiceProvider::class,
         Dingo\Api\Provider\LaravelServiceProvider::class,
         Antares\Api\ApiServiceProvider::class,
     ],
@@ -185,7 +179,6 @@ return [
       |
      */
     'aliases'         => [
-
         'App'        => Illuminate\Support\Facades\App::class,
         'ACL'        => Antares\Support\Facades\ACL::class,
         'Artisan'    => Illuminate\Support\Facades\Artisan::class,
