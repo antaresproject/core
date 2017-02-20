@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Model;
 
 use Antares\Security\Traits\DbCryptTrait as DatabaseCryptor;
@@ -32,8 +31,7 @@ use Closure;
 abstract class Eloquent extends Model
 {
 
-    use AccessTrait,
-        DatabaseCryptor,
+    use DatabaseCryptor,
         Customfields;
 
     /**
