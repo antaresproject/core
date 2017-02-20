@@ -407,7 +407,7 @@ EOD;
         if ($this->datatable->count() > 10 or strlen($this->ajax) > 0) {
             $scrollable = 'data-scrollable';
         }
-        return $this->beforeTable() . '<table ' . $scrollable . ' data-table-init = "true" ' . $this->html->attributes($this->tableAttributes) . '></table>' . $this->afterTable();
+        return $this->tableInit() . $this->beforeTable() . '<table ' . $scrollable . ' data-table-init = "true" ' . $this->html->attributes($this->tableAttributes) . '></table>' . $this->afterTable();
     }
 
     /**
@@ -417,10 +417,14 @@ EOD;
      */
     protected function beforeTable()
     {
-        $hasMassActions = $this->hasMassActions();
+        $hasMassActions  = $this->hasMassActions();
+        $filters         = $this->filterAdapter->getFilters();
+        $hasColumnFilter = $this->hasColumnFilter();
 
-
-        $return = '<div class="tbl-c"><div class="card-ctrls mt24"><div class="card-ctrls__left">';
+        if (!$hasMassActions and ! $this->searchable and empty($this->selects) and ! $filters and ! $hasColumnFilter) {
+            return '';
+        }
+        $return = '<div class="card-ctrls mt24"><div class="card-ctrls__left">';
 
         if (!empty($this->selects)) {
             $return .= implode('', $this->selects);
@@ -439,11 +443,12 @@ EOD;
                 </div>';
         }
         $return .= '</div>';
-        $return .= '<div class="card-ctrls__right">';
 
-        $result  = event(strtolower(class_basename($this->datatable)) . '.datatables.top.center', [&$return]);
-        $return  .= isset($result[0]) ? $result[0] : '';
-        $filters = $this->filterAdapter->getFilters();
+
+        $result = event(strtolower(class_basename($this->datatable)) . '.datatables.top.center', [&$return]);
+        $return .= isset($result[0]) ? $result[0] : '';
+
+        $return .= '<div class="card-ctrls__right">';
 
 
         if (empty($filters) and ! is_null($this->datatable)) {
@@ -453,16 +458,15 @@ EOD;
             }
             $filters = $this->filterAdapter->getFilters();
         }
-
-        if ($this->hasColumnFilter()) {
+        if ($hasColumnFilter) {
             $return .= $this->getColumnFilterAdapter();
         }
         if ($filters) {
             $return .= '<div id="filter-save-url" data-url=' . handles('antares/foundation::datatables/filters/save') . '></div><div class="ddown ctrls__right ml10 ">' . $filters . '</div>';
         }
-
         if ($hasMassActions) {
-            $return .= '<div class="ddown ddown--left">
+            $return .= '
+                <div class="ddown ddown--left">
                     <div class="ddown__init btn--dropdown btn btn--capitalize btn--md btn--primary mdl-js-button is-disabled ml8" id="table-ma" disabled>' . trans('antares/foundation::label.with_selected') . '</div>                    
                     <div class="ddown__content">
                     <div class="ddown__arrow"></div>
@@ -606,7 +610,12 @@ EOD;
             $scrollable = 'data-scrollable';
         }
         $massable = (int) $this->hasMassActions();
-        return $this->beforeTable() . '<table data-massable="' . $massable . '" ' . $scrollable . ' data-table-init = "true" ' . $this->html->attributes($this->tableAttributes) . '>' . $string . '</table>' . $this->afterTable();
+        return $this->tableInit() . $this->beforeTable() . '<table data-massable="' . $massable . '" ' . $scrollable . ' data-table-init = "true" ' . $this->html->attributes($this->tableAttributes) . '>' . $string . '</table>' . $this->afterTable();
+    }
+
+    protected function tableInit()
+    {
+        return '<div class="tbl-c">';
     }
 
     /**
