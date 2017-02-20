@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Html\Form;
 
 use Antares\Contracts\Html\Adapter\FieldPermissionAdapter as FieldPermissionContract;
@@ -158,7 +157,6 @@ class FormBuilder extends BaseBuilder implements BuilderContract
         $viewFactory = $this->container->make('view');
         $this->clientSubmit($buttons);
         view()->share('grid_container_class', 'grid-container--footer');
-
         return $viewFactory->make($grid->view)->with($data)->with($grid->params)->render();
     }
 
