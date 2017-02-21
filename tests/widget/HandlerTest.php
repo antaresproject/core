@@ -17,15 +17,18 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Widget\TestCase;
 
-use Closure;
-use Mockery as m;
+namespace Antares\Widget\TestCase;
+
+use Antares\Testbench\ApplicationTestCase;
+use Antares\Support\Fluent;
 use Antares\Widget\Handler;
-use Illuminate\Support\Fluent;
+use Mockery as m;
+use Closure;
 
-class HandlerTest extends \PHPUnit_Framework_TestCase
+class HandlerTest extends ApplicationTestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -41,8 +44,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructMethod()
     {
-        $stub = new HandlerStub('foo', []);
-
+        $stub   = new HandlerStub('foo', []);
         $refl   = new \ReflectionObject($stub);
         $config = $refl->getProperty('config');
         $name   = $refl->getProperty('name');
@@ -79,14 +81,17 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
             'id'     => 'foobar',
             'hello'  => 'world',
             'childs' => [],
+            'active' => false
         ]);
 
         $this->assertEquals($expected, $stub->is('foobar'));
     }
+
 }
 
 class HandlerStub extends Handler
 {
+
     protected $type   = 'stub';
     protected $config = [];
 
@@ -100,4 +105,5 @@ class HandlerStub extends Handler
 
         return $item;
     }
+
 }

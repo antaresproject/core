@@ -17,12 +17,14 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Support\TestCase;
+
+namespace Antares\Support\TestCase;
 
 use Antares\Support\Collection;
 
 class CollectionTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Test Antares\Support\Collection::toCsv() method.
      *
@@ -33,15 +35,16 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $stub = new Collection([
             ['id' => 1, 'name' => 'Mior Muhammad Zaki'],
             ['id' => 2, 'name' => 'Taylor Otwell'],
+            ['id' => 3, 'name' => 'Antares'],
         ]);
 
         $expected = <<<EXPECTED
 id,name
 1,"Mior Muhammad Zaki"
 2,"Taylor Otwell"
-
+3,Antares
 EXPECTED;
-
-        $this->assertEquals($expected, $stub->toCsv());
+        $this->assertEquals(str_replace("\r", "", $expected) . "\n", $stub->toCsv());
     }
+
 }

@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Support\Providers\Traits\TestCase;
+
+namespace Antares\Support\Providers\Traits\TestCase;
 
 use Mockery as m;
 use Illuminate\Container\Container;
@@ -25,6 +26,7 @@ use Antares\Support\Providers\Traits\PackageProviderTrait;
 
 class PackageProviderTraitTest extends \PHPUnit_Framework_TestCase
 {
+
     use PackageProviderTrait;
 
     /**
@@ -52,7 +54,6 @@ class PackageProviderTraitTest extends \PHPUnit_Framework_TestCase
         m::close();
     }
 
-
     /**
      * Test Antares\Support\Providers\Traits\PackageProviderTrait::package()
      * method.
@@ -61,25 +62,25 @@ class PackageProviderTraitTest extends \PHPUnit_Framework_TestCase
      */
     public function testPackageMethod()
     {
-        $this->app['config'] = $config = m::mock('\Antares\Contracts\Config\PackageRepository, \ArrayAccess');
-        $this->app['files'] = $files = m::mock('\Illuminate\Filesystem\Filesystem');
-        $this->app['translator'] = $translator = m::mock('\Illuminate\Translation\Translator');
-        $this->app['view'] = $view = m::mock('\Illuminate\Contracts\View\Factory');
+        $this->app['config']     = $config                  = m::mock('\Antares\Contracts\Config\PackageRepository, \ArrayAccess');
+        $this->app['files']      = $files                   = m::mock('\Illuminate\Filesystem\Filesystem');
+        $this->app['translator'] = $translator              = m::mock('\Illuminate\Translation\Translator');
+        $this->app['view']       = $view                    = m::mock('\Illuminate\Contracts\View\Factory');
 
         $path = '/var/www/vendor/foo/bar';
 
         $files->shouldReceive('isDirectory')->once()->with("{$path}/config")->andReturn(true)
-            ->shouldReceive('isDirectory')->once()->with("{$path}/lang")->andReturn(true)
-            ->shouldReceive('isDirectory')->once()->with("{$path}/views")->andReturn(true)
-            ->shouldReceive('isDirectory')->once()->with('/var/www/resources/views/packages/foo/bar')->andReturn(true);
+                ->shouldReceive('isDirectory')->once()->with("{$path}/lang")->andReturn(true)
+                ->shouldReceive('isDirectory')->once()->with("{$path}/views")->andReturn(true)
+                ->shouldReceive('isDirectory')->once()->with('/var/www/resources/views/foo/bar')->andReturn(true);
 
         $config->shouldReceive('package')->once()->with('foo/bar', "{$path}/config", 'foo')->andReturnNull()
-            ->shouldReceive('offsetGet')->once()->with('view.paths')->andReturn(['/var/www/resources/views']);
+                ->shouldReceive('get')->once()->with('view.paths')->andReturn(['/var/www/resources/views']);
 
         $translator->shouldReceive('addNamespace')->once()->with('foo', "{$path}/lang")->andReturnNull();
 
-        $view->shouldReceive('addNamespace')->once()->with('foo', '/var/www/resources/views/packages/foo/bar')->andReturnNull()
-            ->shouldReceive('addNamespace')->once()->with('foo', "{$path}/views")->andReturnNull();
+        $view->shouldReceive('addNamespace')->once()->with('foo', '/var/www/resources/views/foo/bar')->andReturnNull()
+                ->shouldReceive('addNamespace')->once()->with('foo', "{$path}/views")->andReturnNull();
 
         $this->assertNull($this->package('foo/bar', 'foo', $path));
     }
@@ -109,4 +110,5 @@ class PackageProviderTraitTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertNull($this->bootUsingLaravel('foo'));
     }
+
 }

@@ -17,15 +17,18 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Widget\Handlers\TestCase;
 
-use Mockery as m;
-use Illuminate\Support\Fluent;
-use Antares\Support\Collection;
+namespace Antares\Widget\Handlers\TestCase;
+
+use Antares\Testbench\ApplicationTestCase;
 use Antares\Widget\Handlers\Pane;
+use Antares\Support\Collection;
+use Antares\Support\Fluent;
+use Mockery as m;
 
-class PaneTest extends \PHPUnit_Framework_TestCase
+class PaneTest extends ApplicationTestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -41,7 +44,7 @@ class PaneTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructMethod()
     {
-        $stub   = new Pane('foo', []);
+        $stub = new Pane('foo', []);
 
         $refl   = new \ReflectionObject($stub);
         $config = $refl->getProperty('config');
@@ -79,30 +82,30 @@ class PaneTest extends \PHPUnit_Framework_TestCase
         $stub = new Pane('foo', []);
 
         $expected = new Collection([
-            'foo' => new Fluent([
+            'foo'    => new Fluent([
                 'attributes' => [],
                 'title'      => '',
                 'content'    => 'hello world',
                 'html'       => '',
                 'id'         => 'foo',
-                'childs'     => [],
-            ]),
+                'active'     => false,
+                'childs'     => [],]),
             'foobar' => new Fluent([
                 'attributes' => [],
                 'title'      => 'hello world',
                 'content'    => '',
                 'html'       => '',
                 'id'         => 'foobar',
-                'childs'     => [],
-            ]),
-            'hello' => new Fluent([
+                'active'     => false,
+                'childs'     => [],]),
+            'hello'  => new Fluent([
                 'attributes' => [],
                 'title'      => 'hello world',
                 'content'    => '',
                 'html'       => '',
                 'id'         => 'hello',
-                'childs'     => [],
-            ]),
+                'active'     => false,
+                'childs'     => [],]),
         ]);
 
         $callback = function ($item) {
@@ -116,7 +119,7 @@ class PaneTest extends \PHPUnit_Framework_TestCase
         $stub->add('foobar', '>:foo', $callback);
 
         $stub->add('hello', '^:foo', $callback);
-
         $this->assertEquals($expected, $stub->items());
     }
+
 }

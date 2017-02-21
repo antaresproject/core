@@ -17,37 +17,23 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Widget\TestCase;
 
-use Mockery as m;
-use Illuminate\Support\Fluent;
-use Antares\Support\Collection;
-use Illuminate\Container\Container;
+namespace Antares\Widget\TestCase;
+
+use Antares\Testbench\ApplicationTestCase;
 use Antares\Widget\WidgetManager;
+use Antares\Support\Collection;
+use Antares\Support\Fluent;
+use Mockery as m;
 
-class WidgetManagerTest extends \PHPUnit_Framework_TestCase
+class WidgetManagerTest extends ApplicationTestCase
 {
-    /**
-     * Application mock instance.
-     *
-     * @var Illuminate\Foundation\Application
-     */
-    private $app = null;
-
-    /**
-     * Setup the test environment.
-     */
-    public function setUp()
-    {
-        $this->app = new Container();
-    }
 
     /**
      * Teardown the test environment.
      */
     public function tearDown()
     {
-        unset($this->app);
         m::close();
     }
 
@@ -58,6 +44,7 @@ class WidgetManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructMethod()
     {
+
         $stub = new WidgetManager($this->app);
 
         $this->assertInstanceOf('\Antares\Widget\WidgetManager', $stub);
@@ -97,12 +84,13 @@ class WidgetManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testMakeMethodForMenu()
     {
-        $app           = $this->app;
-        $app['config'] = $config = m::mock('\Illuminate\Config\Repository');
+        $app = $this->app;
+
+        $app['config'] = $config        = m::mock('\Illuminate\Config\Repository');
 
         $config->shouldReceive('get')->once()
                 ->with("antares/widget::menu.foo", m::any())->andReturn([])
-            ->shouldReceive('get')->once()
+                ->shouldReceive('get')->once()
                 ->with("antares/widget::menu.foo.bar", m::any())->andReturn([]);
 
         $stub = with(new WidgetManager($app))->make('menu.foo');
@@ -120,10 +108,10 @@ class WidgetManagerTest extends \PHPUnit_Framework_TestCase
     public function testMakeMethodForPane()
     {
         $app           = $this->app;
-        $app['config'] = $config = m::mock('\Illuminate\Config\Repository');
+        $app['config'] = $config        = m::mock('\Illuminate\Config\Repository');
 
         $config->shouldReceive('get')->once()
-            ->with("antares/widget::pane.foo", m::any())->andReturn([]);
+                ->with("antares/widget::pane.foo", m::any())->andReturn([]);
 
         $stub = with(new WidgetManager($app))->make('pane.foo');
 
@@ -138,10 +126,10 @@ class WidgetManagerTest extends \PHPUnit_Framework_TestCase
     public function testMakeMethodForPlaceholder()
     {
         $app           = $this->app;
-        $app['config'] = $config = m::mock('\Illuminate\Config\Repository');
+        $app['config'] = $config        = m::mock('\Illuminate\Config\Repository');
 
         $config->shouldReceive('get')->once()
-            ->with("antares/widget::placeholder.foo", m::any())->andReturn([]);
+                ->with("antares/widget::placeholder.foo", m::any())->andReturn([]);
 
         $stub = with(new WidgetManager($app))->make('placeholder.foo');
 
@@ -156,11 +144,11 @@ class WidgetManagerTest extends \PHPUnit_Framework_TestCase
     public function testMakeMethodForDefaultDriver()
     {
         $app           = $this->app;
-        $app['config'] = $config = m::mock('\Illuminate\Config\Repository');
+        $app['config'] = $config        = m::mock('\Illuminate\Config\Repository');
 
         $config->shouldReceive('get')->once()
                 ->with("antares/widget::driver", 'placeholder.default')->andReturn('placeholder.default')
-            ->shouldReceive('get')->once()
+                ->shouldReceive('get')->once()
                 ->with("antares/widget::placeholder.default", m::any())->andReturn([]);
 
         $stub = with(new WidgetManager($app))->driver();
@@ -176,7 +164,7 @@ class WidgetManagerTest extends \PHPUnit_Framework_TestCase
     public function testSetDefaultDriverMethod()
     {
         $app           = $this->app;
-        $app['config'] = $config = m::mock('\Illuminate\Config\Repository');
+        $app['config'] = $config        = m::mock('\Illuminate\Config\Repository');
 
         $config->shouldReceive('set')->once()
                 ->with('antares/widget::driver', 'foo')->andReturnNull();
@@ -204,21 +192,22 @@ class WidgetManagerTest extends \PHPUnit_Framework_TestCase
     public function testOfMethod()
     {
         $app           = $this->app;
-        $app['config'] = $config = m::mock('\Illuminate\Config\Repository');
+        $app['config'] = $config        = m::mock('\Illuminate\Config\Repository');
 
         $config->shouldReceive('get')->once()
                 ->with("antares/widget::placeholder.foo", m::any())->andReturn([])
-            ->shouldReceive('get')->once()
+                ->shouldReceive('get')->once()
                 ->with("antares/widget::placeholder.default", m::any())->andReturn([])
-            ->shouldReceive('get')->once()
+                ->shouldReceive('get')->once()
                 ->with("antares/widget::driver", "placeholder.default")->andReturn("placeholder.default");
 
         $expected = new Collection([
             'foobar' => new Fluent([
-                'id'     => 'foobar',
-                'value'  => 'Hello world',
-                'childs' => [],
-            ]),
+                'id'      => 'foobar',
+                'value'   => 'Hello world',
+                'childs'  => [],
+                'active'  => false,
+                'content' => '']),
         ]);
 
         $stub1 = with(new WidgetManager($app))->of('placeholder.foo', function ($p) {
@@ -226,6 +215,7 @@ class WidgetManagerTest extends \PHPUnit_Framework_TestCase
         });
 
         $this->assertInstanceOf('\Antares\Widget\Handlers\Placeholder', $stub1);
+
         $this->assertEquals($expected, $stub1->items());
 
         $stub2 = with(new WidgetManager($app))->of(function ($p) {
@@ -235,4 +225,5 @@ class WidgetManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Antares\Widget\Handlers\Placeholder', $stub2);
         $this->assertEquals($expected, $stub2->items());
     }
+
 }

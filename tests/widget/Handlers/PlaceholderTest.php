@@ -17,15 +17,18 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Widget\Handlers\TestCase;
 
-use Mockery as m;
-use Illuminate\Support\Fluent;
-use Antares\Support\Collection;
+namespace Antares\Widget\Handlers\TestCase;
+
+use Antares\Testbench\ApplicationTestCase;
 use Antares\Widget\Handlers\Placeholder;
+use Antares\Support\Collection;
+use Antares\Support\Fluent;
+use Mockery as m;
 
-class PlaceholderTest extends \PHPUnit_Framework_TestCase
+class PlaceholderTest extends ApplicationTestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -56,10 +59,11 @@ class PlaceholderTest extends \PHPUnit_Framework_TestCase
 
         $expected = [
             'defaults' => [
-                'value' => '',
+                'value'   => '',
+                'content' => ''
             ],
+            'content'  => ''
         ];
-
         $this->assertEquals($expected, $config->getValue($stub));
         $this->assertEquals('foo', $name->getValue($stub));
         $this->assertInstanceOf('\Antares\Support\Nesty', $nesty->getValue($stub));
@@ -80,27 +84,33 @@ class PlaceholderTest extends \PHPUnit_Framework_TestCase
         };
 
         $expected = new Collection([
-            'foo' => new Fluent([
-                'value'  => $callback,
-                'id'     => 'foo',
-                'childs' => [],
-            ]),
+            'foo'    => new Fluent([
+                'value'   => $callback,
+                'content' => '',
+                'id'      => 'foo',
+                'childs'  => [],
+                'active'  => false
+                    ]),
             'foobar' => new Fluent([
-                'value'  => $callback,
-                'id'     => 'foobar',
-                'childs' => [],
-            ]),
-            'hello' => new Fluent([
-                'value'  => $callback,
-                'id'     => 'hello',
-                'childs' => [],
-            ]),
+                'value'   => $callback,
+                'content' => '',
+                'id'      => 'foobar',
+                'childs'  => [],
+                'active'  => false
+                    ]),
+            'hello'  => new Fluent([
+                'value'   => $callback,
+                'content' => '',
+                'id'      => 'hello',
+                'childs'  => [],
+                'active'  => false
+                    ]),
         ]);
 
         $stub->add('foo', $callback);
         $stub->add('foobar', '>:foo', $callback);
         $stub->add('hello', '^:foo', $callback);
-
         $this->assertEquals($expected, $stub->items());
     }
+
 }

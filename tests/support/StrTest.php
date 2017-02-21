@@ -17,12 +17,14 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Support\TestCase;
+
+namespace Antares\Support\TestCase;
 
 use Antares\Support\Str;
 
 class StrTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Test Authorize\Str::humanize() method.
      *
@@ -53,11 +55,11 @@ class StrTest extends \PHPUnit_Framework_TestCase
             'Antares Platform is not a foobar',
         ];
 
-        $data     = [
+        $data   = [
             '{name} is awesome',
             '{name} is not a {foo}',
         ];
-        $output   = Str::replace($data, ['name' => 'Antares Platform', 'foo' => 'foobar']);
+        $output = Str::replace($data, ['name' => 'Antares Platform', 'foo' => 'foobar']);
 
         $this->assertEquals($expected, $output);
     }
@@ -87,29 +89,9 @@ class StrTest extends \PHPUnit_Framework_TestCase
      */
     public function testStreamGetContentsMethod()
     {
-        $base_path = __DIR__.'/stub/';
-        $expected  = 'a:2:{s:4:"name";s:9:"Antares";s:5:"theme";a:2:{s:7:"backend";s:7:"default";s:8:"frontend";s:7:"default";}}';
-        $stream    = fopen($base_path.'driver1.stub.php', 'r');
-        $output    = Str::streamGetContents($stream);
-
-        $this->assertEquals($expected, $output);
-
-        $expected = [
-            'name'  => 'Antares',
-            'theme' => [
-                'backend'  => 'default',
-                'frontend' => 'default',
-            ],
-        ];
-
-        $this->assertEquals($expected, unserialize($output));
-
-        $expected = 'a:2:{s:4:"name";s:9:"Antares";s:5:"theme";a:2:{s:7:"backend";s:7:"default";s:8:"frontend";s:7:"default";}}'."\n";
-        $stream   = fopen($base_path.'driver2.stub.php', 'r');
+        $string   = 'a:2:{s:4:"name";s:7:"Antares";s:5:"theme";a:2:{s:7:"backend";s:7:"default";s:8:"frontend";s:7:"default";}}';
+        $stream   = fopen('data://text/plain;base64,' . base64_encode($string), 'r');
         $output   = Str::streamGetContents($stream);
-
-        $this->assertEquals($expected, $output);
-
         $expected = [
             'name'  => 'Antares',
             'theme' => [
@@ -117,7 +99,6 @@ class StrTest extends \PHPUnit_Framework_TestCase
                 'frontend' => 'default',
             ],
         ];
-
         $this->assertEquals($expected, unserialize($output));
         $this->assertEquals('foo', Str::streamGetContents('foo'));
     }
@@ -132,4 +113,5 @@ class StrTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Taylor', Str::title('taylor'));
         $this->assertEquals('Άχιστη', Str::title('άχιστη'));
     }
+
 }

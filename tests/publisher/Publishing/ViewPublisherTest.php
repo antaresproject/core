@@ -17,13 +17,16 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Publisher\Publishing\TestCase;
 
-use Mockery as m;
+namespace Antares\Publisher\Publishing\TestCase;
+
 use Antares\Publisher\Publishing\ViewPublisher;
+use Antares\Testbench\ApplicationTestCase;
+use Mockery as m;
 
-class ViewPublisherTest extends \PHPUnit_Framework_TestCase
+class ViewPublisherTest extends ApplicationTestCase
 {
+
     public function tearDown()
     {
         m::close();
@@ -31,20 +34,24 @@ class ViewPublisherTest extends \PHPUnit_Framework_TestCase
 
     public function testPackageViewPublishing()
     {
-        $pub = new ViewPublisher($files = m::mock('\Illuminate\Filesystem\Filesystem'), __DIR__);
-        $pub->setPackagePath(__DIR__.'/vendor');
-        $files->shouldReceive('isDirectory')->once()->with(__DIR__.'/vendor/foo/bar/resources/views')->andReturn(true);
-        $files->shouldReceive('isDirectory')->once()->with(__DIR__.'/packages/foo/bar')->andReturn(true);
-        $files->shouldReceive('copyDirectory')->once()->with(__DIR__.'/vendor/foo/bar/resources/views', __DIR__.'/packages/foo/bar')->andReturn(true);
+        $pub   = new ViewPublisher($files = m::mock('\Illuminate\Filesystem\Filesystem'), __DIR__);
+        $pub->setPackagePath(__DIR__ . '/vendor');
+        $files->shouldReceive('isDirectory')->twice()->withAnyArgs()->andReturn(true)
+                ->shouldReceive('allFiles')->once()->andReturn([]);
+
+        $this->app['antares.asset.publisher'] = $publisher                            = m::mock(\Antares\Asset\AssetPublisher::class);
+        $publisher->shouldReceive('publishAndPropagate')->once()->andReturn(true);
 
         $this->assertTrue($pub->publishPackage('foo/bar'));
 
-        $pub = new ViewPublisher($files2 = m::mock('\Illuminate\Filesystem\Filesystem'), __DIR__);
-        $files2->shouldReceive('isDirectory')->once()->with(__DIR__.'/custom-packages/foo/bar/resources/views')->andReturn(false)
-            ->shouldReceive('isDirectory')->once()->with(__DIR__.'/custom-packages/foo/bar/views')->andReturn(true);
-        $files2->shouldReceive('isDirectory')->once()->with(__DIR__.'/packages/foo/bar')->andReturn(true);
-        $files2->shouldReceive('copyDirectory')->once()->with(__DIR__.'/custom-packages/foo/bar/views', __DIR__.'/packages/foo/bar')->andReturn(true);
+        $pub    = new ViewPublisher($files2 = m::mock('\Illuminate\Filesystem\Filesystem'), __DIR__);
+        $files2->shouldReceive('isDirectory')->twice()->withAnyArgs()->andReturn(false);
 
-        $this->assertTrue($pub->publishPackage('foo/bar', __DIR__.'/custom-packages'));
+        try {
+            $pub->publishPackage('foo/bar', __DIR__ . '/custom-packages');
+        } catch (\Exception $ex) {
+            $this->assertSame('Views not found.', $ex->getMessage());
+        }
     }
+
 }

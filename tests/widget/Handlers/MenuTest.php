@@ -17,15 +17,18 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Widget\Handlers\TestCase;
 
-use Mockery as m;
-use Illuminate\Support\Fluent;
-use Antares\Support\Collection;
+namespace Antares\Widget\Handlers\TestCase;
+
+use Antares\Testbench\ApplicationTestCase;
 use Antares\Widget\Handlers\Menu;
+use Antares\Support\Collection;
+use Antares\Support\Fluent;
+use Mockery as m;
 
-class MenuTest extends \PHPUnit_Framework_TestCase
+class MenuTest extends ApplicationTestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -78,22 +81,24 @@ class MenuTest extends \PHPUnit_Framework_TestCase
         $stub = new Menu('foo', []);
 
         $expected = new Collection([
-            'foo' => new Fluent([
+            'foo'    => new Fluent([
                 'attributes' => [],
                 'childs'     => [],
                 'icon'       => '',
                 'id'         => 'foo',
+                'active'     => false,
                 'link'       => '#',
                 'title'      => 'hello world',
-            ]),
+                    ]),
             'foobar' => new Fluent([
                 'attributes' => [],
                 'childs'     => [],
                 'icon'       => '',
                 'id'         => 'foobar',
+                'active'     => false,
                 'link'       => '#',
                 'title'      => 'hello world 2',
-            ]),
+                    ]),
         ]);
 
         $stub->add('foo', function ($item) {
@@ -106,4 +111,5 @@ class MenuTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $stub->items());
     }
+
 }

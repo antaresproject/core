@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Support\Providers\TestCase; 
+
+namespace Antares\Support\Providers\TestCase;
 
 use Mockery as m;
 use Illuminate\Container\Container;
@@ -25,6 +26,7 @@ use Antares\Support\Providers\PipelineServiceProvider;
 
 class PipelineServiceProviderTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -45,7 +47,6 @@ class PipelineServiceProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('Antares\Support\Providers\Traits\FilterProviderTrait', class_uses_recursive(get_class($stub)));
         $this->assertContains('Antares\Support\Providers\Traits\MiddlewareProviderTrait', class_uses_recursive(get_class($stub)));
     }
-
 
     /**
      * Test Antares\Support\Providers\PipelineServiceProvider::register()
@@ -76,23 +77,27 @@ class PipelineServiceProviderTest extends \PHPUnit_Framework_TestCase
         $kernel = m::mock('\Illuminate\Contracts\Http\Kernel');
 
         $router->shouldReceive('before')->once()->with('BeforeFilter')->andReturnNull()
-            ->shouldReceive('after')->once()->with('AfterFilter')->andReturnNull()
-            ->shouldReceive('filter')->once()->with('foo', 'FooFilter')->andReturnNull()
-            ->shouldReceive('middleware')->once()->with('foobar', 'FoobarMiddleware')->andReturnNull();
+                ->shouldReceive('after')->once()->with('AfterFilter')->andReturnNull()
+                ->shouldReceive('filter')->once()->with('foo', 'FooFilter')->andReturnNull()
+                ->shouldReceive('middleware')->once()->with('foobar', 'FoobarMiddleware')->andReturnNull()
+                ->shouldReceive('middleware')->once()->with('', "Antares\Form\Middleware\FormMiddleware")->andReturnNull();
 
         $kernel->shouldReceive('pushMiddleware')->once()->with('FooMiddleware')->andReturnNull();
 
         $stub = new StubPipelineProvider($app);
-
         $this->assertNull($stub->boot($router, $kernel));
     }
+
 }
 
 class StubPipelineProvider extends PipelineServiceProvider
 {
-    protected $before = ['BeforeFilter'];
-    protected $after  = ['AfterFilter'];
-    protected $filters = ['foo' => 'FooFilter'];
-    protected $middleware = ['FooMiddleware'];
-    protected $routeMiddleware = ['foobar' => 'FoobarMiddleware'];
+
+    protected $before           = ['BeforeFilter'];
+    protected $after            = ['AfterFilter'];
+    protected $filters          = ['foo' => 'FooFilter'];
+    protected $middleware       = ['FooMiddleware'];
+    protected $routeMiddleware  = ['foobar' => 'FoobarMiddleware'];
+    protected $middlewareGroups = [];
+
 }

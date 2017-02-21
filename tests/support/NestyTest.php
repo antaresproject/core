@@ -17,14 +17,17 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Support\TestCase;
 
-use Illuminate\Support\Fluent;
+namespace Antares\Support\TestCase;
+
+use Antares\Testbench\ApplicationTestCase;
 use Antares\Support\Collection;
+use Antares\Support\Fluent;
 use Antares\Support\Nesty;
 
-class NestyTest extends \PHPUnit_Framework_TestCase
+class NestyTest extends ApplicationTestCase
 {
+
     /**
      * Stub instance.
      *
@@ -37,6 +40,7 @@ class NestyTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
+        parent::setUp();
         $this->stub = new Nesty([]);
     }
 
@@ -88,46 +92,50 @@ class NestyTest extends \PHPUnit_Framework_TestCase
                 'hello-foobar' => new Fluent([
                     'id'     => 'hello-foobar',
                     'childs' => [],
-                ]),
+                        ]),
             ],
         ]);
-        $foo = new Fluent([
+        $foo    = new Fluent([
             'id'     => 'foo',
             'childs' => [
-                'bar' => new Fluent([
+                'bar'                => new Fluent([
                     'id'     => 'bar',
                     'childs' => [],
-                ]),
-                'foobar'  => $foobar,
-                'foo-bar' => new Fluent([
+                        ]),
+                'foobar'             => $foobar,
+                'foo-bar'            => new Fluent([
                     'id'     => 'foo-bar',
                     'childs' => [],
-                ]),
+                        ]),
                 'hello-world-foobar' => new Fluent([
                     'id'     => 'hello-world-foobar',
                     'childs' => [],
-                ]),
+                        ]),
             ],
         ]);
 
         $expected = [
-            'crynobone' => new Fluent([
-                'id'     => 'crynobone',
-                'childs' => [],
-            ]),
-            'hello' => new Fluent([
-                'id'     => 'hello',
-                'childs' => [],
-            ]),
-            'world' => new Fluent([
-                'id'     => 'world',
-                'childs' => [],
-            ]),
-            'foo'       => $foo,
             'antares' => new Fluent([
                 'id'     => 'antares',
                 'childs' => [],
-            ]),
+                'active' => false,
+                    ]),
+            'hello'   => new Fluent([
+                'id'     => 'hello',
+                'childs' => [],
+                'active' => false,
+                    ]),
+            'world'   => new Fluent([
+                'id'     => 'world',
+                'childs' => [],
+                'active' => false,
+                    ]),
+            'foo'     => $foo,
+            'antares' => new Fluent([
+                'id'     => 'antares',
+                'childs' => [],
+                'active' => false,
+                    ]),
         ];
 
         $this->stub->add('foo');
@@ -138,7 +146,7 @@ class NestyTest extends \PHPUnit_Framework_TestCase
         $this->stub->add('foo-bar', '^:foo');
         $this->stub->add('hello-foobar', '^:foo.foobar');
         $this->stub->add('hello-world-foobar', '^:foo.dummy');
-        $this->stub->add('crynobone', '<');
+        $this->stub->add('antares', '<');
         $this->stub->add('antares', '#');
 
         $this->assertEquals(new Collection($expected), $this->stub->items());
@@ -164,11 +172,11 @@ class NestyTest extends \PHPUnit_Framework_TestCase
             'foobar' => new Fluent([
                 'id'     => 'foobar',
                 'childs' => [],
-            ]),
-            'foo' => new Fluent([
+                    ]),
+            'foo'    => new Fluent([
                 'id'     => 'foo',
                 'childs' => [],
-            ]),
+                    ]),
         ];
 
         $stub->add('foo', '<:home');
@@ -188,11 +196,11 @@ class NestyTest extends \PHPUnit_Framework_TestCase
             'foobar' => new Fluent([
                 'id'     => 'foobar',
                 'childs' => [],
-            ]),
-            'foo' => new Fluent([
+                    ]),
+            'foo'    => new Fluent([
                 'id'     => 'foo',
                 'childs' => [],
-            ]),
+                    ]),
         ];
 
         $stub->add('foobar', '>:home');
@@ -214,4 +222,5 @@ class NestyTest extends \PHPUnit_Framework_TestCase
         $stub->add('foo', '^:home');
         $this->assertEquals(new Collection([]), $stub->items());
     }
+
 }

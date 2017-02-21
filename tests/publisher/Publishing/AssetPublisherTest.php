@@ -17,13 +17,16 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Publisher\Publishing\TestCase;
 
-use Mockery as m;
+namespace Antares\Publisher\Publishing\TestCase;
+
 use Antares\Publisher\Publishing\AssetPublisher;
+use Antares\Testbench\ApplicationTestCase;
+use Mockery as m;
 
-class AssetPublisherTest extends \PHPUnit_Framework_TestCase
+class AssetPublisherTest extends ApplicationTestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -34,29 +37,41 @@ class AssetPublisherTest extends \PHPUnit_Framework_TestCase
 
     public function testBasicPathPublishing()
     {
-        $pub = new AssetPublisher($files = m::mock('Illuminate\Filesystem\Filesystem'), __DIR__);
-        $files->shouldReceive('isDirectory')->once()->with(__DIR__.'/packages/bar')->andReturn(true);
-        $files->shouldReceive('copyDirectory')->once()->with('foo', __DIR__.'/packages/bar')->andReturn(true);
+        $pub   = new AssetPublisher($files = m::mock('Illuminate\Filesystem\Filesystem'), __DIR__);
+        $files->shouldReceive('isDirectory')->once()->with(__DIR__ . '/packages/antares/bar')->andReturn(true)
+                ->shouldReceive('isDirectory')->withAnyArgs()->andReturn(true)
+                ->shouldReceive('allFiles')->once()->andReturn([]);
 
+
+
+        $this->app['files'] = $files              = m::mock('\Illuminate\Filesystem\Filesystem');
+
+        $this->app['antares.asset.publisher'] = $publisher                            = m::mock(\Antares\Asset\AssetPublisher::class);
+        $publisher->shouldReceive('publishAndPropagate')->once()->andReturn(true);
         $this->assertTrue($pub->publish('bar', 'foo'));
     }
 
     public function testPackageAssetPublishing()
     {
-        $pub = new AssetPublisher($files = m::mock('Illuminate\Filesystem\Filesystem'), __DIR__);
-        $pub->setPackagePath(__DIR__.'/vendor');
-        $files->shouldReceive('isDirectory')->once()->with(__DIR__.'/vendor/foo/resources/public')->andReturn(true);
-        $files->shouldReceive('isDirectory')->once()->with(__DIR__.'/packages/foo')->andReturn(true);
-        $files->shouldReceive('copyDirectory')->once()->with(__DIR__.'/vendor/foo/resources/public', __DIR__.'/packages/foo')->andReturn(true);
+        $pub   = new AssetPublisher($files = m::mock('Illuminate\Filesystem\Filesystem'), __DIR__);
+        $pub->setPackagePath(__DIR__ . '/vendor');
+        $files->shouldReceive('isDirectory')->withAnyArgs()->andReturn(true)
+                ->shouldReceive('allFiles')->once()->andReturn([]);
+
+        $this->app['antares.asset.publisher'] = $publisher                            = m::mock(\Antares\Asset\AssetPublisher::class);
+        $publisher->shouldReceive('publishAndPropagate')->once()->andReturn(true);
 
         $this->assertTrue($pub->publishPackage('foo'));
 
-        $pub = new AssetPublisher($files2 = m::mock('Illuminate\Filesystem\Filesystem'), __DIR__);
-        $files2->shouldReceive('isDirectory')->once()->with(__DIR__.'/custom-packages/foo/resources/public')->andReturn(false)
-            ->shouldReceive('isDirectory')->once()->with(__DIR__.'/custom-packages/foo/public')->andReturn(true);
-        $files2->shouldReceive('isDirectory')->once()->with(__DIR__.'/packages/foo')->andReturn(true);
-        $files2->shouldReceive('copyDirectory')->once()->with(__DIR__.'/custom-packages/foo/public', __DIR__.'/packages/foo')->andReturn(true);
+        $pub    = new AssetPublisher($files2 = m::mock('Illuminate\Filesystem\Filesystem'), __DIR__);
+        $files2->shouldReceive('isDirectory')->withAnyArgs()->andReturn(false);
 
-        $this->assertTrue($pub->publishPackage('foo', __DIR__.'/custom-packages'));
+
+        try {
+            $pub->publishPackage('foo', __DIR__ . '/custom-packages');
+        } catch (\Exception $ex) {
+            $this->assertSame("Assets not found.", $ex->getMessage());
+        }
     }
+
 }

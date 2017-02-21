@@ -17,13 +17,13 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\View\TestCase;
-
-use Mockery as m;
+use Antares\Testbench\ApplicationTestCase;
 use Antares\View\FileViewFinder;
+use Mockery as m;
 
-class FileViewFinderTest extends \PHPUnit_Framework_TestCase
+class FileViewFinderTest extends ApplicationTestCase
 {
+
     /**
      * Filesystem instance.
      *
@@ -56,14 +56,15 @@ class FileViewFinderTest extends \PHPUnit_Framework_TestCase
     public function testFindNamedPathViewMethod()
     {
         $files = $this->files;
-        $stub  = new FileViewFinder($files, ['/path/theme/views', '/path/app/views'], ['php']);
+        $files->shouldReceive('exists')->once()->with("/path/theme/views/foo/bar/hello.php")->andReturn(true)
+                ->shouldReceive('exists')->with("/path/vendor/foo/bar/views/hello.php")->andReturn(false)
+                ->shouldReceive('exists')->with("/path/app/views/packages/foo/bar/hello.php;")->andReturn(false);
 
-        $files->shouldReceive('exists')->once()->with('/path/theme/views/packages/foo/bar/hello.php')->andReturn(false)
-            ->shouldReceive('exists')->once()->with('/path/app/views/packages/foo/bar/hello.php')->andReturn(false)
-            ->shouldReceive('exists')->once()->with('/path/vendor/foo/bar/views/hello.php')->andReturn(true);
+        $stub = new FileViewFinder($files, ['/path/theme/views', '/path/app/views'], ['php']);
+
 
         $stub->addNamespace('foo/bar', '/path/vendor/foo/bar/views');
-        $this->assertEquals('/path/vendor/foo/bar/views/hello.php', $stub->find("foo/bar::hello"));
+        $this->assertEquals('/path/theme/views/foo/bar/hello.php', $stub->find("foo/bar::hello"));
     }
 
     /**
@@ -85,4 +86,5 @@ class FileViewFinderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $paths->getValue($stub));
     }
+
 }
