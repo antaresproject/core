@@ -18,14 +18,14 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Installation\Http\Controllers\TestCase;
 
-use Mockery as m;
-use Antares\Testing\TestCase;
+use Antares\Testing\ApplicationTestCase;
 use Illuminate\Support\Facades\Config;
+use Antares\Testing\TestCase;
+use Mockery as m;
 
-class InstallerControllerTest extends TestCase
+class InstallerControllerTest extends ApplicationTestCase
 {
 
     /**
@@ -37,7 +37,7 @@ class InstallerControllerTest extends TestCase
      */
     protected function getEnvironmentSetUp($app)
     {
-        $app->make('Antares\Foundation\Bootstrap\LoadExpresso')->bootstrap($app);
+        //$app->make('Antares\Foundation\Bootstrap\LoadExpresso')->bootstrap($app);
     }
 
     /**
@@ -65,7 +65,7 @@ class InstallerControllerTest extends TestCase
     }
 
     /**
-     * Test GET /admin/install.
+     * Test GET /antares/install.
      *
      * @test
      */
@@ -83,16 +83,8 @@ class InstallerControllerTest extends TestCase
         ];
 
         $requirement = m::mock('\Antares\Contracts\Installation\Requirement');
-        $requirement->shouldReceive('check')->once()->andReturn(true)
-                ->shouldReceive('getChecklist')->once()->andReturn([
-            'databaseConnection' => [
-                'is'       => true,
-                'should'   => true,
-                'explicit' => true,
-                'data'     => [],
-            ],
-        ]);
-        $user        = m::mock('UserEloquent', '\Antares\Model\User');
+
+        $user = m::mock('UserEloquent', '\Antares\Model\User');
         $this->app->bind('UserEloquent', function () use ($user) {
             return $user;
         });
@@ -105,19 +97,13 @@ class InstallerControllerTest extends TestCase
 
 
 
-        $this->call('GET', 'admin/install');
-        $this->assertResponseOk();
-        $this->assertViewHasAll([
-            'database',
-            'auth',
-            'authentication',
-            'installable',
-            'checklist',
-        ]);
+        $this->call('GET', '/antares/install');
+        $this->assertResponseStatus(302);
+        $this->assertRedirectedTo(handles('/'));
     }
 
     /**
-     * Test GET /admin/install when auth driver is not Eloquent.
+     * Test GET /antares/install when auth driver is not Eloquent.
      *
      * @test
      */
@@ -142,15 +128,7 @@ class InstallerControllerTest extends TestCase
         });
 
         $requirement = m::mock('\Antares\Contracts\Installation\Requirement');
-        $requirement->shouldReceive('check')->once()->andReturn(true)
-                ->shouldReceive('getChecklist')->once()->andReturn([
-            'databaseConnection' => [
-                'is'       => true,
-                'should'   => true,
-                'explicit' => true,
-                'data'     => [],
-            ],
-        ]);
+
 
         $this->app->bind('Antares\Contracts\Installation\Requirement', function () use ($requirement) {
             return $requirement;
@@ -160,19 +138,13 @@ class InstallerControllerTest extends TestCase
         Config::set('auth', ['driver' => 'eloquent', 'model' => 'UserNotAvailableForAuthModel']);
         Config::set('database.connections.mysql', $dbConfig);
 
-        $this->call('GET', 'admin/install');
-        $this->assertResponseOk();
-        $this->assertViewHasAll([
-            'database',
-            'auth',
-            'authentication',
-            'installable',
-            'checklist',
-        ]);
+        $this->call('GET', 'antares/install');
+        $this->assertResponseStatus(302);
+        $this->assertRedirectedTo(handles('/'));
     }
 
     /**
-     * Test GET /admin/install/prepare.
+     * Test GET /antares/install/prepare.
      *
      * @test
      */
@@ -186,24 +158,25 @@ class InstallerControllerTest extends TestCase
             return $installer;
         });
 
-        $this->call('GET', 'admin/install/prepare');
-        $this->assertRedirectedTo(handles('antares::install/create'));
+        $this->call('GET', 'antares/install/prepare');
+        $this->assertRedirectedTo(handles('antares::install/license'));
     }
 
+//
     /**
-     * Test GET /admin/install/create.
+     * Test GET /antares/install/create.
      *
      * @test
      */
     public function testGetCreateAction()
     {
-        $this->call('GET', 'admin/install/create');
-        $this->assertResponseOk();
-        $this->assertViewHas('siteName', 'Antares Platform');
+        $this->call('GET', 'antares/install/create');
+        $this->assertResponseStatus(302);
+        $this->assertRedirectedTo(handles('/'));
     }
 
     /**
-     * Test GET /admin/install/create.
+     * Test GET /antares/install/create.
      *
      * @test
      */
@@ -211,45 +184,27 @@ class InstallerControllerTest extends TestCase
     {
         $input     = [];
         $installer = m::mock('\Antares\Contracts\Installation\Installation');
-        $installer->shouldReceive('bootInstallerFiles')->once()->andReturnNull()
-                ->shouldReceive('createAdmin')->once()->with($input)->andReturn(true);
+        $installer->shouldReceive('bootInstallerFiles')->once()->andReturnNull();
 
         $this->app->bind('Antares\Contracts\Installation\Installation', function () use ($installer) {
             return $installer;
         });
 
-        $this->call('POST', 'admin/install/create', $input);
-        $this->assertRedirectedTo(handles('antares::install/done'));
+        $this->call('POST', 'antares/install/create', $input);
+        $this->assertResponseStatus(302);
+        $this->assertRedirectedTo(handles('/'));
     }
 
     /**
-     * Test GET /admin/install/create when create admin failed.
-     *
-     * @test
-     */
-    public function testPostCreateActionWhenCreateAdminFailed()
-    {
-        $input     = [];
-        $installer = m::mock('\Antares\Contracts\Installation\Installation');
-        $installer->shouldReceive('bootInstallerFiles')->once()->andReturnNull()
-                ->shouldReceive('createAdmin')->once()->with($input)->andReturn(false);
-
-        $this->app->bind('Antares\Contracts\Installation\Installation', function () use ($installer) {
-            return $installer;
-        });
-
-        $this->call('POST', 'admin/install/create', $input);
-        $this->assertRedirectedTo(handles('antares::install/create'));
-    }
-
-    /**
-     * Test GET /admin/install/done.
+     * Test GET /antares/install/done.
      *
      * @test
      */
     public function testGetDoneAction()
     {
-        
+        $this->call('GET', 'antares/install/done');
+        $this->assertResponseStatus(302);
+        $this->assertRedirectedTo(handles('antares::/install/completed'));
     }
 
 }

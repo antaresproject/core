@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\Http\Form;
 
 use Illuminate\Contracts\Container\Container;

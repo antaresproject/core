@@ -137,8 +137,7 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
      * {@inheritdoc}
      */
     protected $casts = [
-        'id'     => 'integer',
-        'status' => 'boolean',
+        'id' => 'integer',
     ];
 
     /**
@@ -476,7 +475,7 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
      */
     public function isActivated()
     {
-        return $this->getAttribute('status') === self::VERIFIED;
+        return (int) $this->getAttribute('status') === self::VERIFIED;
     }
 
     /**
@@ -534,7 +533,7 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
      */
     public function isSuspended()
     {
-        return $this->getAttribute('status') === self::SUSPENDED;
+        return (int) $this->getAttribute('status') === self::SUSPENDED;
     }
 
     /**
@@ -558,8 +557,7 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
      */
     public function suspend()
     {
-        $this->setAttribute('status', self::SUSPENDED);
-
+        $this->setAttribute('status', (int) self::SUSPENDED);
         return $this;
     }
 

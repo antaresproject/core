@@ -18,16 +18,10 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 return [
-
-
-
     'fetch'       => PDO::FETCH_CLASS,
-    'default'     => env('DB_CONNECTION', 'sqlite'),
+    'default'     => 'sqlite',
     'connections' => [
-
         'sqlite' => [
             'driver'   => 'sqlite',
             'database' => storage_path('database.sqlite'),
@@ -66,7 +60,6 @@ return [
     ],
     'migrations'  => 'tbl_migrations',
     'redis'       => [
-
         'cluster' => false,
         'default' => [
             'host'     => '127.0.0.1',

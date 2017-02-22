@@ -17,12 +17,15 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Model\TestCase;
 
+namespace Antares\Model\TestCase;
+
+use Antares\Testing\ApplicationTestCase;
 use Antares\Model\Eloquent;
 
-class EloquentTest extends \PHPUnit_Framework_TestCase
+class EloquentTest extends ApplicationTestCase
 {
+
     public function testIsSoftDeletingMethod()
     {
         $stub1 = new SoftDeletingModel();
@@ -33,18 +36,24 @@ class EloquentTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($stub2->isSoftDeleting());
         $this->assertFalse($stub3->isSoftDeleting());
     }
+
 }
 
 class SoftDeletingModel extends Eloquent
 {
+
     protected $forceDeleting = false;
+
 }
 
 class NoneSoftDeletingModel extends Eloquent
 {
-    }
+    
+}
 
 class ForceDeletingModel extends Eloquent
 {
+
     protected $forceDeleting = true;
+
 }

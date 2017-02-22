@@ -17,17 +17,19 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Model\TestCase;
 
-use Mockery as m;
-use Antares\Model\User;
-use Illuminate\Container\Container;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Facade;
+namespace Antares\Model\TestCase;
+
 use Antares\Support\Traits\Testing\EloquentConnectionTrait;
+use Antares\Testing\ApplicationTestCase;
+use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\Hash;
+use Antares\Model\User;
+use Mockery as m;
 
-class UserTest extends \PHPUnit_Framework_TestCase
+class UserTest extends ApplicationTestCase
 {
+
     use EloquentConnectionTrait;
 
     /**
@@ -35,8 +37,9 @@ class UserTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
+        parent::setUp();
         Facade::clearResolvedInstances();
-        Facade::setFacadeApplication(new Container());
+        //Facade::setFacadeApplication(new Container());
     }
 
     /**
@@ -55,11 +58,8 @@ class UserTest extends \PHPUnit_Framework_TestCase
     public function testRolesMethod()
     {
         $model = new User();
-
         $this->addMockConnection($model);
-
-        $stub = $model->roles();
-
+        $stub  = $model->roles();
         $this->assertInstanceOf('\Illuminate\Database\Eloquent\Relations\BelongsToMany', $stub);
         $this->assertInstanceOf('\Antares\Model\Role', $stub->getQuery()->getModel());
     }
@@ -71,13 +71,9 @@ class UserTest extends \PHPUnit_Framework_TestCase
      */
     public function testAttachRoleMethod()
     {
-        $model        = m::mock('\Antares\Model\User[roles]');
-        $relationship = m::mock('\Illuminate\Database\Eloquent\Relations\BelongsToMany')->makePartial();
-
-        $model->shouldReceive('roles')->once()->andReturn($relationship);
-        $relationship->shouldReceive('sync')->once()->with([2], false)->andReturnNull();
-
-        $model->attachRole(2);
+        $model = User::query()->where(['id' => 1])->first();
+        $this->addMockConnection($model);
+        $this->assertNull($model->attachRole(1));
     }
 
     /**
@@ -87,13 +83,10 @@ class UserTest extends \PHPUnit_Framework_TestCase
      */
     public function testDetachRoleMethod()
     {
-        $model        = m::mock('\Antares\Model\User[roles]');
-        $relationship = m::mock('\Illuminate\Database\Eloquent\Relations\BelongsToMany')->makePartial();
-
-        $model->shouldReceive('roles')->once()->andReturn($relationship);
-        $relationship->shouldReceive('detach')->once()->with([2])->andReturnNull();
-
-        $model->detachRole(2);
+        $model = User::query()->where(['id' => 1])->first();
+        $this->addMockConnection($model);
+        $model->attachRole(1);
+        $this->assertNull($model->detachRole(1));
     }
 
     /**
@@ -103,14 +96,16 @@ class UserTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsMethod()
     {
-        $model = m::mock('\Antares\Model\User[getRoles]');
+        $model        = User::query()->where(['id' => 1])->first();
+        $memberRoleId = \Antares\Model\Role::query()->where('name', 'member')->first()->id;
+        $model->detachRole($memberRoleId);
+        $this->assertTrue($model->is('super-administrator'));
+        $this->assertFalse($model->is('member'));
 
-        $model->shouldReceive('getRoles')->times(4)->andReturn(['admin', 'editor']);
+        $model->attachRole($memberRoleId);
 
-        $this->assertTrue($model->is('admin'));
-        $this->assertFalse($model->is('user'));
 
-        $this->assertTrue($model->is(['admin', 'editor']));
+        $this->assertTrue($model->is(['super-administrator', 'member']));
         $this->assertFalse($model->is(['admin', 'user']));
     }
 
@@ -122,10 +117,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsMethodWhenInvalidRolesIsReturned()
     {
-        $model = m::mock('\Antares\Model\User[getRoles]');
-
-        $model->shouldReceive('getRoles')->times(4)->andReturn('foo');
-
+        $model = User::query()->where(['id' => 1])->first();
         $this->assertFalse($model->is('admin'));
         $this->assertFalse($model->is('user'));
 
@@ -140,15 +132,15 @@ class UserTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsNotMethod()
     {
-        $model = m::mock('\Antares\Model\User[getRoles]');
-
-        $model->shouldReceive('getRoles')->times(4)->andReturn(['admin', 'editor']);
-
+        $model = User::query()->where(['id' => 1])->first();
         $this->assertTrue($model->isNot('user'));
-        $this->assertFalse($model->isNot('admin'));
+        $this->assertFalse($model->isNot('super-administrator'));
 
         $this->assertTrue($model->isNot(['superadmin', 'user']));
-        $this->assertFalse($model->isNot(['admin', 'editor']));
+        $memberRoleId = \Antares\Model\Role::query()->where('name', 'member')->first()->id;
+        $model->attachRole($memberRoleId);
+        $this->assertFalse($model->isNot(['super-administrator', 'member']));
+        $model->detachRole($memberRoleId);
     }
 
     /**
@@ -159,9 +151,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsNotMethodWhenInvalidRolesIsReturned()
     {
-        $model = m::mock('\Antares\Model\User[getRoles]');
-
-        $model->shouldReceive('getRoles')->times(4)->andReturn('foo');
+        $model = User::query()->where(['id' => 1])->first();
 
         $this->assertTrue($model->isNot('admin'));
         $this->assertTrue($model->isNot('user'));
@@ -177,11 +167,9 @@ class UserTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsAnyMethod()
     {
-        $model = m::mock('\Antares\Model\User[getRoles]');
+        $model = User::query()->where(['id' => 1])->first();
 
-        $model->shouldReceive('getRoles')->twice()->andReturn(['admin', 'editor']);
-
-        $this->assertTrue($model->isAny(['admin', 'user']));
+        $this->assertTrue($model->isAny(['super-administrator', 'user']));
         $this->assertFalse($model->isAny(['superadmin', 'user']));
     }
 
@@ -193,9 +181,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsAnyMethodWhenInvalidRolesIsReturned()
     {
-        $model = m::mock('\Antares\Model\User[getRoles]');
-
-        $model->shouldReceive('getRoles')->twice()->andReturn('foo');
+        $model = User::query()->where(['id' => 1])->first();
 
         $this->assertFalse($model->isAny(['admin', 'editor']));
         $this->assertFalse($model->isAny(['admin', 'user']));
@@ -208,13 +194,11 @@ class UserTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsNotAnyMethod()
     {
-        $model = m::mock('\Antares\Model\User[getRoles]');
+        $model = User::query()->where(['id' => 1])->first();
 
-        $model->shouldReceive('getRoles')->times(3)->andReturn(['admin', 'editor']);
-
-        $this->assertTrue($model->isNotAny(['administrator', 'user']));
-        $this->assertFalse($model->isNotAny(['user', 'editor']));
-        $this->assertFalse($model->isNotAny(['admin', 'editor']));
+        $this->assertTrue($model->isNotAny(['admin', 'user']));
+        $this->assertFalse($model->isNotAny(['user', 'super-administrator']));
+        $this->assertFalse($model->isNotAny(['super-administrator', 'editor']));
     }
 
     /**
@@ -225,9 +209,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsNotAnyMethodWhenInvalidRolesIsReturned()
     {
-        $model = m::mock('\Antares\Model\User[getRoles]');
-
-        $model->shouldReceive('getRoles')->twice()->andReturn('foo');
+        $model = User::query()->where(['id' => 1])->first();
 
         $this->assertTrue($model->isNotAny(['admin', 'editor']));
         $this->assertTrue($model->isNotAny(['admin', 'user']));
@@ -240,13 +222,15 @@ class UserTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetRolesMethod()
     {
-        $model        = m::mock('\Antares\Model\User[roles]');
-        $relationship = m::mock('\Illuminate\Database\Eloquent\Relations\BelongsToMany')->makePartial();
+        $model = User::query()->where(['id' => 1])->first();
 
-        $model->shouldReceive('roles')->once()->andReturn($relationship);
-        $relationship->shouldReceive('lists')->once()->andReturn(['admin', 'editor']);
-
-        $this->assertEquals(['admin', 'editor'], $model->getRoles());
+        $roles   = \Antares\Model\Role::query()->whereIn('name', ['member', 'administrator'])->get();
+        $roleIds = $roles->lists('id');
+        foreach ($roleIds as $roleId) {
+            $model->attachRole($roleId);
+        }
+        $this->assertEquals(['super-administrator', 'administrator', 'member'], $model->getRoles()->toArray());
+        $model->detachRole($roles->where('name', 'member')->first()->id);
     }
 
     /**
@@ -256,28 +240,10 @@ class UserTest extends \PHPUnit_Framework_TestCase
      */
     public function testScopeSearchMethod()
     {
-        $model = new User();
+        $model   = new User();
         $this->addMockConnection($model);
-
         $keyword = 'foo*';
-        $search  = 'foo%';
-        $roles   = ['admin'];
-
-        $query = m::mock('\Illuminate\Database\Eloquent\Builder');
-        $query->shouldReceive('with')->once()->with('roles')->andReturn($query)
-            ->shouldReceive('whereNotNull')->once()->with('users.id')->andReturn($query)
-            ->shouldReceive('whereHas')->once()->with('roles', m::type('Closure'))
-                ->andReturnUsing(function ($n, $c) use ($query) {
-                    $c($query);
-                })
-            ->shouldReceive('whereIn')->once()->with('roles.id', $roles)->andReturn(null)
-            ->shouldReceive('orWhere')->once()->with('email', 'LIKE', $search)->andReturn($query)
-            ->shouldReceive('orWhere')->once()->with('fullname', 'LIKE', $search)->andReturn(null)
-            ->shouldReceive('where')->once()->with(m::type('Closure'))->andReturnUsing(function ($q) use ($query, $keyword) {
-                $q($query);
-            });
-
-        $this->assertEquals($query, $model->scopeSearch($query, $keyword, $roles));
+        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Builder::class, $model->search($keyword));
     }
 
     /**
@@ -330,10 +296,8 @@ class UserTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetRememberTokenMethod()
     {
-        $stub = m::mock('\Antares\Model\User[setAttribute]');
-        $stub->shouldReceive('setAttribute')->once()->with('remember_token', 'foobar')->andReturnNull();
-
-        $stub->setRememberToken('foobar');
+        $stub = new User();
+        $this->assertNull($stub->setRememberToken('foobar'));
     }
 
     /**
@@ -380,10 +344,10 @@ class UserTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetRecipientNameMethod()
     {
-        $stub           = new User();
-        $stub->fullname = 'Administrator';
-
-        $this->assertEquals('Administrator', $stub->getRecipientName());
+        $stub            = new User();
+        $stub->firstname = 'Administrator';
+        $stub->fullname  = 'Administrator';
+        $this->assertEquals('Administrator', trim($stub->getRecipientName()));
     }
 
     /**
@@ -434,8 +398,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
     public function testIsActivatedMethodReturnTrue()
     {
         $stub         = new User();
-        $stub->status = 0;
-
+        $stub->status = 1;
         $stub->activate();
 
         $this->assertTrue($stub->isActivated());
@@ -467,9 +430,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
         $stub->status = 0;
 
         $this->assertFalse($stub->isSuspended());
-
         $stub->suspend();
-
         $this->assertTrue($stub->isSuspended());
     }
 
@@ -483,7 +444,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
         $data    = ['foo' => 'bar'];
 
         $stub->shouldReceive('sendNotification')->once()
-            ->with($stub, $subject, $view, $data)->andReturn(true);
+                ->with($stub, $subject, $view, $data)->andReturn(true);
 
         $this->assertTrue($stub->notify($subject, $view, $data));
     }
@@ -501,4 +462,5 @@ class UserTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($stub->isActivated());
     }
+
 }

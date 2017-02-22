@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Model\Memory;
 
 use Illuminate\Support\Arr;
@@ -75,9 +74,9 @@ class UserMetaRepository extends Handler implements HandlerContract
      */
     public function retrieve($key)
     {
-        if (!is_array($key)) {
-            return;
-        }
+//        if (!is_array($key)) {
+//            return;
+//        }
         list($name, $userId) = explode('/user-', $key);
 
         if (!isset($this->userMeta[$userId])) {

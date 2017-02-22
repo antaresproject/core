@@ -17,8 +17,6 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 /**
  * BillEvo (http://billevo.com/)
  *
@@ -30,9 +28,9 @@
 
 namespace Antares\Memory\Handlers\TestCase;
 
-use Mockery as m;
-use Illuminate\Support\Fluent;
 use Antares\Memory\Handlers\Registry;
+use Illuminate\Support\Fluent;
+use Mockery as m;
 
 class ResgistryTest extends \PHPUnit_Framework_TestCase
 {
@@ -73,18 +71,14 @@ class ResgistryTest extends \PHPUnit_Framework_TestCase
         $data   = $this->eloquentDataProvider();
 
         $app->shouldReceive('make')->with('EloquentHandlerModelMock')->andReturn($eloquent);
-        $cache->shouldReceive('rememberForever')
-                ->with('db-memory:eloquent-stub', m::type('Closure'))
-                ->andReturnUsing(function ($n, $c) {
-                    return $c();
-                });
+
         $eloquent->shouldReceive('newInstance')->andReturn($eloquent)
                 ->shouldReceive('get')->andReturn($data);
 
         $stub     = new Registry('stub', $config, $app, $cache);
         $expected = [
-            'foo-foobar'  => 'foobar',
-            'hello-world' => 'world',
+            'foo'   => 'foobar',
+            'hello' => 'world',
         ];
 
 
@@ -106,40 +100,25 @@ class ResgistryTest extends \PHPUnit_Framework_TestCase
 
         $data = $this->eloquentDataProvider();
 
-        $checkWithCountQuery    = m::mock('\Illuminate\Database\Query\Builder');
-        $checkWithoutCountQuery = m::mock('\Illuminate\Database\Query\Builder');
-        $fooEntity              = m::mock('FooEntityMock');
+
 
         $app->shouldReceive('make')->times(4)->with('EloquentHandlerModelMock')->andReturn($eloquent);
-        $cache->shouldReceive('rememberForever')->once()
-                ->with('db-memory:eloquent-stub', m::type('Closure'))
-                ->andReturnUsing(function ($n, $c) {
-                    return $c();
-                })
-                ->shouldReceive('forget')->once()->with('db-memory:eloquent-stub')->andReturn(null);
+        $cache->shouldReceive('forget')->once()->with('db-memory:eloquent-stub')->andReturn(null);
 
-        $checkWithCountQuery->shouldReceive('first')->andReturn($fooEntity);
-
-        $checkWithoutCountQuery->shouldReceive('first')->andReturnNull();
-
-        $fooEntity->shouldReceive('save')->times(3)->andReturn(true);
 
         $eloquent->shouldReceive('newInstance')->times(4)->andReturn($eloquent)
                 ->shouldReceive('get')->once()->andReturn($data)
-                ->shouldReceive('create')->andReturn(true);
+                ->shouldReceive('create')->once()->andReturn(true);
 
         $checkWithWhereFooQuery = m::mock('\Illuminate\Database\Query\Builder');
-        $checkWithWhereFooQuery->shouldReceive('where')->with('value', '=', 'foobar is wicked')->andReturn($checkWithCountQuery);
+        $checkWithWhereFooQuery->shouldReceive('first')->once()->andReturnNull();
 
-        $eloquent->shouldReceive('where')->with('name', '=', 'foo')->andReturn($checkWithWhereFooQuery);
+        $eloquent->shouldReceive('where')->once()->with('name', '=', 'foo')->andReturn($checkWithWhereFooQuery);
 
 
-        $checkWithWhereWorldQuery = m::mock('\Illuminate\Database\Query\Builder');
-        $checkWithWhereWorldQuery->shouldReceive('where')->with('value', '=', 'world')->andReturn($checkWithCountQuery);
-        $eloquent->shouldReceive('where')->with('name', '=', 'hello')->andReturn($checkWithWhereWorldQuery);
 
         $checkWithWhereStubbedQuery = m::mock('\Illuminate\Database\Query\Builder');
-        $checkWithWhereStubbedQuery->shouldReceive('where')->with('value', '=', 'Super Stubbed')->andReturn($checkWithCountQuery);
+        $checkWithWhereStubbedQuery->shouldReceive('first')->once()->andReturnNull();
         $eloquent->shouldReceive('where')->with('name', '=', 'stubbed')->andReturn($checkWithWhereStubbedQuery);
 
 
@@ -148,8 +127,6 @@ class ResgistryTest extends \PHPUnit_Framework_TestCase
 
         $stub = new Registry('stub', $config, $app, $cache);
         $stub->initiate();
-
-
 
         $items = [
             'foo'     => 'foobar is wicked',

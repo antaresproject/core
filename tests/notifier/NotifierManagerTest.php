@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Notifier\TestCase;
+
+namespace Antares\Notifier\TestCase;
 
 use Mockery as m;
 use Illuminate\Container\Container;
@@ -25,12 +26,13 @@ use Antares\Notifier\NotifierManager;
 
 class NotifierManagerTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Teardown the test environment.
      */
     public function tearDown()
     {
-        m::close();
+        //m::close();
     }
 
     /**
@@ -43,11 +45,11 @@ class NotifierManagerTest extends \PHPUnit_Framework_TestCase
     {
         $app = new Container();
 
-        $app['config'] = $config = m::mock('\Illuminate\Contracts\Config\Repository');
-        $app['mailer'] = $mailer = m::mock('\Illuminate\Contracts\Mail\Mailer');
+        $app['config'] = $config        = m::mock('\Illuminate\Contracts\Config\Repository');
+        $app['mailer'] = $mailer        = m::mock('\Illuminate\Contracts\Mail\Mailer');
 
         $config->shouldReceive('get')->once()
-            ->with('antares/notifier::driver', 'laravel')->andReturn('laravel');
+                ->with('antares/notifier::driver', 'laravel')->andReturn('laravel');
 
         $stub = new NotifierManager($app);
 
@@ -64,8 +66,8 @@ class NotifierManagerTest extends \PHPUnit_Framework_TestCase
     {
         $app = new Container();
 
-        $app['antares.mail']   = $mailer   = m::mock('\Antares\Notifier\Mailer');
-        $app['antares.memory'] = $memory = m::mock('\Antares\Memory\MemoryManager');
+        $app['antares.notifier.email'] = $app['antares.mail']           = $mailer                        = m::mock('\Antares\Notifier\Mailer');
+        $app['antares.memory']         = $memory                        = m::mock('\Antares\Memory\MemoryManager');
 
         $memory->shouldReceive('makeOrFallback')->once()->andReturn(m::mock('\Antares\Contracts\Memory\Provider'));
 
@@ -84,7 +86,7 @@ class NotifierManagerTest extends \PHPUnit_Framework_TestCase
     {
         $app = new Container();
 
-        $app['mailer'] = $mailer = m::mock('\Illuminate\Contracts\Mail\Mailer');
+        $app['mailer'] = $mailer        = m::mock('\Illuminate\Contracts\Mail\Mailer');
 
         $stub = new NotifierManager($app);
 
@@ -101,13 +103,14 @@ class NotifierManagerTest extends \PHPUnit_Framework_TestCase
     {
         $app = new Container();
 
-        $app['config'] = $config = m::mock('\Illuminate\Contracts\Config\Repository');
+        $app['config'] = $config        = m::mock('\Illuminate\Contracts\Config\Repository');
 
         $config->shouldReceive('set')->once()
-            ->with('antares/notifier::driver', 'foo')->andReturnNull();
+                ->with('antares/notifier::driver', 'foo')->andReturnNull();
 
         $stub = new NotifierManager($app);
 
         $stub->setDefaultDriver('foo');
     }
+
 }

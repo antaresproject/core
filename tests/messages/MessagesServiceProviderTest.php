@@ -17,13 +17,17 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Messages\TestCase;
 
-use Mockery as m;
+namespace Antares\Messages\TestCase;
+
 use Antares\Messages\MessagesServiceProvider;
+use Antares\Testing\ApplicationTestCase;
+use Illuminate\Contracts\Http\Kernel;
+use Mockery as m;
 
-class MessagesServiceProviderTest extends \PHPUnit_Framework_TestCase
+class MessagesServiceProviderTest extends ApplicationTestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -39,16 +43,7 @@ class MessagesServiceProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testRegisterMethod()
     {
-        $app     = m::mock('\Illuminate\Container\Container');
-        $session = m::mock('\Illuminate\Session\Store');
-
-        $app->shouldReceive('singleton')->once()->with('antares.messages', m::type('Closure'))
-                ->andReturnUsing(function ($n, $c) use ($app) {
-                    $c($app);
-                })
-            ->shouldReceive('offsetGet')->once()->with('session.store')->andReturn($session);
-
-        $stub = new MessagesServiceProvider($app);
+        $stub = new MessagesServiceProvider($this->app);
         $this->assertNull($stub->register());
     }
 
@@ -59,18 +54,10 @@ class MessagesServiceProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testBootMethod()
     {
-        $app = [
-            'router'             => $router = m::mock('\Illuminate\Routing\Router'),
-            'antares.messages' => $messages = m::mock('\Antares\Message\MessageBag'),
-        ];
-
-        $router->shouldReceive('after')->once()->with(m::type('Closure'))
-                ->andReturnUsing(function ($c) {
-                    $c();
-                });
-        $messages->shouldReceive('save')->once();
-
-        $stub = new MessagesServiceProvider($app);
-        $this->assertNull($stub->boot());
+        $kernel = m::mock(Kernel::class);
+        $kernel->shouldReceive('pushMiddleware')->andReturnSelf();
+        $stub   = new MessagesServiceProvider($this->app);
+        $this->assertNull($stub->boot($this->app['router'], $kernel));
     }
+
 }

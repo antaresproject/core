@@ -18,15 +18,14 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\TestCase;
 
-use Mockery as m;
-use Antares\Brands\Http\Handlers\BrandsMenuHandler;
+use Antares\Brands\Http\Handlers\BrandsMenu;
 use Antares\Foundation\Support\MenuHandler;
 use Antares\Testbench\TestCase;
+use Mockery as m;
 
-class BrandsMenuHandlerTest extends TestCase
+class BrandsMenuTest extends TestCase
 {
 
     public function tearDown()
@@ -40,8 +39,9 @@ class BrandsMenuHandlerTest extends TestCase
         $app  = m::mock('Illuminate\Container\Container');
         $menu = m::mock(Menu::class);
         $app->shouldReceive('make')->once()->with('antares.platform.menu')->andReturn($menu);
-        $stub = new BrandsMenuHandler($app);
-        $this->assertInstanceOf(BrandsMenuHandler::class, $stub);
+        $stub = new BrandsMenu($app);
+
+        $this->assertInstanceOf(BrandsMenu::class, $stub);
         $this->assertInstanceOf(MenuHandler::class, $stub);
     }
 
@@ -50,9 +50,9 @@ class BrandsMenuHandlerTest extends TestCase
         $app  = m::mock('Illuminate\Container\Container');
         $menu = m::mock(Menu::class);
         $app->shouldReceive('make')->once()->with('antares.platform.menu')->andReturn($menu);
-        $menu->shouldReceive('has')->once()->with('extensions')->andReturn(true);
-        $stub = new BrandsMenuHandler($app);
-        $this->assertEquals('^:settings', $stub->getPositionAttribute());
+        $menu->shouldReceive('has')->once()->with('settings.general-config')->andReturn(true);
+        $stub = new BrandsMenu($app);
+        $this->assertEquals('>:settings.general-config', $stub->getPositionAttribute());
     }
 
     public function testItShouldNextToHomeGivenExtensionIsntAvailable()
@@ -60,8 +60,8 @@ class BrandsMenuHandlerTest extends TestCase
         $app  = m::mock('Illuminate\Container\Container');
         $menu = m::mock(Menu::class);
         $app->shouldReceive('make')->once()->with('antares.platform.menu')->andReturn($menu);
-        $menu->shouldReceive('has')->once()->with('extensions')->andReturn(false);
-        $stub = new BrandsMenuHandler($app);
+        $menu->shouldReceive('has')->once()->with('settings.general-config')->andReturn(false);
+        $stub = new BrandsMenu($app);
         $this->assertEquals('>:home', $stub->getPositionAttribute());
     }
 
@@ -90,7 +90,7 @@ class BrandsMenuHandlerTest extends TestCase
                 ->getMock();
         $this->app['antares.acl']             = $acl;
         $app->shouldReceive('make')->once()->with('antares.platform.menu')->andReturn($menu);
-        $stub                                 = new BrandsMenuHandler($app);
+        $stub                                 = new BrandsMenu($app);
         $guardMock                            = m::mock('\Antares\Contracts\Auth\Guard');
         $guardMock->shouldReceive('guest')->andReturn(false);
         $this->assertTrue($stub->authorize($guardMock));
@@ -101,10 +101,11 @@ class BrandsMenuHandlerTest extends TestCase
      */
     public function testHandle()
     {
-        $this->app['antares.platform.memory']      = m::mock('Antares\Memory\Provider');
-        $this->app['antares.platform.menu']        = $menu                                      = m::mock('\Antares\Widget\Handlers\Menu');
-        $stub                                      = new BrandsMenuHandler($this->app);
-        $acl                                       = m::mock('Antares\Authorization\Factory')
+        $this->app['antares.platform.memory'] = m::mock('Antares\Memory\Provider');
+        $this->app['antares.platform.menu']   = $menu                                 = m::mock('\Antares\Widget\Handlers\Menu');
+        $stub                                 = new BrandsMenu($this->app);
+
+        $acl                      = m::mock('Antares\Authorization\Factory')
                 ->shouldReceive('make')
                 ->with("antares/widgets")
                 ->andReturnSelf()
@@ -118,10 +119,11 @@ class BrandsMenuHandlerTest extends TestCase
                 ->with($this->app['antares.platform.memory'])
                 ->andReturnSelf()
                 ->getMock();
-        $this->app['antares.acl']                  = $acl;
-        $guardMock                                 = m::mock('\Antares\Contracts\Auth\Guard');
-        $guardMock->shouldReceive('guest')->andReturn(false);
+        $this->app['antares.acl'] = $acl;
+
+
         $this->app['Antares\Contracts\Auth\Guard'] = $guard                                     = m::mock('Antares\Contracts\Auth\Guard');
+        $guard->shouldReceive('guest')->andReturn(true);
         $menu->shouldReceive('has')->with(m::type('String'))->andReturn(false)
                 ->shouldReceive('add')->with(m::type('String'), m::type('String'))->andReturnSelf()
                 ->shouldReceive('title')->with(m::type('String'))->andReturnSelf()
@@ -134,7 +136,9 @@ class BrandsMenuHandlerTest extends TestCase
 
         $this->app['antares.app'] = $foundation;
 
-        $stub->authorize($guardMock);
+
+        $stub->authorize($guard);
+
         $this->assertNull($stub->handle());
     }
 

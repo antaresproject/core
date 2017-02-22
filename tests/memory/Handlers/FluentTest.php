@@ -18,11 +18,10 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Memory\Handlers\TestCase;
 
-use Mockery as m;
 use Antares\Memory\Handlers\Fluent;
+use Mockery as m;
 
 class FluentTest extends \PHPUnit_Framework_TestCase
 {
@@ -63,12 +62,6 @@ class FluentTest extends \PHPUnit_Framework_TestCase
 
         $query = m::mock('\Illuminate\Database\Query\Builder');
 
-        $db->shouldReceive('table')->once()->andReturn($query);
-        $cache->shouldReceive('rememberForever')->once()
-                ->with('db-memory:fluent-stub', m::type('Closure'))
-                ->andReturnUsing(function ($n, $c) {
-                    return $c();
-                });
         $query->shouldReceive('get')->andReturn($data);
 
         $stub = new Fluent('stub', $config, $db, $cache);
@@ -99,22 +92,14 @@ class FluentTest extends \PHPUnit_Framework_TestCase
         $checkWithCountQuery    = m::mock('\Illuminate\Database\Query\Builder');
         $checkWithoutCountQuery = m::mock('\Illuminate\Database\Query\Builder');
 
-        $cache->shouldReceive('rememberForever')->once()
-                ->with('db-memory:fluent-stub', m::type('Closure'))
-                ->andReturnUsing(function ($n, $c) {
-                    return $c();
-                })
-                ->shouldReceive('forget')->once()->with('db-memory:fluent-stub')->andReturn(null);
         $checkWithCountQuery->shouldReceive('count')->andReturn(1);
         $checkWithoutCountQuery->shouldReceive('count')->andReturn(0);
-        $selectQuery->shouldReceive('update')->with(['value' => serialize('foobar is wicked')])->once()->andReturn(true)
-                ->shouldReceive('insert')->once()->andReturn(true)
+        $selectQuery
                 ->shouldReceive('where')->with('name', '=', 'foo')->andReturn($checkWithCountQuery)
                 ->shouldReceive('where')->with('name', '=', 'hello')->andReturn($checkWithCountQuery)
                 ->shouldReceive('where')->with('name', '=', 'stubbed')->andReturn($checkWithoutCountQuery)
                 ->shouldReceive('get')->andReturn($data)
                 ->shouldReceive('where')->with('id', '=', 1)->andReturn($selectQuery);
-        $db->shouldReceive('table')->times(5)->andReturn($selectQuery);
 
         $stub = new Fluent('stub', $config, $db, $cache);
     }

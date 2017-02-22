@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Notifier;
 
 use Illuminate\Contracts\Mail\Mailer as Mail;

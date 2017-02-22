@@ -18,13 +18,13 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands;
 
 use Illuminate\Container\Container;
 use Antares\Brands\Contracts\BrandsRepositoryContract;
 
-class BrandsTeller {
+class BrandsTeller
+{
 
     /**
      *
@@ -37,15 +37,16 @@ class BrandsTeller {
      * @var BrandsRepositoryContract
      */
     protected $repository;
-    
+
     /**
      * 
      * @param Container $app
      * @param BrandsRepository $repository
      */
-    public function __construct(Container $app, BrandsRepositoryContract $repository) {
-        $this->app          = $app;
-        $this->repository   = $repository;
+    public function __construct(Container $app, BrandsRepositoryContract $repository)
+    {
+        $this->app        = $app;
+        $this->repository = $repository;
     }
 
     /**
@@ -54,13 +55,14 @@ class BrandsTeller {
      * @param int $brandId
      * @return \Antares\Brands\BrandsTeller
      */
-    public function setDefaultBrandById($brandId) {
+    public function setDefaultBrandById($brandId)
+    {
         $this->repository->setDefaultBrandById($brandId);
-        
-        $memory  = $this->app->make('antares.memory')->make('primary');
+
+        $memory = $this->app->make('antares.memory')->make('primary');
         $memory->put('brand.default', $brandId);
         $memory->update();
-        
+
         return $this;
     }
 
@@ -69,7 +71,8 @@ class BrandsTeller {
      * 
      * @return int
      */
-    public function getDefaultBrandId() {
+    public function getDefaultBrandId()
+    {
         return $this->repository->findDefault()->id;
     }
 

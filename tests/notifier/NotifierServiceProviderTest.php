@@ -18,14 +18,14 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Notifier\TestCase;
 
 use Mockery as m;
 use Illuminate\Container\Container;
 use Antares\Notifier\NotifierServiceProvider;
+use Antares\Testing\ApplicationTestCase;
 
-class NotifierServiceProviderTest extends \PHPUnit_Framework_TestCase
+class NotifierServiceProviderTest extends ApplicationTestCase
 {
 
     /**
@@ -33,7 +33,7 @@ class NotifierServiceProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
-        m::close();
+        //m::close();
     }
 
     /**
@@ -43,19 +43,8 @@ class NotifierServiceProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testRegisterMethod()
     {
-        $app = m::mock('\Illuminate\Contracts\Container\Container');
-
-        $app->shouldReceive('singleton')->once()->with('antares.mail', m::type('Closure'))
-                ->andReturnUsing(function ($n, $c) use ($app) {
-                    return $c($app);
-                })
-                ->shouldReceive('singleton')->once()->with('antares.notifier', m::type('Closure'))
-                ->andReturnUsing(function ($n, $c) use ($app) {
-                    return $c($app);
-                });
-
-        $stub = new NotifierServiceProvider($app);
-        $stub->register();
+        $stub = new NotifierServiceProvider($this->app);
+        $this->assertNull($stub->register());
     }
 
     /**
@@ -65,17 +54,8 @@ class NotifierServiceProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testBootMethod()
     {
-        $path = realpath(__DIR__.'/../');
-        $app  = new Container();
-
-        $app['path.base'] = '/var/laravel';
-        $app['config']    = $config    = m::mock('\Antares\Contracts\Config\PackageRepository');
-
-        $config->shouldReceive('package')->once()
-                ->with('antares/notifier', "{$path}/resources/config", 'antares/notifier')->andReturnNull();
-        $stub = new NotifierServiceProvider($app);
-
-        $stub->boot();
+        $stub = new NotifierServiceProvider($this->app);
+        $this->assertNull($stub->boot());
     }
 
     /**
@@ -87,8 +67,7 @@ class NotifierServiceProviderTest extends \PHPUnit_Framework_TestCase
     {
         $app  = new Container();
         $stub = new NotifierServiceProvider($app);
-
-        $this->assertEquals(['antares.mail', 'antares.notifier'], $stub->provides());
+        $this->assertEquals(['antares.notifier.sms', 'antares.notifier.email', 'antares.notifier'], $stub->provides());
     }
 
     /**

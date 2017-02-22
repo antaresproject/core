@@ -17,14 +17,18 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Model\TestCase;
 
-use Mockery as m;
+namespace Antares\Model\TestCase;
+
+use Antares\Support\Traits\Testing\EloquentConnectionTrait;
+use Antares\Testing\ApplicationTestCase;
 use Antares\Model\UserMeta;
+use Mockery as m;
 
-class UserMetaTest extends \PHPUnit_Framework_TestCase
+class UserMetaTest extends ApplicationTestCase
 {
-    use \Antares\Support\Traits\Testing\EloquentConnectionTrait;
+
+    use EloquentConnectionTrait;
 
     /**
      * Teardown the test environment.
@@ -61,8 +65,9 @@ class UserMetaTest extends \PHPUnit_Framework_TestCase
         $query = m::mock('\Illuminate\Database\Eloquent\Builder');
 
         $query->shouldReceive('where')->once()->with('user_id', '=', 1)->andReturn($query)
-            ->shouldReceive('where')->once()->with('name', '=', 'foo')->andReturn($query);
+                ->shouldReceive('where')->once()->with('name', '=', 'foo')->andReturn($query);
 
         with(new UserMeta())->scopeSearch($query, 'foo', 1);
     }
+
 }

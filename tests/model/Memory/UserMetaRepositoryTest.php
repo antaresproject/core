@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Model\Memory\TestCase;
+
+namespace Antares\Model\Memory\TestCase;
 
 use Mockery as m;
 use Illuminate\Support\Fluent;
@@ -26,6 +27,7 @@ use Antares\Model\Memory\UserMetaRepository;
 
 class UserMetaRepositoryTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Application instance.
      *
@@ -73,18 +75,18 @@ class UserMetaRepositoryTest extends \PHPUnit_Framework_TestCase
         $app = $this->app;
 
         $app->instance('Antares\Model\UserMeta', $eloquent = m::mock('UserMeta'));
-
         $eloquent->shouldReceive('newInstance')->once()->andReturn($eloquent)
-            ->shouldReceive('where')->once()->with('user_id', '=', 1)->andReturnSelf()
-            ->shouldReceive('get')->once()->andReturn([
-                0 => new Fluent([
-                    'name'  => 'foo',
-                    'id'    => 2,
-                    'value' => 'foobar',
-                ]),
-            ]);
+                ->shouldReceive('where')->once()->with('user_id', '=', 1)->andReturnSelf()
+                ->shouldReceive('get')->once()->andReturn([
+            0 => new Fluent([
+                'name'  => 'foo',
+                'id'    => 2,
+                'value' => 'foobar',
+                    ]),
+        ]);
 
         $stub = new UserMetaRepository('meta', [], $app);
+
 
         $this->assertEquals('foobar', $stub->retrieve('foo/user-1'));
         $this->assertNull($stub->retrieve('foobar/user-1'));
@@ -100,8 +102,8 @@ class UserMetaRepositoryTest extends \PHPUnit_Framework_TestCase
         $app = $this->app;
 
         $value = m::mock('stdClass', [
-            'id'    => 2,
-            'value' => 's:6:"foobar";',
+                    'id'    => 2,
+                    'value' => 's:6:"foobar";',
         ]);
 
         $items = [
@@ -114,13 +116,13 @@ class UserMetaRepositoryTest extends \PHPUnit_Framework_TestCase
         $app->instance('Antares\Model\UserMeta', $eloquent = m::mock('UserMeta'));
 
         $eloquent->shouldReceive('newInstance')->times(4)->andReturn($eloquent)
-            ->shouldReceive('search')->once()->with('foo', 1)
-                ->andReturn($fooQuery = m::mock('\Illuminate\Database\Eloquent\Builder')->makePartial())
-            ->shouldReceive('search')->once()->with('foobar', 1)
+                ->shouldReceive('search')->once()->with('foo', 1)
+                ->andReturn($fooQuery    = m::mock('\Illuminate\Database\Eloquent\Builder')->makePartial())
+                ->shouldReceive('search')->once()->with('foobar', 1)
                 ->andReturn($foobarQuery = m::mock('\Illuminate\Database\Eloquent\Builder')->makePartial())
-            ->shouldReceive('search')->once()->with('foo', 2)
+                ->shouldReceive('search')->once()->with('foo', 2)
                 ->andReturn($foobarQuery)
-            ->shouldReceive('save')->once()->andReturnNull();
+                ->shouldReceive('save')->once()->andReturnNull();
 
         $fooQuery->shouldReceive('first')->andReturn($value);
         $foobarQuery->shouldReceive('first')->andReturnNull();
@@ -131,4 +133,5 @@ class UserMetaRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($stub->finish($items));
     }
+
 }

@@ -48,7 +48,7 @@ class BrandsMenu extends MenuHandler
         return $this->handler->has('settings.general-config') ? '>:settings.general-config' : '>:home';
     }
 
-    public function getLinkAttribute()
+    public function getLinkAttribute($value = null)
     {
         if (extension_active('multibrand')) {
             return handles('antares::multibrand/index');

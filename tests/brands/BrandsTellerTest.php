@@ -18,17 +18,14 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\TestCase;
 
-use Antares\Brands\Contracts\BrandsRepositoryContract;
-use Antares\Brands\Model\Brands as BrandModel;
-use Illuminate\Support\Facades\DB;
+use Antares\Brands\Repositories\BrandsRepository;
+use Antares\Testing\ApplicationTestCase;
 use Antares\Brands\BrandsTeller;
-use Antares\Testbench\TestCase;
 use Mockery as m;
 
-class BrandsTellerTest extends TestCase
+class BrandsTellerTest extends ApplicationTestCase
 {
 
     /**
@@ -43,15 +40,7 @@ class BrandsTellerTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        
-        $repository = m::mock(BrandsRepositoryContract::class)
-                ->shouldReceive('setDefaultBrandById')
-                ->andReturnNull()
-                ->shouldReceive('findDefault')
-                ->andReturn(new BrandModel)
-                ->getMock();
-        
-        $this->stub = new BrandsTeller($this->app, $repository);
+        $this->stub = new BrandsTeller($this->app, app(BrandsRepository::class));
     }
 
     /**
@@ -78,14 +67,9 @@ class BrandsTellerTest extends TestCase
      */
     public function testDefaultBrandById()
     {
-        $this->app['antares.app'] = m::mock('\Antares\Contracts\Foundation\Foundation');
-        DB::shouldReceive('transaction')
-                ->once()
-                ->with(m::type('Closure'))
-                ->andReturn(m::mock('Illuminate\Database\Query\Builder'));
 
+        $this->app['antares.app'] = m::mock('\Antares\Contracts\Foundation\Foundation');
         $this->assertInstanceOf('Antares\Brands\BrandsTeller', $this->stub->setDefaultBrandById(1));
-        $this->assertInstanceOf('Antares\Brands\BrandsTeller', $this->stub->setDefaultBrandById());
     }
 
     /**
@@ -94,24 +78,6 @@ class BrandsTellerTest extends TestCase
      */
     public function testGetDefaultBrandId()
     {
-
-        $model = m::mock('Antares\Brands\Model\Brands');
-        $model->shouldReceive('setAttribute')->withAnyArgs()->andReturn($model)
-                ->shouldReceive('getAttribute')->with(m::type('String'))->andReturn(1);
-
-        $model->shouldReceive('setConnectionResolver')->withAnyArgs()->andReturnSelf()
-                ->shouldReceive('getConnection')->withAnyArgs()->andReturnSelf()
-                ->shouldReceive('defaultBrand')->withNoArgs()->andReturn($model);
-
-        $resolver = m::mock('\Illuminate\Database\ConnectionResolverInterface');
-        $model->setConnectionResolver($resolver);
-
-        $foundation = m::mock('\Antares\Contracts\Foundation\Foundation');
-        $foundation->shouldReceive('make')
-                ->with('antares.brand')
-                ->andReturn($model);
-
-        $this->app['antares.app'] = $foundation;
         $this->assertTrue(is_numeric($this->stub->getDefaultBrandId()));
     }
 

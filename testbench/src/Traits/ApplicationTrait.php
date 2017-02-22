@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Testbench\Traits;
 
 use Illuminate\Foundation\Application;

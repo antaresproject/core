@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Notifier\Handlers\TestCase;
+
+namespace Antares\Notifier\Handlers\TestCase;
 
 use Mockery as m;
 use Antares\Notifier\Message;
@@ -25,12 +26,13 @@ use Antares\Notifier\Handlers\Laravel;
 
 class LaravelTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Teardown the test environment.
      */
     public function tearDown()
     {
-        m::close();
+//        m::close();
     }
 
     /**
@@ -50,16 +52,16 @@ class LaravelTest extends \PHPUnit_Framework_TestCase
         $data    = [];
 
         $user->shouldReceive('getRecipientEmail')->once()->andReturn('hello@antaresplatform.com')
-            ->shouldReceive('getRecipientName')->once()->andReturn('Administrator');
+                ->shouldReceive('getRecipientName')->once()->andReturn('Administrator');
         $mailer->shouldReceive('send')->once()->with($view, $data, m::type('Closure'))
                 ->andReturnUsing(function ($v, $d, $c) use ($mailer, $message) {
                     $c($message);
 
                     return $mailer;
                 })
-            ->shouldReceive('failures')->once()->andReturn([]);
+                ->shouldReceive('failures')->once()->andReturn([]);
         $message->shouldReceive('to')->once()->with('hello@antaresplatform.com', 'Administrator')->andReturnNull()
-            ->shouldReceive('subject')->once()->with($subject)->andReturnNull();
+                ->shouldReceive('subject')->once()->with($subject)->andReturnNull();
 
         $stub    = new Laravel($mailer);
         $receipt = $stub->send($user, new Message(compact('subject', 'view', 'data')));
@@ -88,7 +90,7 @@ class LaravelTest extends \PHPUnit_Framework_TestCase
         };
 
         $user->shouldReceive('getRecipientEmail')->once()->andReturn('hello@antaresplatform.com')
-            ->shouldReceive('getRecipientName')->once()->andReturn('Administrator');
+                ->shouldReceive('getRecipientName')->once()->andReturn('Administrator');
 
         $mailer->shouldReceive('send')->once()->with($view, $data, m::type('Closure'))
                 ->andReturnUsing(function ($v, $d, $c) use ($mailer, $message) {
@@ -96,10 +98,10 @@ class LaravelTest extends \PHPUnit_Framework_TestCase
 
                     return $mailer;
                 })
-            ->shouldReceive('failures')->once()->andReturn([]);
+                ->shouldReceive('failures')->once()->andReturn([]);
         $message->shouldReceive('to')->once()->with('hello@antaresplatform.com', 'Administrator')->andReturnNull()
-            ->shouldReceive('subject')->once()->with($subject)->andReturnNull()
-            ->shouldReceive('subject')->once()->with('foobar!!')->andReturnNull();
+                ->shouldReceive('subject')->once()->with($subject)->andReturnNull()
+                ->shouldReceive('subject')->once()->with('foobar!!')->andReturnNull();
 
         $stub = new Laravel($mailer);
 
@@ -125,16 +127,16 @@ class LaravelTest extends \PHPUnit_Framework_TestCase
         $data    = [];
 
         $user->shouldReceive('getRecipientEmail')->once()->andReturn('hello@antaresplatform.com')
-            ->shouldReceive('getRecipientName')->once()->andReturn('Administrator');
+                ->shouldReceive('getRecipientName')->once()->andReturn('Administrator');
         $mailer->shouldReceive('send')->once()->with($view, $data, m::type('Closure'))
                 ->andReturnUsing(function ($v, $d, $c) use ($mailer, $message) {
                     $c($message);
 
                     return $mailer;
                 })
-            ->shouldReceive('failures')->once()->andReturn(['hello@antaresplatform.com']);
+                ->shouldReceive('failures')->once()->andReturn(['hello@antaresplatform.com']);
         $message->shouldReceive('to')->once()->with('hello@antaresplatform.com', 'Administrator')->andReturnNull()
-            ->shouldReceive('subject')->once()->with($subject)->andReturnNull();
+                ->shouldReceive('subject')->once()->with($subject)->andReturnNull();
 
         $stub    = new Laravel($mailer);
         $receipt = $stub->send($user, new Message(compact('subject', 'view', 'data')));
@@ -142,4 +144,5 @@ class LaravelTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Antares\Notifier\Receipt', $receipt);
         $this->assertFalse($receipt->sent());
     }
+
 }

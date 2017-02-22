@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Installation;
 
 use Antares\Contracts\Installation\Installation as InstallationContract;
@@ -169,9 +168,10 @@ class Installation implements InstallationContract
             ]);
             $this->createFakeUsers($input['password']);
         } catch (Exception $ex) {
+
             $exception = true;
             DB::rollback();
-            throw new $ex;
+            throw $ex;
         }
         DB::commit();
         return $exception === false;

@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Installation;
 
 use PDOException;
@@ -208,7 +207,7 @@ class Requirement implements RequirementContract
     public function getRegisteredPhpExtensions()
     {
         $extensions = get_loaded_extensions();
-        $required   = config('antares/installer::validation.required_php_extensions');
+        $required   = config('antares/installer::validation.required_php_extensions', []);
         $missing    = array_diff($required, $extensions);
         $schema     = ['is' => true, 'data' => ['extensions' => $extensions]];
         if (!empty($missing)) {

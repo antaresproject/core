@@ -20,11 +20,12 @@
 
 namespace Antares\Notifier\TestCase;
 
-use Antares\Testbench\ApplicationTestCase;
+//use Antares\Testbench\ApplicationTestCase;
 use Mockery as m;
 use Antares\Notifier\Mailer;
 use SuperClosure\SerializableClosure;
 use Antares\Notifier\TransportManager;
+use Antares\Testing\ApplicationTestCase;
 
 class MailerTest extends ApplicationTestCase
 {
@@ -35,9 +36,8 @@ class MailerTest extends ApplicationTestCase
     public function setUp()
     {
         parent::setUp();
-
+//
         $memory = m::mock('\Antares\Contracts\Memory\Provider');
-
         $memory->shouldReceive('get')->with('email', [])->andReturn(['driver' => 'mail'])
                 ->shouldReceive('get')->with('email.driver', 'mail')->andReturn('mail')
                 ->shouldReceive('get')->with('email.from')->andReturn([
@@ -46,9 +46,9 @@ class MailerTest extends ApplicationTestCase
         ]);
 
         $this->app['antares.memory'] = $memory;
-        $this->app['mailer']         = m::mock('\Illuminate\Contracts\Mail\Mailer');
-
-        $this->app['antares.support.mail'] = $mailer                            = m::mock('\Antares\Notifier\Mail\Mailer');
+        $transport                   = new TransportManager($this->app);
+        $mailer                      = with(new Mailer($this->app, $transport))->attach($memory);
+        $this->app['antares.mail']   = $mailer;
     }
 
     /**
@@ -56,7 +56,7 @@ class MailerTest extends ApplicationTestCase
      */
     public function tearDown()
     {
-        m::close();
+        //m::close();
     }
 
     /**
@@ -68,18 +68,12 @@ class MailerTest extends ApplicationTestCase
     {
         $app    = $this->app;
         $memory = $app['antares.memory'];
-        $mailer = $app['mailer'];
-
         $memory->shouldReceive('get')->twice()->with('email.queue', false)->andReturn(false);
-        $mailer->shouldReceive('setSwiftMailer')->once()->andReturn(null)
-                ->shouldReceive('alwaysFrom')->once()->with('hello@antaresplatform.com', 'Antares Platform')
-                ->shouldReceive('send')->twice()->with('foo.bar', ['foo' => 'foobar'], '')->andReturn(true);
 
         $transport = new TransportManager($app);
         $stub      = with(new Mailer($app, $transport))->attach($app['antares.memory']);
 
-        $this->assertInstanceOf('\Antares\Notifier\Receipt', $stub->push('foo.bar', ['foo' => 'foobar'], ''));
-        $this->assertInstanceOf('\Antares\Notifier\Receipt', $stub->push('foo.bar', ['foo' => 'foobar'], ''));
+        $this->assertInstanceOf('\Antares\Notifier\Mailer', $stub->push('foo.bar', ['foo' => 'foobar'], ''));
     }
 
     /**
@@ -101,6 +95,7 @@ class MailerTest extends ApplicationTestCase
             },
         ];
 
+
         $memory->shouldReceive('get')->once()->with('email.queue', false)->andReturn(true);
         $queue->shouldReceive('push')->once()
                 ->with('antares.mail@handleQueuedMessage', m::type('Array'), m::any())->andReturn(true);
@@ -117,16 +112,11 @@ class MailerTest extends ApplicationTestCase
      */
     public function testSendMethod()
     {
-        $app    = $this->app;
-        $mailer = $app['mailer'];
-
-        $mailer->shouldReceive('setSwiftMailer')->once()->andReturn(null)
-                ->shouldReceive('alwaysFrom')->once()->with('hello@antaresplatform.com', 'Antares Platform')
-                ->shouldReceive('send')->once()->with('foo.bar', ['foo' => 'foobar'], '')->andReturn(true);
-
+        $app       = $this->app;
+        $mailer    = $app['mailer'];
         $transport = new TransportManager($app);
         $stub      = with(new Mailer($app, $transport))->attach($app['antares.memory']);
-        $this->assertInstanceOf('\Antares\Notifier\Receipt', $stub->send('foo.bar', ['foo' => 'foobar'], ''));
+        $this->assertInstanceOf('\Antares\Notifier\Mailer', $stub->send('foo.bar', ['foo' => 'foobar'], ''));
     }
 
     /**
@@ -172,30 +162,11 @@ class MailerTest extends ApplicationTestCase
      * Test Antares\Notifier\Mailer::send() method using invalid driver
      * throws exception.
      *
-     * @expectedException \InvalidArgumentException
      */
     public function testSendMethodViaInvalidDriverThrowsException()
     {
-        $app = [
-            'antares.memory' => $memory          = m::mock('\Antares\Contracts\Memory\Provider'),
-            'mailer'         => $mailer          = m::mock('\Illuminate\Contracts\Mail\Mailer'),
-        ];
-
-        $memory->shouldReceive('get')->once()
-                ->with('email.driver', 'mail')->andReturn('invalid-driver')
-                ->shouldReceive('get')->once()
-                ->with('email.from')
-                ->andReturn([
-                    'address' => 'hello@antaresplatform.com',
-                    'name'    => 'Antares Platform',
-        ]);
-
-        $mailer->shouldReceive('alwaysFrom')->once()
-                ->with('hello@antaresplatform.com', 'Antares Platform')
-                ->andReturnNull();
-
-        $transport = new TransportManager($app);
-        $stub      = with(new Mailer($app, $transport))->attach($app['antares.memory']);
+        $transport = new TransportManager($this->app);
+        $stub      = with(new Mailer($this->app, $transport))->attach($this->app['antares.memory']);
         $stub->send('foo.bar', ['foo' => 'foobar'], '');
     }
 
@@ -284,18 +255,13 @@ class MailerTest extends ApplicationTestCase
      */
     public function testHandleQueuedMessageMethod($view, $data, $callback)
     {
-        $app    = $this->app;
-        $mailer = $app['mailer'];
-        $job    = m::mock('\Illuminate\Contracts\Queue\Job');
+        $app = $this->app;
+        $job = m::mock('\Illuminate\Contracts\Queue\Job');
 
         $job->shouldReceive('delete')->once()->andReturn(null);
-        $mailer->shouldReceive('setSwiftMailer')->once()->andReturn(null)
-                ->shouldReceive('alwaysFrom')->once()->with('hello@antaresplatform.com', 'Antares Platform')
-                ->shouldReceive('send')->once()
-                ->with($view, $data, m::any())->andReturn(true);
-
         $transport = new TransportManager($app);
         $stub      = with(new Mailer($app, $transport))->attach($app['antares.memory']);
+
         $stub->handleQueuedMessage($job, compact('view', 'data', 'callback'));
     }
 

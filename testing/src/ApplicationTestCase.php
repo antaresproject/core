@@ -19,15 +19,12 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Testing;
 
 use Antares\Foundation\Application;
 
 abstract class ApplicationTestCase extends TestCase
 {
-
-    
 
     /**
      * Get application aliases.
@@ -61,9 +58,7 @@ abstract class ApplicationTestCase extends TestCase
     protected function resolveApplication()
     {
         $app = new Application($this->getBasePath());
-
         $app->singleton('Illuminate\Foundation\Bootstrap\LoadConfiguration', 'Antares\Config\Bootstrap\LoadConfiguration');
-
         return $app;
     }
 

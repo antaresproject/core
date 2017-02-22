@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\TestCase;
 
 use Antares\Testbench\TestCase;
@@ -33,9 +32,9 @@ class IndexControllerTest extends TestCase
      */
     public function testConstructWithProcessor()
     {
-        $mock = m::mock('Antares\Brands\Processor\Brand');
-
-        $stub = new IndexController($mock);
+        $mock                           = m::mock('Antares\Brands\Processor\Brand');
+        $this->app['antares.installed'] = true;
+        $stub                           = new IndexController($mock);
         $this->assertSame(get_class($stub), 'Antares\Brands\Http\Controllers\Admin\IndexController');
     }
 

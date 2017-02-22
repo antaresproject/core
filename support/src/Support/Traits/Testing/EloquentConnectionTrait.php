@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Support\Traits\Testing;
 
 use Mockery as m;
@@ -39,13 +38,20 @@ trait EloquentConnectionTrait
         $model->setConnectionResolver($resolver);
         $connection = m::mock('\Illuminate\Database\Connection');
         $connection->shouldReceive('select')->withAnyArgs()->andReturnSelf();
-        $resolver->shouldReceive('connection')
-                ->andReturn($connection);
+        $connection->shouldReceive('insert')->withAnyArgs()->andReturnSelf();
+        $connection->shouldReceive('delete')->withAnyArgs()->andReturnSelf();
+        $resolver->shouldReceive('connection')->andReturn($connection);
 
 
 
         $grammar = m::mock('\Illuminate\Database\Query\Grammars\Grammar');
         $grammar->shouldReceive('compileSelect')
+                ->withAnyArgs()
+                ->andReturn(m::type('String'));
+        $grammar->shouldReceive('compileInsert')
+                ->withAnyArgs()
+                ->andReturn(m::type('String'));
+        $grammar->shouldReceive('compileDelete')
                 ->withAnyArgs()
                 ->andReturn(m::type('String'));
 

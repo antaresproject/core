@@ -18,10 +18,7 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 return [
-
     /*
       |--------------------------------------------------------------------------
       | PDO Fetch Style
@@ -44,7 +41,7 @@ return [
       | you may use many connections at once using the Database library.
       |
      */
-    'default'     => env('DB_CONNECTION', 'mysql'),
+    'default'     => 'sqlite',
     /*
       |--------------------------------------------------------------------------
       | Database Connections
@@ -61,10 +58,9 @@ return [
       |
      */
     'connections' => [
-
         'sqlite'       => [
             'driver'   => 'sqlite',
-            'database' => database_path('database.sqlite'),
+            'database' => database_path('database.sqlite3'),
             'prefix'   => '',
         ],
         'remote-mysql' => [
@@ -132,7 +128,6 @@ return [
       |
      */
     'redis'       => [
-
         'cluster' => false,
         'default' => [
             'host'     => env('REDIS_HOST', '127.0.0.1'),

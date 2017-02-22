@@ -18,21 +18,18 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\Presenters\TestCase;
 
-use Antares\Testbench\TestCase;
-use Mockery as m;
-use Antares\Brands\Http\Presenters\Brand;
-use Antares\Memory\Model as Eloquent;
-use Illuminate\Container\Container;
-use Antares\Brands\Model\Brands;
 use Antares\Support\Traits\Testing\EloquentConnectionTrait;
+use Antares\Brands\Http\Breadcrumb\Breadcrumb;
+use Antares\Brands\Http\Presenters\Brand;
+use Antares\Testing\ApplicationTestCase;
 use Illuminate\Database\Query\Builder;
-use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
+use Antares\Html\Form\FormBuilder;
+use Antares\Brands\Model\Brands;
+use Mockery as m;
 
-class BrandTest extends TestCase
+class BrandTest extends ApplicationTestCase
 {
 
     use EloquentConnectionTrait;
@@ -66,7 +63,10 @@ class BrandTest extends TestCase
                 ->andReturn(true)
                 ->shouldReceive('build')
                 ->andReturn(true);
-        $this->stub                           = new Brand($mock, $memory, $container);
+        $breadcrumb                           = m::mock(Breadcrumb::class);
+        $breadcrumb->shouldReceive('onBrandEdit')
+                ->andReturnNull();
+        $this->stub                           = new Brand($breadcrumb);
         $this->app['antares.platform.memory'] = m::mock('Antares\Memory\Provider');
 
         $acl = m::mock('Antares\Authorization\Factory')
@@ -133,8 +133,9 @@ class BrandTest extends TestCase
         $processor->shouldReceive('processInsertGetId')->andReturn(1);
         $processor->shouldReceive('processSelect')->once()->andReturn([]);
 
-        $this->app['datatables']  = app('yajra\Datatables\Datatables');
-        $foundation->shouldReceive('make')->with("antares.brand")->andReturn($model);
+
+        $foundation->shouldReceive('make')->with("antares.brand")->andReturn($model)
+                ->shouldReceive('handles')->andReturn('#');
         $this->app['antares.app'] = $foundation;
         $this->app['antares.acl'] = $acl;
         $this->app['view']->addNamespace('antares/brands', realpath(base_path() . '../../../../components/brands/resources/views'));
@@ -145,42 +146,10 @@ class BrandTest extends TestCase
      */
     public function testConstruct()
     {
+        $breadcrumb = m::mock(Breadcrumb::class);
 
-        $mock      = m::mock('\Antares\Contracts\Html\Form\Factory');
-        $container = new Container();
-        $memory    = m::mock('Antares\Memory\MemoryManager');
-
-        $stub = new Brand($mock, $memory, $container);
+        $stub = new Brand($breadcrumb);
         $this->assertSame(get_class($stub), 'Antares\Brands\Http\Presenters\Brand');
-    }
-
-    /**
-     * testing table method
-     */
-    public function testTable()
-    {
-
-//        $builder = m::mock('\yajra\Datatables\Html\Builder');
-//        $builder->shouldReceive('addColumn')->with(m::type('Array'))->andReturnSelf();
-//        $builder->shouldReceive('addAction')->with(m::type('Array'))->andReturnSelf();
-//        $builder->shouldReceive('setDeferedData')->with(m::type('Array'), 0)->andReturnSelf();
-//
-//        $this->assertInstanceOf(View::class, $this->stub->table($builder));
-    }
-
-    /**
-     * test tableJson method
-     */
-    public function testTableJson()
-    {
-        $mock        = m::mock('\Antares\Contracts\Html\Form\Factory');
-        $container   = new Container();
-        $memory      = m::mock('Antares\Memory\MemoryManager');
-        $stub        = new Brand($mock, $memory, $container);
-        $model       = m::mock('\Illuminate\Database\Eloquent\Model');
-        $customField = new Eloquent();
-        $model->shouldReceive('select')->with(m::type('Array'))->andReturn($customField->query()->getQuery());
-        $this->assertInstanceOf(JsonResponse::class, $stub->tableJson($model));
     }
 
     /**
@@ -188,25 +157,8 @@ class BrandTest extends TestCase
      */
     public function testForm()
     {
-        $mock = m::mock('\Antares\Contracts\Html\Form\Factory');
-        $mock->shouldReceive('of')
-                ->with(m::type('String'), m::type('Closure'))
-                ->andReturn(true)
-                ->shouldReceive('build')
-                ->andReturn(true);
-
-        $eloquent = m::mock('\Antares\Model\Eloquent');
-        $eloquent->shouldReceive('getFlattenValidators')
-                ->once()
-                ->andReturn(array())
-                ->shouldReceive('getAttribute')
-                ->once()
-                ->with(m::type('String'))
-                ->andReturn(array());
-        $route    = m::mock('\Illuminate\Routing\Route');
-        $route->shouldReceive('getParameter')->withAnyArgs()->andReturn(true);
-
-        $this->assertTrue($this->stub->form($eloquent, 'fooAction', $route));
+        $this->app['antares.brand'] = Brands::where('default', 1);
+        $this->assertInstanceOf(FormBuilder::class, $this->stub->form(new Brands()));
     }
 
 }

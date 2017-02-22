@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Notifier\TestCase;
+
+namespace Antares\Notifier\TestCase;
 
 use Mockery as m;
 use Antares\Notifier\Message;
@@ -27,6 +28,7 @@ use Antares\Support\Facades\Notifier;
 
 class NotifiableTraitTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Setup the test environment.
      */
@@ -43,7 +45,7 @@ class NotifiableTraitTest extends \PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
-        m::close();
+        //m::close();
     }
 
     /**
@@ -64,17 +66,19 @@ class NotifiableTraitTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $notifier->shouldReceive('send')->twice()
-            ->with($user, m::type('\Antares\Contracts\Notification\Message'))->andReturn(true);
+                ->with($user, m::type('\Antares\Contracts\Notification\Message'))->andReturn(true);
 
         Notifier::swap($notifier);
 
         $this->assertTrue($stub->notify($user));
         $this->assertTrue($stub->notifyFluent($user));
     }
+
 }
 
 class Notifiable
 {
+
     use \Antares\Notifier\NotifiableTrait;
 
     public function notify($user)
@@ -86,4 +90,5 @@ class Notifiable
     {
         return $this->sendNotification($user, new Message(['view' => 'email.foo', 'data' => [], 'subject' => 'foo']));
     }
+
 }

@@ -18,12 +18,11 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\Http\Presenters;
 
-use Antares\Contracts\Html\Form\Builder;
 use Antares\Foundation\Http\Presenters\Presenter;
 use Antares\Brands\Http\Breadcrumb\Breadcrumb;
+use Antares\Contracts\Html\Form\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Antares\Brands\Http\Form\Form;
 

@@ -18,10 +18,7 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 return [
-
     /*
       |--------------------------------------------------------------------------
       | View Storage Paths
@@ -33,7 +30,7 @@ return [
       |
      */
 
-    'paths'    => [getcwd() . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views'],
+    'paths'    => [base_path('resources/views')],
     /*
       |--------------------------------------------------------------------------
       | Compiled View Path

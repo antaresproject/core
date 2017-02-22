@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\Repositories;
 
 use Illuminate\Database\Eloquent\Model as EloquentModel;
@@ -107,7 +106,7 @@ class BrandsRepository implements BrandsRepositoryContract
 
             if (isset($data['import'])) {
                 $importBrandId = array_get($data, 'brands');
-                $fromModel     = $this->findById($importBrandId) ? : $currentDefault;
+                $fromModel     = $this->findById($importBrandId) ?: $currentDefault;
                 $this->copyPermissions($fromModel, $brand);
             }
             $this->saveOptions($brand, $data);

@@ -18,22 +18,24 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Model\TestCase;
 
-use Mockery as m;
+use Antares\Support\Traits\Testing\EloquentConnectionTrait;
+use Antares\Testing\ApplicationTestCase;
 use Antares\Model\Role;
+use Mockery as m;
 
-class RoleTest extends \PHPUnit_Framework_TestCase
+class RoleTest extends ApplicationTestCase
 {
 
-    use \Antares\Support\Traits\Testing\EloquentConnectionTrait;
+    use EloquentConnectionTrait;
 
     /**
      * Setup the test environment.
      */
     public function setUp()
     {
+        parent::setUp();
         Role::setDefaultRoles(['admin' => 10, 'member' => 20]);
     }
 
@@ -82,11 +84,11 @@ class RoleTest extends \PHPUnit_Framework_TestCase
                 ->shouldReceive('getPostProcessor')
                 ->andReturn($processor  = m::mock('Illuminate\Database\Query\Processors\Processor'));
 
-        $grammar->shouldReceive('compileSelect')->once()->andReturn('SELECT * FROM `roles` WHERE id=?');
-        $connection->shouldReceive('select')->once()->with('SELECT * FROM `roles` WHERE id=?', [10], true)->andReturn(null);
-        $processor->shouldReceive('processSelect')->once()->andReturn([]);
+        $grammar->shouldReceive('compileSelect')->once()->andReturn('SELECT * FROM `roles` WHERE name=? or name=?');
+        $connection->shouldReceive('select')->once()->with('SELECT * FROM `roles` WHERE name=? or name=?', array(0 => 'super-administrator', 1 => 'administrator',), true)->andReturn(null);
+        $processor->shouldReceive('processSelect')->once()->andReturn([new Role(['name' => 'admin'])]);
 
-        $model->admin();
+        $this->assertInstanceOf(Role::class, $model->admin());
     }
 
     /**

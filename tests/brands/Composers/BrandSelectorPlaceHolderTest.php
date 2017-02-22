@@ -21,11 +21,12 @@
 namespace Antares\Brands\TestCase;
 
 use Antares\Brands\Composers\BrandPlaceHolder;
-use Antares\Testbench\TestCase;
+use Antares\Testing\ApplicationTestCase;
 use Antares\Widget\WidgetManager;
+use Antares\Support\Fluent;
 use Mockery as m;
 
-class BrandSelectorPlaceHolderTest extends TestCase
+class BrandSelectorPlaceHolderTest extends ApplicationTestCase
 {
 
     public function tearDown()
@@ -55,7 +56,7 @@ class BrandSelectorPlaceHolderTest extends TestCase
         $brandsSelectorHandlerMock                      = m::mock('\Antares\Brands\Http\Handlers\BrandsSelectorHandler');
         $brandsSelectorHandlerMock->shouldReceive('handle')->andReturnSelf();
         $stub                                           = new BrandPlaceHolder($this->app, $brandsSelectorHandlerMock);
-        $this->assertNull($stub->onBootExtension());
+        $this->assertInstanceOf(Fluent::class, $stub->onBootExtension());
     }
 
 }
