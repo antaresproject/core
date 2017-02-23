@@ -22,23 +22,10 @@ namespace Antares\Installation\Http\Controllers\TestCase;
 
 use Antares\Testing\ApplicationTestCase;
 use Illuminate\Support\Facades\Config;
-use Antares\Testing\TestCase;
 use Mockery as m;
 
 class InstallerControllerTest extends ApplicationTestCase
 {
-
-    /**
-     * Define environment setup.
-     *
-     * @param  \Illuminate\Foundation\Application   $app
-     *
-     * @return void
-     */
-    protected function getEnvironmentSetUp($app)
-    {
-        //$app->make('Antares\Foundation\Bootstrap\LoadExpresso')->bootstrap($app);
-    }
 
     /**
      * Teardown the test environment.

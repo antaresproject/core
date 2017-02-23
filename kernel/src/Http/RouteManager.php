@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Http;
 
 use Illuminate\Contracts\Foundation\Application;

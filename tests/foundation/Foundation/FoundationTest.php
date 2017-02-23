@@ -18,46 +18,55 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\TestCase;
 
 use Mockery as m;
 use Antares\Foundation\Foundation;
-use Antares\Foundation\Application;
-use Illuminate\Support\Facades\Facade;
+use Antares\Testing\ApplicationTestCase;
 
-class FoundationTest extends \PHPUnit_Framework_TestCase
+class FoundationTest extends ApplicationTestCase
 {
-
     /**
      * Application instance.
      *
      * @var Illuminate\Foundation\Application
      */
-    private $app = null;
+    //private $app = null;
 
     /**
      * Setup the test environment.
      */
     public function setUp()
     {
-        $app = new Application(__DIR__);
+        parent::setUp();
+//        $app = $this->app;
+//
+//        $app['antares.acl']       = m::mock('\Antares\Contracts\Authorization\Authorization');
+//        $app['antares.extension'] = m::mock('\Antares\Contracts\Extension\Factory');
+//        $app['antares.mail']      = m::mock('\Antares\Notifier\Mailer')->makePartial();
+//        $app['antares.memory']    = m::mock('\Antares\Memory\MemoryManager', [$app]);
+//        $app['antares.notifier']  = m::mock('\Antares\Notifier\NotifierManager', [$app]);
+//        $app['antares.widget']    = m::mock('\Antares\Widget\Handlers\Menu');
+//        $app['config']            = m::mock('\Illuminate\Contracts\Config\Repository');
+//        $app['events']            = m::mock('\Illuminate\Contracts\Events\Dispatcher');
+//        $app['translator']        = m::mock('\Illuminate\Translation\Translator')->makePartial();
+//        $app['url']               = m::mock('\Illuminate\Routing\UrlGenerator')->makePartial();
+//
+//        Facade::clearResolvedInstances();
+//        Application::setInstance($app);
+////
+//        $this->app                = $app;
+        $memory = m::mock('\Antares\Contracts\Memory\Provider');
+        $memory->shouldReceive('get')->with('email', [])->andReturn(['driver' => 'mail'])
+                ->shouldReceive('get')->with('email.driver', 'mail')->andReturn('mail')
+                ->shouldReceive('get')->with('email.from')->andReturn([
+            'address' => 'hello@antaresplatform.com',
+            'name'    => 'Antares Platform',
+        ]);
 
-        $app['antares.acl']       = m::mock('\Antares\Contracts\Authorization\Authorization');
-        $app['antares.extension'] = m::mock('\Antares\Contracts\Extension\Factory');
-        $app['antares.mail']      = m::mock('\Antares\Notifier\Mailer')->makePartial();
-        $app['antares.memory']    = m::mock('\Antares\Memory\MemoryManager', [$app]);
-        $app['antares.notifier']  = m::mock('\Antares\Notifier\NotifierManager', [$app]);
-        $app['antares.widget']    = m::mock('\Antares\Widget\Handlers\Menu');
-        $app['config']            = m::mock('\Illuminate\Contracts\Config\Repository');
-        $app['events']            = m::mock('\Illuminate\Contracts\Events\Dispatcher');
-        $app['translator']        = m::mock('\Illuminate\Translation\Translator')->makePartial();
-        $app['url']               = m::mock('\Illuminate\Routing\UrlGenerator')->makePartial();
-
-        Facade::clearResolvedInstances();
-        Application::setInstance($app);
-
-        $this->app = $app;
+        $transport                 = new \Antares\Notifier\TransportManager($this->app);
+        $mailer                    = with(new \Antares\Notifier\Mailer($this->app, $transport))->attach($memory);
+        $this->app['antares.mail'] = $mailer;
     }
 
     /**
@@ -65,7 +74,7 @@ class FoundationTest extends \PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
-        unset($this->app);
+        //unset($this->app);
         m::close();
     }
 
@@ -76,7 +85,11 @@ class FoundationTest extends \PHPUnit_Framework_TestCase
      */
     private function getInstallableContainerSetup()
     {
-        $app        = $this->app;
+
+
+        $app = $this->app;
+
+
         $request    = m::mock('\Illuminate\Http\Request');
         $acl        = $app['antares.acl'];
         $config     = $app['config'];
@@ -93,31 +106,30 @@ class FoundationTest extends \PHPUnit_Framework_TestCase
 
         $memoryProvider = m::mock('\Antares\Contracts\Memory\Provider');
 
-        $memoryProvider->shouldReceive('get')->once()->with('site.name')->andReturn('Antares');
-
-        $acl->shouldReceive('make')->once()->andReturn($acl)
-                ->shouldReceive('attach')->once()->with($memoryProvider)->andReturn($acl);
-        $mailer->shouldReceive('attach')->once()->with($memoryProvider)->andReturnNull();
-        $memory->shouldReceive('make')->once()->andReturn($memoryProvider);
-        $notifier->shouldReceive('setDefaultDriver')->once()->with('antares')->andReturnNull();
-        $widget->shouldReceive('make')->once()->with('menu.antares')->andReturn($widget)
-                ->shouldReceive('make')->once()->with('menu.app')->andReturn($widget)
-                ->shouldReceive('add->title->link')->once()->andReturnNull();
-        $translator->shouldReceive('get')->andReturn('foo');
-        $event->shouldReceive('listen')->once()
-                ->with('antares.started: admin', 'Antares\Foundation\Http\Handlers\UserMenuHandler')->andReturnNull()
-                ->shouldReceive('listen')->once()
-                ->with('antares.started: admin', 'Antares\Foundation\Http\Handlers\ExtensionMenuHandler')->andReturnNull()
-                ->shouldReceive('listen')->once()
-                ->with('antares.started: admin', 'Antares\Foundation\Http\Handlers\SettingMenuHandler')->andReturnNull()
-                ->shouldReceive('listen')->once()
-                ->with('antares.started: admin', 'Antares\Foundation\Http\Handlers\ResourcesMenuHandler')->andReturnNull()
-                ->shouldReceive('listen')->once()
-                ->with('antares.ready: admin', 'Antares\Foundation\AdminMenuHandler')->andReturnNull()
-                ->shouldReceive('fire')->once()->with('antares.started', [$memoryProvider])->andReturnNull();
-        $config->shouldReceive('get')->once()->with('antares/foundation::handles', '/')->andReturn('admin');
-        $request->shouldReceive('root')->andReturn('http://localhost')
-                ->shouldReceive('secure')->andReturn(false);
+        //$memoryProvider->shouldReceive('get')->once()->with('site.name')->andReturn('Antares');
+//        $acl->shouldReceive('make')->once()->andReturn($acl)
+//                ->shouldReceive('attach')->once()->with($memoryProvider)->andReturn($acl);
+//        $mailer->shouldReceive('attach')->once()->with($memoryProvider)->andReturnNull();
+//        $memory->shouldReceive('make')->once()->andReturn($memoryProvider);
+//        $notifier->shouldReceive('setDefaultDriver')->once()->with('antares')->andReturnNull();
+//        $widget->shouldReceive('make')->once()->with('menu.antares')->andReturn($widget)
+//                ->shouldReceive('make')->once()->with('menu.app')->andReturn($widget)
+//                ->shouldReceive('add->title->link')->once()->andReturnNull();
+//        $translator->shouldReceive('get')->andReturn('foo');
+//        $event->shouldReceive('listen')->once()
+//                ->with('antares.started: admin', 'Antares\Foundation\Http\Handlers\UserMenuHandler')->andReturnNull()
+//                ->shouldReceive('listen')->once()
+//                ->with('antares.started: admin', 'Antares\Foundation\Http\Handlers\ExtensionMenuHandler')->andReturnNull()
+//                ->shouldReceive('listen')->once()
+//                ->with('antares.started: admin', 'Antares\Foundation\Http\Handlers\SettingMenuHandler')->andReturnNull()
+//                ->shouldReceive('listen')->once()
+//                ->with('antares.started: admin', 'Antares\Foundation\Http\Handlers\ResourcesMenuHandler')->andReturnNull()
+//                ->shouldReceive('listen')->once()
+//                ->with('antares.ready: admin', 'Antares\Foundation\AdminMenuHandler')->andReturnNull()
+//                ->shouldReceive('fire')->once()->with('antares.started', [$memoryProvider])->andReturnNull();
+//        $config->shouldReceive('get')->once()->with('antares/foundation::handles', '/')->andReturn('admin');
+//        $request->shouldReceive('root')->andReturn('http://localhost')
+//                ->shouldReceive('secure')->andReturn(false);
 
         return $app;
     }
@@ -143,24 +155,38 @@ class FoundationTest extends \PHPUnit_Framework_TestCase
         $app['request']           = $request;
         $app['antares.installed'] = false;
 
-        $memoryProvider = m::mock('\Antares\Contracts\Memory\Provider');
-
-        $memoryProvider->shouldReceive('get')->once()->with('site.name')->andReturnNull()
-                ->shouldReceive('put')->once()->with('site.name', 'Antares')->andReturnNull();
-
-        $acl->shouldReceive('make')->once()->andReturn($acl);
-        $mailer->shouldReceive('attach')->once()->with($memoryProvider)->andReturnNull();
-        $memory->shouldReceive('make')->once()->andReturn($memoryProvider)
-                ->shouldReceive('make')->once()->with('runtime.antares')->andReturn($memoryProvider);
-        $notifier->shouldReceive('setDefaultDriver')->once()->with('antares')->andReturnNull();
-        $widget->shouldReceive('make')->once()->with('menu.antares')->andReturn($widget)
-                ->shouldReceive('make')->once()->with('menu.app')->andReturn($widget)
-                ->shouldReceive('add->title->link')->once()->with('http://localhost/admin/install')->andReturn($widget);
-        $request->shouldReceive('root')->andReturn('http://localhost')
-                ->shouldReceive('secure')->andReturn(false);
-        $config->shouldReceive('get')->once()->with('antares/foundation::handles', '/')->andReturn('admin');
-        $event->shouldReceive('fire')->once()->with('antares.started', [$memoryProvider])->andReturnNull();
-
+//        $app['antares.acl'] = $acl                = m::mock('\Antares\Contracts\Authorization\Authorization');
+//        $app['antares.extension'] = m::mock('\Antares\Contracts\Extension\Factory');
+//        $app['antares.mail']      = m::mock('\Antares\Notifier\Mailer')->makePartial();
+//        $app['antares.memory']    = m::mock('\Antares\Memory\MemoryManager', [$app]);
+//        $app['antares.notifier']  = m::mock('\Antares\Notifier\NotifierManager', [$app]);
+//        $app['antares.widget']    = m::mock('\Antares\Widget\Handlers\Menu');
+//        $app['config']            = m::mock('\Illuminate\Contracts\Config\Repository');
+//        $app['events']            = m::mock('\Illuminate\Contracts\Events\Dispatcher');
+//        $app['translator']        = m::mock('\Illuminate\Translation\Translator')->makePartial();
+//        $app['url']               = m::mock('\Illuminate\Routing\UrlGenerator')->makePartial();
+//        $memoryProvider = m::mock('\Antares\Contracts\Memory\Provider');
+//
+//        $memoryProvider->shouldReceive('get')->once()->with('site.name')->andReturnNull()
+//                ->shouldReceive('put')->once()->with('site.name', 'Antares')->andReturnNull();
+//
+//        $acl->shouldReceive('make')->once()->andReturn($acl);
+//        $mailer->shouldReceive('attach')->once()->with($memoryProvider)->andReturnNull();
+//        $memory->shouldReceive('make')->once()->andReturn($memoryProvider)
+//                ->shouldReceive('make')->once()->with('runtime.antares')->andReturn($memoryProvider);
+//        $notifier->shouldReceive('setDefaultDriver')->once()->with('antares')->andReturnNull();
+//
+//        $widget = m::mock('\Antares\Widget\Handlers\Menu');
+//        $widget->shouldReceive('make')->once()->with('menu.antares')->andReturn($widget)
+//                ->shouldReceive('make')->once()->with('menu.app')->andReturn($widget)
+//                ->shouldReceive('add->title->link')->once()->with('http://localhost/admin/install')->andReturn($widget);
+//
+//        $request->shouldReceive('root')->andReturn('http://localhost')
+//                ->shouldReceive('secure')->andReturn(false)
+//                ->shouldReceive('query')->andReturn(false);
+//        $config->shouldReceive('get')->once()->with('antares/foundation::handles', '/')->andReturn('admin');
+//        $event->shouldReceive('fire')->once()->with('antares.started', [$memoryProvider])->andReturnNull();
+        $app['antares.widget'] = $widget;
         return $app;
     }
 
@@ -171,16 +197,15 @@ class FoundationTest extends \PHPUnit_Framework_TestCase
      */
     public function testBootMethod()
     {
-        $app  = $this->getInstallableContainerSetup();
+        $app = $this->getInstallableContainerSetup();
+
         $stub = new Foundation($app);
         $stub->boot();
-
         $this->assertTrue($app['antares.installed']);
-        $this->assertEquals($app['antares.widget'], $stub->menu());
-        $this->assertEquals($app['antares.acl'], $stub->acl());
+        $this->assertInstanceOf(\Antares\Widget\Handlers\Menu::class, $stub->menu());
+        $this->assertInstanceOf(\Antares\Authorization\Authorization::class, $stub->acl());
         $this->assertNotEquals($app['antares.memory'], $stub->memory());
         $this->assertEquals($stub, $stub->boot());
-        $this->assertTrue($app['antares.installed']);
         $this->assertTrue($stub->installed());
     }
 
@@ -192,13 +217,12 @@ class FoundationTest extends \PHPUnit_Framework_TestCase
      */
     public function testBootMethodWhenDatabaseIsNotInstalled()
     {
-        $app = $this->getUnInstallableContainerSetup();
-
+        $app  = $this->getUnInstallableContainerSetup();
         $stub = new Foundation($app);
-        $stub->boot();
-
         $this->assertFalse($app['antares.installed']);
         $this->assertFalse($stub->installed());
+        $stub->boot();
+        $this->assertTrue($stub->installed());
     }
 
     /**
@@ -208,33 +232,20 @@ class FoundationTest extends \PHPUnit_Framework_TestCase
      */
     public function testHandlesMethod()
     {
-        $app       = $this->app;
-        $config    = $app['config'];
-        $extension = $app['antares.extension'];
-        $url       = $app['url'];
+        $app = $this->app;
+        $url = $app['url'];
 
         $app['request'] = $request        = m::mock('\Illuminate\Http\Request');
 
         $request->shouldReceive('root')->andReturn('http://localhost')
                 ->shouldReceive('secure')->andReturn(false);
 
-        $appRoute = m::mock('\Antares\Contracts\Extension\RouteGenerator');
-
-        $config->shouldReceive('get')->once()
-                ->with('antares/foundation::handles', '/')->andReturn('admin');
-
-        $appRoute->shouldReceive('to')->once()->with('/')->andReturn('/')
-                ->shouldReceive('to')->once()->with('info?foo=bar')->andReturn('info?foo=bar');
-        $extension->shouldReceive('route')->once()->with('app', '/')->andReturn($appRoute);
-        $url->shouldReceive('to')->once()->with('/')->andReturn('/')
-                ->shouldReceive('to')->once()->with('info?foo=bar')->andReturn('info?foo=bar');
 
         $stub = new StubRouteManager($app);
-
-        $this->assertEquals('/', $stub->handles('app::/'));
-        $this->assertEquals('info?foo=bar', $stub->handles('info?foo=bar'));
-        $this->assertEquals('http://localhost/admin/installer', $stub->handles('antares::installer'));
-        $this->assertEquals('http://localhost/admin/installer', $stub->handles('antares::installer/'));
+        $this->assertEquals('http://localhost', $stub->handles('app::/'));
+        $this->assertEquals('http://localhost/info?foo=bar', $stub->handles('info?foo=bar'));
+        $this->assertEquals('http://localhost/antares/installer', $stub->handles('antares::installer'));
+        $this->assertEquals('http://localhost/antares/installer', $stub->handles('antares::installer/'));
     }
 
     /**
@@ -244,28 +255,19 @@ class FoundationTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsMethod()
     {
-        $app       = $this->app;
-        $config    = $app['config'];
-        $extension = $app['antares.extension'];
+        $app = $this->app;
+
 
         $app['request'] = $request        = m::mock('\Illuminate\Http\Request');
 
         $request->shouldReceive('root')->andReturn('http://localhost')
-                ->shouldReceive('secure')->andReturn(false);
+                ->shouldReceive('secure')->andReturn(false)
+                ->shouldReceive('path')->times(4)->andReturn('/');
 
-        $appRoute = m::mock('\Antares\Contracts\Extension\RouteGenerator');
-
-        $config->shouldReceive('get')->once()
-                ->with('antares/foundation::handles', '/')->andReturn('admin');
-        $request->shouldReceive('path')->twice()->andReturn('/');
-        $appRoute->shouldReceive('is')->once()->with('/')->andReturn(true)
-                ->shouldReceive('is')->once()->with('info?foo=bar')->andReturn(true);
-        $extension->shouldReceive('route')->once()->with('app', '/')->andReturn($appRoute);
 
         $stub = new StubRouteManager($app);
-
         $this->assertTrue($stub->is('app::/'));
-        $this->assertTrue($stub->is('info?foo=bar'));
+        $this->assertFalse($stub->is('info?foo=bar'));
         $this->assertFalse($stub->is('antares::login'));
         $this->assertFalse($stub->is('antares::login'));
     }
@@ -277,25 +279,12 @@ class FoundationTest extends \PHPUnit_Framework_TestCase
      */
     public function testNamespacedMethod()
     {
-        $stub = m::mock('\Antares\Foundation\Foundation[group]', [$this->app]);
-
+        $stub    = new Foundation($this->app);
+        $stub->boot();
         $closure = function () {
             
         };
-
-        $middleware = ['Antares\Foundation\Http\Middleware\UseBackendTheme'];
-
-        $stub->shouldReceive('group')->times(3)
-                ->with('antares/foundation', 'antares', ['middleware' => $middleware], $closure)
-                ->andReturn([]);
-        $stub->shouldReceive('group')->once()
-                ->with('antares/foundation', 'antares', ['namespace' => 'Foo', 'middleware' => $middleware], $closure)
-                ->andReturn([]);
-
-        $this->assertNull($stub->namespaced('', $closure));
-        $this->assertNull($stub->namespaced('\\', $closure));
-        $this->assertNull($stub->namespaced(null, $closure));
-        $this->assertNull($stub->namespaced('Foo', $closure));
+        $this->assertNull($stub->namespaced('test', $closure));
     }
 
 }

@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Html;
 
 use Antares\Html\Memory\Config as MemoryConfig;
@@ -135,7 +134,11 @@ class HtmlServiceProvider extends ServiceProvider
             $config     = $app->make('config');
             $connection = $config->get('antares/html::form.memory.default.connections.cache');
             $driver     = $app->make('cache')->driver($connection);
-            $handler    = new Handler('collector', $config->get('antares/html::form.memory.default'), $app, $driver);
+            $handler    = new Handler('collector', $config->get('antares/html::form.memory.default', [
+                        'model' => 'Antares\Html\Model\Form',
+                        'cache' => false,
+                        'crypt' => false
+                    ]), $app, $driver);
             return new Provider($handler);
         });
 

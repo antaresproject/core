@@ -45,7 +45,9 @@ class CustomfieldAdapter
     {
         $this->grid   = $grid;
         $customfields = app('customfields')->get();
-
+        if (empty($customfields)) {
+            return;
+        }
         foreach ($customfields as $classname => $customfield) {
             if (!$grid->row instanceof $classname) {
                 continue;

@@ -18,83 +18,88 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Area\Tests;
 
 use Mockery as m;
-use Antares\Testing\TestCase;
+use Antares\Testing\ApplicationTestCase;
 use Antares\Area\Model\Area;
 use Antares\Area\Contracts\AreaManagerContract;
 use Antares\Area\Contracts\AreaContract;
 use Antares\Area\AreaManager;
 use Antares\Auth\AuthManager as Auth;
 
-class AreaManagerTest extends TestCase {
-    
+class AreaManagerTest extends ApplicationTestCase
+{
+
     /**
      *
      * @var Mockery
      */
     protected $auth;
-    
-    public function setUp() {
+
+    public function setUp()
+    {
         parent::setUp();
-        
-        $this->auth = m::mock(Auth::class);
+
+        //$this->auth = m::mock(Auth::class);
     }
-    
-    public function tearDown() {
+
+    public function tearDown()
+    {
         m::close();
     }
-    
-    public function testContract() {
-        $areaManager = new AreaManager($this->auth);
+
+    public function testContract()
+    {
+        $areaManager = new AreaManager($this->app->make('auth'));
         $this->assertInstanceOf(AreaManagerContract::class, $areaManager);
     }
-    
-    public function testAreas() {
-        $areaManager = new AreaManager($this->auth);
-        $areas = $areaManager->getAreas();
-        
+
+    public function testAreas()
+    {
+        $areaManager = new AreaManager($this->app->make('auth'));
+        $areas       = $areaManager->getAreas();
         $this->assertInternalType('array', $areas);
         $this->assertCount(2, $areas);
-        $this->assertInstanceOf(AreaContract::class, $areas[0]);
+        $this->assertInstanceOf(AreaContract::class, head($areas));
     }
-    
-    public function testGetAreaById() {
-        $clientArea     = new Area('client', 'Client Area');
-        $adminArea      = new Area('admin', 'Admin Area');
-        $areaManager    = new AreaManager($this->auth);
-        
-        $this->assertEquals($clientArea, $areaManager->getById('client'));
-        $this->assertEquals($adminArea, $areaManager->getById('admin'));
+
+    public function testGetAreaById()
+    {
+        $clientArea  = new Area('administrators', 'Administrators');
+        $adminArea   = new Area('users', 'Users');
+        $areaManager = new AreaManager($this->app->make('auth'));
+        $this->assertEquals($clientArea, $areaManager->getById('administrators'));
+        $this->assertEquals($adminArea, $areaManager->getById('users'));
         $this->assertNull($areaManager->getById('dump'));
     }
-    
-    public function testAdminArea() {
+
+    public function testAdminArea()
+    {
         $this->markTestIncomplete('This test has not been implemented yet because of wrong isAny method implementation.');
-        
+
         $this->auth->shouldReceive('isAny')->withArgs(['member'])->once()->andReturn(false);
-        
-        $adminArea      = new Area('admin', 'Admin Area');
-        $areaManager    = new AreaManager($this->auth);
-        
+
+        $adminArea   = new Area('admin', 'Admin Area');
+        $areaManager = new AreaManager($this->auth);
+
         $this->assertTrue($areaManager->isAdminArea());
         $this->assertFalse($areaManager->isClientArea());
         $this->assertEquals($adminArea, $areaManager->getCurrentArea());
     }
-    
-    public function testClientArea() {
+
+    public function testClientArea()
+    {
         $this->markTestIncomplete('This test has not been implemented yet because of wrong isAny method implementation.');
-        
+
         $this->auth->shouldReceive('isAny')->withArgs(['member'])->once()->andReturn(true);
-        
-        $clientArea     = new Area('client', 'Client Area');
-        $areaManager    = new AreaManager($this->auth);
-        
+
+        $clientArea  = new Area('client', 'Client Area');
+        $areaManager = new AreaManager($this->auth);
+
         $this->assertTrue($areaManager->isClientArea());
         $this->assertFalse($areaManager->isAdminArea());
         $this->assertEquals($clientArea, $areaManager->getCurrentArea());
     }
-    
+
 }

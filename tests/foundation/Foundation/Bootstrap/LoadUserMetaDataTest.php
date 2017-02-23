@@ -17,12 +17,14 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Bootstrap\TestCase;
 
-use Antares\Testing\TestCase;
+namespace Antares\Foundation\Bootstrap\TestCase;
 
-class LoadUserMetaDataTest extends TestCase
+use Antares\Testing\ApplicationTestCase;
+
+class LoadUserMetaDataTest extends ApplicationTestCase
 {
+
     /**
      * Define environment setup.
      *
@@ -31,8 +33,7 @@ class LoadUserMetaDataTest extends TestCase
     protected function getEnvironmentSetUp($app)
     {
         parent::getEnvironmentSetUp($app);
-
-        $app->make('Antares\Foundation\Bootstrap\LoadUserMetaData')->bootstrap($app);
+        $app->make(\Antares\Users\Bootstrap\LoadUserMetaData::class)->bootstrap($app);
     }
 
     /**
@@ -43,8 +44,8 @@ class LoadUserMetaDataTest extends TestCase
     public function testInstanceOfAntaresMemory()
     {
         $stub = $this->app->make('antares.memory')->driver('user');
-
         $this->assertInstanceOf('\Antares\Model\Memory\UserMetaProvider', $stub);
         $this->assertInstanceOf('\Antares\Memory\Provider', $stub);
     }
+
 }

@@ -18,14 +18,14 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Extension\TestCase;
 
-use Mockery as m;
+use Antares\Testing\ApplicationTestCase;
 use Illuminate\Support\Collection;
 use Antares\Extension\Finder;
+use Mockery as m;
 
-class FinderTest extends \PHPUnit_Framework_TestCase
+class FinderTest extends ApplicationTestCase
 {
 
     /**
@@ -52,14 +52,30 @@ class FinderTest extends \PHPUnit_Framework_TestCase
         $paths = $refl->getProperty('paths');
         $paths->setAccessible(true);
 
-        $this->assertEquals(
-                ['/foo/app', '/foo/path/vendor/*/*'], $paths->getValue($stub)
+
+        $this->assertEquals([
+            '/foo/app',
+            '/foo/path/src/core/*',
+            '/foo/path/src/components/*',
+            '/foo/path/src/modules/*',
+            '/foo/path/src/modules/domains/*',
+            '/foo/path/src/modules/products/*',
+            '/foo/path/src/modules/fraud/*',
+            '/foo/path/src/modules/addons/*'], $paths->getValue($stub)
         );
+
 
         $stub->addPath('/foo/public');
 
-        $this->assertEquals(
-                ['/foo/app', '/foo/path/vendor/*/*', '/foo/public'], $paths->getValue($stub)
+        $this->assertEquals(['/foo/app',
+            '/foo/path/src/core/*',
+            '/foo/path/src/components/*',
+            '/foo/path/src/modules/*',
+            '/foo/path/src/modules/domains/*',
+            '/foo/path/src/modules/products/*',
+            '/foo/path/src/modules/fraud/*',
+            '/foo/path/src/modules/addons/*',
+            '/foo/public'], $paths->getValue($stub)
         );
     }
 
@@ -72,36 +88,39 @@ class FinderTest extends \PHPUnit_Framework_TestCase
     {
         $config['path.app']  = '/foo/app';
         $config['path.base'] = '/foo/path';
+        $config['pattern']   = 'manifest.json';
+        $config['paths']     = [
+            'app::', 'vendor::', 'base::'
+        ];
 
         $files = m::mock('\Illuminate\Filesystem\Filesystem');
 
         $files->shouldReceive('glob')->once()->with('/foo/app/manifest.json')
                 ->andReturn(['/foo/app/manifest.json'])
                 ->shouldReceive('get')->once()->with('/foo/app/manifest.json')->andReturn('{"name":"Application"}')
-                ->shouldReceive('glob')->once()->with('/foo/path/vendor/*/*/manifest.json')
-                ->andReturn(['/foo/path/vendor/laravel/framework/manifest.json', '/foo/antares.js'])
-                ->shouldReceive('get')->once()->with('/foo/path/vendor/laravel/framework/manifest.json')
-                ->andReturn('{"name":"Laravel Framework","path": "vendor::laravel/framework"}');
+                ->shouldReceive('glob')->with('/foo/path/src/core/*/manifest.json')
+                ->andReturn(false)
+                ->shouldReceive('glob')->with('/foo/path/src/components/*/manifest.json')
+                ->andReturn(false)
+                ->shouldReceive('glob')->with('/foo/path/src/modules/domains/*/manifest.json')
+                ->andReturn(false)
+                ->shouldReceive('glob')->with('/foo/path/src/modules/products/*/manifest.json')
+                ->andReturn(false)
+                ->shouldReceive('glob')->with('/foo/path/src/modules/fraud/*/manifest.json')
+                ->andReturn(false)
+                ->shouldReceive('glob')->with('/foo/path/src/modules/addons/*/manifest.json')
+                ->andReturn(false)
+                ->shouldReceive('glob')->with('/foo/path/src/modules/*/manifest.json')
+                ->andReturn(false);
 
         $stub = new Finder($files, $config);
 
         $expected = new Collection([
-            'laravel/framework' => [
-                'path'        => 'vendor::laravel/framework',
-                'source-path' => 'vendor::laravel/framework',
-                'name'        => 'Laravel Framework',
-                'description' => null,
-                'author'      => null,
-                'url'         => null,
-                'version'     => '>0',
-                'config'      => [],
-                'autoload'    => [],
-                'provides'    => [],
-            ],
-            'app'               => [
+            'app' => [
                 'path'        => 'app::',
                 'source-path' => 'app::',
                 'name'        => 'Application',
+                'full_name'   => null,
                 'description' => null,
                 'author'      => null,
                 'url'         => null,
@@ -109,9 +128,9 @@ class FinderTest extends \PHPUnit_Framework_TestCase
                 'config'      => [],
                 'autoload'    => [],
                 'provides'    => [],
+                'options'     => [],
             ],
         ]);
-
         $this->assertEquals($expected, $stub->detect());
     }
 
@@ -125,13 +144,16 @@ class FinderTest extends \PHPUnit_Framework_TestCase
     {
         $config['path.app']  = '/foo/app';
         $config['path.base'] = '/foo/path';
-
-        $files = m::mock('\Illuminate\Filesystem\Filesystem');
+        $config['pattern']   = 'manifest.json';
+        $config['paths']     = [
+            'app::', 'vendor::', 'base::'
+        ];
+        $files               = m::mock('\Illuminate\Filesystem\Filesystem');
 
         $files->shouldReceive('glob')->once()->with('/foo/app/manifest.json')
                 ->andReturn(['/foo/app/manifest.json'])
                 ->shouldReceive('get')->once()->with('/foo/app/manifest.json')->andReturn('{"name":"Application"}')
-                ->shouldReceive('glob')->once()->with('/foo/path/vendor/*/*/manifest.json')
+                ->shouldReceive('glob')->with('/foo/path/vendor/*/*/manifest.json')
                 ->andReturn(['/foo/path/vendor/antares/foundation/manifest.json']);
 
         $stub = new Finder($files, $config);
@@ -142,22 +164,35 @@ class FinderTest extends \PHPUnit_Framework_TestCase
      * Test Antares\Extension\Finder::detect() method throws
      * exception when unable to parse json manifest file.
      *
-     * @expectedException \Antares\Contracts\Support\ManifestRuntimeException
      */
     public function testDetectMethodThrowsException()
     {
         $config['path.app']  = '/foo/app';
         $config['path.base'] = '/foo/path';
-
-        $files = m::mock('\Illuminate\Filesystem\Filesystem');
+        $config['pattern']   = 'manifest.json';
+        $config['paths']     = [
+            'app::', 'vendor::', 'base::'
+        ];
+        $files               = m::mock('\Illuminate\Filesystem\Filesystem');
 
         $files->shouldReceive('glob')->once()->with('/foo/app/manifest.json')->andReturn([])
-                ->shouldReceive('glob')->once()->with('/foo/path/vendor/*/*/manifest.json')
-                ->andReturn(['/foo/path/vendor/laravel/framework/manifest.json'])
-                ->shouldReceive('get')->once()->with('/foo/path/vendor/laravel/framework/manifest.json')
-                ->andReturn('{"name":"Laravel Framework}');
+                ->shouldReceive('glob')->with('/foo/path/src/core/*/manifest.json')
+                ->andReturn(false)
+                ->shouldReceive('glob')->with('/foo/path/src/components/*/manifest.json')
+                ->andReturn(false)
+                ->shouldReceive('glob')->with('/foo/path/src/modules/domains/*/manifest.json')
+                ->andReturn(false)
+                ->shouldReceive('glob')->with('/foo/path/src/modules/products/*/manifest.json')
+                ->andReturn(false)
+                ->shouldReceive('glob')->with('/foo/path/src/modules/fraud/*/manifest.json')
+                ->andReturn(false)
+                ->shouldReceive('glob')->with('/foo/path/src/modules/addons/*/manifest.json')
+                ->andReturn(false)
+                ->shouldReceive('glob')->with('/foo/path/src/modules/*/manifest.json')
+                ->andReturn(false);
 
-        with(new Finder($files, $config))->detect();
+
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, with(new Finder($files, $config))->detect());
     }
 
     /**
@@ -170,8 +205,11 @@ class FinderTest extends \PHPUnit_Framework_TestCase
     {
         $config['path.app']  = '/foo/path/app';
         $config['path.base'] = '/foo/path';
-
-        $stub = new Finder(m::mock('\Illuminate\Filesystem\Filesystem'), $config);
+        $config['pattern']   = 'manifest.json';
+        $config['paths']     = [
+            'app::', 'vendor::', 'base::'
+        ];
+        $stub                = new Finder(m::mock('\Illuminate\Filesystem\Filesystem'), $config);
         $this->assertEquals($expected, $stub->guessExtensionPath($output));
     }
 
@@ -201,8 +239,11 @@ class FinderTest extends \PHPUnit_Framework_TestCase
     {
         $config['path.app']  = '/foo/path/app';
         $config['path.base'] = '/foo/path';
-
-        $stub = new Finder(m::mock('\Illuminate\Filesystem\Filesystem'), $config);
+        $config['pattern']   = 'manifest.json';
+        $config['paths']     = [
+            'app::', 'vendor::', 'base::'
+        ];
+        $stub                = new Finder(m::mock('\Illuminate\Filesystem\Filesystem'), $config);
         $this->assertEquals($expected, $stub->resolveExtensionPath($output));
     }
 
@@ -213,8 +254,11 @@ class FinderTest extends \PHPUnit_Framework_TestCase
     {
         $config['path.app']  = '/foo/app';
         $config['path.base'] = '/foo/path';
-
-        $files = m::mock('\Illuminate\Filesystem\Filesystem');
+        $config['pattern']   = 'manifest.json';
+        $config['paths']     = [
+            'app::', 'vendor::', 'base::'
+        ];
+        $files               = m::mock('\Illuminate\Filesystem\Filesystem');
 
         $stub = new Finder($files, $config);
 
@@ -225,8 +269,14 @@ class FinderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($stub->registerExtension('hello', '/foo/path/modules/'));
 
         $expected = [
-            "/foo/app",
-            "/foo/path/vendor/*/*",
+            '/foo/app',
+            '/foo/path/src/core/*',
+            '/foo/path/src/components/*',
+            '/foo/path/src/modules/*',
+            '/foo/path/src/modules/domains/*',
+            '/foo/path/src/modules/products/*',
+            '/foo/path/src/modules/fraud/*',
+            '/foo/path/src/modules/addons/*',
             'hello' => '/foo/path/modules',
         ];
         $this->assertEquals($expected, $paths->getValue($stub));
@@ -300,7 +350,6 @@ class FinderTest extends \PHPUnit_Framework_TestCase
         return [
             ["foobar", "foobar"],
             ["/foo/path/app/foobar", "app::foobar"],
-            ["/foo/path/vendor/foobar", "vendor::foobar"],
             ["/foo/path/foobar", "base::foobar"],
         ];
     }

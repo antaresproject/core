@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Bootstrap;
 
 use Antares\Model\Memory\UserMetaProvider;

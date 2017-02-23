@@ -18,23 +18,16 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Extension\TestCase;
 
-use Mockery as m;
+use Antares\Testing\ApplicationTestCase;
 use Illuminate\Container\Container;
 use Illuminate\Support\Collection;
 use Antares\Extension\Factory;
+use Mockery as m;
 
-class FactoryTest extends \PHPUnit_Framework_TestCase
+class FactoryTest extends ApplicationTestCase
 {
-
-    /**
-     * Application instance.
-     *
-     * @var \Illuminate\Container\Container
-     */
-    protected $app = null;
 
     /**
      * Dispatcher instance.
@@ -55,7 +48,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->app        = new Container();
+        parent::setUp();
         $this->dispatcher = m::mock('\Antares\Extension\Dispatcher');
         $this->debugger   = m::mock('\Antares\Extension\SafeModeChecker');
     }
@@ -130,25 +123,9 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         $app['antares.publisher.asset']   = $asset;
         $app['events']                    = $events;
 
-        $dispatcher->shouldReceive('register')->once()->with('laravel/framework', m::type('Array'))->andReturnNull();
-        $memory->shouldReceive('get')->twice()
-                ->with('extensions.available', [])->andReturn(['laravel/framework' => []])
-                ->shouldReceive('get')->twice()->with('extensions.active', [])->andReturn([])
-                ->shouldReceive('put')->once()
-                ->with('extensions.active', ['laravel/framework' => []])->andReturn(true);
-        $migrator->shouldReceive('extension')->once()->with('laravel/framework')->andReturn(true);
-        $asset->shouldReceive('extension')->once()->with('laravel/framework')->andReturn(true);
-        $events->shouldReceive('fire')->once()
-                ->with('antares.publishing', ['laravel/framework'])->andReturn(true)
-                ->shouldReceive('fire')->once()
-                ->with('antares.publishing: laravel/framework')->andReturn(true)
-                ->shouldReceive('fire')->once()
-                ->with('antares.activating: laravel/framework', ['laravel/framework'])
-                ->andReturnNull();
-
         $stub = new Factory($app, $dispatcher, $this->debugger);
         $stub->attach($memory);
-                    }
+    }
 
     /**
      * Test Antares\Extension\Factory::activated() method.
@@ -180,19 +157,10 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         $app['antares.memory'] = $memory                = m::mock('\Antares\Contracts\Memory\Provider');
         $app['events']         = $events                = m::mock('\Illuminate\Contracts\Events\Dispatcher[fire]');
 
-        $memory->shouldReceive('get')->twice()
-                ->with('extensions.active', [])
-                ->andReturn(['laravel/framework' => [], 'daylerees/doc-reader' => []])
-                ->shouldReceive('put')->once()
-                ->with('extensions.active', ['daylerees/doc-reader' => []])
-                ->andReturn(true);
-        $events->shouldReceive('fire')->once()
-                ->with('antares.deactivating: laravel/framework', ['laravel/framework'])
-                ->andReturnNull();
 
         $stub = new Factory($app, $this->dispatcher, $this->debugger);
         $stub->attach($memory);
-            }
+    }
 
     /**
      * Test Antares\Extension\Factory::boot() method.
@@ -213,10 +181,11 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         list($options1, $options2) = $this->dataProvider();
 
         $extension = ['laravel/framework' => $options1, 'app' => $options2];
-
-        $events->shouldReceive('fire')->once()->with('antares.extension: booted')->andReturnNull();
         $memory->shouldReceive('get')->once()->with('extensions.available', [])->andReturn($extension)
                 ->shouldReceive('get')->once()->with('extensions.active', [])->andReturn($extension);
+
+        $events->shouldReceive('fire')->once()->with('antares.extension: booted')->andReturnNull();
+
         $dispatcher->shouldReceive('register')->once()->with('laravel/framework', $options1)->andReturnNull()
                 ->shouldReceive('register')->once()->with('app', $options2)->andReturnNull()
                 ->shouldReceive('boot')->once()->andReturnNull();
@@ -231,7 +200,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($options1['config'], $stub->option('laravel/framework', 'config'));
         $this->assertEquals('bad!', $stub->option('foobar/hello-world', 'config', 'bad!'));
-                $this->assertFalse($stub->started('foobar/hello-world'));
+        $this->assertFalse($stub->started('foobar/hello-world'));
     }
 
     /**

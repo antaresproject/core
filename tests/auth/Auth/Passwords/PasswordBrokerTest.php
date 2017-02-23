@@ -17,27 +17,17 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Auth\Passwords\TestCase;
 
-use Mockery as m;
-use Illuminate\Container\Container;
-use Illuminate\Support\Facades\Facade;
+namespace Antares\Auth\Passwords\TestCase;
+
 use Antares\Auth\Passwords\PasswordBroker;
+use Antares\Testing\ApplicationTestCase;
+use Illuminate\Support\Facades\Facade;
+use Illuminate\Container\Container;
+use Mockery as m;
 
-class PasswordBrokerTest extends \PHPUnit_Framework_TestCase
+class PasswordBrokerTest extends ApplicationTestCase
 {
-    /**
-     * Setup the test environment.
-     */
-    public function setUp()
-    {
-        $app               = new Container();
-        $app['translator'] = $translator = m::mock('\Illuminate\Translation\Translator')->makePartial();
-        $translator->shouldReceive('trans')->andReturn('foo');
-
-        Facade::clearResolvedInstances();
-        Facade::setFacadeApplication($app);
-    }
 
     /**
      * Teardown the test environment.
@@ -54,28 +44,20 @@ class PasswordBrokerTest extends \PHPUnit_Framework_TestCase
      */
     public function testRemindMethod()
     {
-        $stub = new PasswordBroker(
-            $reminders = m::mock('\Illuminate\Auth\Passwords\TokenRepositoryInterface'),
-            $user = m::mock('\Illuminate\Contracts\Auth\UserProvider'),
-            $mailer = m::mock('\Antares\Notifier\Handlers\Antares'),
-            $view = 'foo'
+        $stub      = new PasswordBroker(
+                $reminders = m::mock('\Illuminate\Auth\Passwords\TokenRepositoryInterface'), $user      = m::mock('\Illuminate\Contracts\Auth\UserProvider'), $mailer    = m::mock('\Antares\Notifier\Handlers\Antares'), $view      = 'foo'
         );
 
         $userReminderable = m::mock('\Illuminate\Contracts\Auth\CanResetPassword, \Antares\Contracts\Notification\Recipient');
-
-        $callback = function () {
-                    };
+        $userReminderable->shouldReceive('getEmailForPasswordReset')->andReturn('foo@bar.com');
+        $callback         = function () {
+            
+        };
 
         $user->shouldReceive('retrieveByCredentials')->once()
-            ->with(['username' => 'user-foo'])
-            ->andReturn($userReminderable);
+                ->with(['username' => 'user-foo'])
+                ->andReturn($userReminderable);
         $reminders->shouldReceive('create')->once()->with($userReminderable)->andReturnNull();
-        $mailer->shouldReceive('send')->once()
-                ->with($userReminderable, m::any(), m::type('Closure'))
-                ->andReturnUsing(function ($u, $f, $c) use ($mailer) {
-                    $c($mailer);
-                    return true;
-                });
 
         $this->assertEquals('passwords.sent', $stub->sendResetLink(['username' => 'user-foo'], $callback));
     }
@@ -88,15 +70,12 @@ class PasswordBrokerTest extends \PHPUnit_Framework_TestCase
      */
     public function testRemindMethodGivenUserIsNull()
     {
-        $stub = new PasswordBroker(
-            $reminders = m::mock('\Illuminate\Auth\Passwords\TokenRepositoryInterface'),
-            $user = m::mock('\Illuminate\Contracts\Auth\UserProvider'),
-            $mailer = m::mock('\Antares\Notifier\Handlers\Antares'),
-            $view = 'foo'
+        $stub      = new PasswordBroker(
+                $reminders = m::mock('\Illuminate\Auth\Passwords\TokenRepositoryInterface'), $user      = m::mock('\Illuminate\Contracts\Auth\UserProvider'), $mailer    = m::mock('\Antares\Notifier\Handlers\Antares'), $view      = 'foo'
         );
 
         $user->shouldReceive('retrieveByCredentials')->once()
-            ->with(['username' => 'user-foo'])->andReturnNull();
+                ->with(['username' => 'user-foo'])->andReturnNull();
 
         $this->assertEquals('passwords.user', $stub->sendResetLink(['username' => 'user-foo']));
     }
@@ -108,11 +87,8 @@ class PasswordBrokerTest extends \PHPUnit_Framework_TestCase
      */
     public function testResetMethod()
     {
-        $stub = new PasswordBroker(
-            $reminders = m::mock('\Illuminate\Auth\Passwords\TokenRepositoryInterface'),
-            $user = m::mock('\Illuminate\Contracts\Auth\UserProvider'),
-            $mailer = m::mock('\Antares\Notifier\Handlers\Antares'),
-            $view = 'foo'
+        $stub      = new PasswordBroker(
+                $reminders = m::mock('\Illuminate\Auth\Passwords\TokenRepositoryInterface'), $user      = m::mock('\Illuminate\Contracts\Auth\UserProvider'), $mailer    = m::mock('\Antares\Notifier\Handlers\Antares'), $view      = 'foo'
         );
 
         $userReminderable = m::mock('\Illuminate\Contracts\Auth\CanResetPassword, \Antares\Contracts\Notification\Recipient');
@@ -131,7 +107,7 @@ class PasswordBrokerTest extends \PHPUnit_Framework_TestCase
         $user->shouldReceive('retrieveByCredentials')->once()
                 ->with(array_except($credentials, ['token']))->andReturn($userReminderable);
         $reminders->shouldReceive('exists')->once()->with($userReminderable, 'someuniquetokenkey')->andReturn(true)
-            ->shouldReceive('delete')->once()->with('someuniquetokenkey')->andReturn(true);
+                ->shouldReceive('delete')->once()->with('someuniquetokenkey')->andReturn(true);
 
         $this->assertEquals('passwords.reset', $stub->reset($credentials, $callback));
     }
@@ -144,15 +120,13 @@ class PasswordBrokerTest extends \PHPUnit_Framework_TestCase
      */
     public function testResetMethodGivenUserIsNotRemindableInterface()
     {
-        $stub = new PasswordBroker(
-            $reminders = m::mock('\Illuminate\Auth\Passwords\TokenRepositoryInterface'),
-            $user = m::mock('\Illuminate\Contracts\Auth\UserProvider'),
-            $mailer = m::mock('\Antares\Notifier\Handlers\Antares'),
-            $view = 'foo'
+        $stub      = new PasswordBroker(
+                $reminders = m::mock('\Illuminate\Auth\Passwords\TokenRepositoryInterface'), $user      = m::mock('\Illuminate\Contracts\Auth\UserProvider'), $mailer    = m::mock('\Antares\Notifier\Handlers\Antares'), $view      = 'foo'
         );
 
         $callback = function ($user, $pass) {
-                    };
+            
+        };
 
         $credentials = [
             'username'              => 'user-foo',
@@ -162,7 +136,7 @@ class PasswordBrokerTest extends \PHPUnit_Framework_TestCase
         ];
 
         $user->shouldReceive('retrieveByCredentials')->once()
-            ->with(array_except($credentials, ['token']))->andReturnNull();
+                ->with(array_except($credentials, ['token']))->andReturnNull();
 
         $this->assertEquals('passwords.user', $stub->reset($credentials, $callback));
     }
@@ -175,15 +149,13 @@ class PasswordBrokerTest extends \PHPUnit_Framework_TestCase
      */
     public function testResetMethodGivenFailVerifyPassword()
     {
-        $stub = new PasswordBroker(
-            $reminders = m::mock('\Illuminate\Auth\Passwords\TokenRepositoryInterface'),
-            $user = m::mock('\Illuminate\Contracts\Auth\UserProvider'),
-            $mailer = m::mock('\Antares\Notifier\Handlers\Antares'),
-            $view = 'foo'
+        $stub      = new PasswordBroker(
+                $reminders = m::mock('\Illuminate\Auth\Passwords\TokenRepositoryInterface'), $user      = m::mock('\Illuminate\Contracts\Auth\UserProvider'), $mailer    = m::mock('\Antares\Notifier\Handlers\Antares'), $view      = 'foo'
         );
 
         $callback = function ($user, $pass) {
-                    };
+            
+        };
 
         $credentials = [
             'username'              => 'user-foo',
@@ -208,15 +180,13 @@ class PasswordBrokerTest extends \PHPUnit_Framework_TestCase
      */
     public function testResetMethodGivenReminderNotExist()
     {
-        $stub = new PasswordBroker(
-            $reminders = m::mock('\Illuminate\Auth\Passwords\TokenRepositoryInterface'),
-            $user = m::mock('\Illuminate\Contracts\Auth\UserProvider'),
-            $mailer = m::mock('\Antares\Notifier\Handlers\Antares'),
-            $view = 'foo'
+        $stub      = new PasswordBroker(
+                $reminders = m::mock('\Illuminate\Auth\Passwords\TokenRepositoryInterface'), $user      = m::mock('\Illuminate\Contracts\Auth\UserProvider'), $mailer    = m::mock('\Antares\Notifier\Handlers\Antares'), $view      = 'foo'
         );
 
         $callback = function ($user, $pass) {
-                    };
+            
+        };
 
         $credentials = [
             'username'              => 'user-foo',
@@ -241,15 +211,13 @@ class PasswordBrokerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetUserThrowsException()
     {
-        $stub = new PasswordBroker(
-            $reminders = m::mock('\Illuminate\Auth\Passwords\TokenRepositoryInterface'),
-            $user = m::mock('\Illuminate\Contracts\Auth\UserProvider'),
-            $mailer = m::mock('\Antares\Notifier\Handlers\Antares'),
-            $view = 'foo'
+        $stub      = new PasswordBroker(
+                $reminders = m::mock('\Illuminate\Auth\Passwords\TokenRepositoryInterface'), $user      = m::mock('\Illuminate\Contracts\Auth\UserProvider'), $mailer    = m::mock('\Antares\Notifier\Handlers\Antares'), $view      = 'foo'
         );
 
         $user->shouldReceive('retrieveByCredentials')->once()->with([])->andReturn('foo');
 
         $stub->getUser([]);
     }
+
 }

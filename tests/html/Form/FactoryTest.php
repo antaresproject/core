@@ -17,14 +17,17 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Html\Form\TestCase;
 
-use Mockery as m;
+namespace Antares\Html\Form\TestCase;
+
+use Antares\Testing\ApplicationTestCase;
 use Illuminate\Container\Container;
 use Antares\Html\Form\Factory;
+use Mockery as m;
 
-class FactoryTest extends \PHPUnit_Framework_TestCase
+class FactoryTest extends ApplicationTestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -42,7 +45,8 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
     {
         $stub   = new Factory($this->getContainer());
         $output = $stub->make(function () {
-                    });
+            
+        });
 
         $this->assertInstanceOf('\Antares\Html\Form\FormBuilder', $output);
     }
@@ -56,7 +60,8 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
     {
         $stub   = new Factory($this->getContainer());
         $output = $stub->of('foo', function () {
-                    });
+            
+        });
 
         $this->assertInstanceOf('\Antares\Html\Form\FormBuilder', $output);
     }
@@ -70,7 +75,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
     public function testPassThroughMethod()
     {
         $app         = new Container();
-        $app['form'] = $form = m::mock('\Illuminate\Html\FormBuilder');
+        $app['form'] = $form        = m::mock('\Illuminate\Html\FormBuilder');
 
         $form->shouldReceive('hidden')->once()->with('foo', 'bar')->andReturn('foobar');
 
@@ -87,17 +92,18 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
      */
     protected function getContainer()
     {
-        $app = new Container();
+        $app    = new Container();
         $config = m::mock('\Illuminate\Contracts\Config\Repository');
 
-        $app['request'] = m::mock('\Illuminate\Http\Request');
-        $app['translator'] = m::mock('\Illuminate\Translation\Translator');
-        $app['view'] = m::mock('\Illuminate\Contracts\View\Factory');
+        $app['request']                                = m::mock('\Illuminate\Http\Request');
+        $app['translator']                             = m::mock('\Illuminate\Translation\Translator');
+        $app['view']                                   = m::mock('\Illuminate\Contracts\View\Factory');
         $app['Illuminate\Contracts\Config\Repository'] = $config;
 
         $config->shouldReceive('get')->once()
-            ->with('antares/html::form', [])->andReturn([]);
+                ->with('antares/html::form', [])->andReturn([]);
 
         return $app;
     }
+
 }

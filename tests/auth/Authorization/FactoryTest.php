@@ -17,13 +17,16 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Authorization\TestCase;
 
-use Mockery as m;
+namespace Antares\Authorization\TestCase;
+
+use Antares\Testing\ApplicationTestCase;
 use Antares\Authorization\Factory;
+use Mockery as m;
 
-class FactoryTest extends \PHPUnit_Framework_TestCase
+class FactoryTest extends ApplicationTestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -45,8 +48,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Antares\Authorization\Authorization', $stub->make('mock-one'));
 
         $memory = m::mock('\Antares\Memory\Provider');
-        $memory->shouldReceive('get')->once()->andReturn([])
-            ->shouldReceive('put')->once()->andReturn([]);
+        $memory->shouldReceive('get')->twice()->andReturn([]);
 
         $this->assertInstanceOf('\Antares\Authorization\Authorization', $stub->make('mock-two', $memory));
     }
@@ -134,4 +136,5 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($mock3, $stub->get('mock-three'));
         $this->assertNull($stub->get('mock-four'));
     }
+
 }

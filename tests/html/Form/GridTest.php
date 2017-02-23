@@ -17,14 +17,17 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Html\Form\TestCase;
 
-use Mockery as m;
+namespace Antares\Html\Form\TestCase;
+
+use Antares\Testing\ApplicationTestCase;
 use Illuminate\Container\Container;
 use Antares\Html\Form\Grid;
+use Mockery as m;
 
-class GridTest extends \PHPUnit_Framework_TestCase
+class GridTest extends ApplicationTestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -57,15 +60,15 @@ class GridTest extends \PHPUnit_Framework_TestCase
      */
     public function testInstanceOfGrid()
     {
-        $app = new Container();
-        $app['Illuminate\Contracts\Config\Repository'] = $config = m::mock('\Illuminate\Contracts\Config\Repository');
+        $app                                           = new Container();
+        $app['Illuminate\Contracts\Config\Repository'] = $config                                        = m::mock('\Illuminate\Contracts\Config\Repository');
 
         $config->shouldReceive('get')->once()
-            ->with('antares/html::form', [])->andReturn([
-                'submit'     => 'Submit',
-                'attributes' => ['id' => 'foo'],
-                'view'       => 'foo',
-            ]);
+                ->with('antares/html::form', [])->andReturn([
+            'submit'     => 'Submit',
+            'attributes' => ['id' => 'foo'],
+            'view'       => 'foo',
+        ]);
 
         $stub             = new Grid($app);
         $stub->attributes = ['class' => 'foobar'];
@@ -122,10 +125,10 @@ class GridTest extends \PHPUnit_Framework_TestCase
         $view->setAccessible(true);
 
         $stub->layout('horizontal');
-        $this->assertEquals('antares/html::form.horizontal', $view->getValue($stub));
+        $this->assertEquals('antares/foundation::layouts.antares.partials.form.horizontal', $view->getValue($stub));
 
         $stub->layout('vertical');
-        $this->assertEquals('antares/html::form.vertical', $view->getValue($stub));
+        $this->assertEquals('antares/foundation::layouts.antares.partials.form.vertical', $view->getValue($stub));
 
         $stub->layout('foo');
         $this->assertEquals('foo', $view->getValue($stub));
@@ -162,23 +165,24 @@ class GridTest extends \PHPUnit_Framework_TestCase
      */
     public function testFieldsetMethod()
     {
-        $app = new Container();
-        $app['Illuminate\Contracts\Config\Repository'] = $config = m::mock('\Illuminate\Contracts\Config\Repository');
-        $app['Antares\Contracts\Html\Form\Control'] = $control = m::mock('\Antares\Html\Form\Control');
-        $app['Antares\Contracts\Html\Form\Template'] = $presenter = m::mock('\Antares\Html\Form\BootstrapThreePresenter');
+        $app                                           = new Container();
+        $app['Illuminate\Contracts\Config\Repository'] = $config                                        = m::mock('\Illuminate\Contracts\Config\Repository');
+        $app['Antares\Contracts\Html\Form\Control']    = $control                                       = m::mock('\Antares\Html\Form\Control');
+        $app['Antares\Contracts\Html\Form\Template']   = $presenter                                     = m::mock('\Antares\Html\Form\BootstrapThreePresenter');
 
         $config->shouldReceive('get')->twice()
                 ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates())
-            ->shouldReceive('get')->once()
+                ->shouldReceive('get')->once()
                 ->with('antares/html::form', [])->andReturn([
-                    'templates' => $this->getFieldsetTemplates(),
-                    'presenter' => 'Antares\Html\Form\BootstrapThreePresenter',
-                ]);
+            'templates' => $this->getFieldsetTemplates(),
+            'presenter' => 'Antares\Html\Form\BootstrapThreePresenter',
+        ]);
         $control->shouldReceive('setTemplates')->twice()->with($this->getFieldsetTemplates())->andReturnSelf()
-            ->shouldReceive('setPresenter')->twice()->with($presenter)->andReturnSelf()
-            ->shouldReceive('generate')->twice();
+                ->shouldReceive('setPresenter')->twice()->with($presenter)->andReturnSelf()
+                ->shouldReceive('generate')->twice();
 
         $stub      = new Grid($app);
+        $stub->name('foo');
         $refl      = new \ReflectionObject($stub);
         $fieldsets = $refl->getProperty('fieldsets');
         $fieldsets->setAccessible(true);
@@ -196,7 +200,7 @@ class GridTest extends \PHPUnit_Framework_TestCase
         $fieldset = $fieldsets->getValue($stub);
 
         $this->assertInstanceOf('\Antares\Html\Form\Fieldset', $fieldset[0]);
-        $this->assertNull($fieldset[0]->name);
+
         $this->assertInstanceOf('\Antares\Html\Form\Field', $stub->find('email'));
 
         $this->assertInstanceOf('\Antares\Html\Form\Fieldset', $fieldset[1]);
@@ -212,12 +216,12 @@ class GridTest extends \PHPUnit_Framework_TestCase
      */
     public function testHiddenMethod()
     {
-        $stub = new Grid($app = $this->getContainer());
-        $app['form'] = $form = m::mock('\Illuminate\Html\FormBuilder');
+        $stub        = new Grid($app         = $this->getContainer());
+        $app['form'] = $form        = m::mock('\Illuminate\Html\FormBuilder');
 
         $form->shouldReceive('hidden')->once()
                 ->with('foo', 'foobar', m::any())->andReturn('hidden_foo')
-            ->shouldReceive('hidden')->once()
+                ->shouldReceive('hidden')->once()
                 ->with('foobar', 'stubbed', m::any())->andReturn('hidden_foobar');
 
         $stub->with(new \Illuminate\Support\Fluent([
@@ -341,9 +345,6 @@ class GridTest extends \PHPUnit_Framework_TestCase
         $listener = m::mock('\Antares\Html\Form\PresenterInterface');
         $model    = m::mock('\Illuminate\Database\Eloquent\Model');
 
-        $listener->shouldReceive('handles')->once()
-                ->with('antares::users')->andReturn('antares::users')
-            ->shouldReceive('setupForm')->once();
 
         $stub->resource($listener, 'antares::users', $model);
     }
@@ -357,14 +358,11 @@ class GridTest extends \PHPUnit_Framework_TestCase
     {
         $stub = new Grid($this->getContainer());
 
-        $listener = m::mock('\Antares\Html\Form\PresenterInterface');
-        $model = m::mock('\Illuminate\Database\Eloquent\Model');
+        $listener      = m::mock('\Antares\Html\Form\PresenterInterface');
+        $model         = m::mock('\Illuminate\Database\Eloquent\Model');
         $model->exists = true;
         $model->shouldReceive('getKey')->once()->andReturn(20);
 
-        $listener->shouldReceive('handles')->once()
-                ->with('antares::users/20')->andReturn('antares::users/20')
-            ->shouldReceive('setupForm')->once();
 
         $stub->resource($listener, 'antares::users', $model);
     }
@@ -376,12 +374,13 @@ class GridTest extends \PHPUnit_Framework_TestCase
      */
     protected function getContainer()
     {
-        $app = new Container();
-        $app['Illuminate\Contracts\Config\Repository'] = $config = m::mock('\Illuminate\Contracts\Config\Repository');
+        $app                                           = new Container();
+        $app['Illuminate\Contracts\Config\Repository'] = $config                                        = m::mock('\Illuminate\Contracts\Config\Repository');
 
         $config->shouldReceive('get')->once()
-            ->with('antares/html::form', [])->andReturn([]);
+                ->with('antares/html::form', [])->andReturn([]);
 
         return $app;
     }
+
 }

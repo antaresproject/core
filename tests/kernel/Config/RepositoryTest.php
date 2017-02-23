@@ -17,13 +17,15 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Config\TestCase;
+
+namespace Antares\Config\TestCase;
 
 use Mockery as m;
 use Antares\Config\Repository;
 
 class RepositoryTest extends \PHPUnit_Framework_TestCase
 {
+
     public function tearDown()
     {
         m::close();
@@ -60,7 +62,9 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($config->get('app.foo.bar'));
         $this->assertEquals('breeze', $config->get('app.baz.boom'));
         $this->assertEquals('blah', $config->get('app.code', 'blah'));
-        $this->assertEquals('blah', $config->get('app.code', function () { return 'blah'; }));
+        $this->assertEquals('blah', $config->get('app.code', function () {
+                    return 'blah';
+                }));
     }
 
     public function testEntireArrayCanBeReturned()
@@ -81,7 +85,9 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('bar', $config->get('namespace::options.foo'));
         $this->assertEquals('breeze', $config->get('namespace::options.baz.boom'));
         $this->assertEquals('blah', $config->get('namespace::options.code', 'blah'));
-        $this->assertEquals('blah', $config->get('namespace::options.code', function () { return 'blah'; }));
+        $this->assertEquals('blah', $config->get('namespace::options.code', function () {
+                    return 'blah';
+                }));
     }
 
     public function testNamespacedAccessedAndPostNamespaceLoadEventIsFired()
@@ -98,7 +104,9 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('bar', $config->get('namespace::options.foo'));
         $this->assertEquals('breeze', $config->get('namespace::options.baz.boom'));
         $this->assertEquals('blah', $config->get('namespace::options.code', 'blah'));
-        $this->assertEquals('blah', $config->get('namespace::options.code', function () { return 'blah'; }));
+        $this->assertEquals('blah', $config->get('namespace::options.code', function () {
+                    return 'blah';
+                }));
         $this->assertEquals('rees', $config->get('namespace::options.dayle'));
     }
 
@@ -107,7 +115,9 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
         $config  = $this->getRepository();
         $options = $this->getDummyOptions();
         $config->getLoader()->shouldReceive('addNamespace')->with('namespace', __DIR__);
-        $config->getLoader()->shouldReceive('cascadePackage')->andReturnUsing(function ($env, $package, $group, $items) { return $items; });
+        $config->getLoader()->shouldReceive('cascadePackage')->andReturnUsing(function ($env, $package, $group, $items) {
+            return $items;
+        });
         $config->getLoader()->shouldReceive('exists')->once()->with('foo', 'namespace')->andReturn(false);
         $config->getLoader()->shouldReceive('exists')->once()->with('baz', 'namespace')->andReturn(false);
         $config->getLoader()->shouldReceive('load')->once()->with('production', 'config', 'namespace')->andReturn($options);
@@ -135,13 +145,12 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testPackageRegistersNamespaceAndSetsUpAfterLoadCallback()
     {
-        $config = $this->getMock('\Antares\Config\Repository', ['addNamespace'], [m::mock('\Antares\Config\LoaderInterface'), 'production']);
+        $config    = $this->getMock('\Antares\Config\Repository', ['addNamespace'], [m::mock('\Antares\Config\LoaderInterface'), 'production']);
         $config->expects($this->once())->method('addNamespace')->with($this->equalTo('rees'), $this->equalTo(__DIR__));
         $config->getLoader()->shouldReceive('cascadePackage')->once()->with('production', 'dayle/rees', 'group', ['foo'])->andReturn(['bar']);
         $config->package('dayle/rees', __DIR__);
         $afterLoad = $config->getAfterLoadCallbacks();
         $results   = call_user_func($afterLoad['rees'], $config, 'group', ['foo']);
-
         $this->assertEquals(['bar'], $results);
     }
 
@@ -154,4 +163,5 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
     {
         return ['foo' => 'bar', 'baz' => ['boom' => 'breeze'], 'bing' => true];
     }
+
 }

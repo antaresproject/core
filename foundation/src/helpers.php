@@ -439,6 +439,9 @@ if (!function_exists('extensions')) {
     {
         $extensions = app('antares.memory')->make('component')->get('extensions.active');
         $return     = [];
+        if (empty($extensions)) {
+            return $return;
+        }
         foreach ($extensions as $name => $extension) {
             $return[str_replace('components', 'antares', $name)] = $extension;
         }

@@ -23,6 +23,8 @@ namespace Antares\Testing;
 
 use Antares\Foundation\Application;
 
+ini_set('memory_limit', '-1');
+
 abstract class ApplicationTestCase extends TestCase
 {
 

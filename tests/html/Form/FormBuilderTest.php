@@ -17,15 +17,18 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Html\Form\TestCase;
 
-use Mockery as m;
+namespace Antares\Html\Form\TestCase;
+
+use Antares\Testing\ApplicationTestCase;
 use Illuminate\Container\Container;
 use Antares\Html\Form\FormBuilder;
 use Antares\Html\Form\Grid;
+use Mockery as m;
 
-class FormBuilderTest extends \PHPUnit_Framework_TestCase
+class FormBuilderTest extends ApplicationTestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -42,12 +45,7 @@ class FormBuilderTest extends \PHPUnit_Framework_TestCase
     public function testConstructMethod()
     {
         $grid = new Grid($this->getContainer());
-
-        $request    = m::mock('\Illuminate\Http\Request');
-        $translator = m::mock('\Illuminate\Translation\Translator');
-        $view       = m::mock('\Illuminate\Contracts\View\Factory');
-
-        $stub = new FormBuilder($request, $translator, $view, $grid);
+        $stub = new FormBuilder($grid);
 
         $refl = new \ReflectionObject($stub);
         $name = $refl->getProperty('name');
@@ -73,13 +71,8 @@ class FormBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testMagicMethodThrowsException()
     {
-        $grid = new Grid($this->getContainer());
-
-        $request    = m::mock('\Illuminate\Http\Request');
-        $translator = m::mock('\Illuminate\Translation\Translator');
-        $view       = m::mock('\Illuminate\Contracts\View\Factory');
-
-        $stub = new FormBuilder($request, $translator, $view, $grid);
+        $grid = new Grid($this->app);
+        $stub = new FormBuilder($grid);
         $stub->someInvalidRequest;
     }
 
@@ -90,23 +83,17 @@ class FormBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testRenderMethod()
     {
-        $grid = new Grid($this->getContainer());
+        $grid = new Grid($this->app);
+        $grid->layout('form');
 
-        $request    = m::mock('\Illuminate\Http\Request');
-        $translator = m::mock('\Illuminate\Translation\Translator');
-        $view       = m::mock('\Illuminate\Contracts\View\Factory');
 
-        $translator->shouldReceive('get')->twice()->andReturn([]);
-        $view->shouldReceive('make')->twice()->andReturn($view)
-            ->shouldReceive('with')->twice()->andReturn($view)
-            ->shouldReceive('render')->twice()->andReturn('mocked');
 
         $data = new \Illuminate\Support\Fluent([
             'id'   => 1,
             'name' => 'Laravel',
         ]);
 
-        $stub1 = new FormBuilder($request, $translator, $view, $grid);
+        $stub1 = new FormBuilder($grid);
         $stub1->extend(function ($form) use ($data) {
             $form->with($data);
             $form->attributes([
@@ -116,7 +103,7 @@ class FormBuilderTest extends \PHPUnit_Framework_TestCase
             ]);
         });
 
-        $stub2 = new FormBuilder($request, $translator, $view, $grid);
+        $stub2 = new FormBuilder($grid);
         $stub2->extend(function ($form) use ($data) {
             $form->with($data);
             $form->attributes = [
@@ -125,11 +112,11 @@ class FormBuilderTest extends \PHPUnit_Framework_TestCase
                 'class'  => 'foo',
             ];
         });
-
         ob_start();
         echo $stub1;
         $output = ob_get_contents();
         ob_end_clean();
+
 
         $this->assertEquals('mocked', $output);
         $this->assertEquals('mocked', $stub2->render());
@@ -142,12 +129,13 @@ class FormBuilderTest extends \PHPUnit_Framework_TestCase
      */
     protected function getContainer()
     {
-        $app = new Container();
-        $app['Illuminate\Contracts\Config\Repository'] = $config = m::mock('\Illuminate\Contracts\Config\Repository');
+        $app                                           = new Container();
+        $app['Illuminate\Contracts\Config\Repository'] = $config                                        = m::mock('\Illuminate\Contracts\Config\Repository');
 
         $config->shouldReceive('get')->once()
-            ->with('antares/html::form', [])->andReturn([]);
+                ->with('antares/html::form', [])->andReturn([]);
 
         return $app;
     }
+
 }

@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Presenters\TestCase;
 
 use Mockery as m;
@@ -26,7 +25,7 @@ use Illuminate\Support\Fluent;
 use Illuminate\Support\Collection;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Facade;
-use Antares\Foundation\Http\Presenters\User;
+use Antares\Users\Http\Presenters\User;
 
 class UserTest extends \PHPUnit_Framework_TestCase
 {

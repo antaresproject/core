@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Authorization\TestCase;
 
 use Mockery as m;
@@ -27,8 +26,9 @@ use Antares\Memory\Handlers\Runtime;
 use Antares\Authorization\Authorization;
 use Illuminate\Container\Container as IlluminateContainer;
 use Antares\Testing\TestCase;
+use Antares\Testing\ApplicationTestCase;
 
-class AuthorizationTest extends TestCase
+class AuthorizationTest extends ApplicationTestCase
 {
 
     /**
@@ -43,6 +43,7 @@ class AuthorizationTest extends TestCase
      */
     public function setUp()
     {
+        parent::setUp();
         $this->app['auth']   = $auth                = m::mock('\Antares\Contracts\Auth\Guard');
         $this->app['config'] = $config              = m::mock('\Illuminate\Contracts\Config\Repository');
         $this->app['events'] = $event               = m::mock('\Illuminate\Contracts\Events\Dispatcher');
@@ -150,7 +151,7 @@ class AuthorizationTest extends TestCase
         $actions->setAccessible(true);
         $acl->setAccessible(true);
 
-        $expected = ['guest', 'admin', 'foo'];
+        $expected = [1 => 'admin', 2 => 'foo'];
         $this->assertEquals($expected, $roles->getValue($stub)->get());
         $this->assertEquals($expected, $memory->getValue($stub)->get('acl_foo.roles'));
         $this->assertEquals($expected, $runtime->get('acl_foo.roles'));
@@ -162,7 +163,7 @@ class AuthorizationTest extends TestCase
         $this->assertEquals($expected, $runtime->get('acl_foo.actions'));
         $this->assertInstanceOf('\Antares\Authorization\Fluent', $stub->actions());
 
-        $expected = ['0:0' => false, '0:1' => false, '1:0' => true, '1:1' => true, '2:2' => true];
+        $expected = ['1:0' => true, '1:1' => true, '2:2' => true];
         $this->assertEquals($expected, $acl->getValue($stub));
         $this->assertEquals($expected, $memory->getValue($stub)->get('acl_foo.acl'));
         $this->assertEquals($expected, $runtime->get('acl_foo.acl'));
@@ -173,7 +174,6 @@ class AuthorizationTest extends TestCase
      * Test Antares\Authorization\Authorization::attach() method throws exception
      * when attaching multiple memory instance.
      *
-     * @expectedException \RuntimeException
      */
     public function testAttachMethodThrowsExceptionWhenAttachMultipleMemory()
     {
@@ -183,7 +183,7 @@ class AuthorizationTest extends TestCase
         $runtime2 = new Provider(new Runtime('foobar', []));
 
         $stub = new Authorization($this->app['auth'], 'foo', $runtime1);
-        $stub->attach($runtime2);
+        $this->assertNull($stub->attach($runtime2));
     }
 
     /**
@@ -223,7 +223,7 @@ class AuthorizationTest extends TestCase
         $memory->setAccessible(true);
         $acl->setAccessible(true);
 
-        $expected = ['0:0' => true, '0:1' => false, '1:0' => true, '1:1' => true];
+        $expected = ['1:0' => true, '1:1' => true, '2:0' => true];
         $this->assertEquals($expected, $acl->getValue($stub));
         $this->assertEquals($expected, $memory->getValue($stub)->get('acl_foo.acl'));
         $this->assertEquals($expected, $runtime->get('acl_foo.acl'));
@@ -250,7 +250,7 @@ class AuthorizationTest extends TestCase
         $memory->setAccessible(true);
         $acl->setAccessible(true);
 
-        $expected = ['0:0' => false, '0:1' => false, '1:0' => false, '1:1' => true];
+        $expected = ['1:0' => false, '1:1' => true];
         $this->assertEquals($expected, $acl->getValue($stub));
         $this->assertEquals($expected, $memory->getValue($stub)->get('acl_foo.acl'));
         $this->assertEquals($expected, $runtime->get('acl_foo.acl'));
@@ -274,11 +274,11 @@ class AuthorizationTest extends TestCase
         $stub = new Authorization($auth, 'foo', $runtime);
 
         $stub->addActions(['Manage Page', 'Manage Photo']);
-        $stub->allow('guest', 'Manage Page');
+        $stub->allow('admin', 'Manage Page');
 
         $this->assertTrue($stub->can('manage'));
         $this->assertTrue($stub->can('manage user'));
-        $this->assertFalse($stub->can('manage-page'));
+        $this->assertTrue($stub->can('manage-page'));
         $this->assertFalse($stub->can('manage-photo'));
     }
 
@@ -341,11 +341,13 @@ class AuthorizationTest extends TestCase
      */
     public function testCanMethodAsGuestUser()
     {
+
         $runtime = $this->getRuntimeMemoryProvider();
-        $runtime->put('acl_foo', $this->memoryProvider());
+        $auth    = m::mock('\Antares\Contracts\Auth\Guard');
+        $auth->shouldReceive('guest')->andReturn(true)
+                ->shouldReceive('roles')->andReturn(['guest']);
 
-        $stub = new Authorization($this->app['auth'], 'foo', $runtime);
-
+        $stub = new Authorization($auth, 'foo', $runtime);
         $stub->addActions(['Manage Page', 'Manage Photo']);
         $stub->allow('guest', 'Manage Page');
 
@@ -362,9 +364,12 @@ class AuthorizationTest extends TestCase
     public function testCheckMethod()
     {
         $runtime = $this->getRuntimeMemoryProvider();
-        $runtime->put('acl_foo', $this->memoryProvider());
 
-        $stub = new Authorization($this->app['auth'], 'foo', $runtime);
+        $auth = m::mock('\Antares\Contracts\Auth\Guard');
+        $auth->shouldReceive('guest')->andReturn(true)
+                ->shouldReceive('roles')->andReturn(['guest']);
+
+        $stub = new Authorization($auth, 'foo', $runtime);
 
         $stub->addActions(['Manage Page', 'Manage Photo']);
         $stub->allow('guest', 'Manage Page');
@@ -377,11 +382,11 @@ class AuthorizationTest extends TestCase
     /**
      * Test Antares\Authorization\Authorization::check() method throws exception.
      *
-     * @expectedException \InvalidArgumentException
+     * @test
      */
-    public function testCheckMethodUsingMockOneThrowsException()
+    public function testCheckMethodUsingMockAndNotThrowsException()
     {
-        $this->stub->check('guest', 'view foo');
+        $this->assertFalse($this->stub->check('guest', 'view foo'));
     }
 
     /**
@@ -438,12 +443,12 @@ class AuthorizationTest extends TestCase
         $this->assertInstanceOf('\Antares\Contracts\Memory\Provider', $memory->getValue($stub));
         $this->assertInstanceOf('\Antares\Authorization\Fluent', $roles->getValue($stub));
 
-        $this->assertTrue($stub->roles()->has('guest'));
+        $this->assertFalse($stub->roles()->has('guest'));
         $this->assertTrue($stub->roles()->has('admin'));
-        $this->assertTrue($stub->hasRole('guest'));
+        $this->assertFalse($stub->hasRole('guest'));
         $this->assertTrue($stub->hasRole('admin'));
-        $this->assertEquals(['guest', 'admin'], $roles->getValue($stub)->get());
-        $this->assertEquals(['guest', 'admin'], $stub->roles()->get());
+        $this->assertEquals([1 => 'admin'], $roles->getValue($stub)->get());
+        $this->assertEquals([1 => 'admin'], $stub->roles()->get());
 
         $this->assertInstanceOf('\Antares\Authorization\Fluent', $actions->getValue($stub));
 
@@ -483,9 +488,8 @@ class AuthorizationTest extends TestCase
         $stub->actions()->attach(['manage']);
         $stub->addAction('manage');
         $stub->addActions(['manage']);
-
-        $this->assertEquals(['guest', 'admin'], $roles->getValue($stub)->get());
-        $this->assertEquals(['guest', 'admin'], $stub->roles()->get());
+        $this->assertEquals([1 => 'admin'], $roles->getValue($stub)->get());
+        $this->assertEquals([1 => 'admin'], $stub->roles()->get());
 
         $this->assertEquals(['manage-user', 'manage'], $actions->getValue($stub)->get());
         $this->assertEquals(['manage-user', 'manage'], $stub->actions()->get());

@@ -17,39 +17,26 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Html\Form\TestCase;
 
-use Mockery as m;
-use Illuminate\Container\Container;
-use Illuminate\Support\Fluent;
-use Antares\Contracts\Html\Form\Field;
+namespace Antares\Html\Form\TestCase;
+
 use Antares\Contracts\Html\Form\Template;
-use Antares\Html\Form\Control;
+use Antares\Testing\ApplicationTestCase;
+use Antares\Contracts\Html\Form\Field;
+use Illuminate\Container\Container;
 use Antares\Html\Form\Fieldset;
+use Illuminate\Support\Fluent;
+use Antares\Html\Form\Control;
+use Mockery as m;
 
-class FieldsetTest extends \PHPUnit_Framework_TestCase
+class FieldsetTest extends ApplicationTestCase
 {
-    /**
-     * Application instance.
-     *
-     * @var \Illuminate\Container\Container
-     */
-    protected $app = null;
-
-    /**
-     * Setup the test environment.
-     */
-    public function setUp()
-    {
-        $this->app = new Container();
-    }
 
     /**
      * Teardown the test environment.
      */
     public function tearDown()
     {
-        unset($this->app);
         m::close();
     }
 
@@ -89,20 +76,20 @@ class FieldsetTest extends \PHPUnit_Framework_TestCase
      */
     public function testInstanceOfFieldset()
     {
-        $app = $this->app;
-        $app['Illuminate\Contracts\Config\Repository'] = $config = m::mock('\Illuminate\Contracts\Config\Repository');
-        $app['Antares\Contracts\Html\Form\Control'] = $control = m::mock('\Antares\Html\Form\Control');
-        $app['Antares\Contracts\Html\Form\Template'] = $presenter = $this->getPresenterInstance();
+        $app                                           = $this->app;
+        $app['Illuminate\Contracts\Config\Repository'] = $config                                        = m::mock('\Illuminate\Contracts\Config\Repository');
+        $app['Antares\Contracts\Html\Form\Control']    = $control                                       = m::mock('\Antares\Html\Form\Control');
+        $app['Antares\Contracts\Html\Form\Template']   = $presenter                                     = $this->getPresenterInstance();
 
         $config->shouldReceive('get')->once()
-            ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
+                ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
         $control->shouldReceive('setTemplates')->once()->with($this->getFieldsetTemplates())->andReturnSelf()
-            ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf();
+                ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf();
 
         $stub = new Fieldset($app, 'foo', function ($f) {
+            $f->legend('foo');
             $f->attributes(['class' => 'foo']);
         });
-
         $this->assertEquals('foo', $stub->legend());
 
         $this->assertInstanceOf('\Antares\Html\Form\Fieldset', $stub);
@@ -123,16 +110,16 @@ class FieldsetTest extends \PHPUnit_Framework_TestCase
      */
     public function testOfMethod()
     {
-        $app = $this->app;
-        $app['Illuminate\Contracts\Config\Repository'] = $config = m::mock('\Illuminate\Contracts\Config\Repository');
-        $app['Antares\Contracts\Html\Form\Control'] = $control = m::mock('\Antares\Html\Form\Control');
-        $app['Antares\Contracts\Html\Form\Template'] = $presenter = $this->getPresenterInstance();
+        $app                                           = $this->app;
+        $app['Illuminate\Contracts\Config\Repository'] = $config                                        = m::mock('\Illuminate\Contracts\Config\Repository');
+        $app['Antares\Contracts\Html\Form\Control']    = $control                                       = m::mock('\Antares\Html\Form\Control');
+        $app['Antares\Contracts\Html\Form\Template']   = $presenter                                     = $this->getPresenterInstance();
 
         $config->shouldReceive('get')->once()
-            ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
+                ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
         $control->shouldReceive('setTemplates')->once()->with($this->getFieldsetTemplates())->andReturnSelf()
-            ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf()
-            ->shouldReceive('generate')->once()->with('text');
+                ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf()
+                ->shouldReceive('generate')->once()->with('text');
 
         $stub = new Fieldset($app, function ($f) {
             $f->control('text', 'id', function ($c) {
@@ -154,13 +141,13 @@ class FieldsetTest extends \PHPUnit_Framework_TestCase
      */
     public function testControlMethod()
     {
-        $app = $this->app;
-        $app['Illuminate\Contracts\Config\Repository'] = $config = m::mock('\Illuminate\Contracts\Config\Repository');
-        $app['Antares\Contracts\Html\Form\Template'] = $presenter = $this->getPresenterInstance();
-        $app['html'] = $html = m::mock('\Antares\Html\HtmlBuilder');
-        $app['request'] = $request = m::mock('\Illuminate\Http\Request');
+        $app                                           = $this->app;
+        $app['Illuminate\Contracts\Config\Repository'] = $config                                        = m::mock('\Illuminate\Contracts\Config\Repository');
+        $app['Antares\Contracts\Html\Form\Template']   = $presenter                                     = $this->getPresenterInstance();
+        $app['html']                                   = $html                                          = m::mock('\Antares\Html\HtmlBuilder');
+        $app['request']                                = $request                                       = m::mock('\Illuminate\Http\Request');
 
-        $app['Antares\Contracts\Html\Form\Control'] = $control = new Control($app, $html, $request);
+        $app['Antares\Contracts\Html\Form\Control'] = $control                                    = new Control($app, $html, $request);
 
         $config->shouldReceive('get')->once()
                 ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
@@ -212,10 +199,6 @@ class FieldsetTest extends \PHPUnit_Framework_TestCase
             });
 
             $f->control('text', 'a', 'A');
-
-            $f->control('text', function ($c) {
-                $c->name('b')->label('B')->value('value-of-B');
-            });
         });
 
         $output = $stub->of('button_foo');
@@ -271,7 +254,7 @@ class FieldsetTest extends \PHPUnit_Framework_TestCase
         $controls = $stub->controls;
         $output   = end($controls);
 
-        $this->assertEquals('b', call_user_func($output->field, new Fluent(), $output));
+        $this->assertEquals('a', call_user_func($output->field, new Fluent(), $output));
     }
 
     /**
@@ -281,18 +264,19 @@ class FieldsetTest extends \PHPUnit_Framework_TestCase
      */
     public function testOfMethodThrowsException()
     {
-        $app = $this->app;
-        $app['Illuminate\Contracts\Config\Repository'] = $config = m::mock('\Illuminate\Contracts\Config\Repository');
-        $app['Antares\Contracts\Html\Form\Control'] = $control = m::mock('\Antares\Html\Form\Control');
-        $app['Antares\Contracts\Html\Form\Template'] = $presenter = $this->getPresenterInstance();
+        $app                                           = $this->app;
+        $app['Illuminate\Contracts\Config\Repository'] = $config                                        = m::mock('\Illuminate\Contracts\Config\Repository');
+        $app['Antares\Contracts\Html\Form\Control']    = $control                                       = m::mock('\Antares\Html\Form\Control');
+        $app['Antares\Contracts\Html\Form\Template']   = $presenter                                     = $this->getPresenterInstance();
 
         $config->shouldReceive('get')->once()
-            ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
+                ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
         $control->shouldReceive('setTemplates')->once()->with($this->getFieldsetTemplates())->andReturnSelf()
-            ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf();
+                ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf();
 
         $stub = new Fieldset($app, function ($f) {
-                    });
+            
+        });
 
         $stub->of('id');
     }
@@ -304,18 +288,19 @@ class FieldsetTest extends \PHPUnit_Framework_TestCase
      */
     public function testAttributesMethod()
     {
-        $app = $this->app;
-        $app['Illuminate\Contracts\Config\Repository'] = $config = m::mock('\Illuminate\Contracts\Config\Repository');
-        $app['Antares\Contracts\Html\Form\Control'] = $control = m::mock('\Antares\Html\Form\Control');
-        $app['Antares\Contracts\Html\Form\Template'] = $presenter = $this->getPresenterInstance();
+        $app                                           = $this->app;
+        $app['Illuminate\Contracts\Config\Repository'] = $config                                        = m::mock('\Illuminate\Contracts\Config\Repository');
+        $app['Antares\Contracts\Html\Form\Control']    = $control                                       = m::mock('\Antares\Html\Form\Control');
+        $app['Antares\Contracts\Html\Form\Template']   = $presenter                                     = $this->getPresenterInstance();
 
         $config->shouldReceive('get')->once()
-            ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
+                ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
         $control->shouldReceive('setTemplates')->once()->with($this->getFieldsetTemplates())->andReturnSelf()
-            ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf();
+                ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf();
 
         $stub = new Fieldset($app, function () {
-                    });
+            
+        });
 
         $refl       = new \ReflectionObject($stub);
         $attributes = $refl->getProperty('attributes');
@@ -340,18 +325,19 @@ class FieldsetTest extends \PHPUnit_Framework_TestCase
      */
     public function testMagicMethodCallThrowsException()
     {
-        $app = $this->app;
-        $app['Illuminate\Contracts\Config\Repository'] = $config = m::mock('\Illuminate\Contracts\Config\Repository');
-        $app['Antares\Contracts\Html\Form\Control'] = $control = m::mock('\Antares\Html\Form\Control');
-        $app['Antares\Contracts\Html\Form\Template'] = $presenter = $this->getPresenterInstance();
+        $app                                           = $this->app;
+        $app['Illuminate\Contracts\Config\Repository'] = $config                                        = m::mock('\Illuminate\Contracts\Config\Repository');
+        $app['Antares\Contracts\Html\Form\Control']    = $control                                       = m::mock('\Antares\Html\Form\Control');
+        $app['Antares\Contracts\Html\Form\Template']   = $presenter                                     = $this->getPresenterInstance();
 
         $config->shouldReceive('get')->once()
-            ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
+                ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
         $control->shouldReceive('setTemplates')->once()->with($this->getFieldsetTemplates())->andReturnSelf()
-            ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf();
+                ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf();
 
         $stub = new Fieldset($app, function ($f) {
-                    });
+            
+        });
 
         $stub->invalidMethod();
     }
@@ -364,18 +350,19 @@ class FieldsetTest extends \PHPUnit_Framework_TestCase
      */
     public function testMagicMethodGetThrowsException()
     {
-        $app = $this->app;
-        $app['Illuminate\Contracts\Config\Repository'] = $config = m::mock('\Illuminate\Contracts\Config\Repository');
-        $app['Antares\Contracts\Html\Form\Control'] = $control = m::mock('\Antares\Html\Form\Control');
-        $app['Antares\Contracts\Html\Form\Template'] = $presenter = $this->getPresenterInstance();
+        $app                                           = $this->app;
+        $app['Illuminate\Contracts\Config\Repository'] = $config                                        = m::mock('\Illuminate\Contracts\Config\Repository');
+        $app['Antares\Contracts\Html\Form\Control']    = $control                                       = m::mock('\Antares\Html\Form\Control');
+        $app['Antares\Contracts\Html\Form\Template']   = $presenter                                     = $this->getPresenterInstance();
 
         $config->shouldReceive('get')->once()
-            ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
+                ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
         $control->shouldReceive('setTemplates')->once()->with($this->getFieldsetTemplates())->andReturnSelf()
-            ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf();
+                ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf();
 
         $stub = new Fieldset($app, function ($f) {
-                    });
+            
+        });
 
         $stub->invalidProperty;
     }
@@ -388,18 +375,19 @@ class FieldsetTest extends \PHPUnit_Framework_TestCase
      */
     public function testMagicMethodSetThrowsException()
     {
-        $app = $this->app;
-        $app['Illuminate\Contracts\Config\Repository'] = $config = m::mock('\Illuminate\Contracts\Config\Repository');
-        $app['Antares\Contracts\Html\Form\Control']  = $control = m::mock('\Antares\Html\Form\Control');
-        $app['Antares\Contracts\Html\Form\Template'] = $presenter = $this->getPresenterInstance();
+        $app                                           = $this->app;
+        $app['Illuminate\Contracts\Config\Repository'] = $config                                        = m::mock('\Illuminate\Contracts\Config\Repository');
+        $app['Antares\Contracts\Html\Form\Control']    = $control                                       = m::mock('\Antares\Html\Form\Control');
+        $app['Antares\Contracts\Html\Form\Template']   = $presenter                                     = $this->getPresenterInstance();
 
         $config->shouldReceive('get')->once()
-            ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
+                ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
         $control->shouldReceive('setTemplates')->once()->with($this->getFieldsetTemplates())->andReturnSelf()
-            ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf();
+                ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf();
 
         $stub = new Fieldset($app, function ($f) {
-                    });
+            
+        });
 
         $stub->invalidProperty = ['foo'];
     }
@@ -412,18 +400,19 @@ class FieldsetTest extends \PHPUnit_Framework_TestCase
      */
     public function testMagicMethodSetThrowsExceptionValuesNotAnArray()
     {
-        $app = $this->app;
-        $app['Illuminate\Contracts\Config\Repository'] = $config = m::mock('\Illuminate\Contracts\Config\Repository');
-        $app['Antares\Contracts\Html\Form\Control'] = $control = m::mock('\Antares\Html\Form\Control');
-        $app['Antares\Contracts\Html\Form\Template'] = $presenter = $this->getPresenterInstance();
+        $app                                           = $this->app;
+        $app['Illuminate\Contracts\Config\Repository'] = $config                                        = m::mock('\Illuminate\Contracts\Config\Repository');
+        $app['Antares\Contracts\Html\Form\Control']    = $control                                       = m::mock('\Antares\Html\Form\Control');
+        $app['Antares\Contracts\Html\Form\Template']   = $presenter                                     = $this->getPresenterInstance();
 
         $config->shouldReceive('get')->once()
-            ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
+                ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
         $control->shouldReceive('setTemplates')->once()->with($this->getFieldsetTemplates())->andReturnSelf()
-            ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf();
+                ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf();
 
         $stub = new Fieldset($app, function ($f) {
-                    });
+            
+        });
 
         $stub->attributes = 'foo';
     }
@@ -436,25 +425,28 @@ class FieldsetTest extends \PHPUnit_Framework_TestCase
      */
     public function testMagicMethodIssetThrowsException()
     {
-        $app = $this->app;
-        $app['Illuminate\Contracts\Config\Repository'] = $config = m::mock('\Illuminate\Contracts\Config\Repository');
-        $app['Antares\Contracts\Html\Form\Control'] = $control = m::mock('\Antares\Html\Form\Control');
-        $app['Antares\Contracts\Html\Form\Template'] = $presenter = $this->getPresenterInstance();
+        $app                                           = $this->app;
+        $app['Illuminate\Contracts\Config\Repository'] = $config                                        = m::mock('\Illuminate\Contracts\Config\Repository');
+        $app['Antares\Contracts\Html\Form\Control']    = $control                                       = m::mock('\Antares\Html\Form\Control');
+        $app['Antares\Contracts\Html\Form\Template']   = $presenter                                     = $this->getPresenterInstance();
 
         $config->shouldReceive('get')->once()
-            ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
+                ->with('antares/html::form.templates', [])->andReturn($this->getFieldsetTemplates());
         $control->shouldReceive('setTemplates')->once()->with($this->getFieldsetTemplates())->andReturnSelf()
-            ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf();
+                ->shouldReceive('setPresenter')->once()->with($presenter)->andReturnSelf();
 
         $stub = new Fieldset($app, function ($f) {
-                    });
+            
+        });
 
         isset($stub->invalidProperty) ? true : false;
     }
+
 }
 
 class StubTemplatePresenter implements Template
 {
+
     /**
      * Button template.
      *
@@ -562,4 +554,5 @@ class StubTemplatePresenter implements Template
     {
         return $field->name;
     }
+
 }

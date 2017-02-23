@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Authorization;
 
 use InvalidArgumentException;
@@ -103,7 +102,6 @@ trait AuthorizationTrait
     {
         $roles   = $this->roles->filter($roles);
         $actions = $this->actions->filter($actions);
-
         foreach ($roles as $role) {
             if (!$this->roles->has($role)) {
                 throw new InvalidArgumentException("Role {$role} does not exist.");
