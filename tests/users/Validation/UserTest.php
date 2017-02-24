@@ -17,13 +17,15 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Tests\Validation;
 
+namespace Antares\Users\Tests\Validation;
+
+use Antares\Users\Validation\User;
 use Mockery as m;
-use Antares\Foundation\Validation\User;
 
 class UserTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -33,7 +35,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Validation\User.
+     * Test Antares\Users\Validation\User.
      *
      * @test
      */
@@ -48,7 +50,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Validation\User validation.
+     * Test Antares\Users\Validation\User validation.
      *
      * @test
      */
@@ -73,7 +75,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
         $factory->shouldReceive('make')->once()->with($input, $rules, [])->andReturn($validator);
 
         $events->shouldReceive('fire')->once()->with('antares.validate: users', m::any())->andReturnNull()
-            ->shouldReceive('fire')->once()->with('antares.validate: user.account', m::any())->andReturnNull();
+                ->shouldReceive('fire')->once()->with('antares.validate: user.account', m::any())->andReturnNull();
 
         $stub       = new User($factory, $events);
         $validation = $stub->with($input);
@@ -82,7 +84,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Validation\User on create.
+     * Test Antares\Users\Validation\User on create.
      *
      * @test
      */
@@ -108,11 +110,12 @@ class UserTest extends \PHPUnit_Framework_TestCase
 
         $factory->shouldReceive('make')->once()->with($input, $rules, [])->andReturn($validator);
         $events->shouldReceive('fire')->once()->with('antares.validate: users', m::any())->andReturnNull()
-            ->shouldReceive('fire')->once()->with('antares.validate: user.account', m::any())->andReturnNull();
+                ->shouldReceive('fire')->once()->with('antares.validate: user.account', m::any())->andReturnNull();
 
         $stub       = new User($factory, $events);
         $validation = $stub->on('create')->with($input);
 
         $this->assertEquals($validator, $validation);
     }
+
 }

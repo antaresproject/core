@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Composers;
 
 use Illuminate\Container\Container;
@@ -79,6 +78,10 @@ class LeftPane
         if ($name instanceof View) {
             $name = null;
         }
+        if (is_null($this->widget)) {
+            return false;
+        }
+
         $this->widget
                 ->make((is_null($name) ? 'pane.left' : $name))
                 ->add(isset($options['name']) ? $options['name'] : $this->defaultAttributes['name'])

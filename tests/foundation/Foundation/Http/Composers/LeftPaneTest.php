@@ -18,13 +18,13 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Composers\TestCase;
 
 use Antares\Foundation\Http\Composers\LeftPane;
-use Antares\Testing\TestCase;
+use Antares\Testing\ApplicationTestCase;
+use Mockery as m;
 
-class LeftPaneTest extends TestCase
+class LeftPaneTest extends ApplicationTestCase
 {
 
     /**
@@ -33,17 +33,30 @@ class LeftPaneTest extends TestCase
      */
     public function testConstructing()
     {
-        $this->assertInstanceOf('\Antares\Foundation\Http\Composers\LeftPane', new LeftPane());
+        $router = m::mock(\Illuminate\Routing\Router::class);
+        $router->shouldReceive('current')->withNoArgs()->andReturnSelf()
+                ->shouldReceive('parameters')->withNoArgs()->andReturn([]);
+
+        $widgetManager = $this->app->make(\Antares\Widget\WidgetManager::class);
+        $this->assertInstanceOf('\Antares\Foundation\Http\Composers\LeftPane', new LeftPane($widgetManager, $router));
     }
 
     /**
+     * Tests compose method
+     * 
      * @test
-     * test compose method
      */
     public function testCompose()
     {
-        $stub = new LeftPane();
-        $this->assertNull($stub->compose('pane.foo'));
+
+        $router = m::mock(\Illuminate\Routing\Router::class);
+        $router->shouldReceive('current')->withNoArgs()->andReturnSelf()
+                ->shouldReceive('parameters')->withNoArgs()->andReturn([]);
+
+        $widgetManager = $this->app->make(\Antares\Widget\WidgetManager::class);
+
+        $stub = new LeftPane($widgetManager, $router);
+        $this->assertFalse($stub->compose('pane.foo'));
     }
 
 }

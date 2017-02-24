@@ -18,16 +18,13 @@
  * @link       http://antaresproject.io
  */
 
+namespace Antares\Users\Http\Controllers\TestCase;
 
-namespace Antares\Foundation\Http\Controllers\TestCase;
-
-use Mockery as m;
-use Antares\Testing\TestCase;
-use Antares\Support\Facades\Meta;
-use Illuminate\Support\Facades\View;
-use Antares\Support\Facades\Messages;
-use Antares\Support\Facades\Foundation;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Support\Facades\View;
+use Antares\Support\Facades\Meta;
+use Antares\Testing\TestCase;
+use Mockery as m;
 
 class CredentialControllerTest extends TestCase
 {
@@ -51,9 +48,9 @@ class CredentialControllerTest extends TestCase
      */
     protected function bindValidation()
     {
-        $validator = m::mock('\Antares\Foundation\Validation\AuthenticateUser');
+        $validator = m::mock('\Antares\Users\Validation\AuthenticateUser');
 
-        $this->app->instance('Antares\Foundation\Validation\AuthenticateUser', $validator);
+        $this->app->instance('Antares\Users\Validation\AuthenticateUser', $validator);
 
         return $validator;
     }
@@ -77,16 +74,16 @@ class CredentialControllerTest extends TestCase
     /**
      * Get processor mock.
      *
-     * @return \Antares\Foundation\Processor\AuthenticateUser
+     * @return \Antares\Users\Processor\AuthenticateUser
      */
     protected function getProcessorMock()
     {
-        $processor = m::mock('\Antares\Foundation\Processor\AuthenticateUser', [
-                    m::mock('\Antares\Foundation\Validation\AuthenticateUser'),
+        $processor = m::mock('\Antares\Users\Processor\AuthenticateUser', [
+                    m::mock('\Antares\Users\Validation\AuthenticateUser'),
                     m::mock('\Illuminate\Contracts\Auth\Guard'),
         ]);
 
-        $this->app->instance('Antares\Foundation\Processor\AuthenticateUser', $processor);
+        $this->app->instance('Antares\Users\Processor\AuthenticateUser', $processor);
 
         return $processor;
     }

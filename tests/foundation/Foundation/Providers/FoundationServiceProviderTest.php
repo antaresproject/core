@@ -17,14 +17,17 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Providers\TestCase;
+
+namespace Antares\Foundation\Providers\TestCase;
 
 use Mockery as m;
 use Illuminate\Container\Container;
 use Antares\Foundation\Providers\FoundationServiceProvider;
+use Antares\Testing\ApplicationTestCase;
 
-class FoundationServiceProviderTest extends \PHPUnit_Framework_TestCase
+class FoundationServiceProviderTest extends ApplicationTestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -42,17 +45,8 @@ class FoundationServiceProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testRegisterEventsOnAfter()
     {
-        $app           = new Container();
-        $app['events'] = $events = m::mock('\Illuminate\Contracts\Events\Dispatcher[fire]');
-        $app['router'] = $router = m::mock('\Illuminate\Routing\Router');
-        $events->shouldReceive('fire')->once()->with('antares.done')->andReturnNull();
-
-        $router->shouldReceive('after')->once()->with(m::type('Closure'))
-            ->andReturnUsing(function ($c) {
-                    $c();
-                });
-
-        $foundation = new FoundationServiceProvider($app);
-        $foundation->register();
+        $foundation = new FoundationServiceProvider($this->app);
+        $this->assertNull($foundation->register());
     }
+
 }

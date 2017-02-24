@@ -17,13 +17,15 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Processor\TestCase;
 
+namespace Antares\Users\Processor\TestCase;
+
+use Antares\Users\Processor\AuthenticateUser;
 use Mockery as m;
-use Antares\Foundation\Processor\AuthenticateUser;
 
 class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -33,7 +35,7 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Processor\AuthenticateUser::login()
+     * Test Antares\Users\Processor\AuthenticateUser::login()
      * method.
      *
      * @test
@@ -41,7 +43,7 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
     public function testLoginMethod()
     {
         $listener  = m::mock('\Antares\Contracts\Auth\Listener\AuthenticateUser');
-        $validator = m::mock('\Antares\Foundation\Validation\AuthenticateUser');
+        $validator = m::mock('\Antares\Users\Validation\AuthenticateUser');
         $resolver  = m::mock('\Illuminate\Contracts\Validation\Validator');
         $auth      = m::mock('\Illuminate\Contracts\Auth\Guard');
         $user      = m::mock('\Antares\Model\User, \Illuminate\Contracts\Auth\Authenticatable');
@@ -49,13 +51,13 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
         $input = $this->getInput();
 
         $validator->shouldReceive('on')->once()->with('login')->andReturn($validator)
-            ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
+                ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
         $resolver->shouldReceive('fails')->once()->andReturn(false);
         $auth->shouldReceive('attempt')->once()->with(m::type('Array'), true)->andReturn(true)
-            ->shouldReceive('getUser')->once()->andReturn($user);
+                ->shouldReceive('getUser')->once()->andReturn($user);
         $user->shouldReceive('getAttribute')->once()->with('status')->andReturn(0)
-            ->shouldReceive('activate')->once()->andReturnSelf()
-            ->shouldReceive('save')->once()->andReturnNull();
+                ->shouldReceive('activate')->once()->andReturnSelf()
+                ->shouldReceive('save')->once()->andReturnNull();
         $listener->shouldReceive('userHasLoggedIn')->once()->andReturn('logged.in');
 
         $stub = new AuthenticateUser($validator, $auth);
@@ -64,7 +66,7 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Processor\AuthenticateUser::login()
+     * Test Antares\Users\Processor\AuthenticateUser::login()
      * method given failed authentication.
      *
      * @test
@@ -72,14 +74,14 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
     public function testLoginMethodGivenFailedAuthentication()
     {
         $listener  = m::mock('\Antares\Contracts\Auth\Listener\AuthenticateUser');
-        $validator = m::mock('\Antares\Foundation\Validation\AuthenticateUser');
+        $validator = m::mock('\Antares\Users\Validation\AuthenticateUser');
         $resolver  = m::mock('\Illuminate\Contracts\Validation\Validator');
         $auth      = m::mock('\Illuminate\Contracts\Auth\Guard');
 
         $input = $this->getInput();
 
         $validator->shouldReceive('on')->once()->with('login')->andReturn($validator)
-            ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
+                ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
         $resolver->shouldReceive('fails')->once()->andReturn(false);
         $auth->shouldReceive('attempt')->once()->with(m::type('Array'), true)->andReturn(false);
         $listener->shouldReceive('userLoginHasFailedAuthentication')->once()
@@ -91,7 +93,7 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Processor\AuthenticateUser::login()
+     * Test Antares\Users\Processor\AuthenticateUser::login()
      * method given failed validation.
      *
      * @test
@@ -99,16 +101,16 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
     public function testLoginMethodGivenFailedValidation()
     {
         $listener  = m::mock('\Antares\Contracts\Auth\Listener\AuthenticateUser');
-        $validator = m::mock('\Antares\Foundation\Validation\AuthenticateUser');
+        $validator = m::mock('\Antares\Users\Validation\AuthenticateUser');
         $resolver  = m::mock('\Illuminate\Contracts\Validation\Validator');
         $auth      = m::mock('\Illuminate\Contracts\Auth\Guard');
 
         $input = $this->getInput();
 
         $validator->shouldReceive('on')->once()->with('login')->andReturn($validator)
-            ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
+                ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
         $resolver->shouldReceive('fails')->once()->andReturn(true)
-            ->shouldReceive('getMessageBag')->once()->andReturn([]);
+                ->shouldReceive('getMessageBag')->once()->andReturn([]);
         $listener->shouldReceive('userLoginHasFailedValidation')->once()
                 ->with(m::type('Array'))->andReturn('login.validation.failed');
 
@@ -118,7 +120,7 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Processor\AuthenticateUser::logout()
+     * Test Antares\Users\Processor\AuthenticateUser::logout()
      * method.
      *
      * @test
@@ -126,7 +128,7 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
     public function testLogoutMethod()
     {
         $listener  = m::mock('\Antares\Contracts\Auth\Listener\AuthenticateUser');
-        $validator = m::mock('\Antares\Foundation\Validation\AuthenticateUser');
+        $validator = m::mock('\Antares\Users\Validation\AuthenticateUser');
         $auth      = m::mock('\Illuminate\Contracts\Auth\Guard');
 
         $stub = new AuthenticateUser($validator, $auth);
@@ -151,4 +153,5 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
             'remember' => 'yes',
         ];
     }
+
 }

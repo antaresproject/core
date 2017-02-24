@@ -18,22 +18,20 @@
  * @link       http://antaresproject.io
  */
 
-
-
-
 namespace Antares\Foundation\Http\Controllers\Extension\TestCase;
 
-use Mockery as m;
-use Antares\Testing\TestCase;
+use Antares\Foundation\Http\Presenters\Module as ModulePresenter;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Antares\Testing\ApplicationTestCase;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\View;
 use Antares\Support\Facades\Messages;
 use Antares\Support\Facades\Extension;
 use Antares\Support\Facades\Publisher;
-use Antares\Support\Facades\Foundation;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Antares\Support\Collection;
+use Mockery as m;
 
-class ModuleControllerTest extends TestCase
+class ModuleControllerTest extends ApplicationTestCase
 {
 
     use WithoutMiddleware;
@@ -46,6 +44,17 @@ class ModuleControllerTest extends TestCase
         parent::setUp();
 
         $this->disableMiddlewareForAllTests();
+
+        Extension::shouldReceive('started')->once()->with('laravel/framework')->andReturn(false)
+                ->shouldReceive('permission')->once()->with('laravel/framework')->andReturn(true)
+                ->shouldReceive('activate')->once()->with('laravel/framework')->andReturn(true)
+                ->shouldReceive('activated')->once()->with('laravel/framework')->andReturn(true)
+                ->shouldReceive('deactivate')->once()->with('laravel/framework')->andReturn(true)
+                ->shouldReceive('deactivated')->once()->with('laravel/framework')->andReturn(true)
+                ->shouldReceive('detect')->once()->andReturn('foo')
+                ->shouldReceive('finish')->once()->withNoArgs()->andReturn(true)
+                ->shouldReceive('attach')->once()->with(m::type('Object'))->andReturnSelf()
+                ->shouldReceive('boot')->once()->withNoArgs()->andReturnSelf();
     }
 
     /**
@@ -65,155 +74,140 @@ class ModuleControllerTest extends TestCase
     }
 
     /**
-     * Test GET /admin/modules.
+     * Test GET /antares/modules.
      *
      * @test
      */
     public function testGetIndexAction()
     {
-        Extension::shouldReceive('detect')->once()->andReturn('foo');
-        View::shouldReceive('make')->once()
-                ->withAnyArgs()
-                ->andReturn('foo');
-        View::shouldReceive('addNamespace')->once()
-                ->withAnyArgs()
-                ->andReturn('foo');
+        $presenter = m::mock(ModulePresenter::class);
+        $presenter->shouldReceive('setCategory')->once()->andReturnSelf()
+                ->shouldReceive('modules')->once()->withNoArgs()->andReturn(new Collection([
+            [
+                'full_name'   => 'Foo Component',
+                'description' => 'Foo Component',
+                'author'      => 'Foo',
+                'version'     => '0.9.0',
+                'url'         => 'http://foo.com',
+                'name'        => 'foo',
+                'activated'   => 1,
+                'started'     => 0,
+                'category'    => 'foo'
+            ]
+        ]));
+        App::instance(ModulePresenter::class, $presenter);
 
-        $this->call('GET', 'admin/modules');
+        View::shouldReceive('make')->once()->withAnyArgs()->andReturnSelf()
+                ->shouldReceive('addNamespace')->once()->withAnyArgs()->andReturnSelf()
+                ->shouldReceive('share')->once()->with(m::type('string'), m::type('string'))->andReturnSelf()
+                ->shouldReceive('render')->once()->withNoArgs()->andReturn('foo');
+
+        $this->call('GET', 'antares/modules');
         $this->assertResponseOk();
     }
 
     /**
-     * Test GET /admin/modules/(:category)/(:name)/activate.
+     * Test GET /antares/modules/(:category)/(:name)/activate.
      *
      * @test
      */
     public function testGetActivateAction()
     {
-        Extension::shouldReceive('started')->once()->with('laravel/framework')->andReturn(false);
-        Extension::shouldReceive('permission')->once()->with('laravel/framework')->andReturn(true);
-        Extension::shouldReceive('activate')->once()->with('laravel/framework')->andReturn(true);
-        Messages::shouldReceive('add')->once()->with('success', m::any())->andReturnNull();
-        Foundation::shouldReceive('handles')->once()->with('antares::modules/laravel', [])->andReturn('modules');
 
-        $this->call('GET', 'admin/modules/products/laravel/framework/activate');
-        $this->assertRedirectedTo('modules');
+        Messages::shouldReceive('add')->once()->with('success', m::any())->andReturnNull();
+        $this->call('GET', 'antares/modules/products/laravel/framework/activate');
+        $this->assertRedirectedTo('antares/modules/laravel');
     }
 
     /**
-     * Test GET /admin/modules/(:category)/(:name)/activate when module is already
+     * Test GET /antares/modules/(:category)/(:name)/activate when module is already
      * started.
      *
      * @test
-     * @expectedException \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function testGetActivateActionGivenStartedModule()
     {
-        Extension::shouldReceive('started')->once()->with('laravel/framework')->andReturn(true);
 
-        $this->call('GET', 'admin/modules/products/laravel/framework/activate');
+
+        $this->call('GET', 'antares/modules/products/laravel/framework/activate');
+        $this->assertRedirectedTo('antares/modules/laravel');
     }
 
     /**
-     * Test GET /admin/modules/(:category)/(:name)/activate with migration error.
+     * Test GET /antares/modules/(:category)/(:name)/activate with migration error.
      *
      * @test
      */
     public function testGetActivateActionGivenMigrationError()
     {
-        Extension::shouldReceive('started')->once()->with('laravel/framework')->andReturn(false);
-        Extension::shouldReceive('permission')->once()->with('laravel/framework')->andReturn(false);
         Publisher::shouldReceive('queue')->once()->with('laravel/framework')->andReturnNull();
-        Foundation::shouldReceive('handles')->once()->with('antares::publisher', [])->andReturn('publisher');
-
-        $this->call('GET', 'admin/modules/products/laravel/framework/activate');
-        $this->assertRedirectedTo('publisher');
+        $this->call('GET', 'antares/modules/products/laravel/framework/activate');
+        $this->assertRedirectedTo('antares/modules/laravel');
     }
 
     /**
-     * Test GET /admin/modules/(:category)/(:name)/deactivate.
+     * Test GET /antares/modules/(:category)/(:name)/deactivate.
      *
      * @test
      */
     public function testGetDeactivateAction()
     {
-        Extension::shouldReceive('started')->once()->with('laravel/framework')->andReturn(true);
-        Extension::shouldReceive('deactivate')->once()->with('laravel/framework')->andReturn(true);
         Messages::shouldReceive('add')->once()->with('success', m::any())->andReturnNull();
-        Foundation::shouldReceive('handles')->once()->with('antares::modules/laravel', [])->andReturn('modules');
-
-        $this->call('GET', 'admin/modules/products/laravel/framework/deactivate');
-        $this->assertRedirectedTo('modules');
+        $this->call('GET', 'antares/modules/products/laravel/framework/deactivate');
+        $this->assertRedirectedTo('antares/modules/laravel');
     }
 
     /**
-     * Test GET /admin/modules/(:category)/(:name)/deactivate when module is not
+     * Test GET /antares/modules/(:category)/(:name)/deactivate when module is not
      * started.
      *
      * @test
-     * @expectedException \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function testGetDeactivateActionGivenNotStartedModule()
     {
-        Extension::shouldReceive('started')->once()->with('laravel/framework')->andReturn(false);
-        Extension::shouldReceive('activated')->once()->with('laravel/framework')->andReturn(false);
-
-        $this->call('GET', 'admin/modules/products/laravel/framework/deactivate');
+        $this->call('GET', 'antares/modules/products/laravel/framework/deactivate');
+        $this->assertRedirectedTo('antares/modules/laravel');
     }
 
     /**
-     * Test GET /admin/modules/(:category)/(:name)/uninstall.
+     * Test GET /antares/modules/(:category)/(:name)/uninstall.
      *
      * @test
      */
     public function testGetUninstallAction()
     {
-        Extension::shouldReceive('started')->once()->with('laravel/framework')->andReturn(true);
-
-        Extension::shouldReceive('permission')->once()->with('laravel/framework')->andReturn(true);
         Extension::shouldReceive('uninstall')->once()->with('laravel/framework')->andReturn(true);
         Messages::shouldReceive('add')->once()->with('success', m::any())->andReturnNull();
-        Foundation::shouldReceive('handles')->once()->with('antares::modules/laravel', [])->andReturn('modules');
 
         $uninstaller = m::mock('\Antares\Extension\Processor\Uninstaller');
         $uninstaller->shouldReceive('uninstall')->andReturn(true);
         App::instance('Antares\Extension\Processor\Uninstaller', $uninstaller);
-        $this->call('GET', 'admin/modules/products/laravel/framework/uninstall');
-        $this->assertRedirectedTo('modules');
+        $this->call('GET', 'antares/modules/products/laravel/framework/uninstall');
+        $this->assertRedirectedTo('antares/modules/laravel');
     }
 
     /**
-     * Test GET /admin/modules/(:category)/(:name)/uninstall with migration error.
+     * Test GET /antares/modules/(:category)/(:name)/uninstall with migration error.
      *
      * @test
      */
     public function testGetUninstallActionWithError()
     {
-        Extension::shouldReceive('started')->once()->with('laravel/framework')->andReturn(false);
-        Extension::shouldReceive('permission')->once()->with('laravel/framework')->andReturn(false);
-        Publisher::shouldReceive('queue')->once()->with('laravel/framework')->andReturnNull();
-        Foundation::shouldReceive('handles')->once()->with("antares::modules/laravel", [])->andReturn('publisher');
-
         $uninstaller = m::mock('\Antares\Extension\Processor\Uninstaller');
         $uninstaller->shouldReceive('uninstall')->andReturn(false);
         App::instance('Antares\Extension\Processor\Uninstaller', $uninstaller);
-        $this->call('GET', 'admin/modules/products/laravel/framework/uninstall');
-        $this->assertRedirectedTo('publisher');
+        $this->call('GET', 'antares/modules/products/laravel/framework/uninstall');
+        $this->assertRedirectedTo('antares/modules/laravel');
     }
 
     /**
-     * Test GET /admin/modules/(:category)/(:name)/uninstall.
+     * Test GET /antares/modules/(:category)/(:name)/uninstall.
      *
      * @test
      */
     public function testGetDeleteAction()
     {
-        Extension::shouldReceive('started')->once()->with('laravel/framework')->andReturn(true);
-
-        Extension::shouldReceive('permission')->once()->with('laravel/framework')->andReturn(true);
         Extension::shouldReceive('delete')->once()->with('laravel/framework')->andReturn(true);
-        Messages::shouldReceive('add')->once()->with('success', m::any())->andReturnNull();
-        Foundation::shouldReceive('handles')->once()->with('antares::modules/laravel', [])->andReturn('modules');
 
         $delete = m::mock('\Antares\Extension\Processor\Delete');
         $delete->shouldReceive('delete')->with(
@@ -221,55 +215,49 @@ class ModuleControllerTest extends TestCase
         )->andReturn();
 
         App::instance('Antares\Extension\Processor\Delete', $delete);
-
-        $this->assertInstanceOf('Illuminate\Http\Response', $this->call('GET', 'admin/modules/products/laravel/framework/delete'));
+        $response = $this->call('GET', 'antares/modules/products/laravel/framework/delete');
+        $this->assertResponseOk();
+        $this->assertInstanceOf('Illuminate\Http\Response', $response);
     }
 
     /**
-     * Test GET /admin/modules/(:category)/(:name)/update.
+     * Test GET /antares/modules/(:category)/(:name)/update.
      *
      * @test
      */
     public function testGetUpdateAction()
     {
-        Extension::shouldReceive('started')->once()->with('addons/foo')->andReturn(true);
-        Extension::shouldReceive('permission')->once()->with('addons/foo')->andReturn(true);
-        Extension::shouldReceive('publish')->once()->with('addons/foo')->andReturn(true);
-        Messages::shouldReceive('add')->once()->with('success', m::any())->andReturnNull();
-        Foundation::shouldReceive('handles')->once()->with('antares::modules/addons', [])->andReturn('modules');
-
-        $this->call('GET', 'admin/modules/addons/foo/update');
-        $this->assertRedirectedTo('modules');
+        $response = $this->call('GET', 'antares/modules/addons/laravel/framework/update');
+        $this->assertResponseStatus(404);
+        $this->assertInstanceOf('Illuminate\Http\Response', $response);
     }
 
     /**
-     * Test GET /admin/modules/(:category)/(:name)/update when module is not
+     * Test GET /antares/modules/(:category)/(:name)/update when module is not
      * started.
      *
      * @test
-     * @expectedException \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function testGetUpdateActionGivenNotStartedExtension()
     {
-        Extension::shouldReceive('started')->once()->with('addons/foo')->andReturn(false);
-
-        $this->call('GET', 'admin/modules/addons/foo/update');
+        Extension::shouldReceive('started')->once()->with('foo')->andReturn(false);
+        $response = $this->call('GET', 'antares/modules/addons/foo/update');
+        $this->assertResponseStatus(404);
+        $this->assertInstanceOf('Illuminate\Http\Response', $response);
     }
 
     /**
-     * Test GET /admin/modules/(:category)/(:name)/update with migration error.
+     * Test GET /antares/modules/(:category)/(:name)/update with migration error.
      *
      * @test
      */
     public function testGetUpdateActionGivenMgrationError()
     {
-        Extension::shouldReceive('started')->once()->with('addons/foo')->andReturn(true);
-        Extension::shouldReceive('permission')->once()->with('addons/foo')->andReturn(false);
-        Publisher::shouldReceive('queue')->once()->with('addons/foo')->andReturnNull();
-        Foundation::shouldReceive('handles')->once()->with('antares::publisher', [])->andReturn('publisher');
-
-        $this->call('GET', 'admin/modules/addons/foo/update');
-        $this->assertRedirectedTo('publisher');
+        Extension::shouldReceive('started')->once()->with('foo')->andReturn(true);
+        Extension::shouldReceive('permission')->once()->with('foo')->andReturn(false);
+        Publisher::shouldReceive('queue')->once()->with('foo')->andReturnNull();
+        $this->call('GET', 'antares/modules/addons/foo/update');
+        $this->assertRedirectedTo('antares/publisher');
     }
 
 }

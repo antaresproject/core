@@ -17,13 +17,15 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Tests\Validation;
 
+namespace Antares\Users\Tests\Validation;
+
+use Antares\Users\Validation\Account;
 use Mockery as m;
-use Antares\Foundation\Validation\Account;
 
 class AccountTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -33,7 +35,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Validation\Account.
+     * Test Antares\Users\Validation\Account.
      *
      * @test
      */
@@ -48,7 +50,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Validation\Account validation.
+     * Test Antares\Users\Validation\Account validation.
      *
      * @test
      */
@@ -78,7 +80,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Validation\User on create setting.
+     * Test Antares\Users\Validation\User on create setting.
      *
      * @test
      */
@@ -102,7 +104,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
 
         $factory->shouldReceive('make')->once()->with($input, $rules, [])->andReturn($validator);
         $events->shouldReceive('fire')->once()->with('antares.validate: user.account', m::any())->andReturnNull()
-            ->shouldReceive('fire')->once()->with('antares.validate: user.account.register', m::any())->andReturnNull();
+                ->shouldReceive('fire')->once()->with('antares.validate: user.account.register', m::any())->andReturnNull();
 
         $stub       = new Account($factory, $events);
         $validation = $stub->on('register')->with($input);
@@ -111,7 +113,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Validation\Account on change
+     * Test Antares\Users\Validation\Account on change
      * password.
      *
      * @test
@@ -141,4 +143,5 @@ class AccountTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($validator, $validation);
     }
+
 }

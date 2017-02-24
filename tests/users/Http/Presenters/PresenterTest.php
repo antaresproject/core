@@ -18,9 +18,9 @@
  * @link       http://antaresproject.io
  */
 
-namespace Antares\Foundation\Http\Presenters\TestCase;
+namespace Antares\Users\Http\Presenters\TestCase;
 
-use Antares\Foundation\Http\Presenters\Presenter;
+use Antares\Users\Http\Presenters\Presenter;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Container\Container;
 use Mockery as m;
@@ -45,7 +45,7 @@ class PresenterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Http\Presenters\Presenter::handles()
+     * Test Antares\Users\Http\Presenters\Presenter::handles()
      * method.
      *
      * @test
@@ -69,7 +69,7 @@ class PresenterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Http\Presenters\Presenter::setupForm()
+     * Test Antares\Users\Http\Presenters\Presenter::setupForm()
      * method.
      *
      * @test

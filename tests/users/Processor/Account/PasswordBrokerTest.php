@@ -17,19 +17,21 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Processor\Account\TestCase;
 
-use Mockery as m;
-use Antares\Testing\TestCase;
-use Illuminate\Support\Facades\Auth;
-use Antares\Support\Facades\Foundation;
+namespace Antares\Users\Processor\Account\TestCase;
+
 use Illuminate\Contracts\Auth\PasswordBroker as Password;
-use Antares\Foundation\Processor\Account\PasswordBroker;
+use Antares\Users\Processor\Account\PasswordBroker;
+use Antares\Support\Facades\Foundation;
+use Illuminate\Support\Facades\Auth;
+use Antares\Testing\TestCase;
+use Mockery as m;
 
 class PasswordBrokerTest extends TestCase
 {
+
     /**
-     * Test Antares\Foundation\Processor\Account\PasswordBroker::store()
+     * Test Antares\Users\Processor\Account\PasswordBroker::store()
      * method.
      *
      * @test
@@ -37,7 +39,7 @@ class PasswordBrokerTest extends TestCase
     public function testStoreMethod()
     {
         $listener  = m::mock('\Antares\Contracts\Auth\Listener\PasswordResetLink');
-        $validator = m::mock('\Antares\Foundation\Validation\AuthenticateUser');
+        $validator = m::mock('\Antares\Users\Validation\AuthenticateUser');
         $resolver  = m::mock('\Illuminate\Contracts\Validation\Validator');
         $password  = m::mock('\Illuminate\Contracts\Auth\PasswordBroker');
         $memory    = m::mock('\Antares\Contracts\Memory\Provider');
@@ -52,12 +54,12 @@ class PasswordBrokerTest extends TestCase
         $memory->shouldReceive('get')->once()->with('site.name', 'Antares Platform')->andReturn('Antares Platform');
         $message->shouldReceive('subject')->once()->with(m::type('String'))->andReturnNull();
         $password->shouldReceive('sendResetLink')->once()
-            ->with(['email' => $input['email']], m::type('Closure'))
-            ->andReturnUsing(function ($d, $c) use ($message) {
-                $c($message);
+                ->with(['email' => $input['email']], m::type('Closure'))
+                ->andReturnUsing(function ($d, $c) use ($message) {
+                    $c($message);
 
-                return Password::RESET_LINK_SENT;
-            });
+                    return Password::RESET_LINK_SENT;
+                });
         $listener->shouldReceive('resetLinkSent')->once()->with(Password::RESET_LINK_SENT)->andReturn('reset.sent');
 
         Foundation::shouldReceive('memory')->once()->andReturn($memory);
@@ -66,7 +68,7 @@ class PasswordBrokerTest extends TestCase
     }
 
     /**
-     * Test Antares\Foundation\Processor\Account\PasswordBroker::store()
+     * Test Antares\Users\Processor\Account\PasswordBroker::store()
      * method given invalid user.
      *
      * @test
@@ -74,7 +76,7 @@ class PasswordBrokerTest extends TestCase
     public function testStoreMethodGivenInvalidUser()
     {
         $listener  = m::mock('\Antares\Contracts\Auth\Listener\PasswordResetLink');
-        $validator = m::mock('\Antares\Foundation\Validation\AuthenticateUser');
+        $validator = m::mock('\Antares\Users\Validation\AuthenticateUser');
         $resolver  = m::mock('\Illuminate\Contracts\Validation\Validator');
         $password  = m::mock('\Illuminate\Contracts\Auth\PasswordBroker');
         $memory    = m::mock('\Antares\Contracts\Memory\Provider');
@@ -87,10 +89,10 @@ class PasswordBrokerTest extends TestCase
         $resolver->shouldReceive('fails')->once()->andReturn(false);
         $memory->shouldReceive('get')->once()->with('site.name', 'Antares Platform')->andReturn('Antares Platform');
         $password->shouldReceive('sendResetLink')->once()
-            ->with(['email' => $input['email']], m::type('Closure'))
-            ->andReturnUsing(function ($d, $c) {
-                return Password::INVALID_USER;
-            });
+                ->with(['email' => $input['email']], m::type('Closure'))
+                ->andReturnUsing(function ($d, $c) {
+                    return Password::INVALID_USER;
+                });
         $listener->shouldReceive('resetLinkFailed')->once()->with(Password::INVALID_USER)->andReturn('reset.not.sent');
 
         Foundation::shouldReceive('memory')->once()->andReturn($memory);
@@ -99,7 +101,7 @@ class PasswordBrokerTest extends TestCase
     }
 
     /**
-     * Test Antares\Foundation\Processor\Account\PasswordBroker::store()
+     * Test Antares\Users\Processor\Account\PasswordBroker::store()
      * method given failed validation.
      *
      * @test
@@ -107,7 +109,7 @@ class PasswordBrokerTest extends TestCase
     public function testStoreMethodGivenFailedValidation()
     {
         $listener  = m::mock('\Antares\Contracts\Auth\Listener\PasswordResetLink');
-        $validator = m::mock('\Antares\Foundation\Validation\AuthenticateUser');
+        $validator = m::mock('\Antares\Users\Validation\AuthenticateUser');
         $resolver  = m::mock('\Illuminate\Contracts\Validation\Validator');
         $password  = m::mock('\Illuminate\Contracts\Auth\PasswordBroker');
 
@@ -117,14 +119,14 @@ class PasswordBrokerTest extends TestCase
 
         $validator->shouldReceive('with')->once()->with($input)->andReturn($resolver);
         $resolver->shouldReceive('fails')->once()->andReturn(true)
-            ->shouldReceive('getMessageBag')->once()->andReturn([]);
+                ->shouldReceive('getMessageBag')->once()->andReturn([]);
         $listener->shouldReceive('resetLinkFailedValidation')->once()->with([])->andReturn('reset.failed.validation');
 
         $this->assertEquals('reset.failed.validation', $stub->store($listener, $input));
     }
 
     /**
-     * Test Antares\Foundation\Processor\Account\PasswordBroker::update()
+     * Test Antares\Users\Processor\Account\PasswordBroker::update()
      * method.
      *
      * @test
@@ -132,7 +134,7 @@ class PasswordBrokerTest extends TestCase
     public function testUpdateMethod()
     {
         $listener  = m::mock('\Antares\Contracts\Auth\Listener\PasswordReset');
-        $validator = m::mock('\Antares\Foundation\Validation\AuthenticateUser');
+        $validator = m::mock('\Antares\Users\Validation\AuthenticateUser');
         $password  = m::mock('\Illuminate\Contracts\Auth\PasswordBroker');
         $user      = m::mock('\Antares\Model\User');
 
@@ -141,14 +143,14 @@ class PasswordBrokerTest extends TestCase
         $stub = new PasswordBroker($validator, $password);
 
         $user->shouldReceive('setAttribute')->once()->with('password', $input['password'])->andReturnNull()
-            ->shouldReceive('save')->once()->andReturnNull();
+                ->shouldReceive('save')->once()->andReturnNull();
         $password->shouldReceive('reset')->once()
-            ->with($input, m::type('Closure'))
-            ->andReturnUsing(function ($d, $c) use ($user, $input) {
-                $c($user, $input['password']);
+                ->with($input, m::type('Closure'))
+                ->andReturnUsing(function ($d, $c) use ($user, $input) {
+                    $c($user, $input['password']);
 
-                return Password::PASSWORD_RESET;
-            });
+                    return Password::PASSWORD_RESET;
+                });
         $listener->shouldReceive('passwordHasReset')->once()->with(Password::PASSWORD_RESET)->andReturn('reset.done');
 
         Auth::shouldReceive('login')->once()->with($user)->andReturnNull();
@@ -157,7 +159,7 @@ class PasswordBrokerTest extends TestCase
     }
 
     /**
-     * Test Antares\Foundation\Processor\Account\PasswordBroker::store()
+     * Test Antares\Users\Processor\Account\PasswordBroker::store()
      * method given failed execution.
      *
      * @test
@@ -165,7 +167,7 @@ class PasswordBrokerTest extends TestCase
     public function testUpdateMethodGivenFailed()
     {
         $listener  = m::mock('\Antares\Contracts\Auth\Listener\PasswordReset');
-        $validator = m::mock('\Antares\Foundation\Validation\AuthenticateUser');
+        $validator = m::mock('\Antares\Users\Validation\AuthenticateUser');
         $password  = m::mock('\Illuminate\Contracts\Auth\PasswordBroker');
 
         $input = $this->getUpdateInput();
@@ -173,10 +175,10 @@ class PasswordBrokerTest extends TestCase
         $stub = new PasswordBroker($validator, $password);
 
         $password->shouldReceive('reset')->once()
-            ->with($input, m::type('Closure'))
-            ->andReturnUsing(function ($d, $c) {
-                return Password::INVALID_PASSWORD;
-            });
+                ->with($input, m::type('Closure'))
+                ->andReturnUsing(function ($d, $c) {
+                    return Password::INVALID_PASSWORD;
+                });
         $listener->shouldReceive('passwordResetHasFailed')->once()->with(Password::INVALID_PASSWORD)->andReturn('reset.failed');
 
         $this->assertEquals('reset.failed', $stub->update($listener, $input));
@@ -208,4 +210,5 @@ class PasswordBrokerTest extends TestCase
             'token'                 => 'auniquetoken',
         ];
     }
+
 }

@@ -39,23 +39,6 @@ class FoundationTest extends ApplicationTestCase
     public function setUp()
     {
         parent::setUp();
-//        $app = $this->app;
-//
-//        $app['antares.acl']       = m::mock('\Antares\Contracts\Authorization\Authorization');
-//        $app['antares.extension'] = m::mock('\Antares\Contracts\Extension\Factory');
-//        $app['antares.mail']      = m::mock('\Antares\Notifier\Mailer')->makePartial();
-//        $app['antares.memory']    = m::mock('\Antares\Memory\MemoryManager', [$app]);
-//        $app['antares.notifier']  = m::mock('\Antares\Notifier\NotifierManager', [$app]);
-//        $app['antares.widget']    = m::mock('\Antares\Widget\Handlers\Menu');
-//        $app['config']            = m::mock('\Illuminate\Contracts\Config\Repository');
-//        $app['events']            = m::mock('\Illuminate\Contracts\Events\Dispatcher');
-//        $app['translator']        = m::mock('\Illuminate\Translation\Translator')->makePartial();
-//        $app['url']               = m::mock('\Illuminate\Routing\UrlGenerator')->makePartial();
-//
-//        Facade::clearResolvedInstances();
-//        Application::setInstance($app);
-////
-//        $this->app                = $app;
         $memory = m::mock('\Antares\Contracts\Memory\Provider');
         $memory->shouldReceive('get')->with('email', [])->andReturn(['driver' => 'mail'])
                 ->shouldReceive('get')->with('email.driver', 'mail')->andReturn('mail')

@@ -18,9 +18,9 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Controllers\TestCase;
 
+use Antares\Testing\ApplicationTestCase;
 use Mockery as m;
 use Antares\Testing\TestCase;
 use Illuminate\Support\Facades\App;
@@ -28,8 +28,10 @@ use Illuminate\Support\Facades\View;
 use Antares\Support\Facades\Messages;
 use Antares\Support\Facades\Foundation;
 
-class SettingsControllerTest extends TestCase
+class SettingsControllerTest extends ApplicationTestCase
 {
+
+    use \Illuminate\Foundation\Testing\WithoutMiddleware;
 
     /**
      * Setup the test environment.
@@ -37,9 +39,9 @@ class SettingsControllerTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-
-        View::shouldReceive('addNamespace');
-        View::shouldReceive('share')->once()->with('errors', m::any());
+        $this->disableMiddlewareForAllTests();
+//        View::shouldReceive('addNamespace');
+//        View::shouldReceive('share')->once()->with('errors', m::any());
     }
 
     /**
@@ -73,10 +75,8 @@ class SettingsControllerTest extends TestCase
 
         $this->app->instance('Antares\Contracts\Memory\Provider', $memory);
 
-        View::shouldReceive('make')->once()
-                ->with('antares/foundation::settings.index', m::type('Array'), [])->andReturn('foo');
-
-        $this->call('GET', 'admin/settings');
+        View::shouldReceive('make')->once()->with('antares/foundation::settings.index', m::type('Array'), [])->andReturn('foo');
+        $this->call('GET', 'antares/settings/index');
         $this->assertResponseOk();
     }
 
@@ -88,7 +88,7 @@ class SettingsControllerTest extends TestCase
     public function testPostIndexAction()
     {
         $input = [
-            'site_name'              => 'BillEvo',
+            'site_name'              => 'Antares Project',
             'site_description'       => '',
             'site_registrable'       => 'yes',
             'email_driver'           => 'smtp',
@@ -117,11 +117,10 @@ class SettingsControllerTest extends TestCase
 
         $this->app->instance('Antares\Contracts\Memory\Provider', $memory);
 
-        Foundation::shouldReceive('handles')->once()->with('antares::settings', [])->andReturn('settings');
         Messages::shouldReceive('add')->once()->with('success', m::any())->andReturnNull();
 
-        $this->call('POST', 'admin/settings', $input);
-        $this->assertRedirectedTo('settings');
+        $this->call('POST', 'antares/settings/index', $input);
+        $this->assertRedirectedTo('antares/settings/index');
     }
 
     /**
@@ -132,7 +131,7 @@ class SettingsControllerTest extends TestCase
     public function testPostIndexActionGivenValidationError()
     {
         $input = [
-            'site_name'              => 'BillEvo',
+            'site_name'              => 'Antares Project',
             'site_description'       => '',
             'site_registrable'       => 'yes',
             'email_driver'           => 'smtp',
@@ -156,10 +155,9 @@ class SettingsControllerTest extends TestCase
                 ->shouldReceive('fails')->once()->andReturn(true)
                 ->shouldReceive('getMessageBag')->once()->andReturn([]);
 
-        Foundation::shouldReceive('handles')->once()->with('antares::settings', [])->andReturn('settings');
 
-        $this->call('POST', 'admin/settings', $input);
-        $this->assertRedirectedTo('settings');
+        $this->call('POST', 'antares/settings/index', $input);
+        $this->assertRedirectedTo('antares/settings/index');
         $this->assertSessionHasErrors();
     }
 
@@ -176,12 +174,8 @@ class SettingsControllerTest extends TestCase
         $asset->shouldReceive('foundation')->once()->andReturnNull();
         $migrate->shouldReceive('foundation')->once()->andReturnNull();
 
-        Foundation::shouldReceive('make')->once()->with('antares.publisher.asset')->andReturn($asset);
-        Foundation::shouldReceive('make')->once()->with('antares.publisher.migrate')->andReturn($migrate);
-        Foundation::shouldReceive('handles')->once()->with('antares::settings', [])->andReturn('settings');
-
-        $this->call('GET', 'admin/settings/migrate');
-        $this->assertRedirectedTo('settings');
+        $this->call('GET', 'antares/settings/migrate');
+        $this->assertRedirectedTo('antares/settings/index');
     }
 
 }

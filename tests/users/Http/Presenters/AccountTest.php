@@ -18,14 +18,13 @@
  * @link       http://antaresproject.io
  */
 
+namespace Antares\Users\Http\Presenters\TestCase;
 
-namespace Antares\Foundation\Http\Presenters\TestCase;
-
-use Mockery as m;
-use Illuminate\Support\Fluent;
-use Illuminate\Container\Container;
+use Antares\Users\Http\Presenters\Account;
 use Illuminate\Support\Facades\Facade;
-use Antares\Foundation\Http\Presenters\Account;
+use Illuminate\Container\Container;
+use Illuminate\Support\Fluent;
+use Mockery as m;
 
 class AccountTest extends \PHPUnit_Framework_TestCase
 {
@@ -59,7 +58,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Https\Presenters\Account::profileForm()
+     * Test Antares\Users\Https\Presenters\Account::profileForm()
      * method.
      *
      * @test
@@ -96,7 +95,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Https\Presenters\Account::passwordForm()
+     * Test Antares\Users\Https\Presenters\Account::passwordForm()
      * method.
      *
      * @test

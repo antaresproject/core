@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Http\Controllers\Account\TestCase;
+
+namespace Antares\Users\Http\Controllers\Account\TestCase;
 
 use Mockery as m;
 use Antares\Testing\TestCase;
@@ -28,6 +29,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class ProfileCreatorControllerTest extends TestCase
 {
+
     use WithoutMiddleware;
 
     /**
@@ -48,13 +50,13 @@ class ProfileCreatorControllerTest extends TestCase
     public function testGetCreateAction()
     {
         $this->getProcessorMock()->shouldReceive('create')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\ProfileCreatorController'))
-            ->andReturnUsing(function ($listener) {
-                return $listener->showProfileCreator([]);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\ProfileCreatorController'))
+                ->andReturnUsing(function ($listener) {
+                    return $listener->showProfileCreator([]);
+                });
 
         View::shouldReceive('make')->once()
-            ->with('antares/foundation::credential.register', [], [])->andReturn('foo');
+                ->with('antares/foundation::credential.register', [], [])->andReturn('foo');
 
         $this->call('GET', 'admin/register');
         $this->assertResponseOk();
@@ -70,10 +72,10 @@ class ProfileCreatorControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('store')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\ProfileCreatorController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->profileCreated();
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\ProfileCreatorController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->profileCreated();
+                });
 
         Foundation::shouldReceive('handles')->once()->with('antares::login', [])->andReturn('login');
         Messages::shouldReceive('add')->twice()->with('success', m::any())->andReturnNull();
@@ -92,10 +94,10 @@ class ProfileCreatorControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('store')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\ProfileCreatorController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->profileCreatedWithoutNotification();
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\ProfileCreatorController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->profileCreatedWithoutNotification();
+                });
 
         Foundation::shouldReceive('handles')->once()->with('antares::login', [])->andReturn('login');
         Messages::shouldReceive('add')->once()->with('success', m::any())->andReturnNull();
@@ -115,10 +117,10 @@ class ProfileCreatorControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('store')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\ProfileCreatorController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->createProfileFailed(['error' => '']);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\ProfileCreatorController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->createProfileFailed(['error' => '']);
+                });
 
         Foundation::shouldReceive('handles')->once()->with('antares::register', [])->andReturn('register');
         Messages::shouldReceive('add')->once()->with('error', m::any())->andReturnNull();
@@ -137,10 +139,10 @@ class ProfileCreatorControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('store')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\ProfileCreatorController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->createProfileFailedValidation([]);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\ProfileCreatorController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->createProfileFailedValidation([]);
+                });
 
         Foundation::shouldReceive('handles')->once()->with('antares::register', [])->andReturn('register');
 
@@ -151,13 +153,13 @@ class ProfileCreatorControllerTest extends TestCase
     /**
      * Get processor mock.
      *
-     * @return \Antares\Foundation\Processor\Account\ProfileCreator
+     * @return Antares\Users\Processor\Account\ProfileCreator
      */
     protected function getProcessorMock()
     {
-        $processor = m::mock('\Antares\Foundation\Processor\Account\ProfileCreator');
+        $processor = m::mock('Antares\Users\Processor\Account\ProfileCreator');
 
-        $this->app->instance('Antares\Foundation\Processor\Account\ProfileCreator', $processor);
+        $this->app->instance('Antares\Users\Processor\Account\ProfileCreator', $processor);
 
         return $processor;
     }
@@ -174,4 +176,5 @@ class ProfileCreatorControllerTest extends TestCase
             'fullname' => 'Administrator',
         ];
     }
+
 }

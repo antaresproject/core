@@ -17,20 +17,15 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Http\Middleware\TestCase;
 
-use Mockery as m;
+namespace Antares\Foundation\Http\Middleware\TestCase;
+
 use Antares\Foundation\Http\Middleware\UseBackendTheme;
+use Antares\Testing\ApplicationTestCase;
+use Mockery as m;
 
-class UseBackendThemeTest extends \PHPUnit_Framework_TestCase
+class UseBackendThemeTest extends ApplicationTestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Foundation\Middleware\UseBackendTheme::handle()
@@ -43,9 +38,10 @@ class UseBackendThemeTest extends \PHPUnit_Framework_TestCase
         $events  = m::mock('\Illuminate\Contracts\Events\Dispatcher');
         $request = m::mock('\Illuminate\Http\Request');
 
-        $events->shouldReceive('fire')->once()->with('antares.started: admin')->andReturnNull()
-            ->shouldReceive('fire')->once()->with('antares.ready: admin')->andReturnNull()
-            ->shouldReceive('fire')->once()->with('antares.done: admin')->andReturnNull();
+        $events->shouldReceive('fire')->with('antares.started: admin')->andReturnNull()
+                ->shouldReceive('fire')->with('antares.ready: admin')->andReturnNull()
+                ->shouldReceive('fire')->with('antares.ready: menu')->andReturnNull()
+                ->shouldReceive('fire')->with('antares.done: admin')->andReturnNull();
 
         $next = function ($request) {
             return 'foo';
@@ -55,4 +51,5 @@ class UseBackendThemeTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('foo', $stub->handle($request, $next));
     }
+
 }

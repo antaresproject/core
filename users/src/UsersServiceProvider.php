@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users;
 
 use Antares\Foundation\Support\Providers\ModuleServiceProvider;

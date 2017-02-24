@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Http\Controllers\Account\TestCase;
+
+namespace Antares\Users\Http\Controllers\Account\TestCase;
 
 use Mockery as m;
 use Antares\Testing\TestCase;
@@ -28,6 +29,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class PasswordUpdaterControllerTest extends TestCase
 {
+
     use WithoutMiddleware;
 
     /**
@@ -48,13 +50,13 @@ class PasswordUpdaterControllerTest extends TestCase
     public function testGetEditAction()
     {
         $this->getProcessorMock()->shouldReceive('edit')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\PasswordUpdaterController'))
-            ->andReturnUsing(function ($listener) {
-                return $listener->showPasswordChanger([]);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\PasswordUpdaterController'))
+                ->andReturnUsing(function ($listener) {
+                    return $listener->showPasswordChanger([]);
+                });
 
         View::shouldReceive('make')->once()
-            ->with('antares/foundation::account.password', [], [])->andReturn('show.password.changer');
+                ->with('antares/foundation::account.password', [], [])->andReturn('show.password.changer');
 
         $this->call('GET', 'admin/account/password');
         $this->assertResponseOk();
@@ -70,10 +72,10 @@ class PasswordUpdaterControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('update')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\PasswordUpdaterController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->passwordUpdated([]);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\PasswordUpdaterController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->passwordUpdated([]);
+                });
 
         Messages::shouldReceive('add')->once()->with('success', m::any())->andReturnNull();
         Foundation::shouldReceive('handles')->once()->with('antares::account/password', [])->andReturn('password');
@@ -93,10 +95,10 @@ class PasswordUpdaterControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('update')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\PasswordUpdaterController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->abortWhenUserMismatched();
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\PasswordUpdaterController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->abortWhenUserMismatched();
+                });
 
         $this->call('POST', 'admin/account/password', $input);
         $this->assertRedirectedTo('password');
@@ -112,10 +114,10 @@ class PasswordUpdaterControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('update')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\PasswordUpdaterController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->updatePasswordFailed([]);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\PasswordUpdaterController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->updatePasswordFailed([]);
+                });
 
         Foundation::shouldReceive('handles')->once()->with('antares::account/password', [])->andReturn('password');
         Messages::shouldReceive('add')->once()->with('error', m::any())->andReturnNull();
@@ -134,10 +136,10 @@ class PasswordUpdaterControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('update')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\PasswordUpdaterController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->updatePasswordFailedValidation([]);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\PasswordUpdaterController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->updatePasswordFailedValidation([]);
+                });
 
         Foundation::shouldReceive('handles')->once()->with('antares::account/password', [])->andReturn('password');
 
@@ -155,10 +157,10 @@ class PasswordUpdaterControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('update')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\PasswordUpdaterController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->verifyCurrentPasswordFailed([]);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\PasswordUpdaterController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->verifyCurrentPasswordFailed([]);
+                });
 
         Foundation::shouldReceive('handles')->once()->with('antares::account/password', [])->andReturn('password');
 
@@ -169,13 +171,13 @@ class PasswordUpdaterControllerTest extends TestCase
     /**
      * Get processor mock.
      *
-     * @return \Antares\Foundation\Processor\Account\PasswordUpdater
+     * @return Antares\Users\Processor\Account\PasswordUpdater
      */
     protected function getProcessorMock()
     {
-        $processor = m::mock('\Antares\Foundation\Processor\Account\PasswordUpdater');
+        $processor = m::mock('Antares\Users\Processor\Account\PasswordUpdater');
 
-        $this->app->instance('Antares\Foundation\Processor\Account\PasswordUpdater', $processor);
+        $this->app->instance('Antares\Users\Processor\Account\PasswordUpdater', $processor);
 
         return $processor;
     }
@@ -193,4 +195,5 @@ class PasswordUpdaterControllerTest extends TestCase
             'new_password'     => 'qwerty',
         ];
     }
+
 }

@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Extension;
 
 use Illuminate\Support\Str;
@@ -151,6 +150,9 @@ class RouteGenerator implements RouteGeneratorContract
      */
     public function prefix($forceBase = false)
     {
+        if (!is_string($this->prefix)) {
+            return '/';
+        }
         $pattern = trim($this->prefix, '/');
         if (is_null($this->domain) && $forceBase === true) {
             $pattern = trim($this->basePrefix, '/') . "/{$pattern}";

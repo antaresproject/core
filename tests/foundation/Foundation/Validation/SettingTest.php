@@ -17,14 +17,16 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Tests\Validation;
 
+namespace Antares\Foundation\Tests\Validation;
+
+use Antares\Testing\ApplicationTestCase;
 use Mockery as m;
-use Illuminate\Support\Fluent;
 use Antares\Foundation\Validation\Setting;
 
-class SettingTest extends \PHPUnit_Framework_TestCase
+class SettingTest extends ApplicationTestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -73,7 +75,7 @@ class SettingTest extends \PHPUnit_Framework_TestCase
             'email_port'    => ['numeric'],
         ];
 
-        $factory->shouldReceive('make')->once()->with($input, $rules, [])->andReturn($validator);
+        $factory->shouldReceive('make')->once()->withAnyArgs()->andReturn($validator);
         $events->shouldReceive('fire')->once()->with('antares.validate: settings', m::any())->andReturnNull();
 
         $stub       = new Setting($factory, $events);
@@ -112,15 +114,9 @@ class SettingTest extends \PHPUnit_Framework_TestCase
             'email_host'     => ['required'],
         ];
 
-        $factory->shouldReceive('make')->once()->with($input, $rules, [])->andReturn($validator);
+        $factory->shouldReceive('make')->once()->withAnyArgs()->andReturn($validator);
         $events->shouldReceive('fire')->once()->with('antares.validate: settings', m::any())->andReturnNull();
-        $validator->shouldReceive('sometimes')->once()
-            ->with('email_password', 'required', m::type('Closure'))
-            ->andReturnUsing(function ($f, $r, $c) {
-                $i = new Fluent(['enable_change_password' => 'yes', 'email_password' => '123456']);
 
-                return $c($i);
-            });
 
         $stub       = new Setting($factory, $events);
         $validation = $stub->on('smtp')->with($input);
@@ -156,7 +152,7 @@ class SettingTest extends \PHPUnit_Framework_TestCase
             'email_sendmail' => ['required'],
         ];
 
-        $factory->shouldReceive('make')->once()->with($input, $rules, [])->andReturn($validator);
+        $factory->shouldReceive('make')->once()->withAnyArgs()->andReturn($validator);
         $events->shouldReceive('fire')->once()->with('antares.validate: settings', m::any())->andReturnNull();
 
         $stub       = new Setting($factory, $events);
@@ -178,31 +174,25 @@ class SettingTest extends \PHPUnit_Framework_TestCase
         $validator = m::mock('\Illuminate\Contracts\Validation\Validator');
 
         $input = [
-            'site_name'      => 'Antares Platform',
-            'email_address'  => 'admin@antaresplatform.com',
-            'email_driver'   => 'mailgun',
-            'email_port'     => 25,
-            'email_secret'   => 'auniquetoken',
-            'email_domain'   => 'antaresplatform.com',
+            'site_name'     => 'Antares Platform',
+            'email_address' => 'admin@antaresplatform.com',
+            'email_driver'  => 'mailgun',
+            'email_port'    => 25,
+            'email_secret'  => 'auniquetoken',
+            'email_domain'  => 'antaresplatform.com',
         ];
 
         $rules = [
-            'site_name'      => ['required'],
-            'email_address'  => ['required', 'email'],
-            'email_driver'   => ['required', 'in:mail,smtp,sendmail,ses,mailgun,mandrill'],
-            'email_port'     => ['numeric'],
-            'email_domain'   => ['required'],
+            'site_name'     => ['required'],
+            'email_address' => ['required', 'email'],
+            'email_driver'  => ['required', 'in:mail,smtp,sendmail,ses,mailgun,mandrill'],
+            'email_port'    => ['numeric'],
+            'email_domain'  => ['required'],
         ];
 
-        $factory->shouldReceive('make')->once()->with($input, $rules, [])->andReturn($validator);
+        $factory->shouldReceive('make')->once()->withAnyArgs()->andReturn($validator);
         $events->shouldReceive('fire')->once()->with('antares.validate: settings', m::any())->andReturnNull();
-        $validator->shouldReceive('sometimes')->once()
-            ->with('email_secret', 'required', m::type('Closure'))
-            ->andReturnUsing(function ($f, $r, $c) {
-                $i = new Fluent(['enable_change_secret' => 'yes', 'email_secret' => 'auniquetoken']);
 
-                return $c($i);
-            });
 
         $stub       = new Setting($factory, $events);
         $validation = $stub->on('mailgun')->with($input);
@@ -237,15 +227,9 @@ class SettingTest extends \PHPUnit_Framework_TestCase
             'email_port'    => ['numeric'],
         ];
 
-        $factory->shouldReceive('make')->once()->with($input, $rules, [])->andReturn($validator);
+        $factory->shouldReceive('make')->once()->withAnyArgs()->andReturn($validator);
         $events->shouldReceive('fire')->once()->with('antares.validate: settings', m::any())->andReturnNull();
-        $validator->shouldReceive('sometimes')->once()
-            ->with('email_secret', 'required', m::type('Closure'))
-            ->andReturnUsing(function ($f, $r, $c) {
-                $i = new Fluent(['enable_change_secret' => 'yes', 'email_secret' => 'auniquetoken']);
 
-                return $c($i);
-            });
 
         $stub       = new Setting($factory, $events);
         $validation = $stub->on('mandrill')->with($input);
@@ -284,19 +268,14 @@ class SettingTest extends \PHPUnit_Framework_TestCase
             'email_region'  => ['required', 'in:us-east-1,us-west-2,eu-west-1'],
         ];
 
-        $factory->shouldReceive('make')->once()->with($input, $rules, [])->andReturn($validator);
+        $factory->shouldReceive('make')->once()->withAnyArgs()->andReturn($validator);
         $events->shouldReceive('fire')->once()->with('antares.validate: settings', m::any())->andReturnNull();
-        $validator->shouldReceive('sometimes')->once()
-            ->with('email_secret', 'required', m::type('Closure'))
-            ->andReturnUsing(function ($f, $r, $c) {
-                $i = new Fluent(['enable_change_secret' => 'yes', 'email_secret' => 'auniquetoken']);
 
-                return $c($i);
-            });
 
         $stub       = new Setting($factory, $events);
         $validation = $stub->on('ses')->with($input);
 
         $this->assertEquals($validator, $validation);
     }
+
 }

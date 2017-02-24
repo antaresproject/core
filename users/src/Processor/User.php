@@ -202,8 +202,7 @@ class User extends Processor implements UserCreatorCommand, UserRemoverCommand, 
             return $listener->usersDeleted();
         }
         $user = Foundation::make('antares.user')->findOrFail($id);
-
-        if ((string) $user->id === (string) Auth::user()->id) {
+        if ((string) $user->id === (string) user()->id) {
             return $listener->selfDeletionFailed();
         }
 

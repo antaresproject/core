@@ -18,13 +18,15 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Controllers\TestCase;
 
-use Mockery as m;
 use Antares\Foundation\Http\Controllers\AdminController;
+use Illuminate\Support\Facades\Route as FacadeRoute;
+use Antares\Testing\ApplicationTestCase;
+use Illuminate\Routing\Route;
+use Mockery as m;
 
-class AdminControllerTest extends \PHPUnit_Framework_TestCase
+class AdminControllerTest extends ApplicationTestCase
 {
 
     /**
@@ -40,20 +42,14 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
      *
      * @test
      */
-    public function testFilters()
+    public function testMiddleware()
     {
-        $stub = new StubAdminController();
+        $stub  = new StubAdminController();
+        $route = m::mock(Route::class);
+        $route->shouldReceive('getAction')->andReturn(['controller' => 'IndexController@index']);
 
-        $beforeFilter = [
-            [
-                'original'   => 'antares.installable',
-                'filter'     => 'antares.installable',
-                'parameters' => [],
-                'options'    => [],
-            ],
-        ];
-
-        $this->assertEquals($beforeFilter, $stub->getBeforeFilters());
+        FacadeRoute::shouldReceive('getCurrentRoute')->andReturn($route);
+        $this->assertNull($stub->middleware('antares.can:foo', ['only' => ['index', 'add']]));
     }
 
 }

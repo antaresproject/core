@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Http\Controllers\Account\TestCase;
+
+namespace Antares\Users\Http\Controllers\Account\TestCase;
 
 use Mockery as m;
 use Antares\Testing\TestCase;
@@ -28,6 +29,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class ProfileUpdaterControllerTest extends TestCase
 {
+
     use WithoutMiddleware;
 
     /**
@@ -48,13 +50,13 @@ class ProfileUpdaterControllerTest extends TestCase
     public function testGetEditAction()
     {
         $this->getProcessorMock()->shouldReceive('edit')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\ProfileUpdaterController'))
-            ->andReturnUsing(function ($listener) {
-                return $listener->showProfileChanger([]);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\ProfileUpdaterController'))
+                ->andReturnUsing(function ($listener) {
+                    return $listener->showProfileChanger([]);
+                });
 
         View::shouldReceive('make')->once()
-            ->with('antares/foundation::account.index', [], [])->andReturn('show.profile.changer');
+                ->with('antares/foundation::account.index', [], [])->andReturn('show.profile.changer');
 
         $this->call('GET', 'admin/account');
         $this->assertResponseOk();
@@ -70,10 +72,10 @@ class ProfileUpdaterControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('update')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\ProfileUpdaterController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->profileUpdated([]);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\ProfileUpdaterController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->profileUpdated([]);
+                });
 
         Messages::shouldReceive('add')->once()->with('success', m::any())->andReturnNull();
         Foundation::shouldReceive('handles')->once()->with('antares::account', [])->andReturn('account');
@@ -92,10 +94,10 @@ class ProfileUpdaterControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('update')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\ProfileUpdaterController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->abortWhenUserMismatched();
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\ProfileUpdaterController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->abortWhenUserMismatched();
+                });
 
         $this->call('POST', 'admin/account', $input);
     }
@@ -110,10 +112,10 @@ class ProfileUpdaterControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('update')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\ProfileUpdaterController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->updateProfileFailed([]);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\ProfileUpdaterController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->updateProfileFailed([]);
+                });
 
         Foundation::shouldReceive('handles')->once()->with('antares::account', [])->andReturn('account');
         Messages::shouldReceive('add')->once()->with('error', m::any())->andReturnNull();
@@ -132,10 +134,10 @@ class ProfileUpdaterControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('update')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\ProfileUpdaterController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->updateProfileFailedValidation([]);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\ProfileUpdaterController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->updateProfileFailedValidation([]);
+                });
 
         Foundation::shouldReceive('handles')->once()->with('antares::account', [])->andReturn('account');
 
@@ -146,13 +148,13 @@ class ProfileUpdaterControllerTest extends TestCase
     /**
      * Get processor mock.
      *
-     * @return \Antares\Foundation\Processor\Account\ProfileUpdater
+     * @return \Antares\Users\Processor\Account\ProfileUpdater
      */
     protected function getProcessorMock()
     {
-        $processor = m::mock('\Antares\Foundation\Processor\Account\ProfileUpdater');
+        $processor = m::mock('\Antares\Users\Processor\Account\ProfileUpdater');
 
-        $this->app->instance('Antares\Foundation\Processor\Account\ProfileUpdater', $processor);
+        $this->app->instance('\Antares\Users\Processor\Account\ProfileUpdater', $processor);
 
         return $processor;
     }
@@ -170,4 +172,5 @@ class ProfileUpdaterControllerTest extends TestCase
             'fullname' => 'Administrator',
         ];
     }
+
 }

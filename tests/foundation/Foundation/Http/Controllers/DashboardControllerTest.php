@@ -18,15 +18,14 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Controllers\TestCase;
 
-use Mockery as m;
-use Antares\Testing\TestCase;
-use Illuminate\Support\Facades\View;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Antares\Testing\ApplicationTestCase;
+use Illuminate\Support\Facades\View;
+use Mockery as m;
 
-class DashboardControllerTest extends TestCase
+class DashboardControllerTest extends ApplicationTestCase
 {
 
     use WithoutMiddleware;
@@ -37,53 +36,39 @@ class DashboardControllerTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-
         $this->disableMiddlewareForAllTests();
     }
 
     /**
-     * Test GET /admin.
+     * Test GET /antares.
      *
      * @test
      */
     public function testIndexAction()
     {
-        $this->getProcessorMock()->shouldReceive('show')->once()
-                ->andReturnUsing(function ($listener) {
-                    return $listener->showDashboard(['panes' => 'foo']);
-                });
+        $this->app[\Illuminate\Contracts\Auth\Factory::class] = $auth                                                 = m::mock(\Illuminate\Contracts\Auth\Factory::class);
+        $auth->shouldReceive('guest')->times(3)->andReturn(false);
+        $auth->shouldReceive('user')->once()->andReturn(\Antares\Model\User::query()->whereId(1)->first());
 
-        View::shouldReceive('make')->once()
-                ->with('antares/foundation::dashboard.index', ['panes' => 'foo'], [])->andReturn('foo');
 
-        $this->call('GET', 'admin');
+        View::shouldReceive('make')->once()->with('antares/foundation::dashboard.index', ['panes' => 'foo'], [])->andReturn('foo')
+                ->shouldReceive('share')->once()->with(m::type('string'), m::type('string'))->andReturnSelf()
+                ->shouldReceive('addNamespace')->once()->with(m::type('string'), m::type('string'))->andReturnSelf()
+                ->shouldReceive('make')->once()->withAnyArgs()->andReturnSelf()
+                ->shouldReceive('render')->once()->withNoArgs()->andReturn('foo');
+
+        $this->call('GET', 'antares');
         $this->assertResponseOk();
     }
 
     /**
-     * Test GET /admin/missing.
+     * Test GET /antares/missing.
      *
-     * @expectedException \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function testMissingAction()
     {
-        $this->call('GET', 'admin/missing');
-    }
-
-    /**
-     * Get processor mock.
-     *
-     * @return \Antares\Users\Processor\Account\ProfileDashboard
-     */
-    protected function getProcessorMock()
-    {
-        $processor = m::mock('\Antares\Foundation\Processor\Account\ProfileDashboard', [
-                    m::mock('\Antares\Widget\WidgetManager'),
-        ]);
-
-        $this->app->instance('Antares\Foundation\Processor\Account\ProfileDashboard', $processor);
-
-        return $processor;
+        $this->call('GET', 'antares/missing');
+        $this->assertResponseStatus(404);
     }
 
 }

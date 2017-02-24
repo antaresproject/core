@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Controllers;
 
 use Antares\Contracts\Foundation\Listener\Account\UserCreator;
@@ -300,7 +299,6 @@ class UsersController extends AdminController implements UserCreator, UserRemove
     public function userDeleted()
     {
         $message = trans('antares/foundation::response.users.delete');
-
         return $this->redirectWithMessage(handles('antares::users/index'), $message);
     }
 

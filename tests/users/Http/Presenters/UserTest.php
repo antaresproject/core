@@ -18,14 +18,14 @@
  * @link       http://antaresproject.io
  */
 
-namespace Antares\Foundation\Http\Presenters\TestCase;
+namespace Antares\Users\Http\Presenters\TestCase;
 
-use Mockery as m;
-use Illuminate\Support\Fluent;
-use Illuminate\Support\Collection;
-use Illuminate\Container\Container;
-use Illuminate\Support\Facades\Facade;
 use Antares\Users\Http\Presenters\User;
+use Illuminate\Support\Facades\Facade;
+use Illuminate\Container\Container;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Fluent;
+use Mockery as m;
 
 class UserTest extends \PHPUnit_Framework_TestCase
 {
@@ -70,7 +70,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Http\Presenters\User::form() method.
+     * Test Antares\Users\Http\Presenters\User::form() method.
      *
      * @test
      */

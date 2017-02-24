@@ -18,55 +18,22 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Presenters\TestCase;
 
-use Mockery as m;
-use Illuminate\Support\Fluent;
-use Illuminate\Container\Container;
-use Illuminate\Support\Facades\Facade;
 use Antares\Foundation\Http\Presenters\Setting;
+use Antares\Foundation\Http\Form\Settings;
+use Antares\Testing\ApplicationTestCase;
+use Illuminate\Support\Fluent;
+use Mockery as m;
 
-class SettingTest extends \PHPUnit_Framework_TestCase
+class SettingTest extends ApplicationTestCase
 {
-
-    /**
-     * Application instance.
-     *
-     * @var \Illuminate\Foundation\Application
-     */
-    protected $app;
-
-    /**
-     * Setup the test environment.
-     */
-    public function setUp()
-    {
-        $app = new Container();
-
-        $app['antares.app']                       = m::mock('\Antares\Contracts\Foundation\Foundation');
-        $app['translator']                        = m::mock('\Illuminate\Translation\Translator')->makePartial();
-        $app['antares.app']->shouldReceive('handles');
-        $app['translator']->shouldReceive('trans');
-        $viewFactory                              = m::mock('Illuminate\Contracts\View\Factory');
-        $viewFactory->shouldReceive('make')->andReturn();
-        $app['Illuminate\Contracts\View\Factory'] = $viewFactory;
-
-        $events        = m::mock('AccountSampleEvent');
-        $events->shouldReceive('fire')->withAnyArgs()->andReturnNull();
-        $app['events'] = $events;
-
-        Facade::setFacadeApplication($app);
-        Container::setInstance($app);
-    }
 
     /**
      * Teardown the test environment.
      */
     public function tearDown()
     {
-        unset($this->app);
-
         m::close();
     }
 
@@ -78,62 +45,22 @@ class SettingTest extends \PHPUnit_Framework_TestCase
      */
     public function testFormMethod()
     {
-        $app   = $this->app;
         $model = new Fluent([
             'email_password' => 123456,
         ]);
 
-        $app['Illuminate\Contracts\View\Factory'] = m::mock('\Illuminate\Contracts\View\Factory');
+        $breadcrumb = m::mock('Antares\Foundation\Http\Breadcrumb\Breadcrumb');
+        $breadcrumb->shouldReceive('onSettings')->andReturnSelf();
 
-        $form = m::mock('\Antares\Contracts\Html\Form\Factory');
-        $grid = m::mock('\Antares\Contracts\Html\Form\Grid');
-
-        $siteFieldset = m::mock('\Antares\Contracts\Html\Form\Fieldset');
-        $siteControl  = m::mock('\Antares\Contracts\Html\Form\Control');
-
-        $emailFieldset = m::mock('\Antares\Contracts\Html\Form\Fieldset');
-        $emailControl  = m::mock('\Antares\Contracts\Html\Form\Control');
-        $emailControl->shouldReceive('help')->with(NUll);
-        $stub          = new Setting($form);
-
-        $siteFieldset->shouldReceive('control')->times(3)->andReturn($siteControl);
-        $siteControl->shouldReceive('label')->times(3)->andReturnSelf()
-                ->shouldReceive('attributes')->andReturnSelf()
-                ->shouldReceive('options')->once()->andReturnSelf();
-
-        $emailFieldset->shouldReceive('control')->times(13)
-                ->with(m::any(), m::any())->andReturn($emailControl);
-        $emailControl->shouldReceive('label')->times(13)->andReturnSelf()
-                ->shouldReceive('attributes')->once()->andReturnSelf()
-                ->shouldReceive('options')->times(3)->andReturnSelf()
-                ->shouldReceive('help')->with('email.password.help');
-
-        $grid->shouldReceive('setup')->once()
-                ->with($stub, 'antares::settings', $model)->andReturnNull()
-                ->shouldReceive('fieldset')->once()
-                ->with(trans('antares/foundation::label.settings.application'), m::type('Closure'))
-                ->andReturnUsing(function ($t, $c) use ($siteFieldset) {
-                    $c($siteFieldset);
-                })
-                ->shouldReceive('fieldset')->once()
-                ->with(trans('antares/foundation::label.settings.mail'), m::type('Closure'))
-                ->andReturnUsing(function ($t, $c) use ($emailFieldset) {
-                    $c($emailFieldset);
-                });
-
-        $form->shouldReceive('of')->once()
-                ->with('antares.settings', m::type('Closure'))
-                ->andReturnUsing(function ($n, $c) use ($grid) {
-                    $c($grid);
-
-                    return 'foo';
-                });
-
-        $app['Illuminate\Contracts\View\Factory']->shouldReceive('make')
-                ->with('antares/foundation::settings._hidden', m::type('Array'), [])
-                ->andReturn('email.password.help');
-
-        $this->assertEquals('foo', $stub->form($model));
+        $this->app['Antares\Contracts\Html\Form\Control'] = $control                                          = m::mock('Antares\Contracts\Html\Form\Control');
+        $control->shouldReceive('setTemplates')->andReturnSelf()
+                ->shouldReceive('setPresenter')->with(m::type('Object'))->andReturnSelf()
+                ->shouldReceive('generate')->with(m::type('String'))->andReturnUsing(function() {
+            return 'foo';
+        });
+        $this->app['Antares\Contracts\Html\Form\Template'] = m::mock('Antares\Contracts\Html\Form\Template');
+        $stub                                              = new Setting($breadcrumb);
+        $this->assertInstanceOf(Settings::class, $stub->form($model));
     }
 
 }

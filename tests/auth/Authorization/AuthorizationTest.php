@@ -24,8 +24,6 @@ use Mockery as m;
 use Antares\Memory\Provider;
 use Antares\Memory\Handlers\Runtime;
 use Antares\Authorization\Authorization;
-use Illuminate\Container\Container as IlluminateContainer;
-use Antares\Testing\TestCase;
 use Antares\Testing\ApplicationTestCase;
 
 class AuthorizationTest extends ApplicationTestCase

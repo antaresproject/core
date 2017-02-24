@@ -17,39 +17,21 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Publisher\TestCase;
 
-use Mockery as m;
-use Illuminate\Container\Container;
-use Illuminate\Support\Facades\Facade;
+namespace Antares\Foundation\Publisher\TestCase;
+
 use Antares\Foundation\Publisher\PublisherManager;
+use Antares\Testing\ApplicationTestCase;
+use Mockery as m;
 
-class PublisherManagerTest extends \PHPUnit_Framework_TestCase
+class PublisherManagerTest extends ApplicationTestCase
 {
-    /**
-     * Application instance.
-     *
-     * @var Illuminate\Foundation\Application
-     */
-    private $app = null;
-
-    /**
-     * Setup the test environment.
-     */
-    public function setUp()
-    {
-        $this->app = new Container();
-
-        Facade::clearResolvedInstances();
-        Container::setInstance($this->app);
-    }
 
     /**
      * Teardown the test environment.
      */
     public function tearDown()
     {
-        unset($this->app);
         m::close();
     }
 
@@ -63,10 +45,10 @@ class PublisherManagerTest extends \PHPUnit_Framework_TestCase
     {
         $app = $this->app;
 
-        $app['session'] = $session = m::mock('\Illuminate\Session\SessionInterface');
-        $app['antares.publisher.ftp'] = $client = m::mock('\Antares\Support\Ftp\Client');
-        $app['antares.platform.memory'] = $memory = m::mock('\Antares\Contracts\Memory\Provider');
-        $app['antares.publisher.ftp'] = m::mock('\Antares\Contracts\Publisher\Uploader');
+        $app['session']                 = $session                        = m::mock('\Illuminate\Session\SessionInterface');
+        $app['antares.publisher.ftp']   = $client                         = m::mock('\Antares\Support\Ftp\Client');
+        $app['antares.platform.memory'] = $memory                         = m::mock('\Antares\Contracts\Memory\Provider');
+        $app['antares.publisher.ftp']   = m::mock('\Antares\Contracts\Publisher\Uploader');
 
         $memory->shouldReceive('get')->once()->with('antares.publisher.driver', 'ftp')->andReturn('ftp');
 
@@ -85,19 +67,19 @@ class PublisherManagerTest extends \PHPUnit_Framework_TestCase
     {
         $app = $this->app;
 
-        $app['antares.messages'] = $messages = m::mock('\Antares\Contracts\Messages\MessageBag');
-        $app['antares.publisher.ftp'] = $client = m::mock('\Antares\Contracts\Publisher\Uploader');
-        $app['translator'] = $translator = m::mock('\Illuminate\Translation\Translator')->makePartial();
-        $app['antares.platform.memory'] = $memory = m::mock('\Antares\Contracts\Memory\Provider');
+        $app['antares.messages']        = $messages                       = m::mock('\Antares\Contracts\Messages\MessageBag');
+        $app['antares.publisher.ftp']   = $client                         = m::mock('\Antares\Contracts\Publisher\Uploader');
+        $app['translator']              = $translator                     = m::mock('\Illuminate\Translation\Translator')->makePartial();
+        $app['antares.platform.memory'] = $memory                         = m::mock('\Antares\Contracts\Memory\Provider');
 
         $memory->shouldReceive('get')->once()->with('antares.publisher.queue', [])->andReturn(['a', 'b'])
-            ->shouldReceive('get')->times(2)->with('antares.publisher.driver', 'ftp')->andReturn('ftp')
-            ->shouldReceive('put')->once()->with('antares.publisher.queue', ['b'])->andReturnNull();
+                ->shouldReceive('get')->times(2)->with('antares.publisher.driver', 'ftp')->andReturn('ftp')
+                ->shouldReceive('put')->once()->with('antares.publisher.queue', ['b'])->andReturnNull();
         $messages->shouldReceive('add')->once()->with('success', m::any())->andReturnNull()
-            ->shouldReceive('add')->once()->with('error', m::any())->andReturnNull();
+                ->shouldReceive('add')->once()->with('error', m::any())->andReturnNull();
         $translator->shouldReceive('trans')->andReturn('foo');
         $client->shouldReceive('upload')->with('a')->andReturnNull()
-            ->shouldReceive('upload')->with('b')->andThrow('\Exception');
+                ->shouldReceive('upload')->with('b')->andThrow('\Exception');
 
         $stub = (new PublisherManager($app))->attach($memory);
 
@@ -111,12 +93,12 @@ class PublisherManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testQueueMethod()
     {
-        $app = $this->app;
-        $app['antares.platform.memory'] = $memory = m::mock('\Antares\Contracts\Memory\Provider');
+        $app                            = $this->app;
+        $app['antares.platform.memory'] = $memory                         = m::mock('\Antares\Contracts\Memory\Provider');
 
         $memory->shouldReceive('get')->once()->with('antares.publisher.queue', [])
                 ->andReturn(['foo', 'foobar'])
-            ->shouldReceive('put')->once()->with('antares.publisher.queue', m::any())
+                ->shouldReceive('put')->once()->with('antares.publisher.queue', m::any())
                 ->andReturnNull();
 
         $stub = (new PublisherManager($app))->attach($memory);
@@ -130,12 +112,13 @@ class PublisherManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testQueuedMethod()
     {
-        $app = $this->app;
-        $app['antares.platform.memory'] = $memory = m::mock('\Antares\Contracts\Memory\Provider');
+        $app                            = $this->app;
+        $app['antares.platform.memory'] = $memory                         = m::mock('\Antares\Contracts\Memory\Provider');
 
         $memory->shouldReceive('get')->once()->with('antares.publisher.queue', [])->andReturn('foo');
 
         $stub = (new PublisherManager($app))->attach($memory);
         $this->assertEquals('foo', $stub->queued());
     }
+
 }

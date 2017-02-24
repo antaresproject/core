@@ -20,21 +20,11 @@
 
 namespace Antares\Foundation\Bootstrap\TestCase;
 
+use Antares\Users\Bootstrap\LoadUserMetaData;
 use Antares\Testing\ApplicationTestCase;
 
 class LoadUserMetaDataTest extends ApplicationTestCase
 {
-
-    /**
-     * Define environment setup.
-     *
-     * @param \Illuminate\Foundation\Application $app
-     */
-    protected function getEnvironmentSetUp($app)
-    {
-        parent::getEnvironmentSetUp($app);
-        $app->make(\Antares\Users\Bootstrap\LoadUserMetaData::class)->bootstrap($app);
-    }
 
     /**
      * Test instance of `antares.memory`.
@@ -43,6 +33,7 @@ class LoadUserMetaDataTest extends ApplicationTestCase
      */
     public function testInstanceOfAntaresMemory()
     {
+        $this->app->make(LoadUserMetaData::class)->bootstrap($this->app);
         $stub = $this->app->make('antares.memory')->driver('user');
         $this->assertInstanceOf('\Antares\Model\Memory\UserMetaProvider', $stub);
         $this->assertInstanceOf('\Antares\Memory\Provider', $stub);

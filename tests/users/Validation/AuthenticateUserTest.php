@@ -17,13 +17,15 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Validation\TestCase;
 
+namespace Antares\Users\Validation\TestCase;
+
+use Antares\Users\Validation\AuthenticateUser;
 use Mockery as m;
-use Antares\Foundation\Validation\AuthenticateUser;
 
 class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -33,7 +35,7 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Validation\Auth.
+     * Test Antares\Users\Validation\Auth.
      *
      * @test
      */
@@ -48,7 +50,7 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Validation\Auth validation.
+     * Test Antares\Users\Validation\Auth validation.
      *
      * @test
      */
@@ -70,7 +72,7 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Validation\Auth on login.
+     * Test Antares\Users\Validation\Auth on login.
      *
      * @test
      */
@@ -90,4 +92,5 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($validator, $validation);
     }
+
 }

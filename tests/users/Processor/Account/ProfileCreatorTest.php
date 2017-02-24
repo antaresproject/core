@@ -17,19 +17,21 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Processor\Account\TestCase;
 
-use Mockery as m;
-use Antares\Testing\TestCase;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Config;
+namespace Antares\Users\Processor\Account\TestCase;
+
+use Antares\Users\Processor\Account\ProfileCreator;
 use Antares\Support\Facades\Foundation;
-use Antares\Foundation\Processor\Account\ProfileCreator;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+use Antares\Testing\TestCase;
+use Mockery as m;
 
 class ProfileCreatorTest extends TestCase
 {
+
     /**
-     * Test Antares\Foundation\Processor\Account\ProfileCreator::create()
+     * Test Antares\Users\Processor\Account\ProfileCreator::create()
      * method.
      *
      * @test
@@ -37,21 +39,21 @@ class ProfileCreatorTest extends TestCase
     public function testCreateMethod()
     {
         $listener  = m::mock('\Antares\Contracts\Foundation\Listener\Account\ProfileCreator');
-        $presenter = m::mock('\Antares\Foundation\Http\Presenters\Account');
-        $validator = m::mock('\Antares\Foundation\Validation\Account');
+        $presenter = m::mock('\Antares\Users\Http\Presenters\Account');
+        $validator = m::mock('\Antares\Users\Validation\Account');
         $user      = m::mock('\Antares\Model\User');
         $form      = m::mock('\Antares\Contracts\Html\Form\Builder');
 
         $stub = new ProfileCreator($presenter, $validator);
 
         $presenter->shouldReceive('profile')->once()
-            ->with($user, 'antares::register')->andReturn($form);
+                ->with($user, 'antares::register')->andReturn($form);
         $form->shouldReceive('extend')->once()->with(m::type('Closure'))
-            ->andReturnUsing(function ($c) use ($form) {
-                return $c($form);
-            });
+                ->andReturnUsing(function ($c) use ($form) {
+                    return $c($form);
+                });
         $listener->shouldReceive('showProfileCreator')->once()
-            ->with(['eloquent' => $user, 'form' => $form])->andReturn('profile.create');
+                ->with(['eloquent' => $user, 'form' => $form])->andReturn('profile.create');
 
         Foundation::shouldReceive('make')->once()->with('antares.user')->andReturn($user);
 
@@ -59,7 +61,7 @@ class ProfileCreatorTest extends TestCase
     }
 
     /**
-     * Test Antares\Foundation\Processor\Account\ProfileCreator::store()
+     * Test Antares\Users\Processor\Account\ProfileCreator::store()
      * method.
      *
      * @test
@@ -67,8 +69,8 @@ class ProfileCreatorTest extends TestCase
     public function testStoreMethod()
     {
         $listener  = m::mock('\Antares\Contracts\Foundation\Listener\Account\ProfileCreator');
-        $presenter = m::mock('\Antares\Foundation\Http\Presenters\Account');
-        $validator = m::mock('\Antares\Foundation\Validation\Account');
+        $presenter = m::mock('\Antares\Users\Http\Presenters\Account');
+        $validator = m::mock('\Antares\Users\Validation\Account');
         $resolver  = m::mock('\Illuminate\Contracts\Validation\Validator');
         $receipt   = m::mock('\Antares\Contracts\Notification\Receipt');
         $memory    = m::mock('\Antares\Contracts\Memory\Provider');
@@ -80,15 +82,15 @@ class ProfileCreatorTest extends TestCase
         $stub = new ProfileCreator($presenter, $validator);
 
         $validator->shouldReceive('on')->once()->with('register')->andReturnSelf()
-            ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
+                ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
         $resolver->shouldReceive('fails')->once()->andReturn(false);
         $user->shouldReceive('setAttribute')->once()->with('email', $input['email'])->andReturnNull()
-            ->shouldReceive('setAttribute')->once()->with('fullname', $input['fullname'])->andReturnNull()
-            ->shouldReceive('setAttribute')->once()->with('password', m::type('String'))->andReturnNull()
-            ->shouldReceive('save')->once()->andReturnNull()
-            ->shouldReceive('roles')->once()->andReturn($role)
-            ->shouldReceive('toArray')->once()->andReturn([])
-            ->shouldReceive('notify')->once()
+                ->shouldReceive('setAttribute')->once()->with('fullname', $input['fullname'])->andReturnNull()
+                ->shouldReceive('setAttribute')->once()->with('password', m::type('String'))->andReturnNull()
+                ->shouldReceive('save')->once()->andReturnNull()
+                ->shouldReceive('roles')->once()->andReturn($role)
+                ->shouldReceive('toArray')->once()->andReturn([])
+                ->shouldReceive('notify')->once()
                 ->with(m::type('\Antares\Contracts\Notification\Message'))
                 ->andReturn($receipt);
         $role->shouldReceive('sync')->once()->with([2])->andReturnNull();
@@ -98,9 +100,9 @@ class ProfileCreatorTest extends TestCase
 
         Config::shouldReceive('get')->once()->with('antares/foundation::roles.member', 2)->andReturn(2);
         DB::shouldReceive('transaction')->once()->with(m::type('Closure'))
-            ->andReturnUsing(function ($c) {
-                return $c();
-            });
+                ->andReturnUsing(function ($c) {
+                    return $c();
+                });
         Foundation::shouldReceive('make')->once()->with('antares.user')->andReturn($user);
         Foundation::shouldReceive('memory')->once()->andReturn($memory);
 
@@ -108,7 +110,7 @@ class ProfileCreatorTest extends TestCase
     }
 
     /**
-     * Test Antares\Foundation\Processor\Account\ProfileCreator::store()
+     * Test Antares\Users\Processor\Account\ProfileCreator::store()
      * method with failed notification.
      *
      * @test
@@ -116,8 +118,8 @@ class ProfileCreatorTest extends TestCase
     public function testStoreMethodGivenFailedNotification()
     {
         $listener  = m::mock('\Antares\Contracts\Foundation\Listener\Account\ProfileCreator');
-        $presenter = m::mock('\Antares\Foundation\Http\Presenters\Account');
-        $validator = m::mock('\Antares\Foundation\Validation\Account');
+        $presenter = m::mock('\Antares\Users\Http\Presenters\Account');
+        $validator = m::mock('\Antares\Users\Validation\Account');
         $resolver  = m::mock('\Illuminate\Contracts\Validation\Validator');
         $receipt   = m::mock('\Antares\Contracts\Notification\Receipt');
         $memory    = m::mock('\Antares\Contracts\Memory\Provider');
@@ -129,15 +131,15 @@ class ProfileCreatorTest extends TestCase
         $stub = new ProfileCreator($presenter, $validator);
 
         $validator->shouldReceive('on')->once()->with('register')->andReturnSelf()
-            ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
+                ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
         $resolver->shouldReceive('fails')->once()->andReturn(false);
         $user->shouldReceive('setAttribute')->once()->with('email', $input['email'])->andReturnNull()
-            ->shouldReceive('setAttribute')->once()->with('fullname', $input['fullname'])->andReturnNull()
-            ->shouldReceive('setAttribute')->once()->with('password', m::type('String'))->andReturnNull()
-            ->shouldReceive('save')->once()->andReturnNull()
-            ->shouldReceive('roles')->once()->andReturn($role)
-            ->shouldReceive('toArray')->once()->andReturn([])
-            ->shouldReceive('notify')->once()
+                ->shouldReceive('setAttribute')->once()->with('fullname', $input['fullname'])->andReturnNull()
+                ->shouldReceive('setAttribute')->once()->with('password', m::type('String'))->andReturnNull()
+                ->shouldReceive('save')->once()->andReturnNull()
+                ->shouldReceive('roles')->once()->andReturn($role)
+                ->shouldReceive('toArray')->once()->andReturn([])
+                ->shouldReceive('notify')->once()
                 ->with(m::type('\Antares\Contracts\Notification\Message'))
                 ->andReturn($receipt);
         $role->shouldReceive('sync')->once()->with([2])->andReturnNull();
@@ -147,9 +149,9 @@ class ProfileCreatorTest extends TestCase
 
         Config::shouldReceive('get')->once()->with('antares/foundation::roles.member', 2)->andReturn(2);
         DB::shouldReceive('transaction')->once()->with(m::type('Closure'))
-            ->andReturnUsing(function ($c) {
-                return $c();
-            });
+                ->andReturnUsing(function ($c) {
+                    return $c();
+                });
         Foundation::shouldReceive('make')->once()->with('antares.user')->andReturn($user);
         Foundation::shouldReceive('memory')->once()->andReturn($memory);
 
@@ -157,7 +159,7 @@ class ProfileCreatorTest extends TestCase
     }
 
     /**
-     * Test Antares\Foundation\Processor\Account\ProfileCreator::store()
+     * Test Antares\Users\Processor\Account\ProfileCreator::store()
      * method with failed saving to db.
      *
      * @test
@@ -165,8 +167,8 @@ class ProfileCreatorTest extends TestCase
     public function testStoreMethodGivenFailedSavingToDB()
     {
         $listener  = m::mock('\Antares\Contracts\Foundation\Listener\Account\ProfileCreator');
-        $presenter = m::mock('\Antares\Foundation\Http\Presenters\Account');
-        $validator = m::mock('\Antares\Foundation\Validation\Account');
+        $presenter = m::mock('\Antares\Users\Http\Presenters\Account');
+        $validator = m::mock('\Antares\Users\Validation\Account');
         $resolver  = m::mock('\Illuminate\Contracts\Validation\Validator');
         $user      = m::mock('\Antares\Model\User');
 
@@ -175,11 +177,11 @@ class ProfileCreatorTest extends TestCase
         $stub = new ProfileCreator($presenter, $validator);
 
         $validator->shouldReceive('on')->once()->with('register')->andReturnSelf()
-            ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
+                ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
         $resolver->shouldReceive('fails')->once()->andReturn(false);
         $user->shouldReceive('setAttribute')->once()->with('email', $input['email'])->andReturnNull()
-            ->shouldReceive('setAttribute')->once()->with('fullname', $input['fullname'])->andReturnNull()
-            ->shouldReceive('setAttribute')->once()->with('password', m::type('String'))->andReturnNull();
+                ->shouldReceive('setAttribute')->once()->with('fullname', $input['fullname'])->andReturnNull()
+                ->shouldReceive('setAttribute')->once()->with('password', m::type('String'))->andReturnNull();
         $listener->shouldReceive('createProfileFailed')->once()->with(m::type('Array'))->andReturn('profile.failed');
 
         DB::shouldReceive('transaction')->once()->with(m::type('Closure'))->andThrow('\Exception');
@@ -189,7 +191,7 @@ class ProfileCreatorTest extends TestCase
     }
 
     /**
-     * Test Antares\Foundation\Processor\Account\ProfileCreator::store()
+     * Test Antares\Users\Processor\Account\ProfileCreator::store()
      * method with failed validation.
      *
      * @test
@@ -197,8 +199,8 @@ class ProfileCreatorTest extends TestCase
     public function testStoreMethodGivenFailedValidation()
     {
         $listener  = m::mock('\Antares\Contracts\Foundation\Listener\Account\ProfileCreator');
-        $presenter = m::mock('\Antares\Foundation\Http\Presenters\Account');
-        $validator = m::mock('\Antares\Foundation\Validation\Account');
+        $presenter = m::mock('\Antares\Users\Http\Presenters\Account');
+        $validator = m::mock('\Antares\Users\Validation\Account');
         $resolver  = m::mock('\Illuminate\Contracts\Validation\Validator');
 
         $input = $this->getInput();
@@ -206,11 +208,11 @@ class ProfileCreatorTest extends TestCase
         $stub = new ProfileCreator($presenter, $validator);
 
         $validator->shouldReceive('on')->once()->with('register')->andReturnSelf()
-            ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
+                ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
         $resolver->shouldReceive('fails')->once()->andReturn(true)
-            ->shouldReceive('getMessageBag')->once()->andReturn([]);
+                ->shouldReceive('getMessageBag')->once()->andReturn([]);
         $listener->shouldReceive('createProfileFailedValidation')->once()
-            ->with(m::type('Array'))->andReturn('profile.failed.validation');
+                ->with(m::type('Array'))->andReturn('profile.failed.validation');
 
         $this->assertEquals('profile.failed.validation', $stub->store($listener, $input));
     }
@@ -227,4 +229,5 @@ class ProfileCreatorTest extends TestCase
             'fullname' => 'Administrator',
         ];
     }
+
 }

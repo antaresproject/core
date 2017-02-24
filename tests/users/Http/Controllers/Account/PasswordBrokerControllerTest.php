@@ -17,18 +17,20 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Http\Controllers\Account\TestCase;
 
-use Mockery as m;
-use Antares\Testing\TestCase;
-use Illuminate\Support\Facades\View;
-use Antares\Support\Facades\Messages;
-use Antares\Support\Facades\Foundation;
-use Illuminate\Contracts\Auth\PasswordBroker;
+namespace Antares\Users\Http\Controllers\Account\TestCase;
+
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Contracts\Auth\PasswordBroker;
+use Antares\Support\Facades\Foundation;
+use Antares\Support\Facades\Messages;
+use Illuminate\Support\Facades\View;
+use Antares\Testing\TestCase;
+use Mockery as m;
 
 class PasswordBrokerControllerTest extends TestCase
 {
+
     use WithoutMiddleware;
 
     /**
@@ -68,10 +70,10 @@ class PasswordBrokerControllerTest extends TestCase
         ];
 
         $this->getProcessorMock()->shouldReceive('store')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\PasswordBrokerController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->resetLinkSent(PasswordBroker::RESET_LINK_SENT);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\PasswordBrokerController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->resetLinkSent(PasswordBroker::RESET_LINK_SENT);
+                });
 
         Messages::shouldReceive('add')->once()->with('success', trans(PasswordBroker::RESET_LINK_SENT))->andReturnNull();
         Foundation::shouldReceive('handles')->once()->with('antares::forgot', [])->andReturn('forgot');
@@ -92,10 +94,10 @@ class PasswordBrokerControllerTest extends TestCase
         ];
 
         $this->getProcessorMock()->shouldReceive('store')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\PasswordBrokerController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->resetLinkFailed(PasswordBroker::INVALID_USER);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\PasswordBrokerController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->resetLinkFailed(PasswordBroker::INVALID_USER);
+                });
 
         Messages::shouldReceive('add')->once()->with('error', trans(PasswordBroker::INVALID_USER))->andReturnNull();
         Foundation::shouldReceive('handles')->once()->with('antares::forgot', [])->andReturn('forgot');
@@ -116,10 +118,10 @@ class PasswordBrokerControllerTest extends TestCase
         ];
 
         $this->getProcessorMock()->shouldReceive('store')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\PasswordBrokerController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->resetLinkFailedValidation([]);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\PasswordBrokerController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->resetLinkFailedValidation([]);
+                });
 
         Foundation::shouldReceive('handles')->once()->with('antares::forgot', [])->andReturn('forgot');
 
@@ -166,10 +168,10 @@ class PasswordBrokerControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('update')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\PasswordBrokerController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->passwordHasReset(PasswordBroker::PASSWORD_RESET);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\PasswordBrokerController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->passwordHasReset(PasswordBroker::PASSWORD_RESET);
+                });
 
         Foundation::shouldReceive('handles')->once()->with('antares::/', [])->andReturn('dashboard');
         Messages::shouldReceive('add')->once()->with('success', m::type('String'))->andReturnNull();
@@ -188,10 +190,10 @@ class PasswordBrokerControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('update')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\PasswordBrokerController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->passwordResetHasFailed(PasswordBroker::INVALID_PASSWORD);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\PasswordBrokerController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->passwordResetHasFailed(PasswordBroker::INVALID_PASSWORD);
+                });
 
         Foundation::shouldReceive('handles')->once()->with('antares::forgot/reset/auniquetoken', [])->andReturn('reset');
         Messages::shouldReceive('add')->once()->with('error', trans(PasswordBroker::INVALID_PASSWORD))->andReturnNull();
@@ -210,10 +212,10 @@ class PasswordBrokerControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('update')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\PasswordBrokerController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->passwordResetHasFailed(PasswordBroker::INVALID_TOKEN);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\PasswordBrokerController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->passwordResetHasFailed(PasswordBroker::INVALID_TOKEN);
+                });
 
         Foundation::shouldReceive('handles')->once()->with('antares::forgot/reset/auniquetoken', [])->andReturn('reset');
         Messages::shouldReceive('add')->once()->with('error', trans(PasswordBroker::INVALID_TOKEN))->andReturnNull();
@@ -232,10 +234,10 @@ class PasswordBrokerControllerTest extends TestCase
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('update')->once()
-            ->with(m::type('\Antares\Foundation\Http\Controllers\Account\PasswordBrokerController'), $input)
-            ->andReturnUsing(function ($listener) {
-                return $listener->passwordResetHasFailed(PasswordBroker::INVALID_USER);
-            });
+                ->with(m::type('\Antares\Users\Http\Controllers\Account\PasswordBrokerController'), $input)
+                ->andReturnUsing(function ($listener) {
+                    return $listener->passwordResetHasFailed(PasswordBroker::INVALID_USER);
+                });
 
         Foundation::shouldReceive('handles')->once()->with('antares::forgot/reset/auniquetoken', [])->andReturn('reset');
         Messages::shouldReceive('add')->once()->with('error', trans(PasswordBroker::INVALID_USER))->andReturnNull();
@@ -247,13 +249,13 @@ class PasswordBrokerControllerTest extends TestCase
     /**
      * Get processor mock.
      *
-     * @return \Antares\Foundation\Processor\Account\PasswordBroker
+     * @return Antares\Users\Processor\Account\PasswordBroker
      */
     protected function getProcessorMock()
     {
-        $processor = m::mock('\Antares\Foundation\Processor\Account\PasswordBroker');
+        $processor = m::mock('Antares\Users\Processor\Account\PasswordBroker');
 
-        $this->app->instance('Antares\Foundation\Processor\Account\PasswordBroker', $processor);
+        $this->app->instance('Antares\Users\Processor\Account\PasswordBroker', $processor);
 
         return $processor;
     }
@@ -272,4 +274,5 @@ class PasswordBrokerControllerTest extends TestCase
             'token'                 => 'auniquetoken',
         ];
     }
+
 }

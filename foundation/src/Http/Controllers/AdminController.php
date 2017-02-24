@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Controllers;
 
 use Illuminate\Support\Facades\Route;
@@ -49,8 +48,8 @@ abstract class AdminController extends BaseController
             return $this->runMiddleware($middleware, $options);
         }
 
-        $route = Route::getCurrentRoute();
 
+        $route = Route::getCurrentRoute();
         if (!$route) {
             return;
         }
@@ -62,7 +61,6 @@ abstract class AdminController extends BaseController
         }
 
         $middlewareMatch = (is_array($options['only'])) ? in_array($action, $options['only']) : $action == $options['only'];
-
         if ($middlewareMatch) {
             $replacement = 'antares.can:';
             if (starts_with($middleware, $replacement)) {
@@ -71,7 +69,6 @@ abstract class AdminController extends BaseController
                     $resource  = $component;
                     $component = 'antares/foundation';
                 }
-
                 app('antares.resource.repository')->add([
                     'component' => str_replace('/', '::', $component),
                     'resource'  => $resource,

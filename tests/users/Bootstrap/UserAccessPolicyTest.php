@@ -18,11 +18,10 @@
  * @link       http://antaresproject.io
  */
 
+namespace Antares\Users\Bootstrap\TestCase;
 
-namespace Antares\Foundation\Bootstrap\TestCase;
-
-use Mockery as m;
 use Antares\Testing\TestCase;
+use Mockery as m;
 
 class UserAccessPolicyTest extends TestCase
 {

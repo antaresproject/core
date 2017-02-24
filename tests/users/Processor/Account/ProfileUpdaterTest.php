@@ -17,18 +17,20 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Processor\Account\TestCase;
 
-use Mockery as m;
-use Antares\Testing\TestCase;
-use Illuminate\Support\Facades\DB;
+namespace Antares\Users\Processor\Account\TestCase;
+
+use Antares\Users\Processor\Account\ProfileUpdater;
 use Illuminate\Support\Facades\Auth;
-use Antares\Foundation\Processor\Account\ProfileUpdater;
+use Illuminate\Support\Facades\DB;
+use Antares\Testing\TestCase;
+use Mockery as m;
 
 class ProfileUpdaterTest extends TestCase
 {
+
     /**
-     * Test Antares\Foundation\Processor\Account\ProfileUpdater::edit()
+     * Test Antares\Users\Processor\Account\ProfileUpdater::edit()
      * method.
      *
      * @test
@@ -36,15 +38,15 @@ class ProfileUpdaterTest extends TestCase
     public function testEditMethod()
     {
         $listener  = m::mock('\Antares\Contracts\Foundation\Listener\Account\ProfileUpdater');
-        $presenter = m::mock('\Antares\Foundation\Http\Presenters\Account');
-        $validator = m::mock('\Antares\Foundation\Validation\Account');
+        $presenter = m::mock('\Antares\Users\Http\Presenters\Account');
+        $validator = m::mock('\Antares\Users\Validation\Account');
         $user      = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
 
         $stub = new ProfileUpdater($presenter, $validator);
 
         $presenter->shouldReceive('profile')->once()->with($user, 'antares::account')->andReturnSelf();
         $listener->shouldReceive('showProfileChanger')->once()
-            ->with(['eloquent' => $user, 'form' => $presenter])->andReturn('show.profile.changer');
+                ->with(['eloquent' => $user, 'form' => $presenter])->andReturn('show.profile.changer');
 
         Auth::shouldReceive('user')->once()->andReturn($user);
 
@@ -52,7 +54,7 @@ class ProfileUpdaterTest extends TestCase
     }
 
     /**
-     * Test Antares\Foundation\Processor\Account\ProfileUpdater::update()
+     * Test Antares\Users\Processor\Account\ProfileUpdater::update()
      * method.
      *
      * @test
@@ -60,8 +62,8 @@ class ProfileUpdaterTest extends TestCase
     public function testUpdateMethod()
     {
         $listener  = m::mock('\Antares\Contracts\Foundation\Listener\Account\ProfileUpdater');
-        $presenter = m::mock('\Antares\Foundation\Http\Presenters\Account');
-        $validator = m::mock('\Antares\Foundation\Validation\Account');
+        $presenter = m::mock('\Antares\Users\Http\Presenters\Account');
+        $validator = m::mock('\Antares\Users\Validation\Account');
         $resolver  = m::mock('\Illuminate\Contracts\Validation\Validator');
         $user      = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
 
@@ -70,24 +72,24 @@ class ProfileUpdaterTest extends TestCase
         $stub = new ProfileUpdater($presenter, $validator);
 
         $user->shouldReceive('getAttribute')->once()->with('id')->andReturn($input['id'])
-            ->shouldReceive('setAttribute')->once()->with('email', $input['email'])->andReturnNull()
-            ->shouldReceive('setAttribute')->once()->with('fullname', $input['fullname'])->andReturnNull()
-            ->shouldReceive('save')->once()->andReturnNull();
+                ->shouldReceive('setAttribute')->once()->with('email', $input['email'])->andReturnNull()
+                ->shouldReceive('setAttribute')->once()->with('fullname', $input['fullname'])->andReturnNull()
+                ->shouldReceive('save')->once()->andReturnNull();
         $validator->shouldReceive('with')->once()->with($input)->andReturn($resolver);
         $resolver->shouldReceive('fails')->once()->andReturn(false);
         $listener->shouldReceive('profileUpdated')->once()->andReturn('profile.updated');
 
         Auth::shouldReceive('user')->once()->andReturn($user);
         DB::shouldReceive('transaction')->once()
-            ->with(m::type('Closure'))->andReturnUsing(function ($c) {
-                $c();
-            });
+                ->with(m::type('Closure'))->andReturnUsing(function ($c) {
+            $c();
+        });
 
         $this->assertEquals('profile.updated', $stub->update($listener, $input));
     }
 
     /**
-     * Test Antares\Foundation\Processor\Account\ProfileUpdater::update()
+     * Test Antares\Users\Processor\Account\ProfileUpdater::update()
      * method given user mismatched.
      *
      * @test
@@ -95,15 +97,15 @@ class ProfileUpdaterTest extends TestCase
     public function testUpdateMethodGivenUserMissmatched()
     {
         $listener  = m::mock('\Antares\Contracts\Foundation\Listener\Account\ProfileUpdater');
-        $presenter = m::mock('\Antares\Foundation\Http\Presenters\Account');
-        $validator = m::mock('\Antares\Foundation\Validation\Account');
+        $presenter = m::mock('\Antares\Users\Http\Presenters\Account');
+        $validator = m::mock('\Antares\Users\Validation\Account');
         $user      = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
 
         $input = $this->getInput();
 
         $stub = new ProfileUpdater($presenter, $validator);
 
-        $user->shouldReceive('getAttribute')->once()->with('id')->andReturn($input['id']++);
+        $user->shouldReceive('getAttribute')->once()->with('id')->andReturn($input['id'] ++);
         $listener->shouldReceive('abortWhenUserMismatched')->once()->andReturn('user.missmatched');
 
         Auth::shouldReceive('user')->once()->andReturn($user);
@@ -112,7 +114,7 @@ class ProfileUpdaterTest extends TestCase
     }
 
     /**
-     * Test Antares\Foundation\Processor\Account\ProfileUpdater::update()
+     * Test Antares\Users\Processor\Account\ProfileUpdater::update()
      * method given validation failed.
      *
      * @test
@@ -120,8 +122,8 @@ class ProfileUpdaterTest extends TestCase
     public function testUpdateMethodGivenValidationFailed()
     {
         $listener  = m::mock('\Antares\Contracts\Foundation\Listener\Account\ProfileUpdater');
-        $presenter = m::mock('\Antares\Foundation\Http\Presenters\Account');
-        $validator = m::mock('\Antares\Foundation\Validation\Account');
+        $presenter = m::mock('\Antares\Users\Http\Presenters\Account');
+        $validator = m::mock('\Antares\Users\Validation\Account');
         $resolver  = m::mock('\Illuminate\Contracts\Validation\Validator');
         $user      = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
 
@@ -132,9 +134,9 @@ class ProfileUpdaterTest extends TestCase
         $user->shouldReceive('getAttribute')->once()->with('id')->andReturn($input['id']);
         $validator->shouldReceive('with')->once()->with($input)->andReturn($resolver);
         $resolver->shouldReceive('fails')->once()->andReturn(true)
-            ->shouldReceive('getMessageBag')->once()->andReturn([]);
+                ->shouldReceive('getMessageBag')->once()->andReturn([]);
         $listener->shouldReceive('updateProfileFailedValidation')->once()
-            ->with([])->andReturn('profile.failed.validation');
+                ->with([])->andReturn('profile.failed.validation');
 
         Auth::shouldReceive('user')->once()->andReturn($user);
 
@@ -142,7 +144,7 @@ class ProfileUpdaterTest extends TestCase
     }
 
     /**
-     * Test Antares\Foundation\Processor\Account\ProfileUpdater::update()
+     * Test Antares\Users\Processor\Account\ProfileUpdater::update()
      * method given saving failed.
      *
      * @test
@@ -150,8 +152,8 @@ class ProfileUpdaterTest extends TestCase
     public function testUpdateMethodGivenSavingFailed()
     {
         $listener  = m::mock('\Antares\Contracts\Foundation\Listener\Account\ProfileUpdater');
-        $presenter = m::mock('\Antares\Foundation\Http\Presenters\Account');
-        $validator = m::mock('\Antares\Foundation\Validation\Account');
+        $presenter = m::mock('\Antares\Users\Http\Presenters\Account');
+        $validator = m::mock('\Antares\Users\Validation\Account');
         $resolver  = m::mock('\Illuminate\Contracts\Validation\Validator');
         $user      = m::mock('\Illuminate\Contracts\Auth\Authenticatable');
 
@@ -160,8 +162,8 @@ class ProfileUpdaterTest extends TestCase
         $stub = new ProfileUpdater($presenter, $validator);
 
         $user->shouldReceive('getAttribute')->once()->with('id')->andReturn($input['id'])
-            ->shouldReceive('setAttribute')->once()->with('email', $input['email'])->andReturnNull()
-            ->shouldReceive('setAttribute')->once()->with('fullname', $input['fullname'])->andReturnNull();
+                ->shouldReceive('setAttribute')->once()->with('email', $input['email'])->andReturnNull()
+                ->shouldReceive('setAttribute')->once()->with('fullname', $input['fullname'])->andReturnNull();
         $validator->shouldReceive('with')->once()->with($input)->andReturn($resolver);
         $resolver->shouldReceive('fails')->once()->andReturn(false);
         $listener->shouldReceive('updateProfileFailed')->once()->with(m::type('Array'))->andReturn('profile.failed');
@@ -185,4 +187,5 @@ class ProfileUpdaterTest extends TestCase
             'fullname' => 'Administrator',
         ];
     }
+
 }

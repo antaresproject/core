@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Support;
 
 use Illuminate\Support\Arr;
@@ -63,8 +62,11 @@ abstract class MenuHandler
      *
      * @param  \Illuminate\Contracts\Container\Container  $container
      */
-    public function __construct(Container $container, $name = null)
+    public function __construct(Container $container = null, $name = null)
     {
+        if (is_null($container)) {
+            $container = app();
+        }
         $this->handler   = (!is_null($name)) ? $container->make($name) : $container->make('antares.platform.menu');
         $this->container = $container;
     }

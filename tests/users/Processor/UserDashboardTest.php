@@ -17,13 +17,15 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Processor\TestCase;
 
+namespace Antares\Users\Processor\TestCase;
+
+use Antares\Users\Processor\Account\ProfileDashboard;
 use Mockery as m;
-use Antares\Foundation\Processor\Account\ProfileDashboard;
 
 class UserDashboardTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Teardown the test environment.
      */
@@ -33,7 +35,7 @@ class UserDashboardTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Foundation\Processor\UserDashboard::show()
+     * Test Antares\Users\Processor\UserDashboard::show()
      * method.
      *
      * @test
@@ -51,4 +53,5 @@ class UserDashboardTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('show.dashboard', $stub->show($listener));
     }
+
 }
