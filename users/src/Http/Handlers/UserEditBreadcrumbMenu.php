@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Handlers;
 
 use Antares\Contracts\Authorization\Authorization;
@@ -141,6 +140,7 @@ class UserEditBreadcrumbMenu extends MenuHandler
             );
         }
         $actions = $this->user->dependableActions();
+
         foreach ($actions as $action) {
             $item = $this->handler
                     ->add(snake_case($action['title']), '^:user-edit')

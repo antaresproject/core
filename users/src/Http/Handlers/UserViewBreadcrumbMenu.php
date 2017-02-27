@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Handlers;
 
 use Antares\Contracts\Authorization\Authorization;
@@ -103,15 +102,19 @@ class UserViewBreadcrumbMenu extends MenuHandler
         if (!$this->passesAuthorization()) {
             return;
         }
+
         $this->createMenu();
         if (!app('antares.acl')->make('antares')->can('client-create')) {
             return;
         }
+
         $acl            = app('antares.acl')->make('antares/control');
         $canUpdateUser  = $acl->can('user-update');
         $canDeleteUser  = $acl->can('user-delete');
         $canLoginAsUser = $acl->can('login-as-user');
         $user           = $this->getUser();
+
+
 
         $uid = from_route('users');
         if ($canUpdateUser) {

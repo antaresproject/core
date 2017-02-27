@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Providers;
 
 use Antares\Foundation\Listeners\DatatableMassActionsDependableActions;

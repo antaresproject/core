@@ -96,7 +96,6 @@ final class MenuComposer
                 $instance->handle();
                 Registry::set('menu.' . $group, $instance);
             }
-
             $this->content($params);
         });
     }

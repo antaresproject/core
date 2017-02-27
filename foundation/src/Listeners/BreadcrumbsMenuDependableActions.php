@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Listeners;
 
 use Antares\Support\Fluent;
@@ -51,7 +50,9 @@ class BreadcrumbsMenuDependableActions extends AbstractDependableActions
     public function handle($menu)
     {
         $this->menu = $menu;
+
         $attributes = $menu->getAttributes();
+
         if (is_null($entity     = array_get($attributes, 'entity')) or empty($dependable = $this->actions)) {
             return;
         }

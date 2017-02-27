@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Datatables\Filter;
 
 use Antares\Asset\Factory as AssetFactory;

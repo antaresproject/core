@@ -219,6 +219,7 @@ class Users extends DataTable
      */
     protected function statusesSelect()
     {
+
         $statuses = User::select([DB::raw('count(id) as counter'), 'status'])
                 ->clients()
                 ->groupBy('status')

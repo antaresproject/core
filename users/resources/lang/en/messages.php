@@ -17,8 +17,6 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 return [
     'register'          => [
         'db-failed' => 'Unable to register user. Please conttact with support.'
@@ -35,8 +33,8 @@ return [
     'created_at'        => 'Created at',
     'created_at_filter' => 'Created at (:start - :end)',
     'dependable'        => [
-        'activate_title'              => 'Activate (dependable)',
-        'deactivate_title'            => 'Deactivate (dependable)',
+        'activate_title'              => 'Activate',
+        'deactivate_title'            => 'Deactivate',
         'activate_description'        => 'Activating user :fullname as dependable action.',
         'deactivate_description'      => 'Deactivating user :fullname as dependable action.',
         'status_has_not_been_changed' => 'User status has not been changed.',

@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Listeners;
 
 use Illuminate\Support\Collection;
