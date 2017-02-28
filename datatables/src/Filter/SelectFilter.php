@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Datatables\Filter;
 
 class SelectFilter extends AbstractFilter
@@ -72,7 +71,7 @@ class SelectFilter extends AbstractFilter
         if (empty($values)) {
             return '';
         }
-        $name      = str_replace('%value', implode(', ', array_only($this->options(), $values)), $this->pattern);
+        $name      = str_replace('%value', implode(', ', array_only($this->options(), $values)), trans($this->pattern));
         $classname = get_called_class();
         return view('antares/automation::admin.partials._deleted')->with([
                     'column'    => $this->column,

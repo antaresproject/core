@@ -19,11 +19,11 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Template;
 
 use Antares\View\Notification\AbstractNotificationTemplate;
 use Antares\Notifications\Adapter\VariablesAdapter;
+use Antares\Notifications\Model\NotificationsStack;
 use Antares\Brands\Model\BrandOptions;
 use Illuminate\Support\Facades\Log;
 use Twig_Loader_String;
@@ -75,7 +75,8 @@ class EmailNotification extends AbstractNotificationTemplate implements Sendable
      */
     public function render($view = null)
     {
-        $view          = app(VariablesAdapter::class)->setVariables($this->predefinedVariables)->get(array_get($this->getModel(), 'contents.0.content'));
+        $model         = $this->getModel();
+        $view          = app(VariablesAdapter::class)->setVariables($this->predefinedVariables)->get(array_get($model, 'contents.0.content', array_get($model, 'content.0.content')));
         $brandTemplate = BrandOptions::query()->where('brand_id', brand_id())->first();
         $header        = $brandTemplate->header;
         return str_replace('</head>', '<style>' . $brandTemplate->styles . '</style></head>', $header) . $view . $brandTemplate->footer;
@@ -87,24 +88,24 @@ class EmailNotification extends AbstractNotificationTemplate implements Sendable
     public function handle()
     {
         try {
-
+            if (empty($this->recipients) && !is_null($recipients = array_get($this->predefinedVariables, 'recipients'))) {
+                $this->recipients = $recipients;
+            }
             $result = parent::handle();
             $code   = $result->getResultCode();
-            $params = [
-                'variables' => [
-                    'recipients' => $this->recipients,
-                    'title'      => $this->getTitle(),
-                    'code'       => $code,
-                    'message'    => $result->getResultMessage()
-                ]
-            ];
+
+            $model = $this->getModel();
+            $stack = new NotificationsStack([
+                'notification_id' => array_get($model, 'id'),
+                'author_id'       => auth()->guest() ? null : user()->id,
+                'variables'       => array_merge($this->predefinedVariables, ['recipients' => $this->recipients]),
+            ]);
+            $stack->save();
         } catch (Exception $ex) {
             Log::error($ex);
             $code = 0;
         }
-        if (!$code) {
-            notify('email.notification_not_sent', $params);
-        }
+        return $code;
     }
 
 }

@@ -629,4 +629,9 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
         return ($lastLogin) ? $lastLogin->created_at->diffForHumans() : 'never';
     }
 
+    public function getPhoneAttribute()
+    {
+        return '697274132';
+    }
+
 }

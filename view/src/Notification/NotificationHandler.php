@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\View\Notification;
 
 use Antares\View\Notification\AbstractNotificationTemplate;
@@ -39,7 +38,6 @@ class NotificationHandler
     {
         $type     = $instance->getType();
         $notifier = $this->getNotifierAdapter($type);
-
         if (!$notifier) {
             return false;
         }
@@ -47,7 +45,6 @@ class NotificationHandler
         $view       = $render instanceof View ? $render->render() : $render;
         $title      = $instance->getTitle();
         $recipients = $instance->getRecipients();
-
         return $notifier->send($view, [], function($m) use($title, $recipients) {
                     $m->to($recipients);
                     $m->subject($title);

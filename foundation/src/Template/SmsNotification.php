@@ -19,11 +19,11 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Template;
 
 use Antares\View\Notification\AbstractNotificationTemplate;
 use Antares\Notifications\Adapter\VariablesAdapter;
+use Antares\Notifications\Model\NotificationsStack;
 
 class SmsNotification extends AbstractNotificationTemplate implements SendableNotification
 {
@@ -59,7 +59,8 @@ class SmsNotification extends AbstractNotificationTemplate implements SendableNo
      */
     public function render($view = null)
     {
-        $view = array_get($this->getModel(), 'contents.0.content');
+        $model = $this->getModel();
+        $view  = array_get($model, 'contents.0.content', array_get($model, 'content.0.content'));
         return app(VariablesAdapter::class)->get($view);
     }
 
@@ -70,9 +71,18 @@ class SmsNotification extends AbstractNotificationTemplate implements SendableNo
      */
     public function handle()
     {
-        $result = parent::handle();
-        $params = ['variables' => ['recipients' => $this->recipients, 'title' => $this->getTitle()]];
-        return (!$result) ? notify('sms.notification_not_sent', $params) : notify('sms.notification_sent', $params);
+        if (empty($this->recipients) && !is_null($recipients = array_get($this->predefinedVariables, 'recipients'))) {
+            $this->recipients = $recipients;
+        }
+        $model = $this->getModel();
+        $stack = new NotificationsStack([
+            'notification_id' => array_get($model, 'id'),
+            'author_id'       => auth()->guest() ? null : user()->id,
+            'variables'       => array_merge($this->predefinedVariables, ['recipients' => $this->recipients]),
+        ]);
+        $stack->save();
+
+        return parent::handle();
     }
 
 }

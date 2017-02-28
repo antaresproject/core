@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\View\Notification;
 
 use Antares\Support\Facades\Foundation;
@@ -208,10 +207,11 @@ abstract class AbstractNotificationTemplate extends Job implements NotificationC
             return [];
         }
         $recipients = ($this->recipients instanceof Collection) ? $this->recipients->toArray() : $this->recipients;
+
+
         if (!is_array($recipients)) {
             return $recipients;
         }
-
         $return = [];
 
         foreach ($recipients as $recipient) {
