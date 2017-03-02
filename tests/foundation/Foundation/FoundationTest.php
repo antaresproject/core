@@ -26,12 +26,6 @@ use Antares\Testing\ApplicationTestCase;
 
 class FoundationTest extends ApplicationTestCase
 {
-    /**
-     * Application instance.
-     *
-     * @var Illuminate\Foundation\Application
-     */
-    //private $app = null;
 
     /**
      * Setup the test environment.
@@ -50,15 +44,6 @@ class FoundationTest extends ApplicationTestCase
         $transport                 = new \Antares\Notifier\TransportManager($this->app);
         $mailer                    = with(new \Antares\Notifier\Mailer($this->app, $transport))->attach($memory);
         $this->app['antares.mail'] = $mailer;
-    }
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        //unset($this->app);
-        m::close();
     }
 
     /**

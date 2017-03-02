@@ -17,12 +17,14 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Support\TestCase;
+
+namespace Antares\Support\TestCase;
 
 use Mockery as m;
 
 class ValidatorTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Setup the test environment.
      */
@@ -30,15 +32,6 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $_SERVER['validator.onFoo'] = null;
         $_SERVER['validator.onFoo'] = null;
-    }
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        unset($_SERVER['validator.onFoo']);
-        unset($_SERVER['validator.extendFoo']);
-        m::close();
     }
 
     /**
@@ -56,7 +49,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
 
         $event->shouldReceive('fire')->once()->with('foo.event', m::any())->andReturn(null);
         $validator->shouldReceive('make')->once()->with([], $rules, $phrases)
-            ->andReturn(m::mock('\Illuminate\Validation\Validator'));
+                ->andReturn(m::mock('\Illuminate\Validation\Validator'));
 
         $stub = new FooValidator($validator, $event);
         $stub->on('foo', ['antares'])->bind(['id' => '2']);
@@ -82,7 +75,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $phrases = ['email.required' => 'Email required', 'name' => 'Any name'];
 
         $validator->shouldReceive('make')->once()->with([], $rules, $phrases)
-            ->andReturn(m::mock('\Illuminate\Validation\Validator'));
+                ->andReturn(m::mock('\Illuminate\Validation\Validator'));
 
         $stub = new FooValidator($validator, $event);
         $stub->bind(['id' => '2']);
@@ -91,15 +84,16 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('\Illuminate\Validation\Validator', $validation);
     }
+
 }
 
 class FooValidator extends \Antares\Support\Validator
 {
+
     protected $rules = [
         'email' => ['email', 'foo:{id}'],
         'name'  => 'any',
     ];
-
     protected $phrases = [
         'email.required' => 'Email required',
     ];
@@ -113,4 +107,5 @@ class FooValidator extends \Antares\Support\Validator
     {
         $_SERVER['validator.extendFoo'] = $validation;
     }
+
 }

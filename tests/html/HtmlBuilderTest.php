@@ -17,13 +17,15 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Html\TestCase;
+
+namespace Antares\Html\TestCase;
 
 use Mockery as m;
 use Antares\Html\HtmlBuilder;
 
 class HtmlBuilderTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Application instance.
      *
@@ -39,14 +41,6 @@ class HtmlBuilderTest extends \PHPUnit_Framework_TestCase
         $this->url = m::mock('\Illuminate\Routing\UrlGenerator');
     }
 
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        unset($this->url);
-        m::close();
-    }
     /**
      * Test Antares\Html\HtmlBuilder::create() with content.
      *
@@ -123,15 +117,15 @@ class HtmlBuilderTest extends \PHPUnit_Framework_TestCase
         $stub = new HtmlBuilder($this->url);
 
         $output   = $stub->decorate(['class' => 'span4 table'], ['id' => 'foobar']);
-        $expected = ['id'                    => 'foobar', 'class' => 'span4 table'];
+        $expected = ['id' => 'foobar', 'class' => 'span4 table'];
         $this->assertEquals($expected, $output);
 
         $output   = $stub->decorate(['class' => 'span4 !span12'], ['class' => 'span12']);
-        $expected = ['class'                 => 'span4'];
+        $expected = ['class' => 'span4'];
         $this->assertEquals($expected, $output);
 
         $output   = $stub->decorate(['id' => 'table'], ['id' => 'foobar', 'class' => 'span4']);
-        $expected = ['id'                 => 'table', 'class' => 'span4'];
+        $expected = ['id' => 'table', 'class' => 'span4'];
         $this->assertEquals($expected, $output);
     }
 
@@ -146,9 +140,9 @@ class HtmlBuilderTest extends \PHPUnit_Framework_TestCase
         $url = $this->url;
 
         $url->shouldReceive('asset')->once()->with('foo.png', false)->andReturn('foo.png')
-            ->shouldReceive('to')->once()->with('foo', m::type('Array'), '')->andReturn('foo');
+                ->shouldReceive('to')->once()->with('foo', m::type('Array'), '')->andReturn('foo');
 
-        $stub   = new HtmlBuilder($url);
+        $stub = new HtmlBuilder($url);
         $stub->macro('foo', function () {
             return 'foo';
         });
@@ -193,4 +187,5 @@ class HtmlBuilderTest extends \PHPUnit_Framework_TestCase
     {
         with(new HtmlBuilder($this->url))->missing();
     }
+
 }

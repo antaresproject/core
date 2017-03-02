@@ -17,20 +17,14 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\View\TestCase\Theme;
+
+namespace Antares\View\TestCase\Theme;
 
 use Mockery as m;
 use Antares\View\Theme\Manifest;
 
 class ManifestTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\View\Theme\Manifest.
@@ -42,7 +36,7 @@ class ManifestTest extends \PHPUnit_Framework_TestCase
         $files = m::mock('\Illuminate\Filesystem\Filesystem');
 
         $files->shouldReceive('exists')->once()->with('/var/antares/themes/default/theme.json')->andReturn(true)
-            ->shouldReceive('get')->once()->with('/var/antares/themes/default/theme.json')->andReturn('{"name":"foobar"}');
+                ->shouldReceive('get')->once()->with('/var/antares/themes/default/theme.json')->andReturn('{"name":"foobar"}');
 
         $stub = new Manifest($files, '/var/antares/themes/default');
 
@@ -68,8 +62,9 @@ class ManifestTest extends \PHPUnit_Framework_TestCase
         $files = m::mock('\Illuminate\Filesystem\Filesystem');
 
         $files->shouldReceive('exists')->once()->with('/var/antares/themes/default/theme.json')->andReturn(true)
-            ->shouldReceive('get')->once()->with('/var/antares/themes/default/theme.json')->andReturn('{"foo}');
+                ->shouldReceive('get')->once()->with('/var/antares/themes/default/theme.json')->andReturn('{"foo}');
 
         new Manifest($files, '/var/antares/themes/default');
     }
+
 }

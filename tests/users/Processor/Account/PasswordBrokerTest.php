@@ -51,7 +51,7 @@ class PasswordBrokerTest extends TestCase
 
         $validator->shouldReceive('with')->once()->with($input)->andReturn($resolver);
         $resolver->shouldReceive('fails')->once()->andReturn(false);
-        $memory->shouldReceive('get')->once()->with('site.name', 'Antares Platform')->andReturn('Antares Platform');
+        $memory->shouldReceive('get')->once()->with('site.name', 'Antares')->andReturn('Antares');
         $message->shouldReceive('subject')->once()->with(m::type('String'))->andReturnNull();
         $password->shouldReceive('sendResetLink')->once()
                 ->with(['email' => $input['email']], m::type('Closure'))
@@ -87,7 +87,7 @@ class PasswordBrokerTest extends TestCase
 
         $validator->shouldReceive('with')->once()->with($input)->andReturn($resolver);
         $resolver->shouldReceive('fails')->once()->andReturn(false);
-        $memory->shouldReceive('get')->once()->with('site.name', 'Antares Platform')->andReturn('Antares Platform');
+        $memory->shouldReceive('get')->once()->with('site.name', 'Antares')->andReturn('Antares');
         $password->shouldReceive('sendResetLink')->once()
                 ->with(['email' => $input['email']], m::type('Closure'))
                 ->andReturnUsing(function ($d, $c) {

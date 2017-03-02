@@ -17,20 +17,14 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Support\Traits\TestCase;
+
+namespace Antares\Support\Traits\TestCase;
 
 use Mockery as m;
 use Antares\Support\Traits\ObservableTrait;
 
 class ObservableTraitTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Support\Traits\ObservableTrait::$dispatcher.
@@ -99,17 +93,17 @@ class ObservableTraitTest extends \PHPUnit_Framework_TestCase
         $stub = new ObservableStub();
 
         $dispatcher->shouldReceive('listen')->once()
-                ->with('saving: '.__NAMESPACE__.'\\ObservableStub', __NAMESPACE__.'\\FoobarObserver@saving')
-            ->shouldReceive('listen')->once()
-                ->with('saved: '.__NAMESPACE__.'\\ObservableStub', __NAMESPACE__.'\\FoobarObserver@saved')
-            ->shouldReceive('fire')->once()
-                ->with('saving: '.__NAMESPACE__.'\\ObservableStub', $stub)
-            ->shouldReceive('fire')->once()
-                ->with('saved: '.__NAMESPACE__.'\\ObservableStub', $stub)
-            ->shouldReceive('forget')->once()
-                ->with('saving: '.__NAMESPACE__.'\\ObservableStub')
-            ->shouldReceive('forget')->once()
-                ->with('saved: '.__NAMESPACE__.'\\ObservableStub');
+                ->with('saving: ' . __NAMESPACE__ . '\\ObservableStub', __NAMESPACE__ . '\\FoobarObserver@saving')
+                ->shouldReceive('listen')->once()
+                ->with('saved: ' . __NAMESPACE__ . '\\ObservableStub', __NAMESPACE__ . '\\FoobarObserver@saved')
+                ->shouldReceive('fire')->once()
+                ->with('saving: ' . __NAMESPACE__ . '\\ObservableStub', $stub)
+                ->shouldReceive('fire')->once()
+                ->with('saved: ' . __NAMESPACE__ . '\\ObservableStub', $stub)
+                ->shouldReceive('forget')->once()
+                ->with('saving: ' . __NAMESPACE__ . '\\ObservableStub')
+                ->shouldReceive('forget')->once()
+                ->with('saved: ' . __NAMESPACE__ . '\\ObservableStub');
 
         ObservableStub::setEventDispatcher($dispatcher);
 
@@ -122,14 +116,15 @@ class ObservableTraitTest extends \PHPUnit_Framework_TestCase
 
         ObservableStub::flushEventListeners();
     }
+
 }
 
 class ObservableStub
 {
+
     use ObservableTrait;
 
     public $saving = false;
-
     public $saved = false;
 
     public function save()
@@ -142,15 +137,18 @@ class ObservableStub
     {
         return ['saving', 'saved'];
     }
+
 }
 
 class ObservableStubWithoutEvents
 {
+
     use ObservableTrait;
 }
 
 class FoobarObserver
 {
+
     public function saving($stub)
     {
         $stub->saving = true;
@@ -160,4 +158,5 @@ class FoobarObserver
     {
         $stub->saving = true;
     }
+
 }

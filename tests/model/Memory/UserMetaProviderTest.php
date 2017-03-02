@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Model\TestCase;
+
+namespace Antares\Model\TestCase;
 
 use Mockery as m;
 use Illuminate\Container\Container;
@@ -25,6 +26,7 @@ use Antares\Model\Memory\UserMetaProvider;
 
 class UserMetaProviderTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Application instance.
      *
@@ -41,15 +43,6 @@ class UserMetaProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        unset($this->app);
-        m::close();
-    }
-
-    /**
      * Test Antares\Model\Memory\UserMetaRepository::initiate()
      * method.
      *
@@ -60,12 +53,12 @@ class UserMetaProviderTest extends \PHPUnit_Framework_TestCase
         $handler = m::mock('\Antares\Model\Memory\UserMetaRepository');
 
         $handler->shouldReceive('initiate')->once()->andReturn([])
-            ->shouldReceive('finish')->once()->andReturn(true);
+                ->shouldReceive('finish')->once()->andReturn(true);
 
         $stub = new UserMetaProvider($handler);
 
-        $refl   = new \ReflectionObject($stub);
-        $items  = $refl->getProperty('items');
+        $refl  = new \ReflectionObject($stub);
+        $items = $refl->getProperty('items');
 
         $items->setAccessible(true);
 
@@ -88,10 +81,10 @@ class UserMetaProviderTest extends \PHPUnit_Framework_TestCase
         $handler = m::mock('\Antares\Model\Memory\UserMetaRepository');
 
         $handler->shouldReceive('initiate')->once()->andReturn([])
-            ->shouldReceive('retrieve')->once()->with('foo/user-1')->andReturn('foobar')
-            ->shouldReceive('retrieve')->once()->with('foobar/user-1')->andReturnNull();
+                ->shouldReceive('retrieve')->once()->with('foo/user-1')->andReturn('foobar')
+                ->shouldReceive('retrieve')->once()->with('foobar/user-1')->andReturnNull();
 
-        $stub  = new UserMetaProvider($handler);
+        $stub = new UserMetaProvider($handler);
 
         $this->assertEquals('foobar', $stub->get('foo.1'));
         $this->assertEquals(null, $stub->get('foobar.1'));
@@ -109,7 +102,7 @@ class UserMetaProviderTest extends \PHPUnit_Framework_TestCase
 
         $handler->shouldReceive('initiate')->once()->andReturn([]);
 
-        $stub  = new UserMetaProvider($handler);
+        $stub = new UserMetaProvider($handler);
 
         $refl  = new \ReflectionObject($stub);
         $items = $refl->getProperty('items');
@@ -125,4 +118,5 @@ class UserMetaProviderTest extends \PHPUnit_Framework_TestCase
         $stub->forget('foo.1');
         $this->assertNull($stub->get('foo.1'));
     }
+
 }

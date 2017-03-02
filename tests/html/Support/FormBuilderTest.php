@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Html\Support\TestCase;
+
+namespace Antares\Html\Support\TestCase;
 
 use Mockery as m;
 use Illuminate\Http\Request;
@@ -28,6 +29,7 @@ use Illuminate\Routing\RouteCollection;
 
 class FormBuilderTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Setup the test environment.
      */
@@ -35,15 +37,7 @@ class FormBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $this->urlGenerator = new UrlGenerator(new RouteCollection(), Request::create('/foo', 'GET'));
         $this->htmlBuilder  = new HtmlBuilder($this->urlGenerator);
-        $this->formBuilder  =  new FormBuilder($this->htmlBuilder, $this->urlGenerator, '');
-    }
-
-    /**
-     * Destroy the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
+        $this->formBuilder  = new FormBuilder($this->htmlBuilder, $this->urlGenerator, '');
     }
 
     public function testOpeningForm()
@@ -124,7 +118,7 @@ class FormBuilderTest extends \PHPUnit_Framework_TestCase
     public function testFormTextRepopulation()
     {
         $this->formBuilder->setSessionStore($session = m::mock('Illuminate\Session\Store'));
-        $this->setModel($model = ['relation' => ['key' => 'attribute'], 'other' => 'val']);
+        $this->setModel($model   = ['relation' => ['key' => 'attribute'], 'other' => 'val']);
 
         $session->shouldReceive('getOldInput')->twice()->with('name_with_dots')->andReturn('some value');
         $input = $this->formBuilder->text('name.with.dots', 'default value');
@@ -220,41 +214,32 @@ class FormBuilderTest extends \PHPUnit_Framework_TestCase
     public function testSelect()
     {
         $select = $this->formBuilder->select(
-            'size',
-            ['L' => 'Large', 'S' => 'Small']
+                'size', ['L' => 'Large', 'S' => 'Small']
         );
         $this->assertEquals($select, '<select name="size"><option value="L">Large</option><option value="S">Small</option></select>');
 
         $select = $this->formBuilder->select(
-            'size',
-            ['L' => 'Large', 'S' => 'Small'],
-            'L'
+                'size', ['L' => 'Large', 'S' => 'Small'], 'L'
         );
         $this->assertEquals($select, '<select name="size"><option value="L" selected="selected">Large</option><option value="S">Small</option></select>');
 
         $select = $this->formBuilder->select(
-            'size',
-            ['L' => 'Large', 'S' => 'Small'],
-            null,
-            ['class' => 'class-name', 'id' => 'select-id']
+                'size', ['L' => 'Large', 'S' => 'Small'], null, ['class' => 'class-name', 'id' => 'select-id']
         );
         $this->assertEquals($select, '<select class="class-name" id="select-id" name="size"><option value="L">Large</option><option value="S">Small</option></select>');
 
         $this->formBuilder->label('select-name-id');
         $select = $this->formBuilder->select(
-            'select-name-id',
-            [],
-            null,
-            ['name' => 'select-name']
+                'select-name-id', [], null, ['name' => 'select-name']
         );
         $this->assertEquals($select, '<select name="select-name" id="select-name-id"></select>');
     }
 
     public function testFormSelectRepopulation()
     {
-        $list = ['L' => 'Large', 'M' => 'Medium', 'S' => 'Small'];
+        $list    = ['L' => 'Large', 'M' => 'Medium', 'S' => 'Small'];
         $this->formBuilder->setSessionStore($session = m::mock('Illuminate\Session\Store'));
-        $this->setModel($model = ['size' => ['key' => 'S'], 'other' => 'val']);
+        $this->setModel($model   = ['size' => ['key' => 'S'], 'other' => 'val']);
 
         $session->shouldReceive('getOldInput')->twice()->with('size')->andReturn('M');
         $select = $this->formBuilder->select('size', $list, 'S');
@@ -404,7 +389,7 @@ class FormBuilderTest extends \PHPUnit_Framework_TestCase
         $url   = 'http://laravel.com/';
         $image = $this->formBuilder->image($url);
 
-        $this->assertEquals('<input src="'.$url.'" type="image">', $image);
+        $this->assertEquals('<input src="' . $url . '" type="image">', $image);
     }
 
     protected function setModel(array $data, $object = true)
@@ -415,10 +400,12 @@ class FormBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->formBuilder->model($data, ['method' => 'GET']);
     }
+
 }
 
 class FormBuilderModelStub
 {
+
     protected $data;
 
     public function __construct(array $data = [])
@@ -441,4 +428,5 @@ class FormBuilderModelStub
     {
         return isset($this->data[$key]);
     }
+
 }

@@ -20,14 +20,13 @@
 
 namespace Antares\Users\Http\Controllers\Account\TestCase;
 
-use Mockery as m;
-use Antares\Testing\TestCase;
-use Illuminate\Support\Facades\View;
-use Antares\Support\Facades\Messages;
-use Antares\Support\Facades\Foundation;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Antares\Testing\ApplicationTestCase;
+use Antares\Support\Facades\Messages;
+use Illuminate\Support\Facades\View;
+use Mockery as m;
 
-class PasswordUpdaterControllerTest extends TestCase
+class PasswordUpdaterControllerTest extends ApplicationTestCase
 {
 
     use WithoutMiddleware;
@@ -38,7 +37,6 @@ class PasswordUpdaterControllerTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-
         $this->disableMiddlewareForAllTests();
     }
 
@@ -58,7 +56,7 @@ class PasswordUpdaterControllerTest extends TestCase
         View::shouldReceive('make')->once()
                 ->with('antares/foundation::account.password', [], [])->andReturn('show.password.changer');
 
-        $this->call('GET', 'admin/account/password');
+        $this->call('GET', 'antares/account/password');
         $this->assertResponseOk();
     }
 
@@ -78,17 +76,15 @@ class PasswordUpdaterControllerTest extends TestCase
                 });
 
         Messages::shouldReceive('add')->once()->with('success', m::any())->andReturnNull();
-        Foundation::shouldReceive('handles')->once()->with('antares::account/password', [])->andReturn('password');
 
-        $this->call('POST', 'admin/account/password', $input);
-        $this->assertRedirectedTo('password');
+        $this->call('POST', 'antares/account/password', $input);
+        $this->assertRedirectedTo('antares/account/password');
     }
 
     /**
      * Test POST /admin/account with invalid user id.
      *
      * @test
-     * @expectedException \Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function testPostIndexActionGivenInvalidUserId()
     {
@@ -100,8 +96,8 @@ class PasswordUpdaterControllerTest extends TestCase
                     return $listener->abortWhenUserMismatched();
                 });
 
-        $this->call('POST', 'admin/account/password', $input);
-        $this->assertRedirectedTo('password');
+        $this->call('POST', 'antares/account/password', $input);
+        $this->assertResponseStatus(500);
     }
 
     /**
@@ -119,11 +115,10 @@ class PasswordUpdaterControllerTest extends TestCase
                     return $listener->updatePasswordFailed([]);
                 });
 
-        Foundation::shouldReceive('handles')->once()->with('antares::account/password', [])->andReturn('password');
         Messages::shouldReceive('add')->once()->with('error', m::any())->andReturnNull();
 
-        $this->call('POST', 'admin/account/password', $input);
-        $this->assertRedirectedTo('password');
+        $this->call('POST', 'antares/account/password', $input);
+        $this->assertRedirectedTo('antares/account/password');
     }
 
     /**
@@ -141,10 +136,9 @@ class PasswordUpdaterControllerTest extends TestCase
                     return $listener->updatePasswordFailedValidation([]);
                 });
 
-        Foundation::shouldReceive('handles')->once()->with('antares::account/password', [])->andReturn('password');
 
-        $this->call('POST', 'admin/account/password', $input);
-        $this->assertRedirectedTo('password');
+        $this->call('POST', 'antares/account/password', $input);
+        $this->assertRedirectedTo('antares/account/password');
     }
 
     /**
@@ -162,10 +156,8 @@ class PasswordUpdaterControllerTest extends TestCase
                     return $listener->verifyCurrentPasswordFailed([]);
                 });
 
-        Foundation::shouldReceive('handles')->once()->with('antares::account/password', [])->andReturn('password');
-
-        $this->call('POST', 'admin/account/password', $input);
-        $this->assertRedirectedTo('password');
+        $this->call('POST', 'antares/account/password', $input);
+        $this->assertRedirectedTo('antares/account/password');
     }
 
     /**

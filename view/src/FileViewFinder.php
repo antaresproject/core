@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\View;
 
 use Illuminate\View\FileViewFinder as SupportFileViewFinder;

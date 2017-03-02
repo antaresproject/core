@@ -17,20 +17,14 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Translation\Tests;
+
+namespace Antares\Translation\Tests;
 
 use Mockery as m;
 use Antares\Translation\FileLoader;
 
 class FileLoaderTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Illuminate\Translation\FileLoader.
@@ -61,20 +55,20 @@ class FileLoaderTest extends \PHPUnit_Framework_TestCase
 
         $files->shouldReceive('exists')->once()
                 ->with("/var/vendor/antares/foundation/src/lang/en/title.php")->andReturn(true)
-            ->shouldReceive('getRequire')->once()
+                ->shouldReceive('getRequire')->once()
                 ->with("/var/vendor/antares/foundation/src/lang/en/title.php")->andReturn(['home' => 'Home', 'install' => 'Install'])
-            ->shouldReceive('exists')->once()
+                ->shouldReceive('exists')->once()
                 ->with("{$path}/vendor/en/antares/foundation/title.php")->andReturn(true)
-            ->shouldReceive('getRequire')->once()
+                ->shouldReceive('getRequire')->once()
                 ->with("{$path}/vendor/en/antares/foundation/title.php")->andReturn(['install' => 'Installation'])
-            ->shouldReceive('exists')->once()
+                ->shouldReceive('exists')->once()
                 ->with("{$path}/packages/antares/foundation/en/title.php")->andReturn(true)
-            ->shouldReceive('getRequire')->once()
+                ->shouldReceive('getRequire')->once()
                 ->with("{$path}/packages/antares/foundation/en/title.php")->andReturn(['home' => 'Home Page', 'install' => 'Installed']);
 
         $this->assertEquals(
-            ['home' => 'Home Page', 'install' => 'Installation'],
-            $stub->load('en', 'title', 'antares/foundation')
+                ['home' => 'Home Page', 'install' => 'Installation'], $stub->load('en', 'title', 'antares/foundation')
         );
     }
+
 }

@@ -22,20 +22,10 @@ namespace Antares\Auth\Passwords\TestCase;
 
 use Antares\Auth\Passwords\PasswordBroker;
 use Antares\Testing\ApplicationTestCase;
-use Illuminate\Support\Facades\Facade;
-use Illuminate\Container\Container;
 use Mockery as m;
 
 class PasswordBrokerTest extends ApplicationTestCase
 {
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Foundation\Reminders\PasswordBroker::remind() method.

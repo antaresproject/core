@@ -20,19 +20,12 @@
 
 namespace Antares\Users\Http\Middleware\TestCase;
 
+//use Antares\Testing\ApplicationTestCase
 use Mockery as m;
 use Antares\Users\Http\Middleware\LoginAs;
 
 class LoginAsTest extends \PHPUnit_Framework_TestCase
 {
-
-    /**
-     * Teardown the test environment.
-     */
-    public function teardown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Users\Middleware\LoginAs::handle()

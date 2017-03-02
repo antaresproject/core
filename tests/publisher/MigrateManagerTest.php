@@ -28,15 +28,6 @@ class MigrateManagerTest extends ApplicationTestCase
 {
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        //unset($this->app);
-        m::close();
-    }
-
-    /**
      * Test Antares\Publisher\MigrateManager::run() method.
      *
      * @test

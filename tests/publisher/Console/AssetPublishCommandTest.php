@@ -17,8 +17,6 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 use Mockery as m;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
@@ -26,10 +24,6 @@ use Antares\Publisher\Console\AssetPublishCommand;
 
 class AssetPublishCommandTest extends \PHPUnit_Framework_TestCase
 {
-    public function tearDown()
-    {
-        m::close();
-    }
 
     public function testCommandCallsPublisherWithProperPackageName()
     {
@@ -38,10 +32,11 @@ class AssetPublishCommandTest extends \PHPUnit_Framework_TestCase
             return call_user_func_array($method, $parameters);
         });
 
-        $command = new AssetPublishCommand($pub = m::mock('\Antares\Publisher\Publishing\AssetPublisher'));
+        $command = new AssetPublishCommand($pub     = m::mock('\Antares\Publisher\Publishing\AssetPublisher'));
         $command->setLaravel($laravel);
         $pub->shouldReceive('alreadyPublished')->andReturn(false);
         $pub->shouldReceive('publishPackage')->once()->with('foo');
         $command->run(new ArrayInput(['package' => 'foo']), new NullOutput());
     }
+
 }

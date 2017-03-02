@@ -30,14 +30,6 @@ class SettingTest extends ApplicationTestCase
 {
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
-
-    /**
      * Test Antares\Foundation\Http\Presenters\Setting::form()
      * method.
      *

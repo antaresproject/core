@@ -44,15 +44,6 @@ class BrandsTellerTest extends ApplicationTestCase
     }
 
     /**
-     * tear down
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        m::close();
-    }
-
-    /**
      * Create a new instance of Brandstelling.
      * @test
      */

@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Controllers\Account;
 
 use Antares\Foundation\Http\Controllers\AdminController;
@@ -40,11 +39,12 @@ abstract class Controller extends AdminController implements User
     /**
      * Abort request when user mismatched.
      *
+     * @return String $message
      * @return mixed
      */
-    public function abortWhenUserMismatched()
+    public function abortWhenUserMismatched($message = null)
     {
-        return $this->suspend(500);
+        return $this->suspend(500, $message);
     }
 
 }

@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Support\Traits\TestCase;
+
+namespace Antares\Support\Traits\TestCase;
 
 use Illuminate\Support\Facades\File;
 use Mockery as m;
@@ -27,6 +28,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadedTraitTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Setup the test environment.
      */
@@ -38,11 +40,6 @@ class UploadedTraitTest extends \PHPUnit_Framework_TestCase
         Facade::setFacadeApplication($app);
     }
 
-    public function tearDown()
-    {
-        m::close();
-    }
-
     /**
      * Test Antares\Support\Traits\UploadableTrait::saveUploadedFile() method.
      *
@@ -52,12 +49,12 @@ class UploadedTraitTest extends \PHPUnit_Framework_TestCase
     {
         $path = '/var/www/public/';
         $file = m::mock('\Symfony\Component\HttpFoundation\File\UploadedFile[getClientOriginalExtension,move]', [
-            realpath(__DIR__.'/fixtures').'/test.gif',
-            'test',
+                    realpath(__DIR__ . '/fixtures') . '/test.gif',
+                    'test',
         ]);
 
         $file->shouldReceive('getClientOriginalExtension')->once()->andReturn('jpg')
-            ->shouldReceive('move')->once()->with($path, m::type('String'))->andReturnNull();
+                ->shouldReceive('move')->once()->with($path, m::type('String'))->andReturnNull();
 
         $stub = new UploadedStub();
 
@@ -74,8 +71,8 @@ class UploadedTraitTest extends \PHPUnit_Framework_TestCase
     {
         $path = '/var/www/public/';
         $file = m::mock('\Symfony\Component\HttpFoundation\File\UploadedFile[move]', [
-            realpath(__DIR__.'/fixtures').'/test.gif',
-            'test',
+                    realpath(__DIR__ . '/fixtures') . '/test.gif',
+                    'test',
         ]);
 
         $file->shouldReceive('move')->once()->with($path, 'foo.jpg')->andReturnNull();
@@ -103,10 +100,12 @@ class UploadedTraitTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($stub->delete($filename));
     }
+
 }
 
 class UploadedStub
 {
+
     use \Antares\Support\Traits\UploadableTrait;
 
     public function save(UploadedFile $file, $path)
@@ -118,10 +117,12 @@ class UploadedStub
     {
         return $this->deleteUploadedFile($file);
     }
+
 }
 
 class UploadedStubWithReplacement
 {
+
     use \Antares\Support\Traits\UploadableTrait;
 
     public function save(UploadedFile $file, $path)
@@ -138,4 +139,5 @@ class UploadedStubWithReplacement
     {
         return 'foo.jpg';
     }
+
 }

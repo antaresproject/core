@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Extension\Config\TestCase;
+
+namespace Antares\Extension\Config\TestCase;
 
 use Mockery as m;
 use Illuminate\Container\Container;
@@ -25,13 +26,6 @@ use Antares\Extension\Config\Repository;
 
 class RepositoryTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Extension\Config\Repository::map() method.
@@ -49,15 +43,15 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
         $memory->shouldReceive('get')->once()
                 ->with('extension_laravel/framework', [])
                 ->andReturn(['foobar' => 'foobar is awesome'])
-            ->shouldReceive('put')->once()
+                ->shouldReceive('put')->once()
                 ->with('extension_laravel/framework', ['foobar' => 'foobar is awesome', 'foo' => 'foobar'])
                 ->andReturn(true);
         $config->shouldReceive('set')->once()
                 ->with('laravel/framework::foobar', 'foobar is awesome')
                 ->andReturn(true)
-            ->shouldReceive('get')->once()
+                ->shouldReceive('get')->once()
                 ->with('laravel/framework::foobar')->andReturn('foobar is awesome')
-            ->shouldReceive('get')->once()
+                ->shouldReceive('get')->once()
                 ->with('laravel/framework::foo')->andReturn('foobar');
 
         $stub = new Repository($config, $manager);
@@ -67,4 +61,5 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             'foobar' => 'laravel/framework::foobar',
         ]);
     }
+
 }

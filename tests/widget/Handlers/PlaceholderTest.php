@@ -30,14 +30,6 @@ class PlaceholderTest extends ApplicationTestCase
 {
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
-
-    /**
      * Test construct a Antares\Widget\Drivers\Handlers\Placeholder.
      *
      * @test

@@ -26,28 +26,9 @@ use Antares\Area\Model\Area;
 use Antares\Area\Contracts\AreaManagerContract;
 use Antares\Area\Contracts\AreaContract;
 use Antares\Area\AreaManager;
-use Antares\Auth\AuthManager as Auth;
 
 class AreaManagerTest extends ApplicationTestCase
 {
-
-    /**
-     *
-     * @var Mockery
-     */
-    protected $auth;
-
-    public function setUp()
-    {
-        parent::setUp();
-
-        //$this->auth = m::mock(Auth::class);
-    }
-
-    public function tearDown()
-    {
-        m::close();
-    }
 
     public function testContract()
     {

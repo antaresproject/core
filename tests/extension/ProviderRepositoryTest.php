@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Extension\TestCase;
+
+namespace Antares\Extension\TestCase;
 
 use Mockery as m;
 use Illuminate\Support\ServiceProvider;
@@ -25,13 +26,6 @@ use Antares\Extension\ProviderRepository;
 
 class ProviderRepositoryTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Extension\ProviderRepository::services()
@@ -46,7 +40,7 @@ class ProviderRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $app->shouldReceive('resolveProviderClass')->once()
                 ->with('Antares\Extension\TestCase\FooServiceProvider')->andReturn($mock)
-            ->shouldReceive('register')->once()->with($mock)->andReturn($mock);
+                ->shouldReceive('register')->once()->with($mock)->andReturn($mock);
 
         $mock->shouldReceive('isDeferred')->once()->andReturn(false);
 
@@ -69,25 +63,29 @@ class ProviderRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $app->shouldReceive('resolveProviderClass')->once()
                 ->with('Antares\Extension\TestCase\FooServiceProvider')->andReturn($mock)
-            ->shouldReceive('getDeferredServices')->once()->andReturn(['events' => '\Illuminate\Events\EventsServiceProvider'])
-            ->shouldReceive('setDeferredServices')->once()->andReturn([
-                'events' => 'Illuminate\Events\EventsServiceProvider',
-                'foo'    => 'Antares\Extension\TestCase\FooServiceProvider',
-            ]);
+                ->shouldReceive('getDeferredServices')->once()->andReturn(['events' => '\Illuminate\Events\EventsServiceProvider'])
+                ->shouldReceive('setDeferredServices')->once()->andReturn([
+            'events' => 'Illuminate\Events\EventsServiceProvider',
+            'foo'    => 'Antares\Extension\TestCase\FooServiceProvider',
+        ]);
 
         $mock->shouldReceive('isDeferred')->once()->andReturn(true)
-            ->shouldReceive('provides')->once()->andReturn(['foo']);
+                ->shouldReceive('provides')->once()->andReturn(['foo']);
 
         $stub = new ProviderRepository($app);
         $stub->provides([
             'Antares\Extension\TestCase\FooServiceProvider',
         ]);
     }
+
 }
 
 class FooServiceProvider extends ServiceProvider
 {
+
     public function register()
     {
-            }
+        
+    }
+
 }

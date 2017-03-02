@@ -45,16 +45,6 @@ class PackageProviderTraitTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        $this->app = null;
-
-        m::close();
-    }
-
-    /**
      * Test Antares\Support\Providers\Traits\PackageProviderTrait::package()
      * method.
      *

@@ -17,20 +17,14 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Extension\TestCase;
+
+namespace Antares\Extension\TestCase;
 
 use Mockery as m;
 use Antares\Extension\SafeModeChecker;
 
 class SafeModeCheckerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Extension\Debugger::check() method when safe mode is
@@ -47,7 +41,7 @@ class SafeModeCheckerTest extends \PHPUnit_Framework_TestCase
 
         $request->shouldReceive('input')->once()->with('_mode', 'safe')->andReturn('safe');
         $config->shouldReceive('get')->once()->with('antares/extension::mode', 'normal')->andReturn('safe')
-            ->shouldReceive('set')->once()->with('antares/extension::mode', 'safe')->andReturn(null);
+                ->shouldReceive('set')->once()->with('antares/extension::mode', 'safe')->andReturn(null);
 
         $this->assertTrue($stub->check());
     }
@@ -67,8 +61,9 @@ class SafeModeCheckerTest extends \PHPUnit_Framework_TestCase
 
         $request->shouldReceive('input')->once()->with('_mode', 'normal')->andReturn(null);
         $config->shouldReceive('get')->once()->with('antares/extension::mode', 'normal')->andReturn('normal')
-            ->shouldReceive('set')->once()->with('antares/extension::mode', 'normal')->andReturn(null);
+                ->shouldReceive('set')->once()->with('antares/extension::mode', 'normal')->andReturn(null);
 
         $this->assertFalse($stub->check());
     }
+
 }

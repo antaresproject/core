@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Html\Support\TestCase;
+
+namespace Antares\Html\Support\TestCase;
 
 use Mockery as m;
 use Illuminate\Http\Request;
@@ -27,6 +28,7 @@ use Antares\Html\Support\HtmlBuilder;
 
 class HtmlBuilderTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * @var \Antares\Html\Support\HtmlBuilder
      */
@@ -37,16 +39,8 @@ class HtmlBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $generator = new UrlGenerator(new RouteCollection(), Request::create('/foo', 'GET'));
+        $generator  = new UrlGenerator(new RouteCollection(), Request::create('/foo', 'GET'));
         $this->html = new HtmlBuilder($generator);
-    }
-
-    /**
-     * Destroy the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
     }
 
     public function testDl()
@@ -67,13 +61,14 @@ class HtmlBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $result = $this->html->meta('description', 'Lorem ipsum dolor sit amet.');
 
-        $this->assertEquals('<meta name="description" content="Lorem ipsum dolor sit amet.">'.PHP_EOL, $result);
+        $this->assertEquals('<meta name="description" content="Lorem ipsum dolor sit amet.">' . PHP_EOL, $result);
     }
 
     public function testMetaOpenGraph()
     {
         $result = $this->html->meta(null, 'website', ['property' => 'og:type']);
 
-        $this->assertEquals('<meta content="website" property="og:type">'.PHP_EOL, $result);
+        $this->assertEquals('<meta content="website" property="og:type">' . PHP_EOL, $result);
     }
+
 }

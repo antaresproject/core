@@ -22,13 +22,12 @@ namespace Antares\Users\Http\Controllers\Account\TestCase;
 
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Contracts\Auth\PasswordBroker;
-use Antares\Support\Facades\Foundation;
+use Antares\Testing\ApplicationTestCase;
 use Antares\Support\Facades\Messages;
 use Illuminate\Support\Facades\View;
-use Antares\Testing\TestCase;
 use Mockery as m;
 
-class PasswordBrokerControllerTest extends TestCase
+class PasswordBrokerControllerTest extends ApplicationTestCase
 {
 
     use WithoutMiddleware;
@@ -44,22 +43,20 @@ class PasswordBrokerControllerTest extends TestCase
     }
 
     /**
-     * Test GET /admin/forgot.
+     * Test GET /antares/forgot.
      *
      * @test
      */
     public function testGetCreateAction()
     {
         $this->getProcessorMock();
-
         View::shouldReceive('make')->once()->with('antares/foundation::forgot.index', [], [])->andReturn('foo');
-
-        $this->call('GET', 'admin/forgot');
+        $this->call('GET', 'antares/forgot');
         $this->assertResponseOk();
     }
 
     /**
-     * Test POST /admin/forgot.
+     * Test POST /antares/forgot.
      *
      * @test
      */
@@ -76,14 +73,13 @@ class PasswordBrokerControllerTest extends TestCase
                 });
 
         Messages::shouldReceive('add')->once()->with('success', trans(PasswordBroker::RESET_LINK_SENT))->andReturnNull();
-        Foundation::shouldReceive('handles')->once()->with('antares::forgot', [])->andReturn('forgot');
 
-        $this->call('POST', 'admin/forgot', $input);
-        $this->assertRedirectedTo('forgot');
+        $this->call('POST', 'antares/forgot', $input);
+        $this->assertRedirectedTo('antares/forgot');
     }
 
     /**
-     * Test POST /admin/forgot given invalid user.
+     * Test POST /antares/forgot given invalid user.
      *
      * @test
      */
@@ -100,14 +96,13 @@ class PasswordBrokerControllerTest extends TestCase
                 });
 
         Messages::shouldReceive('add')->once()->with('error', trans(PasswordBroker::INVALID_USER))->andReturnNull();
-        Foundation::shouldReceive('handles')->once()->with('antares::forgot', [])->andReturn('forgot');
 
-        $this->call('POST', 'admin/forgot', $input);
-        $this->assertRedirectedTo('forgot');
+        $this->call('POST', 'antares/forgot', $input);
+        $this->assertRedirectedTo('antares/forgot');
     }
 
     /**
-     * Test POST /admin/forgot when validation fails.
+     * Test POST /antares/forgot when validation fails.
      *
      * @test
      */
@@ -123,15 +118,15 @@ class PasswordBrokerControllerTest extends TestCase
                     return $listener->resetLinkFailedValidation([]);
                 });
 
-        Foundation::shouldReceive('handles')->once()->with('antares::forgot', [])->andReturn('forgot');
 
-        $this->call('POST', 'admin/forgot', $input);
-        $this->assertRedirectedTo('forgot');
+
+        $this->call('POST', 'antares/forgot', $input);
+        $this->assertRedirectedTo('antares/forgot');
         $this->assertSessionHas('errors');
     }
 
     /**
-     * Test GET /admin/forgot/reset.
+     * Test GET /antares/forgot/reset.
      *
      * @test
      */
@@ -144,22 +139,21 @@ class PasswordBrokerControllerTest extends TestCase
         View::shouldReceive('make')->once()->with('antares/foundation::forgot.reset', [], [])->andReturn($view);
         $view->shouldReceive('with')->once()->with('token', 'auniquetoken')->andReturn('foo');
 
-        $this->call('GET', 'admin/forgot/reset/auniquetoken');
+        $this->call('GET', 'antares/forgot/reset/auniquetoken');
         $this->assertResponseOk();
     }
 
     /**
-     * Test GET /admin/forgot/reset given token is null.
-     *
-     * @expectedException \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException
+     * Test GET /antares/forgot/reset given token is null.
      */
     public function testGetEditActionGivenTokenIsNull()
     {
-        $this->call('GET', 'admin/forgot/reset');
+        $this->call('GET', 'antares/forgot/reset');
+        $this->assertResponseStatus(405);
     }
 
     /**
-     * Test POST /admin/forgot/reset.
+     * Test POST /antares/forgot/reset.
      *
      * @test
      */
@@ -173,15 +167,14 @@ class PasswordBrokerControllerTest extends TestCase
                     return $listener->passwordHasReset(PasswordBroker::PASSWORD_RESET);
                 });
 
-        Foundation::shouldReceive('handles')->once()->with('antares::/', [])->andReturn('dashboard');
         Messages::shouldReceive('add')->once()->with('success', m::type('String'))->andReturnNull();
 
-        $this->call('POST', 'admin/forgot/reset', $input);
-        $this->assertRedirectedTo('dashboard');
+        $this->call('POST', 'antares/forgot/reset', $input);
+        $this->assertRedirectedTo('antares');
     }
 
     /**
-     * Test POST /admin/forgot/reset given invalid password.
+     * Test POST /antares/forgot/reset given invalid password.
      *
      * @test
      */
@@ -195,15 +188,14 @@ class PasswordBrokerControllerTest extends TestCase
                     return $listener->passwordResetHasFailed(PasswordBroker::INVALID_PASSWORD);
                 });
 
-        Foundation::shouldReceive('handles')->once()->with('antares::forgot/reset/auniquetoken', [])->andReturn('reset');
         Messages::shouldReceive('add')->once()->with('error', trans(PasswordBroker::INVALID_PASSWORD))->andReturnNull();
 
-        $this->call('POST', 'admin/forgot/reset', $input);
-        $this->assertRedirectedTo('reset');
+        $this->call('POST', 'antares/forgot/reset', $input);
+        $this->assertRedirectedTo('antares/forgot/reset/auniquetoken');
     }
 
     /**
-     * Test POST /admin/forgot/reset given invalid token.
+     * Test POST /antares/forgot/reset given invalid token.
      *
      * @test
      */
@@ -217,15 +209,14 @@ class PasswordBrokerControllerTest extends TestCase
                     return $listener->passwordResetHasFailed(PasswordBroker::INVALID_TOKEN);
                 });
 
-        Foundation::shouldReceive('handles')->once()->with('antares::forgot/reset/auniquetoken', [])->andReturn('reset');
         Messages::shouldReceive('add')->once()->with('error', trans(PasswordBroker::INVALID_TOKEN))->andReturnNull();
 
-        $this->call('POST', 'admin/forgot/reset', $input);
-        $this->assertRedirectedTo('reset');
+        $this->call('POST', 'antares/forgot/reset', $input);
+        $this->assertRedirectedTo('antares/forgot/reset/auniquetoken');
     }
 
     /**
-     * Test POST /admin/forgot/reset given invalid user.
+     * Test POST /antares/forgot/reset given invalid user.
      *
      * @test
      */
@@ -239,11 +230,10 @@ class PasswordBrokerControllerTest extends TestCase
                     return $listener->passwordResetHasFailed(PasswordBroker::INVALID_USER);
                 });
 
-        Foundation::shouldReceive('handles')->once()->with('antares::forgot/reset/auniquetoken', [])->andReturn('reset');
         Messages::shouldReceive('add')->once()->with('error', trans(PasswordBroker::INVALID_USER))->andReturnNull();
 
-        $this->call('POST', 'admin/forgot/reset', $input);
-        $this->assertRedirectedTo('reset');
+        $this->call('POST', 'antares/forgot/reset', $input);
+        $this->assertRedirectedTo('antares/forgot/reset/auniquetoken');
     }
 
     /**

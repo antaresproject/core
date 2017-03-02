@@ -17,13 +17,15 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Authorization\TestCase;
+
+namespace Antares\Authorization\TestCase;
 
 use Mockery as m;
 use Antares\Authorization\Fluent;
 
 class FluentTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Stub instance.
      *
@@ -38,15 +40,6 @@ class FluentTest extends \PHPUnit_Framework_TestCase
     {
         $this->stub = new Fluent('stub');
         $this->stub->attach(['Hello World']);
-    }
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        unset($this->stub);
-        m::close();
     }
 
     /**
@@ -287,4 +280,5 @@ class FluentTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([1 => 'foobar'], $stub->filter('!foo'));
         $this->assertEquals(['hello-world'], $stub->filter('hello-world'));
     }
+
 }

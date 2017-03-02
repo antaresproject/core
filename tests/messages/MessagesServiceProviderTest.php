@@ -29,14 +29,6 @@ class MessagesServiceProviderTest extends ApplicationTestCase
 {
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
-
-    /**
      * Test Antares\Support\MessagesServiceProvider::register() method.
      *
      * @test

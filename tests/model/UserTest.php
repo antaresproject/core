@@ -39,15 +39,6 @@ class UserTest extends ApplicationTestCase
     {
         parent::setUp();
         Facade::clearResolvedInstances();
-        //Facade::setFacadeApplication(new Container());
-    }
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
     }
 
     /**

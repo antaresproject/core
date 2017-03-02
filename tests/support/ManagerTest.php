@@ -17,19 +17,13 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Support\TestCase;
+
+namespace Antares\Support\TestCase;
 
 use Mockery as m;
 
 class ManagerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Support\Manager::driver() method.
@@ -79,42 +73,50 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     public function testDriverMethodGivenNameWithDottedThrowsException()
     {
         with(new ManagerStub(m::mock('\Illuminate\Foundation\Application')))
-            ->driver('foo.bar.hello');
+                ->driver('foo.bar.hello');
     }
+
 }
 
 class ManagerFoo
 {
+
     public $name = null;
 
     public function __construct($app, $name)
     {
         $this->name = $name;
     }
+
 }
 
 class ManagerFoobar
 {
+
     public $name = null;
 
     public function __construct($app, $name)
     {
         $this->name = $name;
     }
+
 }
 
 class ManagerAwesomeFoobar
 {
+
     public $name = null;
 
     public function __construct($app, $name)
     {
         $this->name = $name;
     }
+
 }
 
 class ManagerStub extends \Antares\Support\Manager
 {
+
     public function createFooDriver($name)
     {
         return new ManagerFoo($this->app, $name);
@@ -129,4 +131,5 @@ class ManagerStub extends \Antares\Support\Manager
     {
         return 'foo';
     }
+
 }

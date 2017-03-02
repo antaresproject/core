@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Bootstrap\TestCase;
+
+namespace Antares\Foundation\Bootstrap\TestCase;
 
 use Mockery as m;
 use Illuminate\Foundation\Application;
@@ -25,13 +26,6 @@ use Antares\Foundation\Bootstrap\LoadFoundation;
 
 class LoadFoundationTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Foundation\Bootstrap\NotifyIfSafeMode::bootstrap()
@@ -43,10 +37,11 @@ class LoadFoundationTest extends \PHPUnit_Framework_TestCase
     {
         $app = new Application(__DIR__);
 
-        $app['antares.app'] = $foundation = m::mock('\Antares\Contracts\Foundation\Foundation');
+        $app['antares.app'] = $foundation         = m::mock('\Antares\Contracts\Foundation\Foundation');
 
         $foundation->shouldReceive('boot')->once()->andReturnNull();
 
         (new LoadFoundation())->bootstrap($app);
     }
+
 }

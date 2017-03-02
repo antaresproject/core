@@ -26,11 +26,6 @@ use Antares\Config\Repository;
 class RepositoryTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function tearDown()
-    {
-        m::close();
-    }
-
     public function testHasGroupIndicatesIfConfigGroupExists()
     {
         $config = $this->getRepository();

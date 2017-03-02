@@ -33,14 +33,6 @@ class FieldsetTest extends ApplicationTestCase
 {
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
-
-    /**
      * Fieldset config.
      *
      * @return array

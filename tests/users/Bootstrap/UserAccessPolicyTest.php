@@ -38,12 +38,14 @@ class UserAccessPolicyTest extends TestCase
 
         $this->assertEquals(['Guest'], $this->app['auth']->roles());
 
-        $user     = m::mock('\Antares\Model\User[getRoles]');
+        $user     = m::mock('\Antares\Model\User');
+        $user->shouldReceive('setAttribute')->once()->andReturnSelf();
         $user->id = 1;
 
         $user->shouldReceive('getRoles')->once()->andReturn([
             'Administrator',
         ]);
+
 
         $this->assertEquals(
                 ['Administrator'], $this->app['events']->until('antares.auth: roles', [$user, []])

@@ -20,14 +20,13 @@
 
 namespace Antares\Users\Http\Controllers\Account\TestCase;
 
-use Mockery as m;
-use Antares\Testing\TestCase;
-use Illuminate\Support\Facades\View;
-use Antares\Support\Facades\Messages;
-use Antares\Support\Facades\Foundation;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Antares\Testing\ApplicationTestCase;
+use Antares\Support\Facades\Messages;
+use Illuminate\Support\Facades\View;
+use Mockery as m;
 
-class ProfileUpdaterControllerTest extends TestCase
+class ProfileUpdaterControllerTest extends ApplicationTestCase
 {
 
     use WithoutMiddleware;
@@ -38,12 +37,11 @@ class ProfileUpdaterControllerTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-
         $this->disableMiddlewareForAllTests();
     }
 
     /**
-     * Test GET /admin/account.
+     * Test GET /antares/account.
      *
      * @test
      */
@@ -58,12 +56,12 @@ class ProfileUpdaterControllerTest extends TestCase
         View::shouldReceive('make')->once()
                 ->with('antares/foundation::account.index', [], [])->andReturn('show.profile.changer');
 
-        $this->call('GET', 'admin/account');
+        $this->call('GET', 'antares/account');
         $this->assertResponseOk();
     }
 
     /**
-     * Test POST /admin/account.
+     * Test POST /antares/account.
      *
      * @test
      */
@@ -78,16 +76,14 @@ class ProfileUpdaterControllerTest extends TestCase
                 });
 
         Messages::shouldReceive('add')->once()->with('success', m::any())->andReturnNull();
-        Foundation::shouldReceive('handles')->once()->with('antares::account', [])->andReturn('account');
 
-        $this->call('POST', 'admin/account', $input);
-        $this->assertRedirectedTo('account');
+        $this->call('POST', 'antares/account', $input);
+        $this->assertRedirectedTo('antares/account');
     }
 
     /**
-     * Test POST /admin/account with invalid user id.
+     * Test POST /antares/account with invalid user id.
      *
-     * @expectedException \Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function testPostIndexActionGivenInvalidUserId()
     {
@@ -99,11 +95,12 @@ class ProfileUpdaterControllerTest extends TestCase
                     return $listener->abortWhenUserMismatched();
                 });
 
-        $this->call('POST', 'admin/account', $input);
+        $this->call('POST', 'antares/account', $input);
+        $this->assertResponseStatus(500);
     }
 
     /**
-     * Test POST /admin/account with database error.
+     * Test POST /antares/account with database error.
      *
      * @test
      */
@@ -117,15 +114,14 @@ class ProfileUpdaterControllerTest extends TestCase
                     return $listener->updateProfileFailed([]);
                 });
 
-        Foundation::shouldReceive('handles')->once()->with('antares::account', [])->andReturn('account');
         Messages::shouldReceive('add')->once()->with('error', m::any())->andReturnNull();
 
-        $this->call('POST', 'admin/account', $input);
-        $this->assertRedirectedTo('account');
+        $this->call('POST', 'antares/account', $input);
+        $this->assertRedirectedTo('antares/account');
     }
 
     /**
-     * Test POST /admin/account with validation failed.
+     * Test POST /antares/account with validation failed.
      *
      * @test
      */
@@ -139,10 +135,8 @@ class ProfileUpdaterControllerTest extends TestCase
                     return $listener->updateProfileFailedValidation([]);
                 });
 
-        Foundation::shouldReceive('handles')->once()->with('antares::account', [])->andReturn('account');
-
-        $this->call('POST', 'admin/account', $input);
-        $this->assertRedirectedTo('account');
+        $this->call('POST', 'antares/account', $input);
+        $this->assertRedirectedTo('antares/account');
     }
 
     /**

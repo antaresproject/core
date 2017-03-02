@@ -17,22 +17,16 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Support\Traits\TestCase;
+
+namespace Antares\Support\Traits\TestCase;
 
 use Mockery as m;
 use Antares\Support\Traits\QueryFilterTrait;
 
 class QueryFilterTraitTest extends \PHPUnit_Framework_TestCase
 {
-    use QueryFilterTrait;
 
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
+    use QueryFilterTrait;
 
     /**
      * Test \Antares\Support\Traits\QueryFilterTrait::setupBasicQueryFilter()
@@ -45,17 +39,17 @@ class QueryFilterTraitTest extends \PHPUnit_Framework_TestCase
         $query = m::mock('\Illuminate\Database\Query\Builder');
 
         $query->shouldReceive('orderBy')->once()->with('updated_at', 'DESC')->andReturn($query)
-            ->shouldReceive('orderBy')->once()->with('created_at', 'DESC')->andReturn($query);
+                ->shouldReceive('orderBy')->once()->with('created_at', 'DESC')->andReturn($query);
 
         $this->assertEquals($query, $this->setupBasicQueryFilter($query, [
-            'order_by'  => 'updated',
-            'direction' => 'desc',
+                    'order_by'  => 'updated',
+                    'direction' => 'desc',
         ]));
 
         $this->assertEquals($query, $this->setupBasicQueryFilter($query, [
-            'order_by'  => 'created',
-            'direction' => 'desc',
-            'columns'   => ['only' => 'created_at'],
+                    'order_by'  => 'created',
+                    'direction' => 'desc',
+                    'columns'   => ['only' => 'created_at'],
         ]));
     }
 
@@ -72,9 +66,9 @@ class QueryFilterTraitTest extends \PHPUnit_Framework_TestCase
         $query->shouldReceive('orderBy')->never()->with('password', 'DESC')->andReturn($query);
 
         $this->assertEquals($query, $this->setupBasicQueryFilter($query, [
-            'order_by'  => 'password',
-            'direction' => 'desc',
-            'columns'   => ['except' => 'password'],
+                    'order_by'  => 'password',
+                    'direction' => 'desc',
+                    'columns'   => ['except' => 'password'],
         ]));
     }
 
@@ -92,11 +86,12 @@ class QueryFilterTraitTest extends \PHPUnit_Framework_TestCase
                 ->andReturnUsing(function ($c) use ($query) {
                     $c($query);
                 })
-            ->shouldReceive('orWhere')->once()->with('name', 'LIKE', 'hello')
-            ->shouldReceive('orWhere')->once()->with('name', 'LIKE', 'hello%')
-            ->shouldReceive('orWhere')->once()->with('name', 'LIKE', '%hello')
-            ->shouldReceive('orWhere')->once()->with('name', 'LIKE', '%hello%');
+                ->shouldReceive('orWhere')->once()->with('name', 'LIKE', 'hello')
+                ->shouldReceive('orWhere')->once()->with('name', 'LIKE', 'hello%')
+                ->shouldReceive('orWhere')->once()->with('name', 'LIKE', '%hello')
+                ->shouldReceive('orWhere')->once()->with('name', 'LIKE', '%hello%');
 
         $this->assertEquals($query, $this->setupWildcardQueryFilter($query, 'hello', ['name']));
     }
+
 }

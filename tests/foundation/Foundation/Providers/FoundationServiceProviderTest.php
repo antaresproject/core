@@ -21,22 +21,11 @@
 namespace Antares\Foundation\Providers\TestCase;
 
 use Mockery as m;
-use Illuminate\Container\Container;
 use Antares\Foundation\Providers\FoundationServiceProvider;
 use Antares\Testing\ApplicationTestCase;
 
 class FoundationServiceProviderTest extends ApplicationTestCase
 {
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-
-        m::close();
-    }
 
     /**
      * Test event are registered.

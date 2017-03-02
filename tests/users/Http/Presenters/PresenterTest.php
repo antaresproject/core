@@ -37,14 +37,6 @@ class PresenterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
-
-    /**
      * Test Antares\Users\Http\Presenters\Presenter::handles()
      * method.
      *
