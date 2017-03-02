@@ -20,17 +20,17 @@
 
 namespace Antares\Users\Http\Controllers\TestCase;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Antares\Testing\ApplicationTestCase;
-use Antares\Support\Facades\Foundation;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Mockery as m;
 
 class UsersControllerTest extends ApplicationTestCase
 {
 
-    use \Illuminate\Foundation\Testing\WithoutMiddleware;
+    use WithoutMiddleware;
 
     /**
      * Setup the test environment.
@@ -251,7 +251,7 @@ class UsersControllerTest extends ApplicationTestCase
             'roles'    => [1],
         ];
 
-        list(, $validator) = $this->bindDependencies();
+        $validator = m::mock('\Antares\Foundation\Validation\User');
 
         $builder = m::mock('\Illuminate\Database\Eloquent\Builder')->makePartial();
         $user    = m::mock('\Antares\Model\User');
@@ -267,19 +267,13 @@ class UsersControllerTest extends ApplicationTestCase
                 ->shouldReceive('with')->once()->with($input)->andReturn($validator)
                 ->shouldReceive('fails')->once()->andReturnNull();
 
-        Foundation::shouldReceive('make')->once()
-                ->with('antares.user')->andReturn($builder);
-        Foundation::shouldReceive('handles')->once()
-                ->with('antares::users', [])->andReturn('users');
-        Messages::shouldReceive('add')->once()
-                ->with('error', m::any())->andReturnNull();
+
         DB::shouldReceive('transaction')->once()
                 ->with(m::type('Closure'))->andReturnUsing(function ($c) {
             $c();
         });
-
-        $this->call('PUT', 'antares/users/foo', $input);
-        $this->assertRedirectedTo('users');
+        $this->call('PUT', 'antares/users/1', $input);
+        $this->assertResponseStatus(500);
     }
 
     /**
@@ -374,7 +368,8 @@ class UsersControllerTest extends ApplicationTestCase
         $user->shouldReceive('getAttribute')->once()->with('id')->andReturn('foo')->shouldReceive('delete')->once()->andReturnNull();
 
         $this->app[\Illuminate\Contracts\Auth\Factory::class] = $auth                                                 = m::mock(\Illuminate\Contracts\Auth\Factory::class);
-        $auth->shouldReceive('guest')->times(3)->andReturn(false);
+        $auth->shouldReceive('guest')->times(3)->andReturn(false)
+                ->shouldReceive('user')->andReturn($user);
         $role                                                 = [
             'id'        => 10,
             'name'      => 'administrator',
@@ -389,42 +384,34 @@ class UsersControllerTest extends ApplicationTestCase
 
         $builder->shouldReceive('findOrFail')->once()->with('foobar')->andReturn($user);
         $user->shouldReceive('getAttribute')->once()->with('id')->andReturn('foobar');
+        DB::beginTransaction();
+        $this->call('GET', 'antares/users/2/delete');
+        DB::rollback();
 
-
-        $this->assertRedirectedTo('antares/users/1/edit');
+        $this->assertRedirectedTo('users/index');
     }
 
-//
-//    /**
-//     * Test GET /antares/users/(:any)/delete when database error.
-//     *
-//     * @test
-//     */
-//    public function testGetDeleteActionGivenDatabaseError()
-//    {
-//        $builder = m::mock('\Illuminate\Database\Eloquent\Builder')->makePartial();
-//        $user    = m::mock('\Antares\Model\User');
-//        $auth    = (object) [
-//                    'id' => 'foobar',
-//        ];
-//
-//        $builder->shouldReceive('findOrFail')->once()->with('foo')->andReturn($user);
-//        $user->shouldReceive('getAttribute')->once()->with('id')->andReturn('foo')
-//                ->shouldReceive('delete')->once()->andThrow('\Exception');
-//
-//        Foundation::shouldReceive('make')->once()
-//                ->with('antares.user')->andReturn($builder);
-//        Foundation::shouldReceive('handles')->once()
-//                ->with('antares::users', [])->andReturn('users');
-//        Messages::shouldReceive('add')->once()
-//                ->with('error', m::any())->andReturnNull();
-//        Auth::shouldReceive('user')->once()->andReturn($auth);
-//        DB::shouldReceive('transaction')->once()
-//                ->with(m::type('Closure'))->andReturnUsing(function ($c) {
-//            $c();
-//        });
-//
-//        $this->call('GET', 'antares/users/foo/delete');
-//        $this->assertRedirectedTo('users');
-//    }
+    /**
+     * Test GET /antares/users/(:any)/delete when database error.
+     *
+     * @test
+     */
+    public function testGetDeleteActionGivenDatabaseError()
+    {
+        $builder = m::mock('\Illuminate\Database\Eloquent\Builder')->makePartial();
+        $user    = m::mock('\Antares\Model\User');
+
+        $builder->shouldReceive('findOrFail')->once()->with('foo')->andReturn($user);
+        $user->shouldReceive('getAttribute')->once()->with('id')->andReturn('foo')
+                ->shouldReceive('delete')->once()->andThrow('\Exception');
+
+
+
+        DB::shouldReceive('transaction')->once()
+                ->with(m::type('Closure'))->andReturnUsing(function ($c) {
+            $c();
+        });
+        $this->assertInstanceOf(ModelNotFoundException::class, $this->call('GET', 'antares/users/999/delete')->exception);
+    }
+
 }

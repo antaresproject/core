@@ -44,15 +44,6 @@ class UserMetaRepositoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        unset($this->app);
-        m::close();
-    }
-
-    /**
      * Test Antares\Model\Memory\UserMetaRepository::initiate()
      * method.
      *

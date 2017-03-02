@@ -17,13 +17,15 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Memory\Handlers\TestCase;
+
+namespace Antares\Memory\Handlers\TestCase;
 
 use Mockery as m;
 use Antares\Memory\Handlers\Runtime;
 
 class RuntimeTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Stub instance.
      *
@@ -37,15 +39,6 @@ class RuntimeTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->stub = new Runtime('stub', []);
-    }
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        unset($this->stub);
-        m::close();
     }
 
     /**
@@ -85,4 +78,5 @@ class RuntimeTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertTrue($this->stub->finish());
     }
+
 }

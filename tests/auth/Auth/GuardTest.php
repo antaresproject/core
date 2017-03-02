@@ -20,7 +20,6 @@
 
 namespace Antares\Auth\TestCase;
 
-use Illuminate\Auth\Events\Authenticated;
 use Antares\Auth\SessionGuard as Guard;
 use Mockery as m;
 
@@ -64,18 +63,6 @@ class GuardTest extends \PHPUnit_Framework_TestCase
         $this->session  = m::mock('\Illuminate\Session\Store');
         $this->events   = m::mock('\Illuminate\Contracts\Events\Dispatcher');
         $this->request  = m::mock('\Illuminate\Http\Request');
-    }
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        unset($this->provider);
-        unset($this->session);
-        unset($this->events);
-        unset($this->request);
-        m::close();
     }
 
     /**

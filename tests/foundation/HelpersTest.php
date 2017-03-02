@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\TestCase;
 
 use Mockery as m;
@@ -43,23 +42,13 @@ class HelpersTest extends \PHPUnit_Framework_TestCase
     {
         $this->app = new Application(__DIR__);
 
-        $this->app['translator']    = $trans                      = m::mock('\Illuminate\Translation\Translator')->makePartial();
+        $this->app['translator']  = $trans                    = m::mock('\Illuminate\Translation\Translator')->makePartial();
         $this->app['antares.app'] = $antares                  = m::mock('\Antares\Contracts\Foundation\Foundation');
 
         Facade::clearResolvedInstances();
         Container::setInstance($this->app);
 
         $trans->shouldReceive('trans')->andReturn('translated');
-    }
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        Facade::clearResolvedInstances();
-
-        m::close();
     }
 
     /**
@@ -82,7 +71,7 @@ class HelpersTest extends \PHPUnit_Framework_TestCase
      */
     public function testMemorizeMethod()
     {
-        $this->app['antares.platform.memory'] = $memory                                 = m::mock('\Antares\Contracts\Memory\Provider');
+        $this->app['antares.platform.memory'] = $memory                               = m::mock('\Antares\Contracts\Memory\Provider');
 
         $memory->shouldReceive('get')->once()->with('site.name', null)->andReturn('Antares');
 
@@ -125,7 +114,7 @@ class HelpersTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetMetaMethod()
     {
-        $this->app['antares.meta'] = $meta                        = m::mock('\Antares\Foundation\Meta');
+        $this->app['antares.meta'] = $meta                      = m::mock('\Antares\Foundation\Meta');
 
         $meta->shouldReceive('get')->once()->with('title', 'foo')->andReturn('foobar');
 
@@ -139,7 +128,7 @@ class HelpersTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetMetaMethod()
     {
-        $this->app['antares.meta'] = $meta                        = m::mock('\Antares\Foundation\Meta');
+        $this->app['antares.meta'] = $meta                      = m::mock('\Antares\Foundation\Meta');
         $meta->shouldReceive('set')->once()->with('title', 'foo')->andReturnNull();
         $this->assertNull(set_meta('title', 'foo'));
     }

@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Bootstrap\TestCase;
+
+namespace Antares\Foundation\Bootstrap\TestCase;
 
 use Mockery as m;
 use Illuminate\Container\Container;
@@ -27,6 +28,7 @@ use Antares\Foundation\Bootstrap\NotifyIfSafeMode;
 
 class NotifyIfSafeModeTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Application instance.
      *
@@ -44,15 +46,6 @@ class NotifyIfSafeModeTest extends \PHPUnit_Framework_TestCase
         Facade::clearResolvedInstances();
         Container::setInstance($this->app);
     }
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        Facade::clearResolvedInstances();
-
-        m::close();
-    }
 
     /**
      * Test Antares\Foundation\Bootstrap\NotifyIfSafeMode::bootstrap()
@@ -64,18 +57,19 @@ class NotifyIfSafeModeTest extends \PHPUnit_Framework_TestCase
     {
         $app = $this->app;
 
-        $app['antares.extension.mode'] = $mode = m::mock('\Antares\Contracts\Extension\SafeMode');
-        $app['antares.messages'] = $messages = m::mock('\Antares\Contracts\Messages\MessageBag');
-        $app['translator'] = $translator = m::mock('\Illuminate\Translation\Translator')->makePartial();
+        $app['antares.extension.mode'] = $mode                          = m::mock('\Antares\Contracts\Extension\SafeMode');
+        $app['antares.messages']       = $messages                      = m::mock('\Antares\Contracts\Messages\MessageBag');
+        $app['translator']             = $translator                    = m::mock('\Illuminate\Translation\Translator')->makePartial();
 
         $messages->shouldReceive('extend')->once()->with(m::type('Closure'))
                 ->andReturnUsing(function ($c) use ($messages) {
                     return $c($messages);
                 })
-            ->shouldReceive('add')->once()->with('info', m::type('String'))->andReturnNull();
+                ->shouldReceive('add')->once()->with('info', m::type('String'))->andReturnNull();
 
         $mode->shouldReceive('check')->once()->andReturn(true);
 
         (new NotifyIfSafeMode())->bootstrap($app);
     }
+
 }

@@ -27,14 +27,6 @@ use Mockery as m;
 class AssetPublisherTest extends ApplicationTestCase
 {
 
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
-
     public function testBasicPathPublishing()
     {
         $pub   = new AssetPublisher($files = m::mock('Illuminate\Filesystem\Filesystem'), __DIR__);

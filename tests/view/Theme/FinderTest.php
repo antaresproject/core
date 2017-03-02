@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\View\TestCase\Theme;
+
+namespace Antares\View\TestCase\Theme;
 
 use Mockery as m;
 use Antares\View\Theme\Finder;
@@ -25,6 +26,7 @@ use Illuminate\Container\Container;
 
 class FinderTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Application instance.
      *
@@ -41,15 +43,6 @@ class FinderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        unset($this->app);
-        m::close();
-    }
-
-    /**
      * Test Antares\Theme\Finder::detect() method.
      *
      * @test
@@ -58,18 +51,18 @@ class FinderTest extends \PHPUnit_Framework_TestCase
     {
         $app                = $this->app;
         $app['path.public'] = '/var/antares/public/';
-        $app['files']       = $file       = m::mock('\Illuminate\Filesystem\Filesystem');
+        $app['files']       = $file               = m::mock('\Illuminate\Filesystem\Filesystem');
 
         $file->shouldReceive('directories')->once()
                 ->with('/var/antares/public/themes/')->andReturn([
                     '/var/antares/public/themes/a',
                     '/var/antares/public/themes/b',
                 ])
-            ->shouldReceive('exists')->once()
+                ->shouldReceive('exists')->once()
                 ->with('/var/antares/public/themes/a/theme.json')->andReturn(true)
-            ->shouldReceive('exists')->once()
+                ->shouldReceive('exists')->once()
                 ->with('/var/antares/public/themes/b/theme.json')->andReturn(false)
-            ->shouldReceive('get')->once()
+                ->shouldReceive('get')->once()
                 ->with('/var/antares/public/themes/a/theme.json')->andReturn('{"name": "foo"}');
 
         $stub   = new Finder($app);
@@ -78,4 +71,5 @@ class FinderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Antares\View\Theme\Manifest', $themes['a']);
         $this->assertEquals('/var/antares/public/themes/a', $themes['a']->path);
     }
+
 }

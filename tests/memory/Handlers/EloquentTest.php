@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Memory\Handlers\TestCase;
 
 use Mockery as m;
@@ -27,14 +26,6 @@ use Antares\Memory\Handlers\Eloquent;
 
 class EloquentTest extends \PHPUnit_Framework_TestCase
 {
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Add data provider.

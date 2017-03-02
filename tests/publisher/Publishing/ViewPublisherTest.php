@@ -27,11 +27,6 @@ use Mockery as m;
 class ViewPublisherTest extends ApplicationTestCase
 {
 
-    public function tearDown()
-    {
-        m::close();
-    }
-
     public function testPackageViewPublishing()
     {
         $pub   = new ViewPublisher($files = m::mock('\Illuminate\Filesystem\Filesystem'), __DIR__);

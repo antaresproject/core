@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Processor\Account;
 
 use Exception;
@@ -61,7 +60,7 @@ class PasswordUpdater extends User implements Command
         $user = Auth::user();
 
         if (!$this->validateCurrentUser($user, $input)) {
-            return $listener->abortWhenUserMismatched();
+            return $listener->abortWhenUserMismatched('User mismatched.');
         }
 
         $validation = $this->validator->on('changePassword')->with($input);

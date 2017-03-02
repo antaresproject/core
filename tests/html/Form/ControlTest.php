@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Html\Form\TestCase;
+
+namespace Antares\Html\Form\TestCase;
 
 use Mockery as m;
 use Illuminate\Support\Fluent;
@@ -25,13 +26,6 @@ use Antares\Html\Form\Control;
 
 class ControlTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Html\Form\Control configuration methods.
@@ -94,8 +88,8 @@ class ControlTest extends \PHPUnit_Framework_TestCase
         $stub = new Control($app, $html, $request);
 
         $stub->render(
-            [],
-            new \Illuminate\Support\Fluent(['method' => 'foo'])
+                [], new \Illuminate\Support\Fluent(['method' => 'foo'])
         );
     }
+
 }

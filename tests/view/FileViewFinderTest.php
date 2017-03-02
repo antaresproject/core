@@ -40,15 +40,6 @@ class FileViewFinderTest extends ApplicationTestCase
     }
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        unset($this->files);
-        m::close();
-    }
-
-    /**
      * Test Antares\View\FileViewFinder::findNamedPathView() method.
      *
      * @test

@@ -21,18 +21,11 @@
 namespace Antares\Users\Processor\TestCase;
 
 use Antares\Users\Processor\Account\ProfileDashboard;
+use Antares\Testing\ApplicationTestCase;
 use Mockery as m;
 
-class UserDashboardTest extends \PHPUnit_Framework_TestCase
+class UserDashboardTest extends ApplicationTestCase
 {
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Users\Processor\UserDashboard::show()
@@ -47,9 +40,13 @@ class UserDashboardTest extends \PHPUnit_Framework_TestCase
 
         $stub = new ProfileDashboard($widget);
 
-        $widget->shouldReceive('make')->once()->with('pane.antares')->andReturn([]);
 
-        $listener->shouldReceive('showDashboard')->once()->with(['panes' => []])->andReturn('show.dashboard');
+
+        $listener->shouldReceive('showDashboard')->once()->andReturn('show.dashboard');
+        $this->app->instance(\Illuminate\Contracts\View\Factory::class, $factory = m::mock(\Illuminate\View\Factory::class));
+        $factory->shouldReceive('make')->andReturnSelf()
+                ->shouldReceive('render')->andReturn('rendered')
+                ->shouldReceive('share')->andReturnSelf();
 
         $this->assertEquals('show.dashboard', $stub->show($listener));
     }

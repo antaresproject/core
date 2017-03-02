@@ -28,14 +28,6 @@ class PublisherManagerTest extends ApplicationTestCase
 {
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
-
-    /**
      * Test Antares\Foundation\Publisher\PublisherManager::getDefaultDriver()
      * method.
      *

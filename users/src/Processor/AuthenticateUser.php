@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Processor;
 
 use Antares\Contracts\Auth\Command\ThrottlesLogins as ThrottlesCommand;
@@ -28,7 +27,6 @@ use Antares\Users\Validation\AuthenticateUser as Validator;
 use Antares\Authorization\Factory as AclFactory;
 use Illuminate\Contracts\Auth\Guard;
 use Antares\Model\User as Eloquent;
-use Validator as LaravelValidator;
 use Antares\Messages\MessageBag;
 use Illuminate\Support\Arr;
 
@@ -67,10 +65,6 @@ class AuthenticateUser extends Authenticate implements Command
      */
     public function login(Listener $listener, array $input, ThrottlesCommand $throttles = null)
     {
-//        LaravelValidator::extend('custom', function($attribute, $value, $parameters, $validator) {
-//            return event('validation.before.login', [$attribute, $value, $parameters, $validator]);
-//        });
-
         $validation = $this->validator->on('login')->with($input);
 
         // Validate user login, if any errors is found redirect it back to
@@ -78,6 +72,7 @@ class AuthenticateUser extends Authenticate implements Command
         if ($validation->fails()) {
             return $listener->userLoginHasFailedValidation($validation->getMessageBag());
         }
+
 
         if ($this->hasTooManyAttempts($throttles)) {
             return $this->handleUserHasTooManyAttempts($listener, $input, $throttles);

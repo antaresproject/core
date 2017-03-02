@@ -17,17 +17,14 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Config\TestCase;
+
+namespace Antares\Config\TestCase;
 
 use Mockery as m;
 use Antares\Config\FileLoader;
 
 class FileLoaderTest extends \PHPUnit_Framework_TestCase
 {
-    public function tearDown()
-    {
-        m::close();
-    }
 
     public function testEmptyArrayIsReturnedOnNullPath()
     {
@@ -38,10 +35,10 @@ class FileLoaderTest extends \PHPUnit_Framework_TestCase
     public function testBasicArrayIsReturned()
     {
         $loader = $this->getLoader();
-        $loader->getFilesystem()->shouldReceive('exists')->once()->with(__DIR__.'/app.php')->andReturn(true);
-        $loader->getFilesystem()->shouldReceive('exists')->once()->with(__DIR__.'/local/app.php')->andReturn(false);
-        $loader->getFilesystem()->shouldReceive('getRequire')->once()->with(__DIR__.'/app.php')->andReturn(['foo' => 'bar']);
-        $array = $loader->load('local', 'app', null);
+        $loader->getFilesystem()->shouldReceive('exists')->once()->with(__DIR__ . '/app.php')->andReturn(true);
+        $loader->getFilesystem()->shouldReceive('exists')->once()->with(__DIR__ . '/local/app.php')->andReturn(false);
+        $loader->getFilesystem()->shouldReceive('getRequire')->once()->with(__DIR__ . '/app.php')->andReturn(['foo' => 'bar']);
+        $array  = $loader->load('local', 'app', null);
 
         $this->assertEquals(['foo' => 'bar'], $array);
     }
@@ -49,11 +46,11 @@ class FileLoaderTest extends \PHPUnit_Framework_TestCase
     public function testEnvironmentArrayIsMerged()
     {
         $loader = $this->getLoader();
-        $loader->getFilesystem()->shouldReceive('exists')->once()->with(__DIR__.'/app.php')->andReturn(true);
-        $loader->getFilesystem()->shouldReceive('exists')->once()->with(__DIR__.'/local/app.php')->andReturn(true);
-        $loader->getFilesystem()->shouldReceive('getRequire')->once()->with(__DIR__.'/app.php')->andReturn(['foo' => 'bar', 'providers' => ['AppProvider']]);
-        $loader->getFilesystem()->shouldReceive('getRequire')->once()->with(__DIR__.'/local/app.php')->andReturn(['foo' => 'blah', 'baz' => 'boom', 'providers' => [1 => 'SomeProvider']]);
-        $array = $loader->load('local', 'app', null);
+        $loader->getFilesystem()->shouldReceive('exists')->once()->with(__DIR__ . '/app.php')->andReturn(true);
+        $loader->getFilesystem()->shouldReceive('exists')->once()->with(__DIR__ . '/local/app.php')->andReturn(true);
+        $loader->getFilesystem()->shouldReceive('getRequire')->once()->with(__DIR__ . '/app.php')->andReturn(['foo' => 'bar', 'providers' => ['AppProvider']]);
+        $loader->getFilesystem()->shouldReceive('getRequire')->once()->with(__DIR__ . '/local/app.php')->andReturn(['foo' => 'blah', 'baz' => 'boom', 'providers' => [1 => 'SomeProvider']]);
+        $array  = $loader->load('local', 'app', null);
 
         $this->assertEquals(['foo' => 'blah', 'baz' => 'boom', 'providers' => ['AppProvider', 'SomeProvider']], $array);
     }
@@ -61,15 +58,15 @@ class FileLoaderTest extends \PHPUnit_Framework_TestCase
     public function testGroupExistsReturnsTrueWhenTheGroupExists()
     {
         $loader = $this->getLoader();
-        $loader->getFilesystem()->shouldReceive('exists')->once()->with(__DIR__.'/app.php')->andReturn(true);
+        $loader->getFilesystem()->shouldReceive('exists')->once()->with(__DIR__ . '/app.php')->andReturn(true);
         $this->assertTrue($loader->exists('app'));
     }
 
     public function testGroupExistsReturnsTrueWhenNamespaceGroupExists()
     {
         $loader = $this->getLoader();
-        $loader->addNamespace('namespace', __DIR__.'/namespace');
-        $loader->getFilesystem()->shouldReceive('exists')->once()->with(__DIR__.'/namespace/app.php')->andReturn(true);
+        $loader->addNamespace('namespace', __DIR__ . '/namespace');
+        $loader->getFilesystem()->shouldReceive('exists')->once()->with(__DIR__ . '/namespace/app.php')->andReturn(true);
         $this->assertTrue($loader->exists('app', 'namespace'));
     }
 
@@ -82,19 +79,19 @@ class FileLoaderTest extends \PHPUnit_Framework_TestCase
     public function testGroupExistsReturnsFalseWhenNamespaceGroupDoesntExists()
     {
         $loader = $this->getLoader();
-        $loader->addNamespace('namespace', __DIR__.'/namespace');
-        $loader->getFilesystem()->shouldReceive('exists')->with(__DIR__.'/namespace/app.php')->andReturn(false);
+        $loader->addNamespace('namespace', __DIR__ . '/namespace');
+        $loader->getFilesystem()->shouldReceive('exists')->with(__DIR__ . '/namespace/app.php')->andReturn(false);
         $this->assertFalse($loader->exists('app', 'namespace'));
     }
 
     public function testCascadingPackagesProperlyLoadsFiles()
     {
         $loader = $this->getLoader();
-        $loader->getFilesystem()->shouldReceive('exists')->once()->with(__DIR__.'/packages/dayle/rees/group.php')->andReturn(true);
-        $loader->getFilesystem()->shouldReceive('getRequire')->once()->with(__DIR__.'/packages/dayle/rees/group.php')->andReturn(['bar' => 'baz']);
-        $loader->getFilesystem()->shouldReceive('exists')->once()->with(__DIR__.'/packages/dayle/rees/local/group.php')->andReturn(true);
-        $loader->getFilesystem()->shouldReceive('getRequire')->once()->with(__DIR__.'/packages/dayle/rees/local/group.php')->andReturn(['foo' => 'boom']);
-        $items = $loader->cascadePackage('local', 'dayle/rees', 'group', ['foo' => 'bar']);
+        $loader->getFilesystem()->shouldReceive('exists')->once()->with(__DIR__ . '/packages/dayle/rees/group.php')->andReturn(true);
+        $loader->getFilesystem()->shouldReceive('getRequire')->once()->with(__DIR__ . '/packages/dayle/rees/group.php')->andReturn(['bar' => 'baz']);
+        $loader->getFilesystem()->shouldReceive('exists')->once()->with(__DIR__ . '/packages/dayle/rees/local/group.php')->andReturn(true);
+        $loader->getFilesystem()->shouldReceive('getRequire')->once()->with(__DIR__ . '/packages/dayle/rees/local/group.php')->andReturn(['foo' => 'boom']);
+        $items  = $loader->cascadePackage('local', 'dayle/rees', 'group', ['foo' => 'bar']);
 
         $this->assertEquals(['foo' => 'boom', 'bar' => 'baz'], $items);
     }
@@ -103,4 +100,5 @@ class FileLoaderTest extends \PHPUnit_Framework_TestCase
     {
         return new FileLoader(m::mock('\Illuminate\Filesystem\Filesystem'), __DIR__);
     }
+
 }

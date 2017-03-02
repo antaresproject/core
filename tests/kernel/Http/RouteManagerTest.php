@@ -40,14 +40,6 @@ class RouteManagerTest extends ApplicationTestCase
     }
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
-
-    /**
      * Installed setup.
      */
     private function getApplicationMocks()

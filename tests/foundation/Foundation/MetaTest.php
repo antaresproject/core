@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\TestCase;
 
 use Mockery as m;
@@ -26,14 +25,6 @@ use Antares\Foundation\Meta;
 
 class MetaTest extends \PHPUnit_Framework_TestCase
 {
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Foundation\Meta::set() method.

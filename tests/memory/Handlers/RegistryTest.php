@@ -17,14 +17,6 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-/**
- * BillEvo (http://billevo.com/)
- *
- * @link      http://billevo.com/billevo/docs for documenation
- * @copyright Copyright (c) 2015 BillEvo S.A. (http://billevo.com/)
- * @license   http://billevo.com/license BillEvo License 
- * @package Antares/Tests
- */
 
 namespace Antares\Memory\Handlers\TestCase;
 
@@ -34,14 +26,6 @@ use Mockery as m;
 
 class ResgistryTest extends \PHPUnit_Framework_TestCase
 {
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Add data provider.

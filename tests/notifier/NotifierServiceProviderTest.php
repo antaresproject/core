@@ -20,21 +20,12 @@
 
 namespace Antares\Notifier\TestCase;
 
-use Mockery as m;
 use Illuminate\Container\Container;
 use Antares\Notifier\NotifierServiceProvider;
 use Antares\Testing\ApplicationTestCase;
 
 class NotifierServiceProviderTest extends ApplicationTestCase
 {
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        //m::close();
-    }
 
     /**
      * Test Antares\Notifier\NotifierServiceProvider::register() method.

@@ -27,14 +27,6 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        //m::close();
-    }
-
-    /**
      * Test Orchesta\Asset\Dispatcher::run() method.
      *
      * @test

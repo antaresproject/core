@@ -54,17 +54,6 @@ class FactoryTest extends ApplicationTestCase
     }
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        unset($this->app);
-        unset($this->dispatcher);
-        unset($this->debugger);
-        m::close();
-    }
-
-    /**
      * Get data provider.
      */
     protected function dataProvider()

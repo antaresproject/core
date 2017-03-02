@@ -17,20 +17,14 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Extension\TestCase;
+
+namespace Antares\Extension\TestCase;
 
 use Mockery as m;
 use Antares\Extension\RouteGenerator;
 
 class RouteGeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Extension\RouteGenerator construct proper route.
@@ -42,9 +36,9 @@ class RouteGeneratorTest extends \PHPUnit_Framework_TestCase
         $request = m::mock('\Illuminate\Http\Request');
 
         $request->shouldReceive('root')->once()->andReturn("http://localhost/laravel")
-            ->shouldReceive('secure')->once()->andReturn(false);
+                ->shouldReceive('secure')->once()->andReturn(false);
 
-        $stub   = new RouteGenerator("foo", $request);
+        $stub = new RouteGenerator("foo", $request);
 
         $refl   = new \ReflectionObject($stub);
         $domain = $refl->getProperty('domain');
@@ -84,7 +78,7 @@ class RouteGeneratorTest extends \PHPUnit_Framework_TestCase
         $request = m::mock('\Illuminate\Http\Request');
 
         $request->shouldReceive('root')->once()->andReturn("http://localhost/laravel")
-            ->shouldReceive('path')->once()->andReturn("acme/$path");
+                ->shouldReceive('path')->once()->andReturn("acme/$path");
 
         $stub = new RouteGenerator("acme", $request);
 
@@ -102,7 +96,7 @@ class RouteGeneratorTest extends \PHPUnit_Framework_TestCase
         $request = m::mock('\Illuminate\Http\Request');
 
         $request->shouldReceive('root')->once()->andReturn("http://localhost/laravel")
-            ->shouldReceive('path')->once()->andReturn($path);
+                ->shouldReceive('path')->once()->andReturn($path);
 
         $stub = new RouteGenerator("//foobar.com", $request);
 
@@ -121,7 +115,7 @@ class RouteGeneratorTest extends \PHPUnit_Framework_TestCase
         $request = m::mock('\Illuminate\Http\Request');
 
         $request->shouldReceive('root')->once()->andReturn("http://localhost/laravel")
-            ->shouldReceive('path')->once()->andReturn("acme/{$path}");
+                ->shouldReceive('path')->once()->andReturn("acme/{$path}");
 
         $stub = new RouteGenerator("//foobar.com/acme", $request);
 
@@ -138,8 +132,8 @@ class RouteGeneratorTest extends \PHPUnit_Framework_TestCase
         $request = m::mock('\Illuminate\Http\Request');
 
         $request->shouldReceive('root')->once()->andReturn("http://localhost/laravel")
-            ->shouldReceive('path')->once()->andReturn('foo')
-            ->shouldReceive('path')->once()->andReturn('foo/bar');
+                ->shouldReceive('path')->once()->andReturn('foo')
+                ->shouldReceive('path')->once()->andReturn('foo/bar');
 
         $stub = new RouteGenerator("foo", $request);
 
@@ -157,8 +151,8 @@ class RouteGeneratorTest extends \PHPUnit_Framework_TestCase
         $request = m::mock('\Illuminate\Http\Request');
 
         $request->shouldReceive('root')->once()->andReturn("http://localhost/laravel")
-            ->shouldReceive('path')->once()->andReturn('/')
-            ->shouldReceive('path')->once()->andReturn('bar');
+                ->shouldReceive('path')->once()->andReturn('/')
+                ->shouldReceive('path')->once()->andReturn('bar');
 
         $stub = new RouteGenerator("//foobar.com", $request);
 
@@ -176,7 +170,7 @@ class RouteGeneratorTest extends \PHPUnit_Framework_TestCase
         $request = m::mock('\Illuminate\Http\Request');
 
         $request->shouldReceive('root')->andReturn(null)
-            ->shouldReceive('secure')->andReturn(false);
+                ->shouldReceive('secure')->andReturn(false);
 
         $stub1 = new RouteGenerator("//blog.antaresplatform.com", $request);
         $stub2 = new RouteGenerator("//blog.antaresplatform.com/hello", $request);
@@ -215,7 +209,7 @@ class RouteGeneratorTest extends \PHPUnit_Framework_TestCase
         $request = m::mock('\Illuminate\Http\Request');
 
         $request->shouldReceive('root')->andReturn('http://localhost')
-            ->shouldReceive('secure')->andReturn(false);
+                ->shouldReceive('secure')->andReturn(false);
 
         $stub1 = new RouteGenerator("//blog.{{domain}}", $request);
         $stub2 = new RouteGenerator("//blog.{{domain}}/hello", $request);
@@ -242,4 +236,5 @@ class RouteGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("http://blog.localhost/hello/world/foo?bar", $stub3->to('foo?bar'));
         $this->assertEquals("http://blog.localhost/hello/world/foo?bar=foobar", $stub3->to('foo?bar=foobar'));
     }
+
 }

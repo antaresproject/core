@@ -17,21 +17,14 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Model\Observer\TestCase;
 
-use Mockery as m;
-use Antares\Support\Facades\ACL;
+namespace Antares\Model\Observer\TestCase;
+
 use Antares\Model\Observer\Role as RoleObserver;
+use Mockery as m;
 
 class RoleTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Model\Observer\Role::creating()
@@ -81,9 +74,9 @@ class RoleTest extends \PHPUnit_Framework_TestCase
         $model = m::mock('\Antares\Model\Role');
 
         $model->shouldReceive('getOriginal')->once()->with('name')->andReturn('foo')
-            ->shouldReceive('getAttribute')->once()->with('name')->andReturn('foobar')
-            ->shouldReceive('getDeletedAtColumn')->never()->andReturn('deleted_at')
-            ->shouldReceive('isSoftDeleting')->once()->andReturn(false);
+                ->shouldReceive('getAttribute')->once()->with('name')->andReturn('foobar')
+                ->shouldReceive('getDeletedAtColumn')->never()->andReturn('deleted_at')
+                ->shouldReceive('isSoftDeleting')->once()->andReturn(false);
         $acl->shouldReceive('renameRole')->once()->with('foo', 'foobar')->andReturn(null);
 
         $stub = new RoleObserver($acl);
@@ -102,14 +95,15 @@ class RoleTest extends \PHPUnit_Framework_TestCase
         $model = m::mock('\Antares\Model\Role');
 
         $model->shouldReceive('getOriginal')->once()->with('name')->andReturn('foo')
-            ->shouldReceive('getAttribute')->once()->with('name')->andReturn('foobar')
-            ->shouldReceive('getDeletedAtColumn')->once()->andReturn('deleted_at')
-            ->shouldReceive('isSoftDeleting')->once()->andReturn(true)
-            ->shouldReceive('getOriginal')->once()->with('deleted_at')->andReturn('0000-00-00 00:00:00')
-            ->shouldReceive('getAttribute')->once()->with('deleted_at')->andReturn(null);
+                ->shouldReceive('getAttribute')->once()->with('name')->andReturn('foobar')
+                ->shouldReceive('getDeletedAtColumn')->once()->andReturn('deleted_at')
+                ->shouldReceive('isSoftDeleting')->once()->andReturn(true)
+                ->shouldReceive('getOriginal')->once()->with('deleted_at')->andReturn('0000-00-00 00:00:00')
+                ->shouldReceive('getAttribute')->once()->with('deleted_at')->andReturn(null);
         $acl->shouldReceive('addRole')->once()->with('foobar')->andReturn(null);
 
         $stub = new RoleObserver($acl);
         $stub->updating($model);
     }
+
 }

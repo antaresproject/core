@@ -28,16 +28,6 @@ class InstallerControllerTest extends ApplicationTestCase
 {
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-
-        m::close();
-    }
-
-    /**
      * Get package providers.
      *
      * @param  \Illuminate\Foundation\Application  $app
@@ -81,9 +71,6 @@ class InstallerControllerTest extends ApplicationTestCase
         Config::set('database.default', 'mysql');
         Config::set('auth', ['driver' => 'eloquent', 'model' => 'UserEloquent']);
         Config::set('database.connections.mysql', $dbConfig);
-
-
-
         $this->call('GET', '/antares/install');
         $this->assertResponseStatus(302);
         $this->assertRedirectedTo(handles('/'));

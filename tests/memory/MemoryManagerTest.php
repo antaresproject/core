@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Memory\TestCase;
 
 use Mockery as m;
@@ -51,8 +50,9 @@ class MemoryManagerTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->app);
-        m::close();
+//        parent::t
+//        unset($this->app);
+//        m::close();
     }
 
     /**
@@ -125,7 +125,7 @@ class MemoryManagerTest extends TestCase
 
         $stub = new MemoryManager($app);
         $stub->setConfig($config);
-            }
+    }
 
     /**
      * Test that Antares\Memory\MemoryManager::makeOrFallback() method.

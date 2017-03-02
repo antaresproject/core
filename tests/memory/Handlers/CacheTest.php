@@ -17,20 +17,14 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Memory\Handlers\TestCase;
+
+namespace Antares\Memory\Handlers\TestCase;
 
 use Mockery as m;
 use Antares\Memory\Handlers\Cache;
 
 class CacheTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Memory\Handlers\Cache::initiate() method.
@@ -71,4 +65,5 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($stub->finish());
     }
+
 }

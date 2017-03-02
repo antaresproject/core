@@ -52,14 +52,6 @@ class MailerTest extends ApplicationTestCase
     }
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        //m::close();
-    }
-
-    /**
      * Test Antares\Notifier\Mailer::push() method uses Mail::send().
      *
      * @test

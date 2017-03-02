@@ -17,20 +17,14 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Messages\TestCase;
+
+namespace Antares\Messages\TestCase;
 
 use Mockery as m;
 use Antares\Messages\MessageBag;
 
 class MessageBagTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Support\MessageBag::make() method.
@@ -104,7 +98,7 @@ class MessageBagTest extends \PHPUnit_Framework_TestCase
     {
         $session = m::mock('\Illuminate\Session\Store');
         $session->shouldReceive('has')->once()->andReturn(true)
-            ->shouldReceive('pull')->once()
+                ->shouldReceive('pull')->once()
                 ->andReturn('a:2:{s:5:"hello";a:1:{i:0;s:8:"Hi World";}s:3:"bye";a:1:{i:0;s:7:"Goodbye";}}');
 
         $retrieve = (new MessageBag())->setSessionStore($session)->retrieve();
@@ -125,7 +119,7 @@ class MessageBagTest extends \PHPUnit_Framework_TestCase
     {
         $session = m::mock('\Illuminate\Session\Store');
         $session->shouldReceive('has')->once()->andReturn(true)
-            ->shouldReceive('pull')->once()
+                ->shouldReceive('pull')->once()
                 ->andReturn('a:1:{s:5:"hello";a:1:{i:0;s:8:"Hi World";}}');
 
         $callback = function ($msg) {
@@ -142,4 +136,5 @@ class MessageBagTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Antares\Messages\MessageBag', $retrieve);
         $this->assertEquals(['Hi World', 'Hi Antares Platform'], $retrieve->get('hello'));
     }
+
 }

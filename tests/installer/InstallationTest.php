@@ -31,34 +31,14 @@ class InstallationTest extends ApplicationTestCase
 {
 
     use EloquentConnectionTrait;
-    /**
-     * Application instance.
-     *
-     * @var Illuminate\Foundation\Application
-     */
-    //protected $app = null;
 
     /**
      * Setup the test environment.
      */
     public function setUp()
     {
-//        $this->app               = new Container();
-//        $this->app['translator'] = $translator              = m::mock('\Illuminate\Translation\Translator');
-//
-//        $translator->shouldReceive('trans')->andReturn('foo');
         parent::setUp();
         Facade::clearResolvedInstances();
-//        Facade::setFacadeApplication($this->app);
-//        Container::setInstance($this->app);
-    }
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
     }
 
     /**

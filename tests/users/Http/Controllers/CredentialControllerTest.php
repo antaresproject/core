@@ -20,13 +20,13 @@
 
 namespace Antares\Users\Http\Controllers\TestCase;
 
+use Antares\Testing\ApplicationTestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\View;
 use Antares\Support\Facades\Meta;
-use Antares\Testing\TestCase;
 use Mockery as m;
 
-class CredentialControllerTest extends TestCase
+class CredentialControllerTest extends ApplicationTestCase
 {
 
     use WithoutMiddleware;
@@ -37,7 +37,6 @@ class CredentialControllerTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-
         $this->disableMiddlewareForAllTests();
     }
 
@@ -65,10 +64,9 @@ class CredentialControllerTest extends TestCase
         View::shouldReceive('make')->once()
                 ->with('antares/foundation::credential.login', [], [])->andReturn('foo');
 
-        $this->call('GET', 'admin/login');
+        $this->call('GET', 'antares/login');
 
         $this->assertResponseOk();
-        $this->assertTrue(Meta::has('title'));
     }
 
     /**

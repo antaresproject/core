@@ -17,20 +17,14 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Memory\TestCase;
+
+namespace Antares\Memory\TestCase;
 
 use Mockery as m;
 use Antares\Memory\Provider;
 
 class ProviderTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Get Mock instance 1.
@@ -42,7 +36,7 @@ class ProviderTest extends \PHPUnit_Framework_TestCase
         $handler = m::mock('\Antares\Contracts\Memory\Handler');
 
         $data = [
-            'foo' => [
+            'foo'      => [
                 'bar' => 'hello world',
             ],
             'username' => 'laravel',
@@ -63,7 +57,7 @@ class ProviderTest extends \PHPUnit_Framework_TestCase
         $handler = m::mock('\Antares\Contracts\Memory\Handler');
 
         $data = [
-            'foo' => [
+            'foo'      => [
                 'bar' => 'hello world',
             ],
             'username' => 'laravel',
@@ -109,7 +103,7 @@ class ProviderTest extends \PHPUnit_Framework_TestCase
         $handler = m::mock('\Antares\Contracts\Memory\Handler');
 
         $handler->shouldReceive('initiate')->once()->andReturn(['foo' => 'foobar'])
-            ->shouldReceive('finish')->once()->with(['foo'            => 'foobar'])->andReturn(true);
+                ->shouldReceive('finish')->once()->with(['foo' => 'foobar'])->andReturn(true);
 
         $stub = new Provider($handler);
 
@@ -172,7 +166,7 @@ class ProviderTest extends \PHPUnit_Framework_TestCase
         $handler = m::mock('\Antares\Contracts\Memory\Handler');
 
         $data = [
-            'hello' => [
+            'hello'    => [
                 'world' => 'hello world',
             ],
             'username' => 'laravel',
@@ -186,4 +180,5 @@ class ProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals([], $stub->get('hello'));
     }
+
 }

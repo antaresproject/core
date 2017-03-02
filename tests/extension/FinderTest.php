@@ -29,14 +29,6 @@ class FinderTest extends ApplicationTestCase
 {
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
-
-    /**
      * Test constructing a new Antares\Extension\Finder.
      *
      * @test

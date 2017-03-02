@@ -31,14 +31,6 @@ class UserMetaTest extends ApplicationTestCase
     use EloquentConnectionTrait;
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
-
-    /**
      * Test Antares\Model\UserMeta::users() method.
      *
      * @test

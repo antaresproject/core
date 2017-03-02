@@ -20,11 +20,12 @@
 
 namespace Antares\Users\Http\Handlers\TestCase;
 
+use Antares\Testing\ApplicationTestCase;
 use Antares\Users\Http\Handlers\UserMenu as UserMenuHandler;
 use Illuminate\Container\Container;
 use Mockery as m;
 
-class UserMenuHandlerTest extends \PHPUnit_Framework_TestCase
+class UserMenuHandlerTest extends ApplicationTestCase
 {
 
     /**
@@ -35,18 +36,21 @@ class UserMenuHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreatingMenuWithAuthorizedUser()
     {
+
         $app                                                  = new Container();
         $app['antares.app']                                   = $foundation                                           = m::mock('\Antares\Contracts\Foundation\Foundation');
-        $app['antares.platform.menu']                         = $menu                                                 = m::mock('\Antares\Widget\Handlers\Menu');
+        $app['antares.platform.menu']                         = $menu                                                 = m::mock(\Illuminate\Support\Fluent::class);
         $app['translator']                                    = $translator                                           = m::mock('\Illuminate\Translator\Translator');
         $app['Antares\Contracts\Authorization\Authorization'] = $acl                                                  = m::mock('\Antares\Contracts\Authorization\Authorization');
 
-        $acl->shouldReceive('can')->with('manage-users')->once()->andReturn(true);
+        $acl->shouldReceive('can')->with(m::type('String'))->once()->andReturn(true);
         $translator->shouldReceive('trans')->once()->with('antares/foundation::title.users.list')->andReturn('users');
-        $foundation->shouldReceive('handles')->once()->with('antares::users')->andReturn('admin/users');
+        $foundation->shouldReceive('handles')->once()->with(m::type('String'))->andReturn('antares/users');
         $menu->shouldReceive('add')->once()->andReturnSelf()
                 ->shouldReceive('title')->once()->with('users')->andReturnSelf()
-                ->shouldReceive('link')->once()->with('admin/users')->andReturnNull();
+                ->shouldReceive('link')->once()->with('antares/users')->andReturnSelf()
+                ->shouldReceive('icon')->once()->with(m::type('String'))->andReturnSelf()
+                ->shouldReceive('entity')->once()->andReturn(new \Illuminate\Support\Fluent());
 
         $stub = new UserMenuHandler($app);
         $this->assertNull($stub->handle());
@@ -64,7 +68,7 @@ class UserMenuHandlerTest extends \PHPUnit_Framework_TestCase
         $app['antares.platform.menu']                         = $menu                                                 = m::mock('\Antares\Widget\Handlers\Menu');
         $app['Antares\Contracts\Authorization\Authorization'] = $acl                                                  = m::mock('\Antares\Contracts\Authorization\Authorization');
 
-        $acl->shouldReceive('can')->with('manage-users')->once()->andReturn(false);
+        $acl->shouldReceive('can')->with("clients-list")->once()->andReturn(false);
 
         $stub = new UserMenuHandler($app);
         $this->assertNull($stub->handle());

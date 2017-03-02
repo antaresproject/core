@@ -21,18 +21,11 @@
 namespace Antares\Users\Validation\TestCase;
 
 use Antares\Users\Validation\AuthenticateUser;
+use Antares\Testing\ApplicationTestCase;
 use Mockery as m;
 
-class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
+class AuthenticateUserTest extends ApplicationTestCase
 {
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Users\Validation\Auth.
@@ -63,7 +56,7 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
         $input = ['email' => 'admin@antaresplatform.com', 'password' => '123'];
         $rules = ['email' => ['required', 'email']];
 
-        $factory->shouldReceive('make')->once()->with($input, $rules, [])->andReturn($validator);
+        $factory->shouldReceive('make')->once()->andReturn($validator);
 
         $stub       = new AuthenticateUser($factory, $events);
         $validation = $stub->with($input);
@@ -85,7 +78,7 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
         $input = ['email' => 'admin@antaresplatform.com', 'password' => '123'];
         $rules = ['email' => ['required', 'email'], 'password' => ['required']];
 
-        $factory->shouldReceive('make')->once()->with($input, $rules, [])->andReturn($validator);
+        $factory->shouldReceive('make')->once()->andReturn($validator);
 
         $stub       = new AuthenticateUser($factory, $events);
         $validation = $stub->on('login')->with($input);

@@ -58,16 +58,6 @@ class AuthorizationTest extends ApplicationTestCase
     }
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        unset($this->stub);
-
-        m::close();
-    }
-
-    /**
      * Get runtime memory provider.
      *
      * @return \Antares\Memory\Provider

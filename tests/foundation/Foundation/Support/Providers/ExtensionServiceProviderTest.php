@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Foundation\Support\Providers\TestCase;
+
+namespace Antares\Foundation\Support\Providers\TestCase;
 
 use Mockery as m;
 use Illuminate\Container\Container;
@@ -25,13 +26,6 @@ use Antares\Foundation\Support\Providers\ExtensionServiceProvider;
 
 class ExtensionServiceProviderTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Foundation\Providers\ExtensionServiceProvider
@@ -67,11 +61,11 @@ class ExtensionServiceProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testBootMethod()
     {
-        $app = new Container();
-        $app['antares.extension.finder'] = $finder = m::mock('\Antares\Contracts\Extension\Finder');
+        $app                             = new Container();
+        $app['antares.extension.finder'] = $finder                          = m::mock('\Antares\Contracts\Extension\Finder');
 
         $finder->shouldReceive('addPath')->once()->with('app::Extensions/*/*')->andReturnNull()
-            ->shouldReceive('registerExtension')->once()->with('forum', 'base::modules/forum')->andReturnNull();
+                ->shouldReceive('registerExtension')->once()->with('forum', 'base::modules/forum')->andReturnNull();
 
         $stub = new StubExtensionProvider($app);
 
@@ -90,12 +84,15 @@ class ExtensionServiceProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertContains('antares.extension: detecting', $stub->when());
     }
+
 }
 
 class StubExtensionProvider extends ExtensionServiceProvider
 {
+
     protected $extensions = [
         'app::Extensions/*/*',
         'forum' => 'base::modules/forum',
     ];
+
 }

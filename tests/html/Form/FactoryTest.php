@@ -29,14 +29,6 @@ class FactoryTest extends ApplicationTestCase
 {
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
-
-    /**
      * Test Antares\Html\Table\Factory::make() method.
      *
      * @test

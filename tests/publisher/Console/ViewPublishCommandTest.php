@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Publisher\Console\TestCase;
+
+namespace Antares\Publisher\Console\TestCase;
 
 use Mockery as m;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -26,10 +27,6 @@ use Antares\Publisher\Console\ViewPublishCommand;
 
 class ViewPublishCommandTest extends \PHPUnit_Framework_TestCase
 {
-    public function tearDown()
-    {
-        m::close();
-    }
 
     public function testCommandCallsPublisherWithProperPackageName()
     {
@@ -38,9 +35,10 @@ class ViewPublishCommandTest extends \PHPUnit_Framework_TestCase
             return call_user_func_array($method, $parameters);
         });
 
-        $command = new ViewPublishCommand($pub = m::mock('\Antares\Publisher\Publishing\ViewPublisher'));
+        $command = new ViewPublishCommand($pub     = m::mock('\Antares\Publisher\Publishing\ViewPublisher'));
         $command->setLaravel($laravel);
         $pub->shouldReceive('publishPackage')->once()->with('foo');
         $command->run(new ArrayInput(['package' => 'foo']), new NullOutput());
     }
+
 }

@@ -20,12 +20,11 @@
 
 namespace Antares\Foundation\TestCase;
 
-use Mockery as m;
-use Antares\Testing\TestCase;
+use Antares\Foundation\Providers\ConsoleSupportServiceProvider;
+use Antares\Foundation\Providers\FoundationServiceProvider;
 use Antares\Foundation\Providers\ArtisanServiceProvider;
 use Antares\Foundation\Providers\SupportServiceProvider;
-use Antares\Foundation\Providers\FoundationServiceProvider;
-use Antares\Foundation\Providers\ConsoleSupportServiceProvider;
+use Antares\Testing\TestCase;
 
 class ServiceProviderTest extends TestCase
 {

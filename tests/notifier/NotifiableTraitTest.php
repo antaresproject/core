@@ -41,14 +41,6 @@ class NotifiableTraitTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        //m::close();
-    }
-
-    /**
      * Test \Antares\Notifier\NotifiableTrait::sendNotification()
      * method.
      *

@@ -21,18 +21,11 @@
 namespace Antares\Users\Processor\TestCase;
 
 use Antares\Users\Processor\AuthenticateUser;
+use Antares\Testing\ApplicationTestCase;
 use Mockery as m;
 
-class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
+class AuthenticateUserTest extends ApplicationTestCase
 {
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Users\Processor\AuthenticateUser::login()
@@ -45,24 +38,28 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
         $listener  = m::mock('\Antares\Contracts\Auth\Listener\AuthenticateUser');
         $validator = m::mock('\Antares\Users\Validation\AuthenticateUser');
         $resolver  = m::mock('\Illuminate\Contracts\Validation\Validator');
-        $auth      = m::mock('\Illuminate\Contracts\Auth\Guard');
-        $user      = m::mock('\Antares\Model\User, \Illuminate\Contracts\Auth\Authenticatable');
+
 
         $input = $this->getInput();
 
-        $validator->shouldReceive('on')->once()->with('login')->andReturn($validator)
-                ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
+        $validator->shouldReceive('on')->once()->with('login')->andReturn($validator)->shouldReceive('with')->once()->with($input)->andReturn($resolver);
         $resolver->shouldReceive('fails')->once()->andReturn(false);
-        $auth->shouldReceive('attempt')->once()->with(m::type('Array'), true)->andReturn(true)
-                ->shouldReceive('getUser')->once()->andReturn($user);
-        $user->shouldReceive('getAttribute')->once()->with('status')->andReturn(0)
-                ->shouldReceive('activate')->once()->andReturnSelf()
-                ->shouldReceive('save')->once()->andReturnNull();
-        $listener->shouldReceive('userHasLoggedIn')->once()->andReturn('logged.in');
 
-        $stub = new AuthenticateUser($validator, $auth);
+        $listener->shouldReceive('userHasLoggedIn')->once()->andReturn('login.success');
 
-        $this->assertEquals('logged.in', $stub->login($listener, $input));
+        $acl = m::mock('\Antares\Authorization\Factory');
+        $acl->shouldReceive('make')->withAnyArgs()->andReturnSelf()
+                ->shouldReceive('can')->withAnyArgs()->andReturn(true);
+
+        $user = \Antares\Model\User::query()->findOrFail(1);
+
+
+        $guard = m::mock('Antares\Auth\SessionGuard');
+        $guard->shouldReceive('attempt')->andReturn(true)
+                ->shouldReceive('getUser')->andReturn($user);
+        $stub  = new AuthenticateUser($guard, $validator, $acl);
+
+        $this->assertEquals('login.success', $stub->login($listener, $input));
     }
 
     /**
@@ -76,20 +73,29 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
         $listener  = m::mock('\Antares\Contracts\Auth\Listener\AuthenticateUser');
         $validator = m::mock('\Antares\Users\Validation\AuthenticateUser');
         $resolver  = m::mock('\Illuminate\Contracts\Validation\Validator');
-        $auth      = m::mock('\Illuminate\Contracts\Auth\Guard');
 
-        $input = $this->getInput();
 
         $validator->shouldReceive('on')->once()->with('login')->andReturn($validator)
-                ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
+                ->shouldReceive('with')->once()->with([
+            'email' => 'foo@bar.com'
+        ])->andReturn($resolver);
+
         $resolver->shouldReceive('fails')->once()->andReturn(false);
-        $auth->shouldReceive('attempt')->once()->with(m::type('Array'), true)->andReturn(false);
-        $listener->shouldReceive('userLoginHasFailedAuthentication')->once()
-                ->with(m::type('Array'))->andReturn('login.authentication.failed');
 
-        $stub = new AuthenticateUser($validator, $auth);
+        $listener->shouldReceive('userIsNotActive')->once()->andReturn('login.authentication.failed');
+        $acl = m::mock('\Antares\Authorization\Factory');
+        $acl->shouldReceive('make')->withAnyArgs()->andReturnSelf()
+                ->shouldReceive('can')->withAnyArgs()->andReturn(true);
 
-        $this->assertEquals('login.authentication.failed', $stub->login($listener, $input));
+        $guard = m::mock('Antares\Auth\SessionGuard');
+        $guard->shouldReceive('attempt')->andReturn(true)
+                ->shouldReceive('getUser')->andReturn(new \Antares\Model\User())
+                ->shouldReceive('logout')->andReturn(false);
+
+        $stub = new AuthenticateUser($guard, $validator, $acl);
+        $this->assertEquals('login.authentication.failed', $stub->login($listener, [
+                    'email' => 'foo@bar.com'
+        ]));
     }
 
     /**
@@ -103,41 +109,30 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
         $listener  = m::mock('\Antares\Contracts\Auth\Listener\AuthenticateUser');
         $validator = m::mock('\Antares\Users\Validation\AuthenticateUser');
         $resolver  = m::mock('\Illuminate\Contracts\Validation\Validator');
-        $auth      = m::mock('\Illuminate\Contracts\Auth\Guard');
 
-        $input = $this->getInput();
 
         $validator->shouldReceive('on')->once()->with('login')->andReturn($validator)
-                ->shouldReceive('with')->once()->with($input)->andReturn($resolver);
+                ->shouldReceive('with')->once()->with([
+            'email' => 'foo@bar.com'
+        ])->andReturn($resolver);
+
         $resolver->shouldReceive('fails')->once()->andReturn(true)
-                ->shouldReceive('getMessageBag')->once()->andReturn([]);
-        $listener->shouldReceive('userLoginHasFailedValidation')->once()
-                ->with(m::type('Array'))->andReturn('login.validation.failed');
+                ->shouldReceive('getMessageBag')->once()->andReturn($messageBag = m::mock(\Antares\Messages\MessageBag::class));
 
-        $stub = new AuthenticateUser($validator, $auth);
+        $listener->shouldReceive('userLoginHasFailedValidation')->once()->andReturn('login.validation.failed');
+        $acl = m::mock('\Antares\Authorization\Factory');
+        $acl->shouldReceive('make')->withAnyArgs()->andReturnSelf()
+                ->shouldReceive('can')->withAnyArgs()->andReturn(true);
 
-        $this->assertEquals('login.validation.failed', $stub->login($listener, $input));
-    }
+        $guard = m::mock('Antares\Auth\SessionGuard');
+        $guard->shouldReceive('attempt')->andReturn(true)
+                ->shouldReceive('getUser')->andReturn(new \Antares\Model\User())
+                ->shouldReceive('logout')->andReturn(false);
 
-    /**
-     * Test Antares\Users\Processor\AuthenticateUser::logout()
-     * method.
-     *
-     * @test
-     */
-    public function testLogoutMethod()
-    {
-        $listener  = m::mock('\Antares\Contracts\Auth\Listener\AuthenticateUser');
-        $validator = m::mock('\Antares\Users\Validation\AuthenticateUser');
-        $auth      = m::mock('\Illuminate\Contracts\Auth\Guard');
-
-        $stub = new AuthenticateUser($validator, $auth);
-
-        $auth->shouldReceive('logout')->once()->andReturnNull();
-
-        $listener->shouldReceive('userHasLoggedOut')->once()->andReturn('logged.out');
-
-        $this->assertEquals('logged.out', $stub->logout($listener));
+        $stub = new AuthenticateUser($guard, $validator, $acl);
+        $this->assertEquals('login.validation.failed', $stub->login($listener, [
+                    'email' => 'foo@bar.com'
+        ]));
     }
 
     /**
@@ -148,8 +143,8 @@ class AuthenticateUserTest extends \PHPUnit_Framework_TestCase
     protected function getInput()
     {
         return [
-            'email'    => 'hello@antaresplatform.com',
-            'password' => '123456',
+            'email'    => 'lukasz.cirut@gmail.com',
+            'password' => 'myszka',
             'remember' => 'yes',
         ];
     }

@@ -20,19 +20,12 @@
 
 namespace Antares\Users\Tests\Validation;
 
+use Antares\Testing\ApplicationTestCase;
 use Antares\Users\Validation\Account;
 use Mockery as m;
 
-class AccountTest extends \PHPUnit_Framework_TestCase
+class AccountTest extends ApplicationTestCase
 {
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
     /**
      * Test Antares\Users\Validation\Account.
@@ -70,7 +63,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
             'fullname' => ['required'],
         ];
 
-        $factory->shouldReceive('make')->once()->with($input, $rules, [])->andReturn($validator);
+        $factory->shouldReceive('make')->once()->andReturn($validator);
         $events->shouldReceive('fire')->once()->with('antares.validate: user.account', m::any())->andReturnNull();
 
         $stub       = new Account($factory, $events);
@@ -102,7 +95,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
             'password_confirmation' => ['sometimes', 'same:password'],
         ];
 
-        $factory->shouldReceive('make')->once()->with($input, $rules, [])->andReturn($validator);
+        $factory->shouldReceive('make')->once()->andReturn($validator);
         $events->shouldReceive('fire')->once()->with('antares.validate: user.account', m::any())->andReturnNull()
                 ->shouldReceive('fire')->once()->with('antares.validate: user.account.register', m::any())->andReturnNull();
 

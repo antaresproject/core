@@ -28,14 +28,6 @@ class AssetManagerTest extends ApplicationTestCase
 {
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
-
-    /**
      * Test Antares\Publisher\AssetManager::publish() method.
      *
      * @test

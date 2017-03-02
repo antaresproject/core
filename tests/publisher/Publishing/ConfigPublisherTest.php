@@ -27,11 +27,6 @@ use Mockery as m;
 class ConfigPublisherTest extends ApplicationTestCase
 {
 
-    public function tearDown()
-    {
-        m::close();
-    }
-
     public function testPackageConfigPublishing()
     {
         $pub   = new ConfigPublisher($files = m::mock('\Illuminate\Filesystem\Filesystem'), __DIR__);

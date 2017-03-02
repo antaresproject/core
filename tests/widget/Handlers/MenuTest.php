@@ -30,14 +30,6 @@ class MenuTest extends ApplicationTestCase
 {
 
     /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
-
-    /**
      * Test construct a Antares\Widget\Handlers\Menu.
      *
      * @test

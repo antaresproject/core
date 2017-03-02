@@ -17,7 +17,8 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\View\TestCase\Theme;
+
+namespace Antares\View\TestCase\Theme;
 
 use Mockery as m;
 use Illuminate\Container\Container;
@@ -25,6 +26,7 @@ use Antares\View\Theme\ThemeManager;
 
 class ThemeManagerTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * Application instance.
      *
@@ -38,22 +40,13 @@ class ThemeManagerTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->app                = new Container();
-        $this->app['request']     = $request     = m::mock('\Illuminate\Http\Request');
+        $this->app['request']     = $request                  = m::mock('\Illuminate\Http\Request');
         $this->app['events']      = m::mock('\Illuminate\Contracts\Events\Dispatcher');
         $this->app['files']       = m::mock('\Illuminate\Filesystem\Filesystem');
         $this->app['path.base']   = '/var/antares';
         $this->app['path.public'] = '/var/antares/public';
 
         $request->shouldReceive('root')->andReturn('http://localhost/');
-    }
-
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        unset($this->app);
-        m::close();
     }
 
     /**
@@ -75,12 +68,13 @@ class ThemeManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testDetectMethod()
     {
-        $app                           = $this->app;
-        $app['antares.theme.finder'] = $finder = m::mock('\Antares\View\Theme\Finder');
+        $app                         = $this->app;
+        $app['antares.theme.finder'] = $finder                      = m::mock('\Antares\View\Theme\Finder');
 
         $finder->shouldReceive('detect')->once()->andReturn('foo');
 
         $stub = new ThemeManager($app);
         $this->assertEquals('foo', $stub->detect());
     }
+
 }
