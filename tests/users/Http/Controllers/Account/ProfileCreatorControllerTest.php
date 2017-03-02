@@ -43,12 +43,14 @@ class ProfileCreatorControllerTest extends TestCase
     }
 
     /**
-     * Test GET /admin/register.
+     * Test GET /antares/register.
      *
      * @test
      */
     public function testGetCreateAction()
     {
+        $this->markTestIncomplete('Registration is not currently supported.');
+
         $this->getProcessorMock()->shouldReceive('create')->once()
                 ->with(m::type('\Antares\Users\Http\Controllers\Account\ProfileCreatorController'))
                 ->andReturnUsing(function ($listener) {
@@ -58,17 +60,20 @@ class ProfileCreatorControllerTest extends TestCase
         View::shouldReceive('make')->once()
                 ->with('antares/foundation::credential.register', [], [])->andReturn('foo');
 
-        $this->call('GET', 'admin/register');
+        $this->call('GET', 'antares/register');
         $this->assertResponseOk();
     }
 
     /**
-     * Test POST /admin/register.
+     * Test POST /antares/register.
      *
      * @test
      */
     public function testPostStoreAction()
     {
+        $this->markTestIncomplete('Registration is not currently supported.');
+
+
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('store')->once()
@@ -80,17 +85,18 @@ class ProfileCreatorControllerTest extends TestCase
         Foundation::shouldReceive('handles')->once()->with('antares::login', [])->andReturn('login');
         Messages::shouldReceive('add')->twice()->with('success', m::any())->andReturnNull();
 
-        $this->call('POST', 'admin/register', $input);
+        $this->call('POST', 'antares/register', $input);
         $this->assertRedirectedTo('login');
     }
 
     /**
-     * Test POST /admin/register failed to send email.
+     * Test POST /antares/register failed to send email.
      *
      * @test
      */
     public function testPostStoreActionGivenFailedToSendEmail()
     {
+        $this->markTestIncomplete('Registration is not currently supported.');
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('store')->once()
@@ -103,17 +109,18 @@ class ProfileCreatorControllerTest extends TestCase
         Messages::shouldReceive('add')->once()->with('success', m::any())->andReturnNull();
         Messages::shouldReceive('add')->once()->with('error', m::any())->andReturnNull();
 
-        $this->call('POST', 'admin/register', $input);
+        $this->call('POST', 'antares/register', $input);
         $this->assertRedirectedTo('login');
     }
 
     /**
-     * Test POST /admin/register with database error.
+     * Test POST /antares/register with database error.
      *
      * @test
      */
     public function testPostStoreActionGivenDatabaseError()
     {
+        $this->markTestIncomplete('Registration is not currently supported.');
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('store')->once()
@@ -125,17 +132,18 @@ class ProfileCreatorControllerTest extends TestCase
         Foundation::shouldReceive('handles')->once()->with('antares::register', [])->andReturn('register');
         Messages::shouldReceive('add')->once()->with('error', m::any())->andReturnNull();
 
-        $this->call('POST', 'admin/register', $input);
+        $this->call('POST', 'antares/register', $input);
         $this->assertRedirectedTo('register');
     }
 
     /**
-     * Test POST /admin/register with failed validation.
+     * Test POST /antares/register with failed validation.
      *
      * @test
      */
     public function testPostStoreActionGivenFailedValidation()
     {
+        $this->markTestIncomplete('Registration is not currently supported.');
         $input = $this->getInput();
 
         $this->getProcessorMock()->shouldReceive('store')->once()
@@ -146,7 +154,7 @@ class ProfileCreatorControllerTest extends TestCase
 
         Foundation::shouldReceive('handles')->once()->with('antares::register', [])->andReturn('register');
 
-        $this->call('POST', 'admin/register', $input);
+        $this->call('POST', 'antares/register', $input);
         $this->assertRedirectedTo('register');
     }
 
