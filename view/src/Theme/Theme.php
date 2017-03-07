@@ -253,7 +253,7 @@ class Theme implements ThemeContract
         $themePaths = $this->getThemePaths();
 
         foreach ($themePaths as $path) {
-            $this->files->isDirectory($path) && $paths[] = $path;
+            $this->files->isDirectory(base_path($path)) && $paths[] = base_path($path);
         }
 
         return $paths;
