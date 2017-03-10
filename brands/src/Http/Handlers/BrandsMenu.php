@@ -33,7 +33,7 @@ class BrandsMenu extends MenuHandler
      */
     protected $menu = [
         'id'    => 'brands',
-        'title' => 'Brand settings',
+        'title' => 'Branding',
         'link'  => 'antares::multibrand/index',
         'icon'  => 'zmdi-settings-square',
     ];

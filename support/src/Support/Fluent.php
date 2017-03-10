@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Support;
 
 use Illuminate\Support\Fluent as SupportFluent;
@@ -92,11 +91,16 @@ class Fluent extends SupportFluent
      */
     protected function compare($url)
     {
+
         if ($this->url == $url) {
             return true;
         }
-        $segments  = $this->segments;
-        $count     = count($segments);
+        $segments = $this->segments;
+        $count    = count($segments);
+        if ($count !== count(array_filter(explode('/', str_replace(url('/'), '', $url))))) {
+            return false;
+        }
+
         $segmented = url('/') . '/' . implode('/', array_slice($segments, 0, $count - 1));
         if (count($segments) > 2 && starts_with($url, $segmented)) {
             return true;
@@ -107,6 +111,31 @@ class Fluent extends SupportFluent
         }
         return ($segments[1] == $module && isset($segments[2]) && (in_array($segments[2], ['index', 'edit']) or is_numeric($segments[2])));
     }
+
+    /**
+     * Whether menu item is active
+     * 
+     * @param String $url
+     * @return boolean
+     */
+//    protected function compare($url)
+//    {
+//
+//        if ($this->url == $url) {
+//            return true;
+//        }
+//        $segments  = $this->segments;
+//        $count     = count($segments);
+//        $segmented = url('/') . '/' . implode('/', array_slice($segments, 0, $count - 1));
+//        if (count($segments) > 2 && starts_with($url, $segmented)) {
+//            return true;
+//        }
+//        @list($domain, $area, $module, $action) = explode('/', str_replace('http://', '', $url));
+//        if (!isset($segments[1])) {
+//            return false;
+//        }
+//        return ($segments[1] == $module && isset($segments[2]) && (in_array($segments[2], ['index', 'edit']) or is_numeric($segments[2])));
+//    }
 
     /**
      * Whether child is active

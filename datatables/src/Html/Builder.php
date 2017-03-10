@@ -118,6 +118,15 @@ class Builder extends BaseBuilder
         'width'       => '100%'
     ];
 
+    /**
+     * Table container attributes
+     *
+     * @var array 
+     */
+    protected $containerAttributes = [
+        'class' => 'tbl-c',
+    ];
+
     /** @var array * */
     protected $attributes = [
         "bFilter"        => true,
@@ -125,8 +134,6 @@ class Builder extends BaseBuilder
         'bLengthChange'  => true,
         'bInfo'          => false,
         "columnDefs"     => [
-//"targets"   => 'no-sort',
-//"orderable" => false,
         ],
         "serverSide"     => true,
         "dom"            => '<"dt-area-top"i>rt<"dt-area-bottom pagination pagination--type2" fpL><"clear">',
@@ -187,6 +194,20 @@ class Builder extends BaseBuilder
     protected $selects = [];
 
     /**
+     * Right ctrls container
+     *
+     * @var String
+     */
+    protected $rightCtrls = null;
+
+    /**
+     * Whether scripts are disabled
+     *
+     * @var Boolean
+     */
+    protected $disabledScripts = false;
+
+    /**
      * Constructing
      * 
      * @param Repository $config
@@ -224,6 +245,7 @@ class Builder extends BaseBuilder
      */
     public function generateScripts()
     {
+
         app('antares.asset')->container('antares/foundation::application')
                 ->add('gridstack', '/webpack/view_datatables.js', ['webpack_gridstack', 'app_cache'])
                 ->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
@@ -282,7 +304,7 @@ EOD;
                 }
             }");
 
-        $args['initComplete'] = new JavaScriptExpression(isset($args['initComplete']) ? $args['initComplete'] : $this->initComplete());
+        $args['initComplete'] = new JavaScriptExpression(isset($args['initComplete']) ? $args['initComplete'] : 'function () {}');
         $args['columnDefs'][] = new JavaScriptExpression('{ responsivePriority:0, targets: -1 }');
 
         $parameters = JavaScriptDecorator::decorate($args);
@@ -322,36 +344,6 @@ EOD;
         }
 
         return $this->url->current();
-    }
-
-    /**
-     * default datatables init complete
-     * 
-     * @return String
-     */
-    protected function initComplete()
-    {
-        return <<<EOD
-            function () {   
-//                $('.card > * > *, .tbl-c > *,form').css('opacity', '1');
-//                var column = $('[data-table-init="true"]').DataTable().column(3),
-//                    select = $('[data-selectAR="true"]');
-//                    select.on('change', function () {
-//                        console.log($(this).children('option:selected').val());
-//                        var val = $.fn.dataTable.util.escapeRegex(
-//                                $(this).children('option:selected').val()
-//                                );
-                        
-//                        column.search(val ? '^' + val + '$' : '', true, false).draw();
-//                    });
-//                    if(column.data()!==undefined){
-//                        column.data().unique().sort().each(function (d, j) {
-//                            select.append('<option value="' + d + '">' + d + '</option>');
-//                        });
-//                    }
-
-                    }
-EOD;
     }
 
     /**
@@ -449,8 +441,9 @@ EOD;
         $return .= isset($result[0]) ? $result[0] : '';
 
         $return .= '<div class="card-ctrls__right">';
-
-
+        if (!is_null($this->rightCtrls)) {
+            $return .= $this->rightCtrls;
+        }
         if (empty($filters) and ! is_null($this->datatable)) {
             $list = $this->datatable->getFilters();
             foreach ($list as $filter) {
@@ -477,6 +470,21 @@ EOD;
             $return .= '</ul></div></div>';
         }
         return $return . '</div></div>';
+    }
+
+    /**
+     * Adds right ctrls container
+     * 
+     * @param String $rightCtrls
+     * @return $this
+     */
+    public function addRightCtrls($rightCtrls = null)
+    {
+        if (!is_string($rightCtrls)) {
+            return $this;
+        }
+        $this->rightCtrls = $rightCtrls;
+        return $this;
     }
 
     /**
@@ -594,7 +602,6 @@ EOD;
         }
         $string .= '</tr></thead>';
         $string .= '<tbody>';
-
         foreach ($this->getDeferredDataItems() as $item) {
             $string .= '<tr>';
             foreach ($this->collection as $collectedItem) {
@@ -613,9 +620,26 @@ EOD;
         return $this->tableInit() . $this->beforeTable() . '<table data-massable="' . $massable . '" ' . $scrollable . ' data-table-init = "true" ' . $this->html->attributes($this->tableAttributes) . '>' . $string . '</table>' . $this->afterTable();
     }
 
-    protected function tableInit()
+    /**
+     * Disable javascript scripts
+     * 
+     * @return $this
+     */
+    public function disableScripts()
     {
-        return '<div class="tbl-c">';
+        $this->disabledScripts = true;
+        return $this;
+    }
+
+    /**
+     * Inits table container
+     * 
+     * @return String
+     */
+    protected function tableInit(): String
+    {
+        $attributes = $this->html->attributes($this->containerAttributes);
+        return "<div {$attributes}>";
     }
 
     /**
@@ -631,11 +655,29 @@ EOD;
     }
 
     /**
-     * table attributes setter
+     * Container attributes setter
      * 
      * @param array $attributes
+     * @return $this
      */
-    public function tableAttributes(array $attributes = array())
+    public function containerAttributes(array $attributes = []): Builder
+    {
+        foreach ($this->containerAttributes as $name => $value) {
+            if (is_null($param = array_get($attributes, $name))) {
+                continue;
+            }
+            array_set($this->containerAttributes, $name, $value . ' ' . $param);
+        }
+        return $this;
+    }
+
+    /**
+     * Table attributes setter
+     * 
+     * @param array $attributes
+     * @return $this
+     */
+    public function tableAttributes(array $attributes = array()): Builder
     {
         array_set($attributes, 'id', array_get($attributes, 'id') . str_random(3));
         $this->tableAttributes = array_merge($this->tableAttributes, $attributes);
@@ -797,6 +839,9 @@ EOD;
      */
     public function scripts($script = null, array $attributes = ['type' => 'text/javascript'])
     {
+        if ($this->disabledScripts) {
+            return false;
+        }
         $container = app('antares.asset')->container('antares/foundation::scripts');
         $container->add('context_menu', '/packages/core/js/contextMenu.js');
         $script    = $script ?: $this->generateScripts();

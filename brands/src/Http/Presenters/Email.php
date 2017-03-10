@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\Http\Presenters;
 
 use Antares\Brands\Http\Form\Email as EmailForm;
@@ -56,7 +55,7 @@ class Email extends Presenter
     {
         view()->share('pageId', 'page-email-settings');
         publish(null, ['/packages/core/js/brand-form.js', '/packages/core/js/brand-colors.js']);
-        $this->breadcrumb->onBrandEdit($model);
+        $this->breadcrumb->onBrandEmailEdit($model);
         $form = $this->form($model);
         return view('antares/foundation::brands.email', compact('form'));
     }

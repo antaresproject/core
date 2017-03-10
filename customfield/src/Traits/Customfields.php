@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Customfield\Traits;
 
 trait Customfields
@@ -31,7 +30,8 @@ trait Customfields
      */
     protected function getAssignedCustomfields()
     {
-        $customfields = array_get(app('customfields')->get(), get_called_class());
+
+        $customfields = array_get(app('customfields')->get(), get_called_class(), []);
         return !is_array($customfields) ? [$customfields] : $customfields;
     }
 
@@ -43,7 +43,11 @@ trait Customfields
      */
     public static function hasCustomfield($name = null)
     {
+
         $customfields = $this->getAssignedCustomfields();
+        if (empty($customfields)) {
+            return false;
+        }
         foreach ($customfields as $customfield) {
             if ($customfield->getName() !== $name) {
                 continue;

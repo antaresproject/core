@@ -110,9 +110,8 @@ class LayoutStyler extends AbstractAdapter implements StylerAdapter
             $return .= ".ddown.ddown--brand .ddown__menu li.is-selected .flex-block .flex-block__title { color:" . $value . " !important;}\n";
             $return .= ".ddown.ddown--brand .ddown__menu li.is-selected .flex-block { color:" . $value . " !important;}\n";
             $return .= ".timeline li a { color:" . $value . " !important;}\n";
-            $return .= ".tbl-c .billevo-table tr.is-selected td,.tbl-c .billevo-table tr.ui-selected td,.tbl-c .billevo-table tr.ui-selecting td { border-bottom: 1px solid " . $value . "!important;}\n";
             $return .= ".icheckbox_billevo.checked { background-color: " . $value . "!important;}\n";
-            $return .= ".tbl-c table tr td a,.ddown.ddown--columns li.col-is-visible a,.ddown.ddown--columns li.col-is-visible a:after { color: " . $value . "!important;}\n";
+            $return .= ".tbl-c table tr td a,.ddown.ddown--columns li.col-is-visible a,.ddown.ddown--columns li.col-is-visible a:after,.btn-link.btn--primary { color: " . $value . "!important;}\n";
 
             $return .= ".timeline li.timeline__entry--ok:before { color:" . $value . " !important;}\n";
             $return .= ".ddown.ddown--brand .ddown__menu li.is-selected .flex-block, .ddown.ddown--brand .ddown__menu li.is-selected .flex-block .flex-block__title { color:" . $value . " !important;}\n";
@@ -120,7 +119,7 @@ class LayoutStyler extends AbstractAdapter implements StylerAdapter
             $return .= ".card.card--chart-small .card__header { background-color:" . $value . " !important;}\n";
             $return .= ".card.card--chart-small .card__header-chart { background-color:" . $value . " !important;}\n";
             $return .= ".card.card--primary-light { background-color:" . $value . " !important;}\n";
-            $return .= ".btn.btn--primary { background-color:" . $value . " !important;}\n";
+            $return .= ".form-block .radio-btns [data-type=radio-btn] input:checked+.btn, .btn.btn--primary { background-color:" . $value . " !important;}\n";
             $return .= ".login-box a { color:" . $value . " !important;}\n";
 
             $return .= ".ddown-multi .ddown-multi__submenu > li.ddown-multi__return { background-color:" . $value . " !important;}\n";
@@ -130,10 +129,8 @@ class LayoutStyler extends AbstractAdapter implements StylerAdapter
             $return .= ".icheck-label:hover > .icheckbox_billevo, .icheckbox_billevo.hover { border-color:" . $value . "!important;}\n";
             $return .= ".tbl-c .dataTables_wrapper .pagination--type2 .dataTables_paginate .paginate_button:hover { color:" . $value . "!important;}\n";
 
-
-
             $return .= "aside.main-sidebar ul.main-menu .submenu.submenu--system section.section--2col .submenu__content .submenu__content-right .datarow .datarow__right i { color:" . $value . "!important;}\n";
-            $return .= ".menu-aside-container{background:$value !important;}\n";
+            $return .= ".grid-col--menu,.menu-aside-container{background:$value !important;}\n";
 
             $return .= "@media only screen and (max-width: 768px) {
                     #app-wrapper aside.main-sidebar .mobile-ddowns .mobile-ddowns__sgl ul.mobile-ddowns__menu {
@@ -153,15 +150,12 @@ class LayoutStyler extends AbstractAdapter implements StylerAdapter
         }
         if (!is_null($modPri1 = array_get($this->colors, 'main.mod1'))) {
             $modPri1 = starts_with($modPri1, '#') ? $modPri1 : '#' . $modPri1;
-            //$return.= "li.is-active { background-color:" . $modPri1 . "!important;}\n";
-            //$return.= ".breadcrumbs > li:first-child a{color:" . $modPri1 . "!important;}\n";
             $return  .= ".breadcrumbs > li.is-active { background-color:" . $modPri1 . "!important;}\n";
             $return  .= ".menu-aside li.is-active a{background-color:$modPri1 !important;}\n";
         }
         if (!is_null($modPri3 = array_get($this->colors, 'main.mod3'))) {
             $modPri3 = starts_with($modPri3, '#') ? $modPri3 : '#' . $modPri3;
-            $return  .= ".badge{background-color:$modPri3 !important;}\n";
-            $return  .= ".tbl-c .billevo-table tr.is-selected td,.tbl-c .billevo-table tr.ui-selected td,.tbl-c .billevo-table tr.ui-selecting td{background-color:$modPri3 !important;}\n";
+            $return  .= ".badge,.btn.btn--indigo{background-color:$modPri3 !important;}\n";
             $return  .= ".ddown--brand .ddown__init{background-color:$modPri3 !important;}\n";
             $return  .= "body .select2-dropdown ul.select2-results__options li.select2-results__option[aria-selected=true],
                          body .select2-dropdown ul.select2-results__options li.select2-results__option[aria-selected=true]:after,

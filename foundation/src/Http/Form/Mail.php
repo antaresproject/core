@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Form;
 
 use Illuminate\Contracts\Container\Container;
@@ -59,8 +58,10 @@ class Mail extends FormBuilder implements Presenter
      */
     protected function mailer($model)
     {
+
         return $this->grid->fieldset(trans('antares/foundation::label.settings.mail'), function (Fieldset $fieldset) use ($model) {
                     $fieldset->legend('Mail configuration');
+
                     $providers = config('antares/foundation::mail.providers');
                     $fieldset->control('select', 'email_driver')
                             ->label(trans('antares/foundation::label.email.driver'))
@@ -72,7 +73,8 @@ class Mail extends FormBuilder implements Presenter
                                 return $return;
                             })
                             ->attributes(['class' => 'mail-change-driver'])
-                            ->wrapper(['class' => 'w200']);
+                            ->fieldClass('w200')
+                            ->help(trans('antares/foundation::messages.form.help.driver'));
                     $fields  = array_get($providers, 'smtp.fields');
                     $default = 'smtp';
                     foreach ($providers as $name => $provider) {
@@ -80,8 +82,14 @@ class Mail extends FormBuilder implements Presenter
                         foreach ($fields as $fieldname => $attributes) {
                             $control = $fieldset->control(array_get($attributes, 'type'), $fieldname)
                                     ->label(trans('antares/foundation::label.' . $fieldname))
+                                    ->attributes(['class' => 'mail-control'])
                                     ->block(['role' => $name])
-                                    ->wrapper(['class' => 'w350']);
+                                    ->help(trans('antares/foundation::messages.form.help.' . $fieldname));
+                            if (!is_null($options = array_get($attributes, 'options'))) {
+                                $control->options($options);
+                            }
+                            $control->fieldClass(array_get($attributes, 'fieldClass', 'w350'));
+
 
                             if ($name !== $default) {
                                 $control->block(['class' => 'hidden-block']);

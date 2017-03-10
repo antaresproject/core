@@ -17,8 +17,6 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 return [
     'disabled_delete_brand_demo'          => 'Sorry, not this time ;)',
     'small_sidemenu'                      => 'Small sidemenu',
@@ -26,8 +24,11 @@ return [
     'upper_menu'                          => 'Upper menu',
     'simple'                              => 'Simple',
     'material'                            => 'Material',
-    'brand_settings'                      => 'Brand settings',
+    'brand_settings'                      => 'Branding',
+    'brand_edit'                          => 'Branding: :name',
     'brand_settings_email'                => 'Email branding',
+    'brand_settings_multibrand_email'     => 'Email branding: :name',
+    'brand_area_settings'                 => ':name Area',
     'legend'                              => [
         'brand_template' => 'Brand template',
         'brand_logo'     => 'Brand logo',

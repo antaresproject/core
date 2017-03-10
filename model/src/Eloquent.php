@@ -23,7 +23,6 @@ namespace Antares\Model;
 
 use Antares\Security\Traits\DbCryptTrait as DatabaseCryptor;
 use Antares\Customfield\Traits\Customfields;
-use Antares\Security\Traits\AccessTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Closure;

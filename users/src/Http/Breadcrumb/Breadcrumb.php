@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Breadcrumb;
 
 use DaveJamesMiller\Breadcrumbs\Facade as Breadcrumbs;
@@ -72,15 +71,18 @@ class Breadcrumb
         Breadcrumbs::register('users', function($breadcrumbs) {
             $breadcrumbs->push('Users', handles('antares::users/index'), ['force_link' => true]);
         });
-        view()->share('breadcrumbs', Breadcrumbs::render('users'));
-
         if (!$model->exists) {
-            Breadcrumbs::register('user-create', function($breadcrumbs) {
+            Breadcrumbs::register('user-action', function($breadcrumbs) {
                 $breadcrumbs->parent('users');
-                $breadcrumbs->push('Add user');
+                $breadcrumbs->push(trans('antares/users::messages.breadcrumbs.add'));
             });
-            view()->share('breadcrumbs', Breadcrumbs::render('user-create'));
+        } else {
+            Breadcrumbs::register('user-action', function($breadcrumbs) use($model) {
+                $breadcrumbs->parent('users');
+                $breadcrumbs->push(trans('antares/users::messages.breadcrumbs.edit', ['name' => $model->fullname]));
+            });
         }
+        view()->share('breadcrumbs', Breadcrumbs::render('user-action'));
     }
 
 }

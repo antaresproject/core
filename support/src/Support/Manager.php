@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Support;
 
 use InvalidArgumentException;
@@ -95,6 +94,7 @@ abstract class Manager extends BaseManager
         }
 
         list($driver, $name) = explode('.', $driverName, 2);
+
 
         $this->checkNameIsNotBlacklisted($name);
 

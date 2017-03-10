@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 return [
     'use_gravatar'                => 'Use gravatar instead',
     'package'                     => [
@@ -44,7 +42,19 @@ return [
         'disabled' => 'Disabled (:count)'
     ],
     'notifier_mail_has_been_sent' => 'An e-mail notification has been sent to recipient.',
-    'are_you_sure'                => 'Are you sure?'
+    'are_you_sure'                => 'Are you sure?',
+    'form'                        => [
+        'help' => [
+            'driver'           => '*Mail drivers such as SMTP and sendmail, allowing to sending mail through a local or cloud based service of your choice.',
+            'email_address'    => '*Outgoing email address (sender email).',
+            'email_host'       => '*The host name of outgoing SMTP (eg.: smtp.gmail.com).',
+            'email_port'       => '*The default port number of an outgoing SMTP server. Typically Common SMTP ports: SMTP - port 25 or 2525 or 587, Secure SMTP (SSL / TLS) - port 465 or 25 or 587, 2526 (Elastic Email).',
+            'email_username'   => 'SMTP server username credential.',
+            'email_password'   => 'SMTP server password credential.',
+            'email_encryption' => 'Encryption of email messages to protect the content from being read by other entities than the intended recipients.',
+            'email_sendmail'   => 'Sendmail is a most popular SMTP server used in most of Linux/Unix distribution. Sendmail allows sending email as simple command.'
+        ]
+    ]
 ];
 
 

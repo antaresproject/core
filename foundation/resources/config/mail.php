@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 return [
     'providers' => [
         'smtp'     => [
@@ -30,7 +28,16 @@ return [
                 'email_port'       => ['type' => 'input:text', 'validators' => ['required']],
                 'email_username'   => ['type' => 'input:text', 'validators' => ['required']],
                 'email_password'   => ['type' => 'input:password', 'validators' => ['required']],
-                'email_encryption' => ['type' => 'input:text', 'validators' => ['required']],
+                'email_encryption' => [
+                    'type'       => 'select',
+                    'validators' => ['required'],
+                    'options'    => [
+                        ''    => 'None...',
+                        'SSL' => 'SSL',
+                        'TLS' => 'TLS'
+                    ],
+                    'fieldClass' => 'w150'
+                ],
             ]
         ],
         'sendmail' => [

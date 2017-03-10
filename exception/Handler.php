@@ -183,8 +183,6 @@ class Handler extends ExceptionHandler
                 
             }
 
-
-
             if (is_null($view)) {
                 throw $e;
             }

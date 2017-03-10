@@ -79,7 +79,6 @@ class User extends Processor implements UserCreatorCommand, UserRemoverCommand, 
      */
     public function show($id)
     {
-        app('antares.asset')->container('antares/foundation::application')->add('webpack_vue', '/webpack/vue_loader.js', ['app_cache']);
         $model = Foundation::make('antares.user')->findOrFail($id);
         return $this->presenter->show($model);
     }

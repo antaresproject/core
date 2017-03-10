@@ -45,5 +45,9 @@ return [
             'change_status_question'    => 'Are you sure to change status of selected users?',
             'change_status_description' => 'Changing status of selected users...'
         ]
+    ],
+    'breadcrumbs'       => [
+        'edit' => 'Edit: :name',
+        'add'  => 'Add user'
     ]
 ];
