@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Twig\Extension;
 
 use Antares\Acl\MultisessionAcl;
@@ -255,6 +254,9 @@ class Foundation extends Twig_Extension
                     }),
             new Twig_SimpleFunction('priority_label', function ($name) {
                         return priority_label($name);
+                    }),
+            new Twig_SimpleFunction('component_color', function ($name) {
+                        return component_color($name);
                     }),
         ];
     }

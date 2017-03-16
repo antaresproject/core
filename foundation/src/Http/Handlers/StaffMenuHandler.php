@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Handlers;
 
 use Antares\Foundation\Support\MenuHandler;
@@ -34,10 +33,9 @@ class StaffMenuHandler extends MenuHandler
      * @var array
      */
     protected $menu = [
-        'id'    => 'staff',
-        'title' => 'Staff',
-        'link'  => 'antares::control/roles/index',
-        'icon'  => 'icon-support',
+        'id'   => 'staff',
+        'link' => 'antares::control/roles/index',
+        'icon' => 'icon-support',
     ];
 
     /**
@@ -48,6 +46,16 @@ class StaffMenuHandler extends MenuHandler
     public function getPositionAttribute()
     {
         return $this->handler->has('dashboard') ? '^:settings' : '>:home';
+    }
+
+    /**
+     * Get title attribute
+     *
+     * @return String
+     */
+    public function getTitleAttribute()
+    {
+        return trans('antares/foundation::title.staff');
     }
 
     /**

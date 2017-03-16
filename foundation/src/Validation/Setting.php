@@ -19,11 +19,9 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Validation;
 
 use Antares\Support\Validator;
-use Illuminate\Contracts\Validation\Validator as ValidatorResolver;
 
 class Setting extends Validator
 {

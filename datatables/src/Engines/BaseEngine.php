@@ -18,18 +18,17 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Datatables\Engines;
 
-use Illuminate\Http\JsonResponse;
+use Yajra\Datatables\Contracts\DataTableEngineContract;
+use League\Fractal\Serializer\DataArraySerializer;
+use Antares\Datatables\Processors\DataProcessor;
+use League\Fractal\Resource\Collection;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Http\JsonResponse;
+use Yajra\Datatables\Helper;
 use Illuminate\Support\Str;
 use League\Fractal\Manager;
-use League\Fractal\Resource\Collection;
-use League\Fractal\Serializer\DataArraySerializer;
-use Yajra\Datatables\Contracts\DataTableEngineContract;
-use Yajra\Datatables\Helper;
-use Antares\Datatables\Processors\DataProcessor;
 
 abstract class BaseEngine implements DataTableEngineContract
 {
@@ -194,6 +193,13 @@ abstract class BaseEngine implements DataTableEngineContract
      * @var array
      */
     private $appends = [];
+
+    /**
+     * Name of called class
+     *
+     * @var String
+     */
+    protected $classname;
 
     /**
      * Setup search keyword.
@@ -570,7 +576,6 @@ abstract class BaseEngine implements DataTableEngineContract
             $this->orderRecords($orderFirst);
             $this->paginate();
         }
-
         return $this->render($mDataSupport);
     }
 
@@ -634,6 +639,7 @@ abstract class BaseEngine implements DataTableEngineContract
             'recordsFiltered' => $this->filteredRecords,
                 ], $this->appends);
 
+
         if (isset($this->transformer)) {
             $fractal = new Manager();
             if ($this->request->get('include')) {
@@ -663,7 +669,6 @@ abstract class BaseEngine implements DataTableEngineContract
         } else {
             $output['data'] = Helper::transform($this->getProcessedData($object));
         }
-
         if ($this->isDebugging()) {
             $output = $this->showDebugger($output);
         }
@@ -832,7 +837,7 @@ abstract class BaseEngine implements DataTableEngineContract
      * @param bool $wantsAlias
      * @return string
      */
-    protected function getColumnName($index, $wantsAlias = false)
+    public function getColumnName($index, $wantsAlias = false)
     {
         $column = $this->request->columnName($index);
 
@@ -921,9 +926,36 @@ abstract class BaseEngine implements DataTableEngineContract
         return in_array($this->database, ['oracle', 'oci8']);
     }
 
+    /**
+     * Query getter
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function getQuery()
     {
         return $this->query;
+    }
+
+    /**
+     * Column def getter
+     * 
+     * @return array
+     */
+    public function getColumnDef()
+    {
+        return $this->columnDef;
+    }
+
+    /**
+     * Called class setter
+     * 
+     * @param String $classname
+     * @return $this
+     */
+    public function setCalledClass($classname)
+    {
+        $this->classname = $classname;
+        return $this;
     }
 
 }

@@ -77,7 +77,7 @@ class Session
      */
     protected function getSessionKey($classname)
     {
-        return strtolower(implode('-', [class_basename(get_called_class()), class_basename($classname), $this->router->current()->uri()]));
+        return strtolower(implode('-', [class_basename(get_called_class()), class_basename($classname), uri()]));
     }
 
 }

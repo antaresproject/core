@@ -254,13 +254,41 @@ class Builder extends BaseBuilder
         $columns = $this->hasColumnFilter() ? $this->getColumnFilterAdapter()->getColumns()->toArray() : $this->collection->toArray();
 
         array_set($this->attributes, 'iDisplayLength', $this->datatable->getPerPage());
-        $args      = array_merge(
+        $args         = array_merge(
                 $this->attributes, ['ajax' => $this->ajax, 'columns' => $columns]
         );
-        $searching = (($value     = $this->getGlobalSearchValue()) !== false) ? "data.search.value=instance.find('.mdl-textfield__input').val();" : '';
-        $ajax      = <<<EOD
+        $searching    = (($value        = $this->getGlobalSearchValue()) !== false) ? "data.search.value=instance.find('.mdl-textfield__input').val();" : '';
+        $groupsFilter = app(\Antares\Datatables\Adapter\GroupsFilterAdapter::class);
+        $sessionValue = $groupsFilter->getSessionValue();
+        $cols         = '';
+        if ($sessionValue && !ajax()) {
+            $columns = [];
+            foreach ($this->collection as $column) {
+                $value = '';
+                $regex = false;
+                if ($column->data == array_get($sessionValue, 'data') && $column->name == array_get($sessionValue, 'name')) {
+                    $value = array_get($sessionValue, 'search.value');
+                    $regex = true;
+                }
+
+                $columns[] = [
+                    'data'       => $column->data,
+                    'name'       => $column->name,
+                    'searchable' => $column->searchable,
+                    'orderable'  => $column->orderable,
+                    'search'     => [
+                        'value' => $value,
+                        'regex' => $regex
+                    ],
+                ];
+            }
+            $cols = 'data.columns = ' . JavaScriptDecorator::decorate($columns) . ';';
+        }
+        $ajax = <<<EOD
             function (data, callback, settings) {                        
-                       
+                    if(data.draw===1){
+                        $cols
+                    }
                     var dtInstance=$(settings.oInstance);
                     var instance = dtInstance.closest('.grid-stack-item-content').length>0?dtInstance.closest('.grid-stack-item-content'):dtInstance.closest('.tbl-c');                    
                     $searching
@@ -282,6 +310,7 @@ class Builder extends BaseBuilder
                     });                    
             }
 EOD;
+
 
         $url          = $this->getTargetUrl();
         $args['ajax'] = new JavaScriptExpression(sprintf($ajax, $this->method, $url));
@@ -394,11 +423,13 @@ EOD;
         if (count($this->deferredData)) {
             return $this->tableDeferred($attributes);
         }
+
         $this->tableAttributes = $attributes ?: $this->tableAttributes;
         $scrollable            = '';
         if ($this->datatable->count() > 10 or strlen($this->ajax) > 0) {
             $scrollable = 'data-scrollable';
         }
+
         return $this->tableInit() . $this->beforeTable() . '<table ' . $scrollable . ' data-table-init = "true" ' . $this->html->attributes($this->tableAttributes) . '></table>' . $this->afterTable();
     }
 
@@ -573,6 +604,7 @@ EOD;
         if (request()->has('search')) {
             return $this;
         }
+
         $totalItemsCount    = $this->datatable->count();
         $this->deferredData = $this->datatable->ajax()->getData()->data;
         $filters            = $this->datatable->getFilters();
@@ -581,7 +613,10 @@ EOD;
             $this->addFilter($filter, $query);
         }
 
-        $this->attributes = array_merge($this->attributes, ["deferLoading" => $totalItemsCount, 'iDisplayLength' => $this->datatable->getPerPage()]);
+        $this->attributes = array_merge($this->attributes, [
+            "deferLoading"   => $totalItemsCount,
+            'iDisplayLength' => $this->datatable->getPerPage()
+        ]);
         return $this;
     }
 
@@ -824,10 +859,54 @@ EOD;
      * @param String $html
      * @return \Antares\Datatables\Html\Builder
      */
-    public function addGroupSelect($html)
+    public function addGroupSelect($options, $columnIndex = 0, $defaultSelected = null, array $attributes = [])
     {
+        $orderAdapter = app(\Antares\Datatables\Adapter\OrderAdapter::class)->setClassname(get_class($this->datatable));
+        if (($order        = $orderAdapter->getSelected()) !== false) {
+            $this->parameters([
+                'order' => [[$order['column'], $order['dir']]],
+            ]);
+        }
+        $groupsFilter = app(\Antares\Datatables\Adapter\GroupsFilterAdapter::class)->setClassname(get_class($this->datatable))->setIndex($columnIndex);
+        $data         = ($options instanceof Collection) ? $options->toArray() : $options;
+
+
+        $id    = array_get($this->tableAttributes, 'id') . '-filter-group';
+        if (is_null($value = $groupsFilter->getSelected($columnIndex))) {
+            $value = $defaultSelected;
+        }
+        $decorated = $this->html->decorate($attributes, [
+            'data-selectAR--mdl-big' => "true",
+            'class'                  => 'select2--prefix',
+            'id'                     => $id
+        ]);
+
+        $html = \Antares\Support\Facades\Form::select('category', $data, $value, $decorated);
+        $groupsFilter->scripts(array_get($decorated, 'id'), $columnIndex);
         array_push($this->selects, $html);
         return $this;
+    }
+
+    /**
+     * Configure DataTable's parameters.
+     *
+     * @param  array $attributes
+     * @return $this
+     */
+    public function parameters(array $attributes = [])
+    {
+        if (!is_null($defaultOrder = array_get($attributes, 'order'))) {
+            $orderAdapter = app(\Antares\Datatables\Adapter\OrderAdapter::class)->setClassname(get_class($this->datatable));
+            if (($order        = $orderAdapter->getSelected()) !== false) {
+                $attributes = array_merge($attributes, [
+                    'order' => [[$order['column'], $order['dir']]],
+                ]);
+            }
+        }
+
+
+
+        return parent::parameters($attributes);
     }
 
     /**

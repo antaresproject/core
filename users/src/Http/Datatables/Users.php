@@ -70,34 +70,10 @@ class Users extends DataTable
                 $query->whereIn('status', [0, 1]);
             }
         }
-        if (($where = $this->getDefaultWhere()) !== false) {
-            $query->where($where);
-        }
+
 
 
         return $query;
-    }
-
-    /**
-     * Default ordering
-     *
-     * @return array
-     */
-    protected function getDefaultWhere()
-    {
-        if (!app('request')->ajax()) {
-            return ['status' => 1];
-        } else {
-            $columns = app('request')->get('columns');
-            $found   = array_where($columns, function ($index, $item) {
-                return strlen(array_get($item, 'search.value')) > 0;
-            });
-            if (empty($found)) {
-                return ['status' => 1];
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -208,7 +184,7 @@ class Users extends DataTable
                                     'data-description' => trans('Deleting users'),
                         ]))
                         ->setDeferedData()
-                        ->addGroupSelect($this->statusesSelect())
+                        ->addGroupSelect($this->statuses(), 5, 1)
                         ->ajax(handles('antares/foundation::/users/index'));
     }
 
@@ -217,28 +193,27 @@ class Users extends DataTable
      *
      * @return String
      */
-    protected function statusesSelect()
+    protected function statuses()
     {
 
-        $statuses = User::select([DB::raw('count(id) as counter'), 'status'])
-                ->clients()
-                ->groupBy('status')
-                ->get()
-                ->lists('counter', 'status')
-                ->toArray();
+        $statuses = User::select([DB::raw('count(id) as counter'), 'status'])->clients()->groupBy('status')->get()->lists('counter', 'status')->toArray();
+        return ['all' => trans('antares/users::messages.statuses.all'),
+            0     => trans('antares/users::messages.statuses.archived', ['count' => array_get($statuses, 0, 0)]),
+            1     => trans('antares/users::messages.statuses.active', ['count' => array_get($statuses, 1, 0)])
+        ];
 
-
-
-        $selected = app('request')->ajax() ? null : 1;
-        return Form::select('status', [
-                    'all' => trans('antares/users::messages.statuses.all'),
-                    0     => trans('antares/users::messages.statuses.archived', ['count' => array_get($statuses, 0, 0)]),
-                    1     => trans('antares/users::messages.statuses.active', ['count' => array_get($statuses, 1, 0)]),
-                        ], $selected, [
-                    'data-prefix'            => '',
-                    'data-selectAR--mdl-big' => "true",
-                    'class'                  => 'users-select-status mr24 select2--prefix',
-        ]);
+//
+//
+//        $selected = app('request')->ajax() ? null : 1;
+//        return Form::select('status', [
+//                    'all' => trans('antares/users::messages.statuses.all'),
+//                    0     => trans('antares/users::messages.statuses.archived', ['count' => array_get($statuses, 0, 0)]),
+//                    1     => trans('antares/users::messages.statuses.active', ['count' => array_get($statuses, 1, 0)]),
+//                        ], $selected, [
+//                    'data-prefix'            => '',
+//                    'data-selectAR--mdl-big' => "true",
+//                    'class'                  => 'users-select-status mr24 select2--prefix',
+//        ]);
     }
 
     /**

@@ -37,7 +37,7 @@ class LayoutStyler extends AbstractAdapter implements StylerAdapter
             $value  = starts_with($value, '#') ? $value : '#' . $value;
             $return .= "#table-ma { color:" . $value . "}\n";
             $return .= ".menu-aside li a span, .menu-aside li a i{color:" . $value . "}\n";
-            $return .= ".breadcrumbs > li:last-child .ddown__init a, .breadcrumbs .ddown .ddown__content .ddown__arrow:after,.breadcrumbs .ddown .ddown__init.ddown__init--white:after, .ddown .ddown__init.ddown__init--white i {color:" . $value . "}\n";
+            $return .= ".breadcrumbs,.breadcrumbs > li:last-child .ddown__init a, .breadcrumbs .ddown .ddown__content .ddown__arrow:after,.breadcrumbs .ddown .ddown__init.ddown__init--white:after, .ddown .ddown__init.ddown__init--white i {color:" . $value . "}\n";
             $return .= ".search-box:before, .search-box > i {color:" . $value . "}\n";
             $return .= ".item-grp  i {color:" . $value . "}\n";
             $return .= ".btn.btn--brand{color:" . $value . "}\n";
@@ -65,7 +65,7 @@ class LayoutStyler extends AbstractAdapter implements StylerAdapter
         }
         if (!is_null($value = array_get($this->colors, 'text.main.second'))) {
             $value  = starts_with($value, '#') ? $value : '#' . $value;
-            $return .= ".search-box .search-box__search-field {color:" . $value . "}\n";
+            $return .= ".search-box .search-box__search-field,.btn.btn--default {color:" . $value . "}\n";
             $return .= ".main-head .search-box .search-box__mdl-textfield .mdl-textfield__label {color:" . $value . "}\n";
             $return .= ".search-box .search-box__search-field{ border-color:" . $value . "}\n";
         }

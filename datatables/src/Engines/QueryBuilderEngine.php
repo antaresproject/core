@@ -23,10 +23,10 @@ namespace Antares\Datatables\Engines;
 use Closure;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Str;
-use Yajra\Datatables\Helper;
-use Antares\Datatables\Request;
 use Illuminate\Support\Facades\Event;
+use Antares\Datatables\Request;
+use Yajra\Datatables\Helper;
+use Illuminate\Support\Str;
 
 class QueryBuilderEngine extends BaseEngine
 {
@@ -518,6 +518,15 @@ class QueryBuilderEngine extends BaseEngine
      */
     public function results()
     {
+        if ($this->classname) {
+            $orderAdapter = app(\Antares\Datatables\Adapter\OrderAdapter::class);
+            $orderAdapter->setClassname($this->classname);
+            $orderAdapter->setEngineInstance($this);
+
+            $groupsFilterAdapter = app(\Antares\Datatables\Adapter\GroupsFilterAdapter::class);
+            $groupsFilterAdapter->setClassname($this->classname);
+            $groupsFilterAdapter->setEngineInstance($this);
+        }
         return $this->query->get();
     }
 
