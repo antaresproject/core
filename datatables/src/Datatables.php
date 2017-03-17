@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Datatables;
 
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -37,6 +36,7 @@ class Datatables extends SupportDatatables
      * @var \Yajra\Datatables\Request
      */
     public $request;
+    protected static $classname;
 
     /**
      * Datatables constructor.
@@ -52,20 +52,28 @@ class Datatables extends SupportDatatables
      * Gets query and returns instance of class.
      *
      * @param  mixed $builder
+     * @param  String $classname
      * @return mixed
      */
-    public static function of($builder)
+    public static function of($builder, $classname = null)
     {
         $datatables          = app(Datatables::class);
         $datatables->builder = $builder;
+        $engine              = ($builder instanceof QueryBuilder) ? $datatables->usingQueryBuilder($builder) : ($builder instanceof Collection ? $datatables->usingCollection($builder) : $datatables->usingEloquent($builder));
+        $engine->setCalledClass($classname);
+        return $engine;
+    }
 
-        if ($builder instanceof QueryBuilder) {
-            $ins = $datatables->usingQueryBuilder($builder);
-        } else {
-            $ins = $builder instanceof Collection ? $datatables->usingCollection($builder) : $datatables->usingEloquent($builder);
-        }
-
-        return $ins;
+    /**
+     * Called class setter
+     * 
+     * @param String $classname
+     * @return $this
+     */
+    public static function setCalledClass($classname): Datatables
+    {
+        self::$classname = $classname;
+        return $this;
     }
 
     /**

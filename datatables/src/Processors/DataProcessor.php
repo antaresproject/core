@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Datatables\Processors;
 
 use Yajra\Datatables\Processors\DataProcessor as SupportDataProcessor;

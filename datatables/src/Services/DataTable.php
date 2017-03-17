@@ -134,7 +134,7 @@ abstract class DataTable extends BaseDataTableService
     /**
      * Query getter for defer initialization
      *
-     * @param type $param
+     * @param boolean $applyGlobalGroupScope
      */
     protected function getQuery($applyGlobalGroupScope = true)
     {
@@ -222,10 +222,9 @@ abstract class DataTable extends BaseDataTableService
     public function prepare($query = null)
     {
         $of         = is_null($query) ? $this->getQuery() : $query;
-        $datatables = $this->datatables->of($of);
+        $datatables = $this->datatables->of($of, get_class($this));
         $path       = uri();
         Event::fire("datatables.value.{$path}", [$datatables]);
-
         return $datatables;
     }
 
@@ -277,8 +276,10 @@ abstract class DataTable extends BaseDataTableService
 
 
         $groupsFilter = app(\Antares\Datatables\Adapter\GroupsFilterAdapter::class);
-        $groupsFilter->setName(get_class($this));
+        $groupsFilter->setClassname(get_class($this));
         $groupsFilter->saveRequestedSessionKey();
+
+        app(\Antares\Datatables\Adapter\OrderAdapter::class)->setClassname(get_class($this))->saveRequestedSessionKey();
 
         if (!isset($this->ajax)) {
             $groupsFilter->apply($query);

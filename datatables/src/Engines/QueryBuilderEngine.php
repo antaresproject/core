@@ -527,6 +527,15 @@ class QueryBuilderEngine extends BaseEngine
      */
     public function results()
     {
+        if ($this->classname) {
+            $orderAdapter = app(\Antares\Datatables\Adapter\OrderAdapter::class);
+            $orderAdapter->setClassname($this->classname);
+            $orderAdapter->setEngineInstance($this);
+
+            $groupsFilterAdapter = app(\Antares\Datatables\Adapter\GroupsFilterAdapter::class);
+            $groupsFilterAdapter->setClassname($this->classname);
+            $groupsFilterAdapter->setEngineInstance($this);
+        }
         return $this->query->get();
     }
 

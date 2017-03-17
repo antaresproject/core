@@ -70,34 +70,10 @@ class Users extends DataTable
                 $query->whereIn('status', [0, 1]);
             }
         }
-        if (($where = $this->getDefaultWhere()) !== false) {
-            $query->where($where);
-        }
+
 
 
         return $query;
-    }
-
-    /**
-     * Default ordering
-     *
-     * @return array
-     */
-    protected function getDefaultWhere()
-    {
-        if (!app('request')->ajax()) {
-            return ['status' => 1];
-        } else {
-            $columns = app('request')->get('columns');
-            $found   = array_where($columns, function ($index, $item) {
-                return strlen(array_get($item, 'search.value')) > 0;
-            });
-            if (empty($found)) {
-                return ['status' => 1];
-            }
-        }
-
-        return false;
     }
 
     /**

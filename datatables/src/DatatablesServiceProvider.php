@@ -21,6 +21,7 @@
 namespace Antares\Datatables;
 
 use Yajra\Datatables\DatatablesServiceProvider as SupportDatatablesServiceProvider;
+use Antares\Datatables\Adapter\GroupsFilterAdapter;
 use Illuminate\Routing\Router;
 
 class DatatablesServiceProvider extends SupportDatatablesServiceProvider
@@ -34,6 +35,7 @@ class DatatablesServiceProvider extends SupportDatatablesServiceProvider
     public function register()
     {
         $this->app->singleton(Datatables::class);
+        $this->app->singleton(GroupsFilterAdapter::class);
         $this->app->alias(Datatables::class, 'datatables');
     }
 

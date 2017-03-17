@@ -604,6 +604,7 @@ EOD;
         if (request()->has('search')) {
             return $this;
         }
+
         $totalItemsCount    = $this->datatable->count();
         $this->deferredData = $this->datatable->ajax()->getData()->data;
         $filters            = $this->datatable->getFilters();
@@ -612,7 +613,10 @@ EOD;
             $this->addFilter($filter, $query);
         }
 
-        $this->attributes = array_merge($this->attributes, ["deferLoading" => $totalItemsCount, 'iDisplayLength' => $this->datatable->getPerPage()]);
+        $this->attributes = array_merge($this->attributes, [
+            "deferLoading"   => $totalItemsCount,
+            'iDisplayLength' => $this->datatable->getPerPage()
+        ]);
         return $this;
     }
 
@@ -857,12 +861,18 @@ EOD;
      */
     public function addGroupSelect($options, $columnIndex = 0, $defaultSelected = null, array $attributes = [])
     {
-        $groupsFilter = app(\Antares\Datatables\Adapter\GroupsFilterAdapter::class);
-        $groupsFilter->setName(get_class($this->datatable));
+        $orderAdapter = app(\Antares\Datatables\Adapter\OrderAdapter::class)->setClassname(get_class($this->datatable));
+        if (($order        = $orderAdapter->getSelected()) !== false) {
+            $this->parameters([
+                'order' => [[$order['column'], $order['dir']]],
+            ]);
+        }
+        $groupsFilter = app(\Antares\Datatables\Adapter\GroupsFilterAdapter::class)->setClassname(get_class($this->datatable))->setIndex($columnIndex);
         $data         = ($options instanceof Collection) ? $options->toArray() : $options;
 
+
         $id    = array_get($this->tableAttributes, 'id') . '-filter-group';
-        if (is_null($value = $groupsFilter->getSelected())) {
+        if (is_null($value = $groupsFilter->getSelected($columnIndex))) {
             $value = $defaultSelected;
         }
         $decorated = $this->html->decorate($attributes, [
@@ -875,6 +885,28 @@ EOD;
         $groupsFilter->scripts(array_get($decorated, 'id'), $columnIndex);
         array_push($this->selects, $html);
         return $this;
+    }
+
+    /**
+     * Configure DataTable's parameters.
+     *
+     * @param  array $attributes
+     * @return $this
+     */
+    public function parameters(array $attributes = [])
+    {
+        if (!is_null($defaultOrder = array_get($attributes, 'order'))) {
+            $orderAdapter = app(\Antares\Datatables\Adapter\OrderAdapter::class)->setClassname(get_class($this->datatable));
+            if (($order        = $orderAdapter->getSelected()) !== false) {
+                $attributes = array_merge($attributes, [
+                    'order' => [[$order['column'], $order['dir']]],
+                ]);
+            }
+        }
+
+
+
+        return parent::parameters($attributes);
     }
 
     /**
