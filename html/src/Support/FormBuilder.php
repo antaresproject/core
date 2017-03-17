@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Html\Support;
 
 use Illuminate\Routing\UrlGenerator;
@@ -144,7 +143,7 @@ class FormBuilder
      */
     protected function formatLabel($name, $value)
     {
-        return $value ? : ucwords(str_replace('_', ' ', $name));
+        return $value ?: ucwords(str_replace('_', ' ', $name));
     }
 
     /**

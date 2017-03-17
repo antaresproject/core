@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Processor;
 
 use Antares\Contracts\Foundation\Listener\SettingUpdater as SettingUpdateListener;
@@ -89,10 +88,10 @@ class Setting extends Processor implements SystemUpdateCommand, SettingUpdateCom
      */
     public function update(SettingUpdateListener $listener, array $input)
     {
-        $input      = new Fluent($input);
-        $validation = $this->validator->with($input->toArray());
-        if ($validation->fails()) {
-            return $listener->settingFailedValidation($validation->getMessageBag());
+        $input = new Fluent($input);
+        $form  = $this->presenter->form($input);
+        if (!$form->isValid()) {
+            return $listener->settingFailedValidation($form->getMessageBag());
         }
         $memory = $this->memory;
         $memory->put('site.mode', $input['mode']);

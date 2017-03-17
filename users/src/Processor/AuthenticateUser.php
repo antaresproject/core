@@ -66,7 +66,6 @@ class AuthenticateUser extends Authenticate implements Command
     public function login(Listener $listener, array $input, ThrottlesCommand $throttles = null)
     {
         $validation = $this->validator->on('login')->with($input);
-
         // Validate user login, if any errors is found redirect it back to
         // login page with the errors.
         if ($validation->fails()) {
@@ -114,13 +113,12 @@ class AuthenticateUser extends Authenticate implements Command
     protected function handleUserWasAuthenticated(Listener $listener, array $input, ThrottlesCommand $throttles = null)
     {
         if ($throttles) {
-            $throttles->clearLoginAttempts($input);
+            //$throttles->clearLoginAttempts($input);
         }
         $redirect = ($this->acl->make('antares')->can('show-dashboard')) ? handles('antares::/') : handles('client');
 
         auth()->guard('web')->getSession()->remove('auth');
         $user = $this->getUser();
-
         if (!$this->verifyUserActive($user)) {
             $this->auth->logout();
             return $listener->userIsNotActive();

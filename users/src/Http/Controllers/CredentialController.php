@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Controllers;
 
 use Antares\Contracts\Auth\Listener\AuthenticateUser as AuthenticateListener;
@@ -75,6 +74,7 @@ class CredentialController extends AdminController implements AuthenticateListen
     {
 
         $input = $request->only(['email', 'password', 'remember']);
+
         $throttles->setRequest($request)->setLoginKey('email');
         return $authenticate->login($this, $input, $throttles);
     }

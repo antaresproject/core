@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Filter;
 
 use Yajra\Datatables\Contracts\DataTableScopeContract;

@@ -23,10 +23,10 @@ namespace Antares\Datatables\Engines;
 use Closure;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Str;
-use Yajra\Datatables\Helper;
-use Antares\Datatables\Request;
 use Illuminate\Support\Facades\Event;
+use Antares\Datatables\Request;
+use Yajra\Datatables\Helper;
+use Illuminate\Support\Str;
 
 class QueryBuilderEngine extends BaseEngine
 {
@@ -111,6 +111,15 @@ class QueryBuilderEngine extends BaseEngine
             $row_count = $this->connection->getQueryGrammar()->wrap('row_count');
             $myQuery->select($this->connection->raw("'1' as {$row_count}"));
         }
+//        vdump($myQuery->toSql());
+//        exit;
+//        $columnDef  = $this->columnDef['filter']['type'];
+//        $whereQuery = $this->query->getQuery()->newQuery();
+//        call_user_func_array($columnDef['method'], [$whereQuery, $this->request->keyword()]);
+//        $queryBuilder->addNestedWhereQuery($whereQuery, 'or');
+//
+//        vdump($this->columnDef);
+//        exit;
 
         return $this->connection->table($this->connection->raw('(' . $myQuery->toSql() . ') count_row_table'))
                         ->setBindings($myQuery->getBindings())->count();

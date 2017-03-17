@@ -24,6 +24,34 @@ use Illuminate\Support\Debug\Dumper;
 use Antares\Messages\SwalMessanger;
 use Antares\Html\Form\Field;
 
+if (!function_exists('ajax')) {
+
+    /**
+     * Whether request is ajax request
+     */
+    function ajax($key = null)
+    {
+        if (!request()->ajax()) {
+            return false;
+        }
+        return is_null($key) ? true : input($key);
+    }
+
+}
+
+if (!function_exists('component_color')) {
+
+    /**
+     * Component color getter
+     */
+    function component_color($name)
+    {
+        return array_get(components_colors(), $name, '#000');
+    }
+
+}
+
+
 if (!function_exists('is_api_request')) {
 
     /**
@@ -322,18 +350,17 @@ if (!function_exists('components_colors')) {
      */
     function components_colors()
     {
-        $extensions = ['core'] + array_keys(app('antares.memory')->make('component')->get('extensions.active'));
+        $extensions = array_keys(app('antares.memory')->make('component')->get('extensions.active'));
         $colors     = config('colors');
-        $index      = 0;
         $components = array_map(function($current) {
             return trim(str_replace('components', '', $current), '/');
         }, $extensions);
         $return = [];
         foreach ($components as $index => $component) {
-            $color = array_get($colors, $index, '000');
+            $color = array_get($colors, $index + 1, '000');
             array_set($return, $component, '#' . $color);
         }
-        return $return;
+        return $return + ['core' => '#' . $colors[0]];
     }
 
 }

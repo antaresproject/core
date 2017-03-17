@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Html\Validation;
 
 use Illuminate\Support\Facades\Validator as ValidatorFacade;

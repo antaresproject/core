@@ -18,58 +18,56 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 return
 
 
         array(
-            'menu'            =>
+            'menu'             =>
             array(
                 'top' =>
                 array(
                     'default' => 'Default',
                 ),
             ),
-            'home'            => 'Home',
-            'dashboard'       => 'Dashboard',
-            'login'           => 'Login',
-            'logout'          => 'Logout',
-            'register'        => 'Register',
-            'remember-me'     => 'Remember Me',
-            'forgot-password' => 'Forgot Password',
-            'reset-password'  => 'Reset Password',
-            'account'         =>
+            'home'             => 'Home',
+            'dashboard'        => 'Dashboard',
+            'login'            => 'Login',
+            'logout'           => 'Logout',
+            'register'         => 'Register',
+            'remember-me'      => 'Remember Me',
+            'forgot-password'  => 'Forgot Password',
+            'reset-password'   => 'Reset Password',
+            'account'          =>
             array(
                 'profile'  => 'Edit Profile',
                 'password' => 'Edit Password',
             ),
-            'extensions'      =>
+            'extensions'       =>
             array(
                 'list'      => 'Extensions',
                 'configure' => 'Configure Extension',
             ),
-            'components'      =>
+            'components'       =>
             array(
                 'list'            => 'Components',
                 'configure'       => 'Configure Component',
                 'list_breadcrumb' => 'Components List',
             ),
-            'resources'       =>
+            'resources'        =>
             array(
                 'list'        => 'Resources',
                 'list-detail' => 'List of available resources',
             ),
-            'settings'        =>
+            'settings'         =>
             array(
                 'list' => 'Configuration',
             ),
-            'publisher'       =>
+            'publisher'        =>
             array(
                 'ftp'         => 'FTP Credential',
                 'description' => 'We would need to have your credential in order to run the following task.',
             ),
-            'users'           =>
+            'users'            =>
             array(
                 'account_details' => 'Account details',
                 'profile_details' => 'Profile details',
@@ -79,7 +77,7 @@ return
                 'update'          => 'Edit User',
                 'list_breadcrumb' => 'Users List',
             ),
-            'clients'         =>
+            'clients'          =>
             array(
                 'create'          => 'Add User',
                 'update'          => 'Edit User',
@@ -87,7 +85,7 @@ return
                 'list'            => 'Users',
                 'show'            => 'Show'
             ),
-            'modules'         =>
+            'modules'          =>
             array(
                 'list_breadcrumb' =>
                 array(
@@ -106,9 +104,11 @@ return
                 'all'             => 'Module list',
                 'list'            => 'Modules',
             ),
-            'dropzone'        =>
+            'dropzone'         =>
             array(
                 'title' => 'Module uploader',
                 'area'  => 'Drop files here to upload',
             ),
+            'staff'            => 'Staff',
+            'groups_and_staff' => 'Groups and staff'
 );

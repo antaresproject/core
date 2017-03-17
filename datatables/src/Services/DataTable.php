@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Datatables\Services;
 
 use Yajra\Datatables\Services\DataTable as BaseDataTableService;
@@ -108,19 +107,24 @@ abstract class DataTable extends BaseDataTableService
      */
     public function count()
     {
-        $query = $this->query();
-
+        $query   = $this->query();
         $myQuery = $query instanceof EloquentBuilder ? clone $this->query() : $query;
         if ($query instanceof Collection) {
             return $query->count();
         }
+
         $finalQuery = $this->applyScopes($myQuery);
+        $this->applyGlobalGroupScope($finalQuery);
+
+
         // if its a normal query ( no union, having and distinct word )
         // replace the select with static text to improve performance
         $connection = $finalQuery->getQuery()->getConnection();
+
         if (!Str::contains(Str::lower($finalQuery->toSql()), ['union', 'having', 'distinct', 'order by', 'group by'])) {
+
             $row_count = $connection->getQueryGrammar()->wrap('row_count');
-            $finalQuery->select($connection->raw("'1' as {$row_count}"));
+            return $connection->table($connection->raw('(' . $finalQuery->toSql() . ') count_row_table'))->select($connection->raw("'1' as {$row_count}"))->setBindings($finalQuery->getBindings())->count();
         }
 
         return $connection->table($connection->raw('(' . $finalQuery->toSql() . ') count_row_table'))
@@ -132,12 +136,15 @@ abstract class DataTable extends BaseDataTableService
      *
      * @param type $param
      */
-    protected function getQuery()
+    protected function getQuery($applyGlobalGroupScope = true)
     {
         $query      = $this->query();
         $this->addFilters();
         $finalQuery = $this->applyScopes($query);
-        $request    = app('request');
+        if ($applyGlobalGroupScope) {
+            $this->applyGlobalGroupScope($finalQuery);
+        }
+        $request = app('request');
         if ($finalQuery instanceof Collection) {
             return $finalQuery;
         }
@@ -247,6 +254,35 @@ abstract class DataTable extends BaseDataTableService
         $section = $html->create('div', $html->raw(implode('', $this->tableActions->toArray())), ['class' => 'mass-actions-menu', 'data-id' => $row->id ? $row->id : ''])->get();
 
         return '<i class="zmdi zmdi-more"></i>' . app('html')->raw($section)->get();
+    }
+
+    /**
+     * Apply query scopes.
+     *
+     * @param \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder $query
+     * @return mixed
+     */
+    protected function applyScopes($query)
+    {
+        foreach ($this->scopes as $scope) {
+            $scope->apply($query);
+        }
+        return $query;
+    }
+
+    protected function applyGlobalGroupScope($query)
+    {
+        $query      = $this->getQuery(false);
+        $datatables = $this->datatables->of($query);
+
+
+        $groupsFilter = app(\Antares\Datatables\Adapter\GroupsFilterAdapter::class);
+        $groupsFilter->setName(get_class($this));
+        $groupsFilter->saveRequestedSessionKey();
+
+        if (!isset($this->ajax)) {
+            $groupsFilter->apply($query);
+        }
     }
 
 }

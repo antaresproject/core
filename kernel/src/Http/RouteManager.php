@@ -111,7 +111,7 @@ abstract class RouteManager
     public function handles($path, array $options = [])
     {
 
-        if (str_contains($path, '.') and ! starts_with($path, 'http') && strpos($path, '.') < 20) {
+        if (str_contains($path, '.') and ! is_api_request() and ! starts_with($path, 'http') && strpos($path, '.') < 20) {
             return route(area() . '.' . $path, $options);
         }
         $url = $this->app->make('url');
