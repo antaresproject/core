@@ -112,6 +112,7 @@ class AuthenticateUser extends Authenticate implements Command
      */
     protected function handleUserWasAuthenticated(Listener $listener, array $input, ThrottlesCommand $throttles = null)
     {
+
         if ($throttles) {
             //$throttles->clearLoginAttempts($input);
         }
@@ -119,11 +120,12 @@ class AuthenticateUser extends Authenticate implements Command
 
         auth()->guard('web')->getSession()->remove('auth');
         $user = $this->getUser();
+
         if (!$this->verifyUserActive($user)) {
+
             $this->auth->logout();
             return $listener->userIsNotActive();
         }
-
         return $listener->userHasLoggedIn($user, $redirect);
     }
 

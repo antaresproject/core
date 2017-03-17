@@ -65,7 +65,7 @@ class LayoutStyler extends AbstractAdapter implements StylerAdapter
         }
         if (!is_null($value = array_get($this->colors, 'text.main.second'))) {
             $value  = starts_with($value, '#') ? $value : '#' . $value;
-            $return .= ".search-box .search-box__search-field,.btn.btn--default {color:" . $value . "}\n";
+            $return .= ".search-box .search-box__search-field,.btn.btn--default,.sandbox-mode-title {color:" . $value . "}\n";
             $return .= ".main-head .search-box .search-box__mdl-textfield .mdl-textfield__label {color:" . $value . "}\n";
             $return .= ".search-box .search-box__search-field{ border-color:" . $value . "}\n";
         }

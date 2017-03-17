@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Routing;
 
 use Illuminate\Support\Arr;
@@ -41,9 +40,6 @@ class Router extends BaseRouter
         $this->get('login', 'Auth\AuthenticateController@show');
         $this->post('login', 'Auth\AuthenticateController@attempt');
         $this->get('logout', 'Auth\DeauthenticateController@logout');
-
-        $this->get('register', 'Auth\RegisterController@show');
-        $this->post('register', 'Auth\RegisterController@store');
     }
 
     /**

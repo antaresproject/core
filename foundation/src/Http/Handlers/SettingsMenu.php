@@ -53,6 +53,30 @@ class SettingsMenu extends MenuHandler
     }
 
     /**
+     * Get title attribute
+     *
+     * @return String
+     */
+    public function getActiveAttribute()
+    {
+        $segment = request()->segment(2);
+        if ($segment == 'control') {
+            return true;
+        }
+        return parent::getActiveAttribute();
+    }
+
+    /**
+     * Get title attribute
+     *
+     * @return String
+     */
+    public function getTypeAttribute()
+    {
+        return 'secondary';
+    }
+
+    /**
      * Check authorization to display the menu.
      *
      * @param  \Antares\Contracts\Authorization\Authorization  $acl

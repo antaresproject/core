@@ -90,7 +90,8 @@ abstract class MenuHandler
                     ->link($this->getAttribute('link'))
                     ->title($this->getAttribute('title'))
                     ->icon($this->getAttribute('icon'))
-                    ->type($this->getAttribute('type'));
+                    ->type($this->getAttribute('type'))
+                    ->active($this->getAttribute('active'));
         } else {
             $menu = $this->createMenu();
             if ($menu) {
@@ -98,6 +99,16 @@ abstract class MenuHandler
             }
         }
         Event::fire('antares.ready: menu.after.' . $id);
+    }
+
+    /**
+     * Get title attribute
+     *
+     * @return String
+     */
+    public function getActiveAttribute()
+    {
+        return;
     }
 
     /**
@@ -144,7 +155,8 @@ abstract class MenuHandler
             $handler->title($this->getAttribute('title'))
                     ->link($this->getAttribute('link'))
                     ->icon($this->getAttribute('icon'))
-                    ->entity($this->getAttribute('entity'));
+                    ->entity($this->getAttribute('entity'))
+                    ->active($this->getAttribute('active'));
             if (!is_null($type = $this->getAttribute('type'))) {
                 $handler->type($type);
             }

@@ -59,6 +59,26 @@ class StaffMenuHandler extends MenuHandler
     }
 
     /**
+     * Get title attribute
+     *
+     * @return String
+     */
+    public function getActiveAttribute()
+    {
+        return request()->segment(2) === 'control';
+    }
+
+    /**
+     * Get title attribute
+     *
+     * @return String
+     */
+    public function getTypeAttribute()
+    {
+        return 'secondary';
+    }
+
+    /**
      * Get the URL.
      *
      * @param  string  $value
@@ -70,7 +90,7 @@ class StaffMenuHandler extends MenuHandler
         $control = app('antares.acl')->make('antares/control');
 
         if ($control->can('roles-list')) {
-            return handles('antares::control/roles/index');
+            return handles('antares::control/index/roles');
         }
         if ($control->can('admin-list')) {
             return handles('antares::control/users/index');

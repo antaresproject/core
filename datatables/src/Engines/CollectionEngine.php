@@ -229,6 +229,7 @@ class CollectionEngine extends BaseEngine
      */
     public function results()
     {
+
         return $this->collection->all();
     }
 

@@ -305,11 +305,13 @@ class Asset
         }
 
         $filename = 'packages/' . str_replace(['/', '}', '{', '?'], '_', uri()) . '.js';
-        $path     = public_path($filename);
+        $path     = sandbox_path($filename);
 
         $input = implode(PHP_EOL, array_merge($internals, $this->dispatcher->scripts('inline', $this->assets, $this->path)));
+        if (env('APP_ENV') === 'production') {
+            $input = new JSMin($input);
+        }
 
-        //$jsMin    = new JSMin($input);
         file_put_contents($path, $input);
         $return[] = '<script  src="' . asset($filename) . '?t=' . time() . '" ></script>';
 
