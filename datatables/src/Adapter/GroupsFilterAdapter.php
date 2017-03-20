@@ -2,6 +2,8 @@
 
 namespace Antares\Datatables\Adapter;
 
+use Closure;
+
 class GroupsFilterAdapter
 {
 
@@ -11,111 +13,112 @@ class GroupsFilterAdapter
      * @var String 
      */
     protected static $prefix = 'filter';
-    protected $name;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $classname;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $index;
 
     public function apply($builder)
     {
         $this->saveRequestedSessionKey();
-        $this->applyWhere($builder);
     }
 
-    public function setName($name)
+    public function setClassname($name)
     {
-        $this->name = $name;
+        $this->classname = strtolower(str_replace('\\', '_', $name));
+        return $this;
+    }
+
+    public function setIndex($index)
+    {
+        $this->index = $index;
+        return $this;
+    }
+
+    public function setEngineInstance(&$engine)
+    {
+        $filters = array_get($engine->getColumnDef(), 'filter', []);
+        $values  = $this->getSessionValue();
+        if (!$values) {
+            return $this;
+        }
+        foreach ($values as $value) {
+            if (is_null($name = array_get($value, 'name'))) {
+                continue;
+            }
+            if (!isset($filters[$name])) {
+                continue;
+            }
+            if ($filters[$name]['method'] instanceof Closure) {
+                $keyword    = array_get($value, 'search.value');
+                $whereQuery = $engine->getQuery();
+                request()->merge(['columns' => [$value]]);
+                call_user_func_array($filters[$name]['method'], [$whereQuery, $keyword]);
+            }
+        }
         return $this;
     }
 
     public function saveRequestedSessionKey()
     {
-        if (is_null($columns = ajax('columns'))) {
+        if (!($columns = ajax('columns'))) {
             return false;
         }
-        $value = collect($columns)->first(function($key, $item) {
+        $index = 0;
+        $value = collect($columns)->first(function($key, $item) use(&$index) {
             $value = array_get($item, 'search.value');
-            return !is_null($value) && $value !== "";
+            $index = $key;
+            return (!is_null($value) && $value !== "");
         });
-        return $this->setSessionKeyValue($value);
+        return $this->setSessionKeyValue($value, $index);
     }
 
-    protected function getSessionKey()
-    {
-        return implode('-', [self::$prefix, str_slug($this->name)]);
-    }
-
-    protected function setSessionKeyValue($value)
+    protected function setSessionKeyValue($value, $index = 0)
     {
         if (empty($value)) {
             return false;
         }
         $session = request()->session();
-        $key     = $this->getSessionKey();
 
-        if ($session->has($key)) {
-            $session->forget($key);
+        if ($session->has($this->classname)) {
+            $values = $session->get($this->classname);
+            $session->forget($this->classname);
+            if (isset($values[$index])) {
+                unset($values[$index]);
+            }
+            $values[$index] = $value;
+            $session->put($this->classname, $values);
+        } else {
+            $session->put($this->classname, [$index => $value]);
         }
-        $session->put($key, $value);
         $session->save();
     }
 
-    public function getSessionValue()
+    public function getSessionValue($columnIndex = null)
     {
         $session = request()->session();
-        $key     = $this->getSessionKey();
-
-        return $session->has($key) ? $session->get($key) : null;
-    }
-
-    public function getSelected()
-    {
-        $column = $this->getSessionValue();
-
-        return is_null($column) ? null : array_get($column, 'search.value');
-    }
-
-    protected function applyWhere(&$builder)
-    {
-        /* @var $query \Illuminate\Database\Query\Builder */
-        if (!$builder instanceof \Illuminate\Database\Eloquent\Builder) {
-            return;
-        }
-        $query  = $builder->getQuery();
-        $wheres = (array) $query->wheres;
-        $column = $this->getSessionValue();
-
-        if (is_null($column)) {
+        if (!$session->has($this->classname)) {
             return false;
         }
-        $columnName       = array_get($column, 'data');
-        $found            = [];
-        $subqueryBindings = [];
-
-        foreach ($wheres as $index => $where) {
-            /* @var $subquery \Illuminate\Database\Query\Builder */
-            if (is_null($subquery = array_get($where, 'query'))) {
-                continue;
-            }
-            foreach ($subquery->wheres as $subindex => $params) {
-                if (is_null($whereColumn = array_get($params, 'column'))) {
-                    continue;
-                }
-                if ($whereColumn == $columnName) {
-                    $bindings = $subquery->getBindings();
-                    unset($bindings[$subindex]);
-                    $subquery->setBindings($bindings);
-                    unset($subquery->wheres[$subindex]);
-                    continue;
-                }
-            }
-            $subqueryBindings = array_merge($subqueryBindings, $subquery->getBindings());
-
-            if (empty($where['query']->wheres)) {
-                continue;
-            }
-            $found[] = $where;
+        $params = $session->get($this->classname);
+        if (!is_null($columnIndex)) {
+            return array_get($params, $columnIndex, false);
         }
-        $query->setBindings(array_filter($subqueryBindings));
-        $query->wheres = $found;
-        return $builder->where($columnName, array_get($column, 'search.value'));
+        return $params;
+    }
+
+    public function getSelected($columnIndex)
+    {
+        $column = $this->getSessionValue($columnIndex);
+        return !($column) ? null : array_get($column, 'search.value');
     }
 
     public function scripts($id, $columnIndex)
@@ -123,7 +126,6 @@ class GroupsFilterAdapter
         $js     = <<<EOD
            $(document).ready(function () {
                 $('%s', document).on('change', function (e) {
-                    
                     var table = $(this).closest('.tbl-c').find('[data-table-init]');
                     if (table.length < 0) {
                         return false;

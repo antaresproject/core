@@ -455,10 +455,10 @@ class QueryBuilderEngine extends BaseEngine
                 }
                 $direction    = $orderable['direction'];
                 $queryBuilder = $this->getQueryBuilder();
-                $fired        = Event::fire('datatables.order.' . $column, [&$queryBuilder, $direction]);
-                if (empty($fired)) {
-                    $this->getQueryBuilder()->orderBy($column, $direction);
-                }
+                //$fired        = Event::fire('datatables.order.' . $column, [&$queryBuilder, $direction]);
+//                if (empty($fired)) {
+//                    $this->getQueryBuilder()->orderBy($column, $direction);
+//                }
             }
         }
     }
@@ -527,6 +527,7 @@ class QueryBuilderEngine extends BaseEngine
      */
     public function results()
     {
+
         if ($this->classname) {
             $orderAdapter = app(\Antares\Datatables\Adapter\OrderAdapter::class);
             $orderAdapter->setClassname($this->classname);

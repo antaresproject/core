@@ -24,6 +24,7 @@ namespace Antares\Http;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\NamespacedItemResolver;
 use Illuminate\Support\Arr;
+use Exception;
 use Closure;
 
 abstract class RouteManager
@@ -112,7 +113,11 @@ abstract class RouteManager
     {
 
         if (str_contains($path, '.') and ! is_api_request() and ! starts_with($path, 'http') && strpos($path, '.') < 20) {
-            return route(area() . '.' . $path, $options);
+            try {
+                return route(area() . '.' . $path, $options);
+            } catch (Exception $ex) {
+                return '';
+            }
         }
         $url = $this->app->make('url');
         if ($url->isValidUrl($path)) {
