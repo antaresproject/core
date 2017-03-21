@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 return [
     /**
      * cachable memory configuration
@@ -39,7 +37,7 @@ return [
     'format'     => '<p class="help-block error">:message</p>',
     'submit'     => 'antares/foundation::label.submit',
     /** default form view * */
-    'view'       => 'antares/foundation::layouts.antares.partials.form.vertical',
+    'view'       => 'antares/foundation::layouts.antares.partials.form.horizontal',
     /** when form does not have any of control * */
     'empty_form' => 'antares/foundation::layouts.antares.partials.form.empty',
     'dropzone'   => [

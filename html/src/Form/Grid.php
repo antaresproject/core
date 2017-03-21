@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Html\Form;
 
 use Antares\Contracts\Html\Form\Grid as GridContract;
@@ -202,7 +201,6 @@ class Grid extends BaseGrid implements GridContract
         } else {
             $this->view = $name;
         }
-
         $this->params = $params;
 
         return $this;
