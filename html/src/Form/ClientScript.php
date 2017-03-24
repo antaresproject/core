@@ -124,7 +124,7 @@ class ClientScript implements ClientScriptContract
         $controls = [];
         foreach ($fieldsets as $fieldset) {
             foreach ($fieldset->controls as $control) {
-                array_push($controls, $control->name);
+                array_push($controls, method_exists($control, 'getName') ? $control->getType() : $control->name);
             }
         }
 
@@ -134,7 +134,12 @@ class ClientScript implements ClientScriptContract
         foreach ($fieldsets as $fieldset) {
             foreach ($fieldset->controls as $control) {
                 $validation          = $this->resolveRules($control, $rules);
-                $control->attributes = array_merge($control->attributes, $validation);
+                
+                if (method_exists($control, 'setAttributes')) {
+                    $control->setAttributes(array_merge($control->getAttributes(), $validation));
+                } else {
+                    $control->attributes = array_merge($control->attributes, $validation);
+                }
             }
         }
     }
@@ -150,7 +155,9 @@ class ClientScript implements ClientScriptContract
     {
         $validation         = [];
         $rulesDispatcher    = new RulesDispatcher($rules);
-        $ruleName           = $rulesDispatcher->getMatchedRuleNameForControl($control->name);
+        $ruleName           = $rulesDispatcher->getMatchedRuleNameForControl(
+            method_exists($control, 'getName') ? $control->getType() : $control->name
+        );
 
         if ($ruleName === null) {
             return $validation;

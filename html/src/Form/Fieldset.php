@@ -472,7 +472,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
     {
         $return = [];
         foreach ($this->controls as $control) {
-            if ($control->type == $name) {
+            if ((method_exists($control, 'getType') ? $control->getType() : $control->type) == $name) {
                 array_push($return, $control);
             }
         }
@@ -533,7 +533,9 @@ class Fieldset extends BaseGrid implements FieldsetContract
     {
         $return = [];
         foreach ($this->controls as $control) {
-            if (in_array($control->type, ['button', 'submit'])) {
+            if (in_array((method_exists($control, 'getType') ? $control->getType() : $control->type),
+                ['button', 'submit']
+            )) {
                 continue;
             }
             array_push($return, $control);
