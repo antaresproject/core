@@ -13,6 +13,8 @@
  * @package        Antares Core
  * @version        0.9.0
  * @author         Antares Team
+ * @author         Mariusz Jucha <mariuszjucha@gmail.com>
+ * @author         Marcin Domański <marcin@domanskim.pl>
  * @license        BSD License (3-clause)
  * @copyright  (c) 2017, Antares Project
  * @link           http://antaresproject.io
@@ -24,30 +26,20 @@ use Antares\Form\Decorators\AbstractDecorator;
 use Antares\Form\Labels\AbstractLabel;
 use Antares\Form\Labels\Label;
 
-/**
- * @author Marcin Domański <marcin@domanskim.pl>
- * @author Mariusz Jucha <mariuszjucha@gmail.com>
- * Date: 24.03.17
- * Time: 10:11
- */
 abstract class AbstractType
 {
-
-    const ERROR_MESSAGE_TYPE = 'error';
-    const INFO_MESSAGE_TYPE = 'info';
-    const WARNING_MESSAGE_TYPE = 'warning';
-    const SUCCESS_MESSAGE_TYPE = 'success';
-    
-    public $id;
     
     /** @var string */
-    public $name;
+    protected $id;
+    
+    /** @var string */
+    protected $name;
 
     /** @var string */
-    public $type;
+    protected $type;
 
     /** @var array */
-    public $attributes = [];
+    protected $attributes = [];
 
     /** @var string|array */
     protected $value;
