@@ -46,9 +46,9 @@ abstract class AbstractLabel
     /**
      * @param $name
      * @param $value
-     * @return AbstractType
+     * @return AbstractLabel
      */
-    public function setAttribute(string $name, $value) : AbstractType
+    public function setAttribute(string $name, $value) : AbstractLabel
     {
         $this->attributes[$name] = $value;
         return $this;
@@ -57,9 +57,9 @@ abstract class AbstractLabel
     /**
      * @param $name
      * @param $value
-     * @return AbstractType
+     * @return AbstractLabel
      */
-    public function setAttributeIfNotExists($name, $value) : AbstractType
+    public function setAttributeIfNotExists($name, $value) : AbstractLabel
     {
         if (!$this->hasAttribute($name)) {
             $this->setAttribute($name, $value);
@@ -69,9 +69,9 @@ abstract class AbstractLabel
     
     /**
      * @param array $values
-     * @return AbstractType
+     * @return AbstractLabel
      */
-    public function setAttributes(array $values) : AbstractType
+    public function setAttributes(array $values) : AbstractLabel
     {
         $this->attributes = $values;
         return $this;

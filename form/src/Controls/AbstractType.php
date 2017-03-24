@@ -22,6 +22,7 @@ namespace Antares\Form\Controls;
 
 use Antares\Form\Decorators\AbstractDecorator;
 use Antares\Form\Labels\AbstractLabel;
+use Antares\Form\Labels\Label;
 
 /**
  * @author Marcin Domański <marcin@domanskim.pl>
@@ -57,7 +58,7 @@ abstract class AbstractType
     /** @var AbstractLabel  */
     protected $label;
 
-    /** @var  AbstractType */
+    /** @var array */
     protected $wrapper;
     
     /** @var AbstractDecorator */
@@ -79,11 +80,14 @@ abstract class AbstractType
     }
     
     /**
-     * @param AbstractLabel $label
+     * @param AbstractLabel|string $label
      * @return AbstractType
      */
-    public function setLabel(AbstractLabel $label) : AbstractType
+    public function setLabel($label) : AbstractType
     {
+        if(!$label instanceof AbstractLabel) {
+            $label = new Label($label);
+        }
         $this->label = $label;
         return $this;
     }
@@ -270,6 +274,24 @@ abstract class AbstractType
     public function addMessage(string $type, string $message) : AbstractType
     {
         $this->messages[$type][] = $message;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWrapper(): array
+    {
+        return $this->wrapper;
+    }
+
+    /**
+     * @param array $wrapper
+     * @return AbstractType
+     */
+    public function setWrapper(array $wrapper)
+    {
+        $this->wrapper = $wrapper;
         return $this;
     }
 
