@@ -18,30 +18,18 @@
  * @link           http://antaresproject.io
  */
 
-namespace Antares\Form\Controls;
+namespace Antares\Form\Decorators;
+
+use Antares\Form\Controls\AbstractType;
 
 /**
  * @author Mariusz Jucha <mariuszjucha@gmail.com>
  * Date: 24.03.17
- * Time: 11:42
+ * Time: 11:25
  */
-class TextareaType extends AbstractType
+abstract class AbstractDecorator
 {
-    
-    protected $type = 'textarea';
-    
-    /**
-     * @param int $rows
-     * @return AbstractType
-     */
-    public function setRows(int $rows) : AbstractType
-    {
-        return $this->setAttribute('rows', $rows);
-    }
-    
-    protected function render()
-    {
-        return view('antares/foundation::form.controls.textarea', ['control' => $this]);
-    }
+
+    abstract public function decorate(AbstractType $control);
     
 }

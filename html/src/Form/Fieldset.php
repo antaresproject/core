@@ -24,6 +24,7 @@ namespace Antares\Html\Form;
 use Antares\Contracts\Html\Form\Fieldset as FieldsetContract;
 use Antares\Contracts\Html\Form\Control as ControlContract;
 use Antares\Contracts\Html\Form\Field as FieldContract;
+use Antares\Form\Controls\AbstractType;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Config\Repository;
 use Antares\Contracts\Html\Form\Template;
@@ -187,10 +188,11 @@ class Fieldset extends BaseGrid implements FieldsetContract
      */
     public function control($type, $name, $callback = null)
     {
-        $primaryEventName = 'forms:' . str_slug($this->formName) . '.controls.' . $name;
-
-        Event::fire($primaryEventName . '.before', $this);
+        
         list($name, $control) = $this->buildControl($name, $callback, $type);
+        
+        $primaryEventName = 'forms:' . str_slug($this->formName) . '.controls.' . $name;
+        Event::fire($primaryEventName . '.before', $this);
 
         if (is_null($control->field)) {
             $control->field = $this->control->generate($type);
@@ -310,6 +312,14 @@ class Fieldset extends BaseGrid implements FieldsetContract
             $this->addCustomfield($grid, $field);
         }
         return $this;
+    }
+    
+    /**
+     * @param AbstractType $type
+     */
+    public function addType(AbstractType $type)
+    {
+        $this->controls[] = $type;
     }
 
     /**

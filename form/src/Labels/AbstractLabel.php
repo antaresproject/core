@@ -21,15 +21,101 @@
 namespace Antares\Form\Labels;
 
 /**
- * @author Mariusz Jucha <mariusz.ju@modulesgarden.com>
+ * @author Mariusz Jucha <mariuszjucha@gmail.com>
  * Date: 24.03.17
- * Time: 11:06
+ * Time: 11:16
  */
 abstract class AbstractLabel
 {
 
     /** @var string */
     protected $name;
-
+    
+    /** @var array */
+    protected $attributes;
+    
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function hasAttribute(string $name) : bool
+    {
+        return isset($this->attributes, $name);
+    }
+    
+    /**
+     * @param $name
+     * @param $value
+     * @return AbstractType
+     */
+    public function setAttribute(string $name, $value) : AbstractType
+    {
+        $this->attributes[$name] = $value;
+        return $this;
+    }
+    
+    /**
+     * @param $name
+     * @param $value
+     * @return AbstractType
+     */
+    public function setAttributeIfNotExists($name, $value) : AbstractType
+    {
+        if (!$this->hasAttribute($name)) {
+            $this->setAttribute($name, $value);
+        }
+        return $this;
+    }
+    
+    /**
+     * @param array $values
+     * @return AbstractType
+     */
+    public function setAttributes(array $values) : AbstractType
+    {
+        $this->attributes = $values;
+        return $this;
+    }
+    
+    /**
+     * @param string $name
+     * @param null $fallbackValue
+     * @return mixed
+     */
+    public function getAttribute(string $name, $fallbackValue = null)
+    {
+        if ($this->hasAttribute($name)) {
+            return $this->attributes[$name];
+        }
+        
+        return $this->setAttribute($name, $fallbackValue);
+    }
+    
+    /**
+     * @return array
+     */
+    public function getAttributes() : array
+    {
+        return $this->attributes;
+    }
+    
+    /**
+     * @return string
+     */
+    public function __toString() : string
+    {
+        try {
+            return $this->render();
+        } catch (\Throwable $e) {
+            return $e->getMessage();
+        }
+    }
+    
+    /**
+     * Render label to html
+     *
+     * @return string
+     */
+    abstract protected function render();
     
 }

@@ -19,43 +19,55 @@
  */
 
 namespace Antares\Form\Controls;
+
+use Antares\Form\Decorators\AbstractDecorator;
 use Antares\Form\Labels\AbstractLabel;
 
 /**
- * @author Marcin Domański <marcin.do@modulesgarden.com>
- * @author Mariusz Jucha <mariusz.ju@modulesgarden.com>
+ * @author Marcin Domański <marcin@domanskim.pl>
+ * @author Mariusz Jucha <mariuszjucha@gmail.com>
  * Date: 24.03.17
  * Time: 10:11
  */
 abstract class AbstractType
 {
 
+    const ERROR_MESSAGE_TYPE = 'error';
+    const INFO_MESSAGE_TYPE = 'info';
+    const WARNING_MESSAGE_TYPE = 'warning';
+    const SUCCESS_MESSAGE_TYPE = 'success';
+    
+    public $id;
+    
     /** @var string */
-    protected $name;
+    public $name;
 
     /** @var string */
-    protected $type;
+    public $type;
 
     /** @var array */
-    protected $attributes = [];
+    public $attributes = [];
 
     /** @var string|array */
     protected $value;
 
     /** @var bool  */
-    protected $hasLabel = true;
+    protected $hasLabel = false;
 
     /** @var AbstractLabel  */
     protected $label;
 
     /** @var  AbstractType */
     protected $wrapper;
+    
+    /** @var AbstractDecorator */
+    protected $decorator;
 
     /** @var array */
-    protected $messages;
+    protected $messages = [];
 
     /**
-     * AbstractType constructor.
+     * AbstractType constructor
      *
      * @param string $name
      * @param array $attributes
@@ -65,7 +77,43 @@ abstract class AbstractType
         $this->setName($name);
         $this->attributes = array_merge($attributes, ['name' => $this->getName()]);
     }
-
+    
+    /**
+     * @param AbstractLabel $label
+     * @return AbstractType
+     */
+    public function setLabel(AbstractLabel $label) : AbstractType
+    {
+        $this->label = $label;
+        return $this;
+    }
+    
+    /**
+     * @return bool
+     */
+    public function hasLabel() : bool
+    {
+        return $this->hasLabel;
+    }
+    
+    /**
+     * @return AbstractLabel
+     */
+    public function getLabel() : AbstractLabel
+    {
+        return $this->label;
+    }
+    
+    /**
+     * @param AbstractDecorator $decorator
+     * @return AbstractType
+     */
+    public function setDecorator(AbstractDecorator $decorator)
+    {
+        $this->decorator = $decorator;
+        return $this;
+    }
+    
     /**
      * @param $name
      * @return bool
@@ -120,7 +168,8 @@ abstract class AbstractType
             return $this->attributes[$name];
         }
 
-        return $this->setAttribute($name, $fallbackValue);
+        $this->setAttribute($name, $fallbackValue);
+        return $this->getAttribute($name);
     }
 
     /**
@@ -184,25 +233,45 @@ abstract class AbstractType
         $this->value = $value;
         return $this;
     }
-
+    
     /**
-     * @return string
-     */
-    public function getLabel() : string
-    {
-        return $this->label;
-    }
-
-    /**
-     * @param string $label
+     * @param string $placeholder
      * @return AbstractType
      */
-    public function setLabel(string $label) : AbstractType
+    public function setPlaceholder($placeholder) : AbstractType
     {
-        $this->label = $label;
+        return $this->setAttribute('placeholder', $placeholder);
+    }
+    
+    /**
+     * @param string $class
+     * @return AbstractType
+     */
+    public function addClass($class) : AbstractType
+    {
+        return $this->setAttribute('class',
+            $this->hasAttribute('class')
+                ? sprintf('%s %s', $this->getAttribute('class'), $class) : $class);
+    }
+    
+    /**
+     * @return array
+     */
+    public function getMessages() : array
+    {
+        return $this->messages;
+    }
+    
+    /**
+     * @param string $type
+     * @param string $message
+     * @return AbstractType
+     */
+    public function addMessage(string $type, string $message) : AbstractType
+    {
+        $this->messages[$type][] = $message;
         return $this;
     }
-
 
     /**
      * @return string
@@ -210,7 +279,8 @@ abstract class AbstractType
     public function __toString() : string
     {
         try {
-            return $this->render();
+            return $this->decorator instanceof AbstractType
+                ? $this->decorator->decorate($this) : $this->render();
         } catch (\Throwable $e) {
             return $e->getMessage();
         }
