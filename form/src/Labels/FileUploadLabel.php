@@ -26,9 +26,18 @@ namespace Antares\Form\Labels;
  * Date: 24.03.17
  * Time: 14:06
  */
-class Label extends AbstractLabel
+class FileUploadLabel extends AbstractLabel
 {
 
-    public $type = 'default';
+    public $type = 'fileupload';
+    public $inputHtml;
+    public $controlName;
+
+    public function render()
+    {
+        $this->setAttributes(['class' => 'file-upload']);
+        return view('antares/foundation::form.labels.' . $this->type,
+            ['label' => $this, 'controlName' => $this->controlName, 'controlHtml' => $this->inputHtml])->render();
+    }
 
 }

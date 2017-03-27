@@ -22,24 +22,23 @@
 namespace Antares\Form\Labels;
 
 use Antares\Form\Contracts\Attributable;
+use Antares\Form\Contracts\Wrapperable;
 use Antares\Form\Controls\AbstractType;
 use Antares\Form\Traits\AttributesTrait;
+use Antares\Form\Traits\WrapperTrait;
 
 /**
  * @author Mariusz Jucha <mariuszjucha@gmail.com>
  * Date: 24.03.17
  * Time: 11:16
  */
-abstract class AbstractLabel implements Attributable
+abstract class AbstractLabel implements Attributable, Wrapperable
 {
 
-    use AttributesTrait;
+    use AttributesTrait, WrapperTrait;
 
     /** @var string */
     public $name;
-    
-    /** @var array */
-    protected $attributes;
 
     /** @var string */
     public $type;
@@ -105,7 +104,6 @@ abstract class AbstractLabel implements Attributable
     {
         $this->control = $control;
     }
-
 
     public function render()
     {

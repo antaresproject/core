@@ -113,4 +113,17 @@ trait AttributesTrait
         }
     }
 
+    /**
+     * @param $name
+     * @param $value
+     */
+    public function addAttribute($name, $value)
+    {
+        if ($this->hasAttribute($name)) {
+            $this->attributes[$name] .= ' ' . $value;
+        } else {
+            $this->attributes[$name] = $value;
+        }
+    }
+
 }

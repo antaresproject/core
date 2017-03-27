@@ -79,7 +79,6 @@ abstract class AbstractType implements Wrapperable, Attributable
     {
         $this->setName($name);
         $this->attributes = array_merge($attributes, ['name' => $this->getName()]);
-        $this->wrapper = ['class'];
     }
     
     /**
@@ -254,7 +253,7 @@ abstract class AbstractType implements Wrapperable, Attributable
     /**
      * lookup for validation errors for this control
      */
-    private function findErrors()
+    protected function findErrors()
     {
         $session = session();
         if (!$session->has('errors') || !$session->get('errors')->hasBag('default')) {
@@ -306,7 +305,6 @@ abstract class AbstractType implements Wrapperable, Attributable
             'control' => $this,
             'errors'  => $this->messages['errors']?? [],
         ]);
-
     }
 
 }
