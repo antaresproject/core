@@ -1,0 +1,13 @@
+<div class="form-block">
+    <div class="col-dt-2 col-2 col-mb-2">
+        {{ label|raw }}
+    </div>
+    <div class="col-dt-6 col-6 col-mb-6 {{ control.getWrapper()['class'] }}">
+        <div class="input-field">
+            {{ input|raw }}
+        </div>
+        <span id="{{ control.id }}_error" class="error col-13 col-mb-11">
+        {{ errors.first(control.name, format)|raw }}
+        </span>
+    </div>
+</div>
