@@ -23,9 +23,12 @@ namespace Antares\Form\Controls;
 
 use Antares\Form\Controls\Elements\Option;
 use Antares\Form\Exceptions\WrongSelectOptionFormatException;
+use Antares\Form\Traits\SelectTypeFunctionsTrait;
 
 class SelectType extends AbstractType
 {
+
+    use SelectTypeFunctionsTrait;
 
     /** @var string */
     protected $type = 'select';
