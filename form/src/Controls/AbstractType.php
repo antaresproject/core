@@ -28,7 +28,7 @@ use Antares\Form\Labels\AbstractLabel;
 abstract class AbstractType
 {
     
-    /** @var string */
+    /** @var mixed */
     protected $id;
     
     /** @var string */
@@ -69,6 +69,23 @@ abstract class AbstractType
         $this->setName($name);
         $this->attributes = array_merge($attributes, ['name' => $this->getName()]);
     }
+    
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    
+    /**
+     * @param mixed $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+    
     
     /**
      * @param AbstractLabel $label
@@ -112,7 +129,7 @@ abstract class AbstractType
      */
     public function hasAttribute(string $name) : bool
     {
-        return isset($this->attributes, $name);
+        return isset($this->attributes[$name]);
     }
 
     /**

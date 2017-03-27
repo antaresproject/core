@@ -1,0 +1,13 @@
+<select name="{{ control.getName() }}" {{ control.getAttributes()|stringify }}>
+    {% for key, name in control.getOptions() %}
+        <option value="{{ key }}"
+            {% if control.getValue() is iterable and key in control.getValue() %}
+                selected
+            {% elseif control.getValue() == key %}
+                selected
+            {% endif %}
+        >
+            {{ name }}
+        </option>
+    {% endfor %}
+</select>
