@@ -253,7 +253,7 @@ abstract class AbstractType implements Wrapperable, Attributable
     /**
      * lookup for validation errors for this control
      */
-    protected function findErrors()
+    private function findErrors()
     {
         $session = session();
         if (!$session->has('errors') || !$session->get('errors')->hasBag('default')) {
@@ -305,6 +305,7 @@ abstract class AbstractType implements Wrapperable, Attributable
             'control' => $this,
             'errors'  => $this->messages['errors']?? [],
         ]);
+
     }
 
 }

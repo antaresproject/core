@@ -21,6 +21,7 @@
 
 namespace Antares\Form\Controls;
 
+use Antares\Form\Controls\Elements\OptGroup;
 use Antares\Form\Controls\Elements\Option;
 use Antares\Form\Exceptions\WrongSelectOptionFormatException;
 use Antares\Form\Traits\SelectTypeFunctionsTrait;
@@ -47,20 +48,35 @@ class SelectType extends AbstractType
     public function setValueOptions($options): SelectType
     {
         if (is_array($options) || $options instanceof \Traversable) {
-            foreach ($options as $k => $v) {
-                if (!$v instanceof Option) {
-                    if (!is_array($v) && !is_object($v)) {
-                        $v = new Option($k, $v);
+            foreach ($options as $key => $value) {
+                if (!$value instanceof Option) {
+                    if (!is_array($value) && !is_object($value)) {
+                        $value = new Option($key, $value);
                     } else {
-                        throw new WrongSelectOptionFormatException('Wrong option format');
+                        $value = new OptGroup($key, $this->createOptionsFormArray($value));
                     }
                 }
 
-                $this->attributes[$v->value] = $v;
+                $this->valueOptions[$value instanceof Option ? $value->value : $value->label] = $value;
             }
         }
 
         return $this;
+    }
+    
+    /**
+     * @param $array
+     * @return array
+     */
+    private function createOptionsFormArray($array): array
+    {
+        $options = [];
+        
+        foreach ($array as $key => $value) {
+            $options[] = new Option($key, $value);
+        }
+        
+        return $options;
     }
 
     /**
@@ -97,15 +113,32 @@ class SelectType extends AbstractType
 
         return $this;
     }
-
+    
+    /**
+     * @param Option $option
+     */
+    private function setSelectedAttribute(Option $option)
+    {
+        $option->selected = (
+            (!is_array($this->value) && $this->value == $option->value) ||
+            (is_array($this->value) && in_array($option->value, $this->value))
+        );
+    }
+    
+    /**
+     * @return string
+     */
     public function render()
     {
         if ($this->value) {
             foreach ($this->valueOptions as $option) {
-                $option->selected = (
-                    (!is_array($this->value) && $this->value == $option->value) ||
-                    (is_array($this->value) && in_array($option->value, $this->value))
-                );
+                if ($option instanceof Option) {
+                    $this->setSelectedAttribute($option);
+                } else {
+                    foreach ($option->options as $opt) {
+                        $this->setSelectedAttribute($opt);
+                    }
+                }
             }
         }
 

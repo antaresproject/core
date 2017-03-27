@@ -20,6 +20,7 @@
 
 namespace Antares\Form\Controls\Elements;
 
+use Antares\Form\Contracts\Attributable;
 use Antares\Form\Traits\AttributesTrait;
 
 /**
@@ -27,13 +28,18 @@ use Antares\Form\Traits\AttributesTrait;
  * Date: 27.03.17
  * Time: 12:38
  */
-class Option
+class Option implements Attributable
 {
 
     use AttributesTrait;
 
+    /** @var mixed */
     public $value;
+    
+    /** @var string */
     public $name;
+    
+    /** @var bool */
     public $selected;
 
     /**

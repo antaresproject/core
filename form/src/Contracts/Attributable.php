@@ -20,7 +20,6 @@
 
 namespace Antares\Form\Contracts;
 
-
 /**
  * @author Marcin Domański <marcin@domanskim.pl>
  * Date: 27.03.17
