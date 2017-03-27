@@ -26,9 +26,6 @@ use Antares\Form\Decorators\AbstractDecorator;
 use Antares\Form\Labels\AbstractLabel;
 use Antares\Form\Labels\Label;
 use Antares\Messages\MessageBag;
-use Illuminate\Session\SessionManager;
-use Illuminate\Session\Store;
-use Illuminate\Support\ViewErrorBag;
 
 abstract class AbstractType
 {

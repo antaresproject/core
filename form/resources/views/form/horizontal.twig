@@ -2,6 +2,9 @@
     <div class="col-dt-2 col-2 col-mb-2">
         {{ label|raw }}
     </div>
+    {% if control.hasWrapper %}
+        <div {{ control.getWrapper|stringify }} >
+    {% endif %}
     <div class="col-dt-6 col-6 col-mb-6 {{ control.getWrapper()['class'] }}">
         <div class="input-field">
             {{ input|raw }}
@@ -14,4 +17,7 @@
             </span>
         {% endif %}
     </div>
+    {% if control.hasWrapper %}
+        </div>
+    {% endif %}
 </div>
