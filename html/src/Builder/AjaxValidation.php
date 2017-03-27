@@ -26,6 +26,7 @@ use Antares\Contracts\Html\Form\AjaxValidation as AjaxValidationContract;
 use Antares\Contracts\Html\Form\Field as FieldContract;
 use Antares\Asset\JavaScriptDecorator;
 use Antares\Contracts\Html\Grid;
+use Antares\Form\Controls\AbstractType;
 use Closure;
 
 class AjaxValidation implements AjaxValidationContract
@@ -84,9 +85,17 @@ class AjaxValidation implements AjaxValidationContract
                 $name = ($fieldset->name instanceof Closure) ? 'fieldset_' . $index : snake_case($fieldset->name, '-');
             }
             foreach ($fieldset->controls as $control) {
-                $inputId              = (is_null($control->id) OR strlen($control->id) <= 0) ? $this->generateID('input') : $control->id;
-                $control->id          = str_replace(['[', ']'], '_', $inputId);
-                $inputs[$control->id] = $this->field($control);
+                $id = method_exists($control, 'getId') ? $control->getId() : $control->id;
+                
+                $inputId     = (is_null($id) OR strlen($id) <= 0) ? $this->generateID('input') : $id;
+                $id          = str_replace(['[', ']'], '_', $inputId);
+                $inputs[$id] = $this->field($control);
+                
+                if (method_exists($control, 'getId')) {
+                    $control->setId($id);
+                } else {
+                    $control->id = $id;
+                }
             }
         }
 
@@ -145,16 +154,16 @@ EOD;
     /**
      * setting field parameters
      * 
-     * @param FieldContract $field
+     * @param FieldContract|AbstractType $field
      * @return array
      */
-    protected function field(FieldContract $field)
+    protected function field($field)
     {
-        $id = $field->id;
+        $id = $field instanceof FieldContract ? $field->id : $field->getId();
         return [
             'id'                   => $id,
             'inputID'              => $id,
-            'name'                 => $field->name,
+            'name'                 => $field instanceof FieldContract ? $field->name : $field->getName(),
             'errorID'              => $id . '_error',
             'enableAjaxValidation' => true,
             'summary'              => true,

@@ -293,7 +293,10 @@ class FormBuilder extends BaseBuilder implements BuilderContract
             $controls = [];
             foreach ($fieldsets as $fieldset) {
                 foreach ($fieldset->controls() as $control) {
-                    array_push($controls, $control->name);
+                    array_push(
+                        $controls,
+                        method_exists($control, 'getName') ? $control->getName() : $control->name
+                    );
                 }
             }
             $rulesDispatcher = new RulesDispatcher($grid->rules);

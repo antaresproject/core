@@ -35,9 +35,9 @@ abstract class AbstractType
 
     /** @var string */
     protected $id;
-
+    
     /** @var string */
-    public $name;
+    protected $name;
 
     /** @var string */
     protected $type;
@@ -70,14 +70,32 @@ abstract class AbstractType
      * AbstractType constructor
      *
      * @param string $name
-     * @param array  $attributes
+     * @param array $attributes
      */
     public function __construct(string $name, array $attributes = [])
     {
         $this->setName($name);
         $this->attributes = array_merge($attributes, ['name' => $this->getName()]);
+        $this->wrapper = ['class'];
     }
-
+    
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    
+    /**
+     * @param mixed $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+    
+    
     /**
      * @param AbstractLabel|string $label
      * @return AbstractType
@@ -94,23 +112,23 @@ abstract class AbstractType
 
         return $this;
     }
-
+    
     /**
      * @return bool
      */
-    public function hasLabel(): bool
+    public function hasLabel() : bool
     {
         return $this->hasLabel;
     }
-
+    
     /**
      * @return AbstractLabel
      */
-    public function getLabel(): AbstractLabel
+    public function getLabel() : AbstractLabel
     {
         return $this->label;
     }
-
+    
     /**
      * @param AbstractDecorator $decorator
      * @return AbstractType
@@ -118,17 +136,16 @@ abstract class AbstractType
     public function setDecorator(AbstractDecorator $decorator)
     {
         $this->decorator = $decorator;
-
         return $this;
     }
-
+    
     /**
      * @param $name
      * @return bool
      */
-    public function hasAttribute(string $name): bool
+    public function hasAttribute(string $name) : bool
     {
-        return isset($this->attributes, $name);
+        return isset($this->attributes[$name]);
     }
 
     /**
@@ -136,10 +153,9 @@ abstract class AbstractType
      * @param $value
      * @return AbstractType
      */
-    public function setAttribute(string $name, $value): AbstractType
+    public function setAttribute(string $name, $value) : AbstractType
     {
         $this->attributes[$name] = $value;
-
         return $this;
     }
 
@@ -148,12 +164,11 @@ abstract class AbstractType
      * @param $value
      * @return AbstractType
      */
-    public function setAttributeIfNotExists($name, $value): AbstractType
+    public function setAttributeIfNotExists($name, $value) : AbstractType
     {
         if (!$this->hasAttribute($name)) {
             $this->setAttribute($name, $value);
         }
-
         return $this;
     }
 
@@ -161,10 +176,9 @@ abstract class AbstractType
      * @param array $values
      * @return AbstractType
      */
-    public function setAttributes(array $values): AbstractType
+    public function setAttributes(array $values) : AbstractType
     {
         $this->attributes = $values;
-
         return $this;
     }
 
@@ -180,14 +194,13 @@ abstract class AbstractType
         }
 
         $this->setAttribute($name, $fallbackValue);
-
         return $this->getAttribute($name);
     }
 
     /**
      * @return array
      */
-    public function getAttributes(): array
+    public function getAttributes() : array
     {
         return $this->attributes;
     }
@@ -195,7 +208,7 @@ abstract class AbstractType
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName() : string
     {
         return $this->name;
     }
@@ -204,17 +217,16 @@ abstract class AbstractType
      * @param string $name
      * @return AbstractType
      */
-    public function setName(string $name): AbstractType
+    public function setName(string $name) : AbstractType
     {
         $this->name = $name;
-
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getType(): string
+    public function getType() : string
     {
         return $this->type;
     }
@@ -223,10 +235,9 @@ abstract class AbstractType
      * @param string $type
      * @return AbstractType
      */
-    public function setType(string $type): AbstractType
+    public function setType(string $type) : AbstractType
     {
         $this->type = $type;
-
         return $this;
     }
 
@@ -242,50 +253,48 @@ abstract class AbstractType
      * @param array|string $value
      * @return AbstractType
      */
-    public function setValue($value): AbstractType
+    public function setValue($value) : AbstractType
     {
         $this->value = $value;
-
         return $this;
     }
-
+    
     /**
      * @param string $placeholder
      * @return AbstractType
      */
-    public function setPlaceholder($placeholder): AbstractType
+    public function setPlaceholder($placeholder) : AbstractType
     {
         return $this->setAttribute('placeholder', $placeholder);
     }
-
+    
     /**
      * @param string $class
      * @return AbstractType
      */
-    public function addClass($class): AbstractType
+    public function addClass($class) : AbstractType
     {
         return $this->setAttribute('class',
             $this->hasAttribute('class')
                 ? sprintf('%s %s', $this->getAttribute('class'), $class) : $class);
     }
-
+    
     /**
      * @return array
      */
-    public function getMessages(): array
+    public function getMessages() : array
     {
         return $this->messages;
     }
-
+    
     /**
      * @param string $type
      * @param string $message
      * @return AbstractType
      */
-    public function addMessage(string $type, string $message): AbstractType
+    public function addMessage(string $type, string $message) : AbstractType
     {
         $this->messages[$type][] = $message;
-
         return $this;
     }
 
@@ -312,7 +321,6 @@ abstract class AbstractType
     public function setWrapper(array $wrapper)
     {
         $this->wrapper = $wrapper;
-
         return $this;
     }
 
@@ -361,7 +369,7 @@ abstract class AbstractType
     /**
      * @return string
      */
-    public function __toString(): string
+    public function __toString() : string
     {
         try {
             return $this->decorator instanceof AbstractType

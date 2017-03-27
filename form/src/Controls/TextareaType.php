@@ -35,9 +35,6 @@ class TextareaType extends AbstractType
         return $this->setAttribute('rows', $rows);
     }
     
-    protected function render()
-    {
-        return view('antares/foundation::form.controls.textarea', ['control' => $this]);
-    }
+    
     
 }
