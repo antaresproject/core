@@ -37,7 +37,7 @@ class SelectType extends AbstractType
      * @param array|\Traversable $options
      * @return SelectType
      */
-    public function setValueOptions($options) : SelectType
+    public function setValueOptions($options): SelectType
     {
         if (is_array($options) || $options instanceof \Traversable) {
             $this->valueOptions = $options;
@@ -57,7 +57,7 @@ class SelectType extends AbstractType
     /**
      * @return bool
      */
-    public function hasEmptyValue() : bool
+    public function hasEmptyValue(): bool
     {
         return !empty($this->emptyValue);
     }
@@ -65,7 +65,7 @@ class SelectType extends AbstractType
     /**
      * @return string
      */
-    public function getEmptyValue() : string
+    public function getEmptyValue(): string
     {
         return $this->emptyValue;
     }
@@ -74,9 +74,10 @@ class SelectType extends AbstractType
      * @param string $emptyValue
      * @return SelectType
      */
-    public function setEmptyValue(string $emptyValue) : SelectType
+    public function setEmptyValue(string $emptyValue): SelectType
     {
         $this->emptyValue = $emptyValue;
+        
         return $this;
     }
     
