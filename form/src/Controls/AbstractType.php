@@ -24,6 +24,7 @@ namespace Antares\Form\Controls;
 
 use Antares\Form\Decorators\AbstractDecorator;
 use Antares\Form\Labels\AbstractLabel;
+use Antares\Form\Labels\Label;
 
 abstract class AbstractType
 {
@@ -71,6 +72,7 @@ abstract class AbstractType
     {
         $this->setName($name);
         $this->attributes = array_merge($attributes, ['name' => $this->getName()]);
+        $this->wrapper = ['class'];
     }
     
     /**
@@ -315,7 +317,6 @@ abstract class AbstractType
     public function setWrapper(array $wrapper)
     {
         $this->wrapper = $wrapper;
-
         return $this;
     }
 

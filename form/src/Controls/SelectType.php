@@ -26,5 +26,58 @@ class SelectType extends AbstractType
     
     /** @var string */
     protected $type = 'select';
-
+    
+    /** @var array */
+    protected $valueOptions = [];
+    
+    /** @var string */
+    protected $emptyValue;
+    
+    /**
+     * @param array|\Traversable $options
+     * @return SelectType
+     */
+    public function setValueOptions($options) : SelectType
+    {
+        if (is_array($options) || $options instanceof \Traversable) {
+            $this->valueOptions = $options;
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * @return array|\Traversable
+     */
+    public function getValueOptions()
+    {
+        return $this->valueOptions;
+    }
+    
+    /**
+     * @return bool
+     */
+    public function hasEmptyValue() : bool
+    {
+        return !empty($this->emptyValue);
+    }
+    
+    /**
+     * @return string
+     */
+    public function getEmptyValue() : string
+    {
+        return $this->emptyValue;
+    }
+    
+    /**
+     * @param string $emptyValue
+     * @return SelectType
+     */
+    public function setEmptyValue(string $emptyValue) : SelectType
+    {
+        $this->emptyValue = $emptyValue;
+        return $this;
+    }
+    
 }

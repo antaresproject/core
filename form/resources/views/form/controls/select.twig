@@ -1,5 +1,8 @@
 <select name="{{ control.getName() }}" {{ control.getAttributes()|stringify }}>
-    {% for key, name in control.getOptions() %}
+    {% if control.hasEmptyValue() %}
+        <option>{{ control.getEmptyValue() }}</option>
+    {% endif %}
+    {% for key, name in control.getValueOptions() %}
         <option value="{{ key }}"
             {% if control.getValue() is iterable and key in control.getValue() %}
                 selected
