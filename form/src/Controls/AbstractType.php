@@ -22,58 +22,64 @@
 
 namespace Antares\Form\Controls;
 
+use Antares\Form\Contracts\Attributable;
+use Antares\Form\Contracts\Wrapperable;
 use Antares\Form\Decorators\AbstractDecorator;
 use Antares\Form\Labels\AbstractLabel;
 use Antares\Form\Labels\Label;
+use Antares\Form\Traits\AttributesTrait;
+use Antares\Form\Traits\WrapperTrait;
 use Antares\Messages\MessageBag;
 
-abstract class AbstractType
+abstract class AbstractType implements Wrapperable, Attributable
 {
-    
+
+    use AttributesTrait, WrapperTrait;
+
     /** @var string */
     protected $id;
     
     /** @var string */
     protected $name;
-    
+
     /** @var string */
     protected $type;
-    
-    /** @var array */
-    protected $attributes = [];
-    
+
     /** @var string|array */
     protected $value;
-    
+
     /** @var bool */
     protected $hasLabel = false;
-    
+
     /** @var AbstractLabel */
     protected $label;
-    
-    /** @var array */
-    public $wrapper;
-    
+
     /** @var AbstractDecorator */
     protected $decorator;
-    
+
     /** @var array */
     protected $messages = [];
-    
+
     /** @var string */
     protected $orientation;
-    
+
+    /** @var string */
+    public $prependHtml = '';
+
+    /** @var string */
+    public $appendHtml = '';
+
     /**
      * AbstractType constructor
      *
      * @param string $name
-     * @param array  $attributes
+     * @param array $attributes
      */
     public function __construct(string $name, array $attributes = [])
     {
         $this->setName($name);
         $this->attributes = array_merge($attributes, ['name' => $this->getName()]);
-        $this->wrapper = ['class' => 'w300'];
+        $this->wrapper = ['class' => ''];
     }
     
     /**
@@ -92,6 +98,7 @@ abstract class AbstractType
         $this->id = $id;
     }
     
+    
     /**
      * @param AbstractLabel|string $label
      * @return AbstractType
@@ -105,14 +112,14 @@ abstract class AbstractType
             $label->setControl($this);
         }
         $this->label = $label;
-        
+
         return $this;
     }
     
     /**
      * @return bool
      */
-    public function hasLabel(): bool
+    public function hasLabel() : bool
     {
         return $this->hasLabel;
     }
@@ -120,7 +127,7 @@ abstract class AbstractType
     /**
      * @return AbstractLabel
      */
-    public function getLabel(): AbstractLabel
+    public function getLabel() : AbstractLabel
     {
         return $this->label;
     }
@@ -132,118 +139,45 @@ abstract class AbstractType
     public function setDecorator(AbstractDecorator $decorator)
     {
         $this->decorator = $decorator;
-        
         return $this;
     }
-    
-    /**
-     * @param $name
-     * @return bool
-     */
-    public function hasAttribute(string $name): bool
-    {
-        return isset($this->attributes[$name]);
-    }
-    
-    /**
-     * @param $name
-     * @param $value
-     * @return AbstractType
-     */
-    public function setAttribute(string $name, $value): AbstractType
-    {
-        $this->attributes[$name] = $value;
-        
-        return $this;
-    }
-    
-    /**
-     * @param $name
-     * @param $value
-     * @return AbstractType
-     */
-    public function setAttributeIfNotExists($name, $value): AbstractType
-    {
-        if (!$this->hasAttribute($name)) {
-            $this->setAttribute($name, $value);
-        }
-        
-        return $this;
-    }
-    
-    /**
-     * @param array $values
-     * @return AbstractType
-     */
-    public function setAttributes(array $values): AbstractType
-    {
-        $this->attributes = $values;
-        
-        return $this;
-    }
-    
-    /**
-     * @param string $name
-     * @param null   $fallbackValue
-     * @return mixed
-     */
-    public function getAttribute(string $name, $fallbackValue = null)
-    {
-        if ($this->hasAttribute($name)) {
-            return $this->attributes[$name];
-        }
-        
-        $this->setAttribute($name, $fallbackValue);
-        
-        return $this->getAttribute($name);
-    }
-    
-    /**
-     * @return array
-     */
-    public function getAttributes(): array
-    {
-        return $this->attributes;
-    }
-    
+
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName() : string
     {
         return $this->name;
     }
-    
+
     /**
      * @param string $name
      * @return AbstractType
      */
-    public function setName(string $name): AbstractType
+    public function setName(string $name) : AbstractType
     {
         $this->name = $name;
-        
         return $this;
     }
-    
+
     /**
      * @return string
      */
-    public function getType(): string
+    public function getType() : string
     {
         return $this->type;
     }
-    
+
     /**
      * @param string $type
      * @return AbstractType
      */
-    public function setType(string $type): AbstractType
+    public function setType(string $type) : AbstractType
     {
         $this->type = $type;
-        
         return $this;
     }
-    
+
     /**
      * @return array|string
      */
@@ -251,15 +185,14 @@ abstract class AbstractType
     {
         return $this->value;
     }
-    
+
     /**
      * @param array|string $value
      * @return AbstractType
      */
-    public function setValue($value): AbstractType
+    public function setValue($value) : AbstractType
     {
         $this->value = $value;
-        
         return $this;
     }
     
@@ -267,7 +200,7 @@ abstract class AbstractType
      * @param string $placeholder
      * @return AbstractType
      */
-    public function setPlaceholder($placeholder): AbstractType
+    public function setPlaceholder($placeholder) : AbstractType
     {
         return $this->setAttribute('placeholder', $placeholder);
     }
@@ -276,7 +209,7 @@ abstract class AbstractType
      * @param string $class
      * @return AbstractType
      */
-    public function addClass($class): AbstractType
+    public function addClass($class) : AbstractType
     {
         return $this->setAttribute('class',
             $this->hasAttribute('class')
@@ -286,7 +219,7 @@ abstract class AbstractType
     /**
      * @return array
      */
-    public function getMessages(): array
+    public function getMessages() : array
     {
         return $this->messages;
     }
@@ -296,40 +229,12 @@ abstract class AbstractType
      * @param string $message
      * @return AbstractType
      */
-    public function addMessage(string $type, string $message): AbstractType
+    public function addMessage(string $type, string $message) : AbstractType
     {
         $this->messages[$type][] = $message;
-        
         return $this;
     }
-    
-    /**
-     * @return bool
-     */
-    public function hasWrapper(): bool
-    {
-        return !empty($this->wrapper);
-    }
-    
-    /**
-     * @return array
-     */
-    public function getWrapper(): array
-    {
-        return $this->wrapper;
-    }
-    
-    /**
-     * @param array $wrapper
-     * @return AbstractType
-     */
-    public function setWrapper(array $wrapper)
-    {
-        $this->wrapper = $wrapper;
-        
-        return $this;
-    }
-    
+
     /**
      * @return string
      */
@@ -337,7 +242,7 @@ abstract class AbstractType
     {
         return $this->orientation;
     }
-    
+
     /**
      * @param string $orientation
      */
@@ -345,7 +250,7 @@ abstract class AbstractType
     {
         $this->orientation = $orientation;
     }
-    
+
     /**
      * lookup for validation errors for this control
      */
@@ -363,7 +268,7 @@ abstract class AbstractType
             }
         }
     }
-    
+
     /**
      * @param string $error
      */
@@ -371,11 +276,11 @@ abstract class AbstractType
     {
         $this->messages['errors'][] = $error;
     }
-    
+
     /**
      * @return string
      */
-    public function __toString(): string
+    public function __toString() : string
     {
         try {
             return $this->decorator instanceof AbstractType
@@ -384,7 +289,7 @@ abstract class AbstractType
             return $e->getMessage();
         }
     }
-    
+
     /**
      * Render control to html
      *
@@ -393,15 +298,16 @@ abstract class AbstractType
     protected function render()
     {
         $this->findErrors();
+        
         $input = view('antares/foundation::form.controls.' . $this->type, ['control' => $this]);
         
         return view('antares/foundation::form.' . $this->orientation, [
             'label'   => $this->getLabel()->render(),
             'input'   => $input,
             'control' => $this,
-            'errors'  => $this->messages['errors'] ?? [],
+            'errors'  => $this->messages['errors']?? [],
         ]);
-        
+
     }
-    
+
 }
