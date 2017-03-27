@@ -2,15 +2,9 @@
     {% if control.hasEmptyValue() %}
         <option>{{ control.getEmptyValue() }}</option>
     {% endif %}
-    {% for key, name in control.getValueOptions() %}
-        <option value="{{ key }}"
-            {% if control.getValue() is iterable and key in control.getValue() %}
-                selected
-            {% elseif control.getValue() == key %}
-                selected
-            {% endif %}
-        >
-            {{ name }}
+    {% for option in control.getValueOptions() %}
+        <option value="{{ option.value }}" {% if option.selected %}selected{% endif %} {{ option.getAttributes()|stringify }}>
+            {{ option.name }}
         </option>
     {% endfor %}
 </select>
