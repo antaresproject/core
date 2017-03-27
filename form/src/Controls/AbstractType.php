@@ -79,7 +79,7 @@ abstract class AbstractType implements Wrapperable, Attributable
     {
         $this->setName($name);
         $this->attributes = array_merge($attributes, ['name' => $this->getName()]);
-        $this->wrapper = ['class' => ''];
+        $this->wrapper = ['class' => 'col-dt-12'];
     }
     
     /**

@@ -65,6 +65,16 @@ class SelectType extends AbstractType
     }
     
     /**
+     * @param bool $multiple
+     * @return SelectType
+     */
+    public function setMultiple(bool $multiple): SelectType
+    {
+        return $multiple ? $this->setAttribute('multiple', 'multiple')
+            : $this->removeAttribute('multiple');
+    }
+    
+    /**
      * @param $array
      * @return array
      */

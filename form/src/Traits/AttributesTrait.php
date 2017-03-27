@@ -20,7 +20,6 @@
 
 namespace Antares\Form\Traits;
 
-
 /**
  * @author Marcin Domański <marcin@domanskim.pl>
  * Date: 27.03.17
@@ -28,11 +27,10 @@ namespace Antares\Form\Traits;
  */
 trait AttributesTrait
 {
-
+    
     /** @var array */
     protected $attributes = [];
-
-
+    
     /**
      * @param $name
      * @return bool
@@ -41,7 +39,7 @@ trait AttributesTrait
     {
         return isset($this->attributes[$name]);
     }
-
+    
     /**
      * @param $name
      * @param $value
@@ -50,10 +48,10 @@ trait AttributesTrait
     public function setAttribute(string $name, $value): self
     {
         $this->attributes[$name] = $value;
-
+        
         return $this;
     }
-
+    
     /**
      * @param $name
      * @param $value
@@ -64,10 +62,10 @@ trait AttributesTrait
         if (!$this->hasAttribute($name)) {
             $this->setAttribute($name, $value);
         }
-
+        
         return $this;
     }
-
+    
     /**
      * @param array $values
      * @return $this
@@ -75,10 +73,10 @@ trait AttributesTrait
     public function setAttributes(array $values): self
     {
         $this->attributes = $values;
-
+        
         return $this;
     }
-
+    
     /**
      * @param string $name
      * @param null   $fallbackValue
@@ -89,12 +87,12 @@ trait AttributesTrait
         if ($this->hasAttribute($name)) {
             return $this->attributes[$name];
         }
-
+        
         $this->setAttribute($name, $fallbackValue);
-
+        
         return $this->getAttribute($name);
     }
-
+    
     /**
      * @return array
      */
@@ -102,15 +100,17 @@ trait AttributesTrait
     {
         return $this->attributes;
     }
-
+    
     /**
      * @param $name
+     * @return $this
      */
     public function removeAttribute($name)
     {
-        if($this->hasAttribute($name)) {
+        if ($this->hasAttribute($name)) {
             unset($this->attributes[$name]);
         }
+        return $this;
     }
-
+    
 }

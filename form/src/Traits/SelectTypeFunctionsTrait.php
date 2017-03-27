@@ -29,7 +29,25 @@ use Antares\Form\Contracts\Attributable;
  */
 trait SelectTypeFunctionsTrait
 {
-
+    
+    /**
+     * Turn on/off select2 for this select
+     *
+     * @param bool $select2
+     * @return $this
+     */
+    public function useSelect2(bool $select2)
+    {
+        if (!$this instanceof Attributable) {
+            return $this;
+        }
+        
+        $searchOption = 'data-selectAR';
+        $select2 ? $this->setAttribute($searchOption, true) : $this->removeAttribute($searchOption);
+    
+        return $this;
+    }
+    
     /**
      * Turn on or off search feature for this select
      *
@@ -38,17 +56,17 @@ trait SelectTypeFunctionsTrait
      */
     public function setSearch(bool $search)
     {
-        if(!$this instanceof Attributable) {
+        if (!$this instanceof Attributable) {
             return $this;
         }
-        $searchOption = 'data-selectar--search';
+        $searchOption = 'data-selectAR--search';
         if ($search) {
             $this->setAttribute($searchOption, true);
         } else {
             $this->removeAttribute($searchOption);
         }
-
+        
         return $this;
     }
-
+    
 }
