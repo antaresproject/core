@@ -27,8 +27,8 @@ use Antares\Form\Labels\AbstractLabel;
 
 abstract class AbstractType
 {
-    
-    /** @var mixed */
+
+    /** @var string */
     protected $id;
     
     /** @var string */
@@ -43,20 +43,23 @@ abstract class AbstractType
     /** @var string|array */
     protected $value;
 
-    /** @var bool  */
+    /** @var bool */
     protected $hasLabel = false;
 
-    /** @var AbstractLabel  */
+    /** @var AbstractLabel */
     protected $label;
 
-    /** @var  AbstractType */
-    protected $wrapper;
-    
+    /** @var array */
+    public $wrapper;
+
     /** @var AbstractDecorator */
     protected $decorator;
 
     /** @var array */
     protected $messages = [];
+
+    /** @var string */
+    protected $orientation;
 
     /**
      * AbstractType constructor
@@ -88,12 +91,19 @@ abstract class AbstractType
     
     
     /**
-     * @param AbstractLabel $label
+     * @param AbstractLabel|string $label
      * @return AbstractType
      */
-    public function setLabel(AbstractLabel $label) : AbstractType
+    public function setLabel($label): AbstractType
     {
+        if (!$label instanceof AbstractLabel) {
+            $label = new Label($label);
+        }
+        if(!$label->hasControl()) {
+            $label->setControl($this);
+        }
         $this->label = $label;
+
         return $this;
     }
     
@@ -168,7 +178,7 @@ abstract class AbstractType
 
     /**
      * @param string $name
-     * @param null $fallbackValue
+     * @param null   $fallbackValue
      * @return mixed
      */
     public function getAttribute(string $name, $fallbackValue = null)
@@ -283,6 +293,49 @@ abstract class AbstractType
     }
 
     /**
+     * @return bool
+     */
+    public function hasWrapper(): bool
+    {
+        return !empty($this->wrapper);
+    }
+
+    /**
+     * @return array
+     */
+    public function getWrapper(): array
+    {
+        return $this->wrapper;
+    }
+
+    /**
+     * @param array $wrapper
+     * @return AbstractType
+     */
+    public function setWrapper(array $wrapper)
+    {
+        $this->wrapper = $wrapper;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrientation(): string
+    {
+        return $this->orientation;
+    }
+
+    /**
+     * @param string $orientation
+     */
+    public function setOrientation(string $orientation)
+    {
+        $this->orientation = $orientation;
+    }
+
+    /**
      * @return string
      */
     public function __toString() : string
@@ -300,6 +353,16 @@ abstract class AbstractType
      *
      * @return string
      */
-    abstract protected function render();
+    protected function render()
+    {
+        $input = view('antares/foundation::form.controls.' . $this->type, ['control' => $this]);
+
+        return view('antares/foundation::form.' . $this->orientation, [
+            'label'   => $this->getLabel()->render(),
+            'input'   => $input,
+            'control' => $this,
+        ]);
+
+    }
 
 }

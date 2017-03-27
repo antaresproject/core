@@ -21,6 +21,8 @@
 
 namespace Antares\Form\Labels;
 
+use Antares\Form\Controls\AbstractType;
+
 /**
  * @author Mariusz Jucha <mariuszjucha@gmail.com>
  * Date: 24.03.17
@@ -30,10 +32,31 @@ abstract class AbstractLabel
 {
 
     /** @var string */
-    protected $name;
+    public $name;
     
     /** @var array */
     protected $attributes;
+
+    /** @var string */
+    public $type;
+    /** @var string */
+    public $wrapper;
+    /** @var AbstractType */
+    protected $control;
+
+    /**
+     * AbstractLabel constructor.
+     *
+     * @param string            $name
+     * @param AbstractType|null $control
+     * @param array             $attributes
+     */
+    public function __construct(string $name, AbstractType $control = null, array $attributes = [])
+    {
+        $this->name = $name;
+        $this->control = $control;
+        $this->setAttributes($attributes);
+    }
     
     /**
      * @param $name
@@ -41,15 +64,15 @@ abstract class AbstractLabel
      */
     public function hasAttribute(string $name) : bool
     {
-        return isset($this->attributes, $name);
+        return isset($this->attributes[$name]);
     }
     
     /**
      * @param $name
      * @param $value
-     * @return AbstractType
+     * @return self
      */
-    public function setAttribute(string $name, $value) : AbstractType
+    public function setAttribute(string $name, $value) : self
     {
         $this->attributes[$name] = $value;
         return $this;
@@ -58,9 +81,9 @@ abstract class AbstractLabel
     /**
      * @param $name
      * @param $value
-     * @return AbstractType
+     * @return self
      */
-    public function setAttributeIfNotExists($name, $value) : AbstractType
+    public function setAttributeIfNotExists($name, $value) : self
     {
         if (!$this->hasAttribute($name)) {
             $this->setAttribute($name, $value);
@@ -70,9 +93,9 @@ abstract class AbstractLabel
     
     /**
      * @param array $values
-     * @return AbstractType
+     * @return self
      */
-    public function setAttributes(array $values) : AbstractType
+    public function setAttributes(array $values) : self
     {
         $this->attributes = $values;
         return $this;
@@ -99,24 +122,44 @@ abstract class AbstractLabel
     {
         return $this->attributes;
     }
-    
+
     /**
      * @return string
      */
-    public function __toString() : string
+    public function getType(): string
     {
-        try {
-            return $this->render();
-        } catch (\Throwable $e) {
-            return $e->getMessage();
-        }
+        return $this->type;
     }
-    
+
     /**
-     * Render label to html
-     *
-     * @return string
+     * @param string $type
      */
-    abstract protected function render();
-    
+    public function setType(string $type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasControl(): bool 
+    {
+        return $this->control instanceof AbstractType;
+    }
+
+    /**
+     * @param AbstractType $control
+     */
+    public function setControl(AbstractType $control)
+    {
+        $this->control = $control;
+    }
+
+
+    public function render()
+    {
+        return view('antares/foundation::form.labels.' . $this->type,
+            ['label' => $this, 'control' => $this->control])->render();
+    }
+
 }

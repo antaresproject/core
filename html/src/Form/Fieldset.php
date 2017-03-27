@@ -86,6 +86,8 @@ class Fieldset extends BaseGrid implements FieldsetContract
      */
     protected $params = [];
 
+    protected $orientation = 'horizontal';
+
     /**
      * {@inheritdoc}
      */
@@ -319,6 +321,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
      */
     public function addType(AbstractType $type)
     {
+        $type->setOrientation($this->orientation);
         $this->controls[] = $type;
     }
 
@@ -551,6 +554,24 @@ class Fieldset extends BaseGrid implements FieldsetContract
     public function hasLayout()
     {
         return !is_null($this->layout);
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrientation(): string
+    {
+        return $this->orientation;
+    }
+
+    /**
+     * Orientation can be 'horizontal' or 'vertical'
+     *
+     * @param string $orientation
+     */
+    public function setOrientation(string $orientation)
+    {
+        $this->orientation = $orientation;
     }
 
 }
