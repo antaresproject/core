@@ -25,6 +25,10 @@ namespace Antares\Form\Controls;
 use Antares\Form\Decorators\AbstractDecorator;
 use Antares\Form\Labels\AbstractLabel;
 use Antares\Form\Labels\Label;
+use Antares\Messages\MessageBag;
+use Illuminate\Session\SessionManager;
+use Illuminate\Session\Store;
+use Illuminate\Support\ViewErrorBag;
 
 abstract class AbstractType
 {
@@ -83,7 +87,7 @@ abstract class AbstractType
         if (!$label instanceof AbstractLabel) {
             $label = new Label($label);
         }
-        if(!$label->hasControl()) {
+        if (!$label->hasControl()) {
             $label->setControl($this);
         }
         $this->label = $label;
@@ -329,6 +333,32 @@ abstract class AbstractType
     }
 
     /**
+     * lookup for validation errors for this control
+     */
+    private function findErrors()
+    {
+        $session = session();
+        if (!$session->has('errors') || !$session->get('errors')->hasBag('default')) {
+            return;
+        }
+        /** @var MessageBag $messageBag */
+        $messageBag = session()->get('errors')->getBag('default');
+        if (isset($messageBag->messages()[$this->name])) {
+            foreach ($messageBag->messages()[$this->name] as $error) {
+                $this->addError($error);
+            }
+        }
+    }
+
+    /**
+     * @param string $error
+     */
+    public function addError(string $error)
+    {
+        $this->messages['errors'][] = $error;
+    }
+
+    /**
      * @return string
      */
     public function __toString(): string
@@ -348,12 +378,14 @@ abstract class AbstractType
      */
     protected function render()
     {
+        $this->findErrors();
         $input = view('antares/foundation::form.controls.' . $this->type, ['control' => $this]);
 
         return view('antares/foundation::form.' . $this->orientation, [
             'label'   => $this->getLabel()->render(),
             'input'   => $input,
             'control' => $this,
+            'errors'  => $this->messages['errors']?? [],
         ]);
 
     }

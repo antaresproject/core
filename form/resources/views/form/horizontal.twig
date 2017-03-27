@@ -6,8 +6,12 @@
         <div class="input-field">
             {{ input|raw }}
         </div>
-        <span id="{{ control.id }}_error" class="error col-13 col-mb-11">
-        {{ errors.first(control.name, format)|raw }}
-        </span>
+        {% if errors != null %}
+            <span id="{{ control.id }}_error" class="error col-13 col-mb-11">
+                {% for error in errors %}
+                    {{ error }}
+                {% endfor %}
+            </span>
+        {% endif %}
     </div>
 </div>
