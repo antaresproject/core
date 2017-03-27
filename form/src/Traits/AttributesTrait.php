@@ -103,4 +103,14 @@ trait AttributesTrait
         return $this->attributes;
     }
 
+    /**
+     * @param $name
+     */
+    public function removeAttribute($name)
+    {
+        if($this->hasAttribute($name)) {
+            unset($this->attributes[$name]);
+        }
+    }
+
 }

@@ -21,15 +21,19 @@
 
 namespace Antares\Form\Labels;
 
+use Antares\Form\Contracts\Attributable;
 use Antares\Form\Controls\AbstractType;
+use Antares\Form\Traits\AttributesTrait;
 
 /**
  * @author Mariusz Jucha <mariuszjucha@gmail.com>
  * Date: 24.03.17
  * Time: 11:16
  */
-abstract class AbstractLabel
+abstract class AbstractLabel implements Attributable
 {
+
+    use AttributesTrait;
 
     /** @var string */
     public $name;
@@ -41,6 +45,8 @@ abstract class AbstractLabel
     public $type;
     /** @var string */
     public $wrapper;
+    /** @var string */
+    public $info;
     /** @var AbstractType */
     protected $control;
 
@@ -48,79 +54,24 @@ abstract class AbstractLabel
      * AbstractLabel constructor.
      *
      * @param string            $name
+     * @param string            $info
      * @param AbstractType|null $control
      * @param array             $attributes
      */
-    public function __construct(string $name, AbstractType $control = null, array $attributes = [])
+    public function __construct(string $name, AbstractType $control = null, $info = '', array $attributes = [])
     {
         $this->name = $name;
         $this->control = $control;
+        $this->info = $info;
         $this->setAttributes($attributes);
     }
-    
+
     /**
-     * @param $name
      * @return bool
      */
-    public function hasAttribute(string $name) : bool
+    public function hasInfo()
     {
-        return isset($this->attributes[$name]);
-    }
-    
-    /**
-     * @param $name
-     * @param $value
-     * @return self
-     */
-    public function setAttribute(string $name, $value) : self
-    {
-        $this->attributes[$name] = $value;
-        return $this;
-    }
-    
-    /**
-     * @param $name
-     * @param $value
-     * @return self
-     */
-    public function setAttributeIfNotExists($name, $value) : self
-    {
-        if (!$this->hasAttribute($name)) {
-            $this->setAttribute($name, $value);
-        }
-        return $this;
-    }
-    
-    /**
-     * @param array $values
-     * @return self
-     */
-    public function setAttributes(array $values) : self
-    {
-        $this->attributes = $values;
-        return $this;
-    }
-    
-    /**
-     * @param string $name
-     * @param null $fallbackValue
-     * @return mixed
-     */
-    public function getAttribute(string $name, $fallbackValue = null)
-    {
-        if ($this->hasAttribute($name)) {
-            return $this->attributes[$name];
-        }
-        
-        return $this->setAttribute($name, $fallbackValue);
-    }
-    
-    /**
-     * @return array
-     */
-    public function getAttributes() : array
-    {
-        return $this->attributes;
+        return strlen($this->info) > 0;
     }
 
     /**

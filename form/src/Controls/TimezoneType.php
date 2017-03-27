@@ -24,10 +24,10 @@ namespace Antares\Form\Controls;
 use Antares\Brands\Model\Country;
 use Antares\Form\Controls\Elements\Option;
 
-class CountryType extends SelectType
+class TimezoneType extends SelectType
 {
 
-    protected $emptyValue = 'Select Country';
+    protected $emptyValue = 'Select Timezone';
 
     /**
      * CountryType constructor.
@@ -38,30 +38,18 @@ class CountryType extends SelectType
     public function __construct($name, $attributes = [])
     {
         parent::__construct($name, $attributes);
-        $this->setCountriesFromDB();
+        $this->setTimezones();
     }
 
     /**
      * Fill select with countries saved in DB
      */
-    private function setCountriesFromDB()
+    private function setTimezones()
     {
-        /** @var Country $item */
-        foreach(app(Country::class)->all() as $item) {
-            $this->valueOptions[] = new Option($item->id, $item->name, ['data-country' => $item->code]);
+        foreach(\DateTimeZone::listIdentifiers() as $identifier) {
+            $key = strtolower(str_replace('/', '_', $identifier));
+            $this->valueOptions[] = new Option($key, $identifier);
         }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function render()
-    {
-        $this->setAttribute('data-flag-select--search', 'true');
-        $this->addWrapper('class', 'input-field input-field--icon');
-        $this->prependHtml = sprintf('<span class="input-field__icon"><span class="flag-icon flag-icon-us"></span></span>');
-
-        return parent::render();
     }
 
 }

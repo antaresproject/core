@@ -23,11 +23,12 @@ namespace Antares\Form\Controls;
 
 use Antares\Brands\Model\Country;
 use Antares\Form\Controls\Elements\Option;
+use Antares\Translations\Models\Languages;
 
-class CountryType extends SelectType
+class LanguageType extends SelectType
 {
 
-    protected $emptyValue = 'Select Country';
+    protected $emptyValue = 'Select Language';
 
     /**
      * CountryType constructor.
@@ -47,7 +48,7 @@ class CountryType extends SelectType
     private function setCountriesFromDB()
     {
         /** @var Country $item */
-        foreach(app(Country::class)->all() as $item) {
+        foreach(app(Languages::class)->all() as $item) {
             $this->valueOptions[] = new Option($item->id, $item->name, ['data-country' => $item->code]);
         }
     }
