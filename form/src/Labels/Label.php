@@ -20,6 +20,7 @@
 
 namespace Antares\Form\Labels;
 
+
 /**
  * @author Marcin Domański <marcin@domanskim.pl>
  * Date: 24.03.17
@@ -28,22 +29,35 @@ namespace Antares\Form\Labels;
 class Label extends AbstractLabel
 {
 
+    public $type = 'default';
+
+    protected $wrapperClass;
 
     /**
-     * Label constructor.
-     *
-     * @param string $name
-     * @param array  $attributes
+     * @return bool
      */
-    public function __construct(string $name, array $attributes = [])
+    public function hasWrapperClass(): bool
     {
-        $this->name = $name;
-        $this->setAttributes($attributes);
+        return !empty($this->wrapper);
     }
 
-    protected function render()
+    /**
+     * @return string
+     */
+    public function getWrapperClass()
     {
-        // TODO: Implement render() method.
+        return $this->wrapper;
+    }
+
+    /**
+     * @param string $wrapperClass
+     * @return self
+     */
+    public function setWrapper(string $wrapperClass): self
+    {
+        $this->wrapperClass = $wrapperClass;
+
+        return $this;
     }
 
 }

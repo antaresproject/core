@@ -27,9 +27,4 @@ class TextType extends AbstractType
     /** @var string */
     protected $type = 'text';
 
-    protected function render()
-    {
-        return view('antares/foundation::form.controls.text', ['control' => $this]);
-    }
-
 }
