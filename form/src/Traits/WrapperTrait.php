@@ -50,6 +50,8 @@ trait WrapperTrait
     }
 
     /**
+     * If wrapper not empty - creates div with specified here attributes
+     *
      * @param array $wrapper
      * @return self
      */

@@ -298,9 +298,8 @@ abstract class AbstractType implements Wrapperable, Attributable
     protected function render()
     {
         $this->findErrors();
-        
         $input = view('antares/foundation::form.controls.' . $this->type, ['control' => $this]);
-        
+
         return view('antares/foundation::form.' . $this->orientation, [
             'label'   => $this->getLabel()->render(),
             'input'   => $input,

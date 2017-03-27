@@ -13,22 +13,24 @@
  * @package        Antares Core
  * @version        0.9.0
  * @author         Antares Team
+ * @author         Mariusz Jucha <mariuszjucha@gmail.com>
  * @license        BSD License (3-clause)
  * @copyright  (c) 2017, Antares Project
  * @link           http://antaresproject.io
  */
 
-namespace Antares\Form\Labels;
+namespace Antares\Form\Controls;
 
+use Antares\Brands\Model\Country;
+use Antares\Form\Controls\Elements\Option;
 
-/**
- * @author Marcin Domański <marcin@domanskim.pl>
- * Date: 24.03.17
- * Time: 14:06
- */
-class Label extends AbstractLabel
+class ALTDatetimeType extends TextType
 {
 
-    public $type = 'default';
+    public function render()
+    {
+        $this->addAttribute('data-alt-datetimepicker', true);
+        return parent::render();
+    }
 
 }
