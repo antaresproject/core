@@ -58,7 +58,7 @@ class CountryType extends SelectType
     public function render()
     {
         $this->setAttribute('data-flag-select--search', 'true');
-        $this->setWrapper(['class' => 'input-field input-field--icon']);
+        $this->addWrapper('class', 'input-field input-field--icon');
         $this->prependHtml = sprintf('<span class="input-field__icon"><span class="flag-icon flag-icon-us"></span></span>');
 
         return parent::render();

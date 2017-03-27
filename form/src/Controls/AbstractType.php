@@ -103,10 +103,10 @@ abstract class AbstractType implements Wrapperable, Attributable
      * @param AbstractLabel|string $label
      * @return AbstractType
      */
-    public function setLabel($label): AbstractType
+    public function setLabel($label, $info = ''): AbstractType
     {
         if (!$label instanceof AbstractLabel) {
-            $label = new Label($label);
+            $label = new Label($label, $this, $info);
         }
         if (!$label->hasControl()) {
             $label->setControl($this);
