@@ -19,6 +19,7 @@
  * @link       http://antaresproject.io
  */
 
+
 namespace Antares\Foundation\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -32,7 +33,7 @@ class Kernel extends HttpKernel
      * @return void
      */
     protected $bootstrappers = [
-        \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
+        \Illuminate\Foundation\Bootstrap\DetectEnvironment::class,
         \Antares\Config\Bootstrap\LoadConfiguration::class,
         \Antares\Console\ConfigureLogging::class,
         \Illuminate\Foundation\Bootstrap\HandleExceptions::class,

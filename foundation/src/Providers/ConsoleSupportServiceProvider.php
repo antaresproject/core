@@ -19,6 +19,7 @@
  * @link       http://antaresproject.io
  */
 
+
 namespace Antares\Foundation\Providers;
 
 use Illuminate\Support\AggregateServiceProvider;

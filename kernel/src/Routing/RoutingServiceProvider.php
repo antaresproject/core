@@ -19,10 +19,10 @@
  * @link       http://antaresproject.io
  */
 
+
 namespace Antares\Routing;
 
 use Illuminate\Routing\RoutingServiceProvider as ServiceProvider;
-use Illuminate\Contracts\Foundation\Application;
 
 class RoutingServiceProvider extends ServiceProvider
 {
@@ -34,7 +34,8 @@ class RoutingServiceProvider extends ServiceProvider
      */
     protected function registerRouter()
     {
-        $this->app->singleton('router', function (Application $app) {
+
+        $this->app['router'] = $this->app->share(function ($app) {
             return new Router($app->make('events'), $app);
         });
     }
