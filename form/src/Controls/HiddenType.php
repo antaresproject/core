@@ -26,5 +26,5 @@ class HiddenType extends AbstractType
     
     /** @var string */
     protected $type = 'hidden';
-    
+
 }

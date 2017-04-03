@@ -298,15 +298,19 @@ abstract class AbstractType implements Wrapperable, Attributable
     protected function render()
     {
         $this->findErrors();
+
+        if(!$this->label instanceof AbstractLabel && $this->type != 'hidden') {
+            $this->setLabel(new Label(ucfirst($this->name)));
+        }
+
         $input = view('antares/foundation::form.controls.' . $this->type, ['control' => $this]);
 
         return view('antares/foundation::form.' . $this->orientation, [
-            'label'   => $this->getLabel()->render(),
+            'label'   => ($this->label instanceof AbstractLabel)? $this->getLabel()->render():'',
             'input'   => $input,
             'control' => $this,
             'errors'  => $this->messages['errors']?? [],
         ]);
-
     }
 
 }
