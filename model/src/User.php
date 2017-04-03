@@ -35,7 +35,6 @@ use Antares\Contracts\Notification\Recipient;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Antares\Logger\Traits\LogRecorder;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 use Antares\Search\Traits\SearchTrait;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -51,7 +50,7 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
  */
-class User extends Eloquent implements UserContract, CanResetPasswordContract, Recipient, Taggable, JWTSubject, Commentable, AuthorizableContract
+class User extends Eloquent implements UserContract, CanResetPasswordContract, Recipient, Taggable, Commentable, AuthorizableContract
 {
 
     use Authenticatable,
@@ -291,7 +290,7 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
 
     public function getArea()
     {
-        $areas = $this->roles->lists('area')->toArray();
+        $areas = $this->roles->pluck('area')->toArray();
         return count($areas) > 1 ? $areas : current($areas);
     }
 
@@ -393,7 +392,7 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
     public function getRoles()
     {
         $roles = (array_key_exists('roles', $this->relations) ? $this->relations['roles'] : $this->roles());
-        return $roles->lists('name');
+        return $roles->pluck('name');
     }
 
     /**
@@ -451,7 +450,7 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
      *
      * @return bool
      */
-    public function is($roles)
+    public function hasRoles($roles)
     {
         $userRoles = $this->getRoles()->toArray();
 

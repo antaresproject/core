@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\View\Helper;
 
 use function view;
@@ -51,7 +50,7 @@ class FilterSelect extends AbstractHelper
     public function render()
     {
         $this->attributes = array_merge($this->attributes, [
-            'dataProvider' => $this->attributes['dataProvider']->lists('name', 'id'),
+            'dataProvider' => $this->attributes['dataProvider']->pluck('name', 'id'),
         ]);
         $view             = view($this->view, $this->attributes);
 

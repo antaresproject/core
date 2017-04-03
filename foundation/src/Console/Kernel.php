@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Console;
 
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -33,7 +32,7 @@ class Kernel extends ConsoleKernel
      * @return void
      */
     protected $bootstrappers = [
-        'Illuminate\Foundation\Bootstrap\DetectEnvironment',
+        'Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables',
         'Antares\Config\Bootstrap\LoadConfiguration',
         'Antares\Console\ConfigureLogging',
         'Illuminate\Foundation\Bootstrap\HandleExceptions',

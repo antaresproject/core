@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Console;
 
 use Exception;
@@ -65,9 +64,9 @@ class BaseKernel
      * @var array
      */
     protected $bootstrappers = [
-        'Illuminate\Foundation\Bootstrap\DetectEnvironment',
+        'Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables',
         'Antares\Config\Bootstrap\LoadConfiguration',
-        'Antares\Console\ConfigureLogging',
+        //'Antares\Console\ConfigureLogging',
         'Illuminate\Foundation\Bootstrap\HandleExceptions',
         'Illuminate\Foundation\Bootstrap\RegisterFacades',
         'Illuminate\Foundation\Bootstrap\SetRequestForConsole',

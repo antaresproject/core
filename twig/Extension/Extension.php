@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Twig\Extension;
 
 use Illuminate\Contracts\Foundation\Application;
@@ -58,18 +57,10 @@ class Extension extends Twig_Extension
      */
     public function getFunctions()
     {
-        $extensionActive = new Twig_SimpleFunction('extension_active', function ($name) {
-            $extensions = $this->application->make('antares.memory')->make('component')->get('extensions.active');
-            if (empty($extensions)) {
-                return false;
-            }
-            $found = array_where($extensions, function($key) use($name) {
-                return strpos($key, $name) !== false;
-            });
-            return !empty($found);
-        });
         return [
-            $extensionActive
+            new Twig_SimpleFunction('extension_active', function ($name) {
+                        return extension_active($name);
+                    })
         ];
     }
 

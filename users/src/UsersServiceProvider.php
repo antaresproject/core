@@ -86,13 +86,12 @@ class UsersServiceProvider extends ModuleServiceProvider
     }
 
     /**
-     * users service boot
-     * 
-     * @param Router $router
+     * Users service boot
      */
-    public function boot(Router $router)
+    public function boot()
     {
-        $path = __DIR__ . '/../';
+        $router = $this->app->make(Router::class);
+        $path   = __DIR__ . '/../';
         $this->addConfigComponent($this->routeGroup, $this->routeGroup, "{$path}/resources/config");
         $this->addLanguageComponent($this->routeGroup, $this->routeGroup, "{$path}/resources/lang");
         if (!$this->app->routesAreCached()) {

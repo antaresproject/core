@@ -12,7 +12,7 @@
         "yajra/laravel-datatables-oracle": "6.15.2",
         "aarondfrancis/urlcrypt": "0.2.*",        
         "torann/geoip": "0.2.*@dev",
-        "tijsverkoyen/css-to-inline-styles": "~1.2",
+        "tijsverkoyen/css-to-inline-styles": "~2.2",
         "twig/twig": "~1.15|~2.0",
         "laravolt/avatar": "^1.0@dev",
         "thomaswelton/laravel-gravatar": "~1.0",

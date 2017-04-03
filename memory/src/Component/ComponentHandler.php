@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Memory\Component;
 
 use Antares\Contracts\Memory\Handler as HandlerContract;
@@ -208,7 +207,7 @@ class ComponentHandler extends DefaultHandler implements HandlerContract
         $changed[] = isset($items['extensions']['active']) && (($countActive != count($items['extensions']['active'])));
         $changed[] = isset($items['extensions']['available']) && (($countAvailable != count($items['extensions']['available'])));
 
-        $return = array_where($changed, function ($key, $value) {
+        $return = array_where($changed, function ($value, $key) {
             return $value == true;
         });
 

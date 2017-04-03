@@ -18,14 +18,13 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Area;
 
 use Antares\Support\Providers\ServiceProvider;
 use Antares\Area\Contracts\AreaManagerContract;
 use Antares\Area\Middleware\AreaMiddleware;
-use Antares\Area\AreaManager;
 use Illuminate\Routing\Router;
+use Antares\Area\AreaManager;
 
 class AreaServiceProvider extends ServiceProvider
 {
@@ -42,11 +41,10 @@ class AreaServiceProvider extends ServiceProvider
 
     /**
      * Boot the service provider and bind the {area} wildcard to the router.
-     * 
-     * @param Router $router
      */
-    public function boot(Router $router)
+    public function boot()
     {
+        $router = $this->app->make(Router::class);
         $router->bind('area', function($value) {
             return $this->app->make(AreaManagerContract::class)->getById($value);
         });

@@ -180,7 +180,7 @@ class SessionGuard extends BaseGuard implements StatefulGuard, GuardContract
 
         $roles = $this->events->until('antares.auth: roles', [$user, (array) $roles]);
         if (!is_null($user)) {
-            $roles = $user->roles->lists('name', 'id')->toArray();
+            $roles = $user->roles->pluck('name', 'id')->toArray();
         }
 
         // It possible that after event are all propagated we don't have a

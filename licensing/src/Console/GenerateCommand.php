@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Licensing\Console;
 
 use Antares\Licensing\Model\LicenseTypes;
@@ -72,7 +71,7 @@ class GenerateCommand extends BaseCommand
         $hostname        = $this->ask("Please provide license hostname", $defaultHostname);
 
         $defaultType = 'trial';
-        $types       = implode(', ', array_values(LicenseTypes::all()->lists('name', 'id')->toArray()));
+        $types       = implode(', ', array_values(LicenseTypes::all()->pluck('name', 'id')->toArray()));
         $type        = $this->ask("Please provide license type ({$types})", $defaultType);
 
         if (!$this->validateType($type)) {

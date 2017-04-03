@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands;
 
 use Antares\Foundation\Support\Providers\ModuleServiceProvider;
@@ -107,13 +106,11 @@ class BrandsServiceProvider extends ModuleServiceProvider
     }
 
     /**
-     * boots components
-     * 
-     * @param Router $router
+     * Boot components
      */
-    public function boot(Router $router)
+    public function boot()
     {
-        parent::boot($router);
+        parent::boot();
         $this->app->make('view')->composer(['antares/foundation::brands.email', 'antares/foundation::brands.edit'], BrandsPane::class);
     }
 

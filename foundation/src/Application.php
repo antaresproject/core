@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation;
 
 use Antares\Contracts\Foundation\Application as ApplicationContract;
@@ -49,7 +48,7 @@ class Application extends BaseApplication implements ApplicationContract
      *
      * @return string
      */
-    public function configPath()
+    public function configPath($path = '')
     {
         return $this->basePath . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'config';
     }
@@ -59,9 +58,9 @@ class Application extends BaseApplication implements ApplicationContract
      *
      * @return string
      */
-    public function databasePath()
+    public function databasePath($path = '')
     {
-        return $this->databasePath ? : $this->basePath . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'database';
+        return $this->databasePath ?: $this->basePath . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'database';
     }
 
     /**

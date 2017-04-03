@@ -70,7 +70,7 @@ class OrderAdapter
         if (!($columns = ajax('order'))) {
             return false;
         }
-        $value = collect($columns)->first(function($key, $item) use(&$index) {
+        $value = collect($columns)->first(function($item, $key) use(&$index) {
             $value = array_get($item, 'column');
             return (!is_null($value) && $value !== "");
         });

@@ -96,14 +96,14 @@ class Form extends FormBuilder implements Presenter
                             ->wrapper(['class' => 'w220'])
                             ->label(trans('antares/brands::label.brand.date_format'))
                             ->options(function() {
-                        return app(DateFormat::class)->query()->get()->lists('format', 'id');
+                        return app(DateFormat::class)->query()->get()->pluck('format', 'id');
                     });
                     $dateFormatModel = $this->model->options()->first();
 
                     if (!is_null($dateFormatModel)) {
                         $dateFormat->value($dateFormatModel->date_format_id);
                     }
-                    $options = app(Country::class)->query()->get()->lists('name', 'code');
+                    $options = app(Country::class)->query()->get()->pluck('name', 'code');
                     $country = $fieldset->control('select', 'default_country')
                             ->label(trans('antares/brands::label.brand.default_country'))
                             ->attributes(['data-flag-select', 'data-selectAR' => true, 'class' => 'w200'])
@@ -123,7 +123,7 @@ class Form extends FormBuilder implements Presenter
                     if (!is_null($optionsModel)) {
                         $country->value($optionsModel->country()->first()->code);
                     }
-                    $langs = app(Languages::class)->query()->get()->lists('name', 'code');
+                    $langs = app(Languages::class)->query()->get()->pluck('name', 'code');
                     $fieldset->control('select', 'default_language')
                             ->label(trans('antares/brands::label.brand.default_language'))
                             ->attributes(['data-flag-select', 'data-selectAR' => true, 'class' => 'w300'])
@@ -155,7 +155,7 @@ class Form extends FormBuilder implements Presenter
                                 ->attributes([
                                     'class' => 'brand-selector'
                         ]);
-                        $brands = $this->container->make('antares.brand')->get()->lists('name', 'id');
+                        $brands = $this->container->make('antares.brand')->get()->pluck('name', 'id');
                         $fieldset->control('select', 'brands')
                                 ->label(trans('Actual brands'))
                                 ->options($brands)

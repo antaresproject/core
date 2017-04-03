@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation;
 
 use Antares\Model\Role;
@@ -70,7 +69,7 @@ class Areas
     {
         $collection      = $this->model->query()->get();
         $this->areaRoles = $collection;
-        $filtered        = $collection->lists('area')->unique()->filter(function($element) {
+        $filtered        = $collection->pluck('area')->unique()->filter(function($element) {
             return !is_null($element);
         });
         $this->areas = $filtered->toArray();
@@ -105,7 +104,7 @@ class Areas
             return '';
         }
         $user      = auth()->user();
-        $userRoles = $user->roles->lists('id');
+        $userRoles = $user->roles->pluck('id');
         $area      = null;
         $role      = null;
         foreach ($userRoles as $userRole) {

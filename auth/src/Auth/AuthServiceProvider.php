@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Auth;
 
 use Antares\Authorization\Policy;
@@ -77,9 +76,9 @@ class AuthServiceProvider extends ServiceProvider
     }
 
     /**
-     * boot service provider
+     * Boot service provider
      */
-    public function boot(Router $router)
+    public function boot()
     {
         Event::listen('antares.auth', 'Antares\Auth\Composers\MultiuserPlaceholder@onBootExtension');
     }

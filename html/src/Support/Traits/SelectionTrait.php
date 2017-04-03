@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Html\Support\Traits;
 
 use Closure;
@@ -45,10 +44,11 @@ trait SelectionTrait
         !isset($options['name']) && $options['name'] = $name;
         $html            = [];
         $optionsData     = ($optionsData instanceof Closure) ? call_user_func($optionsData) : $optionsData;
-
         foreach ($list as $value => $display) {
             $html[] = $this->getSelectOption($display, $value, $selected, $optionsData);
         }
+
+
         $options = $this->getHtmlBuilder()->attributes($options);
         $list    = implode('', $html);
 

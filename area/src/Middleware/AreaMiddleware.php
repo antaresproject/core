@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Area\Middleware;
 
 use Illuminate\Http\Request;
@@ -38,7 +37,7 @@ class AreaMiddleware
     {
         $area = area();
         if (!auth()->guest() && $area && $area !== 'antares' && !request()->ajax() && !($request->isJson() OR $request->wantsJson())) {
-            $areas = user()->roles->lists('area')->toArray();
+            $areas = user()->roles->pluck('area')->toArray();
             if (!in_array($area, $areas)) {
                 return redirect_with_message(handles('antares/foundation::/'), trans('You are not allowed to area.'), 'error');
             }

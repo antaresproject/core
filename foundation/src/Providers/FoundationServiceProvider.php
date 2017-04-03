@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Providers;
 
 use Antares\Support\Providers\Traits\AliasesProviderTrait;
@@ -212,9 +211,10 @@ class FoundationServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(Router $router)
+    public function boot()
     {
-        $path = realpath(__DIR__ . '/../../');
+        $router = $this->app->make(Router::class);
+        $path   = realpath(__DIR__ . '/../../');
         $this->addConfigComponent('antares/foundation', 'antares/foundation', $path . '/resources/config');
         $this->addLanguageComponent('antares/foundation', 'antares/foundation', $path . '/resources/lang');
         $this->assignAreaTemplate();

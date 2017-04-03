@@ -25,7 +25,6 @@ use Antares\Foundation\Listeners\DatatableMassActionsDependableActions;
 use Antares\Foundation\Listeners\BreadcrumbsMenuDependableActions;
 use Antares\Foundation\Listeners\DatatableDependableActions;
 use Antares\Support\Providers\ServiceProvider;
-use Illuminate\Routing\Router;
 
 class DependableActionsServiceProvider extends ServiceProvider
 {
@@ -43,10 +42,9 @@ class DependableActionsServiceProvider extends ServiceProvider
     /**
      * Bootstrap the application events.
      *
-     * @param Router $router
      * @return void
      */
-    public function boot(Router $router)
+    public function boot()
     {
         $events = $this->app->make('events');
         $events->listen('datatables:*:after.action.edit', DatatableDependableActions::class);

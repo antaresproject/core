@@ -194,12 +194,18 @@ class User extends Processor implements UserCreatorCommand, UserRemoverCommand, 
     public function destroy(UserRemoverListener $listener, $id)
     {
 
-        /**
-         * @todo add mass actions removing
-         */
-        if (app('request')->isMethod('post')) {
+        if (!is_null($users = input('attr'))) {
+            DB::transaction(function () use ($users) {
+                foreach ($users as $uid) {
+                    $user = Foundation::make('antares.user')->findOrFail($uid);
+                    $this->fireEvent('deleting', [$user]);
+                    $user->delete();
+                    $this->fireEvent('deleted', [$user]);
+                }
+            });
             return $listener->usersDeleted();
         }
+
         $user = Foundation::make('antares.user')->findOrFail($id);
         if ((string) $user->id === (string) user()->id) {
             return $listener->selfDeletionFailed();
@@ -246,7 +252,7 @@ class User extends Processor implements UserCreatorCommand, UserRemoverCommand, 
         DB::beginTransaction();
 
         try {
-            $roles = ($user->exists) ? $user->roles->lists('id')->toArray() : Role::members()->get()->lists('id')->toArray();
+            $roles = ($user->exists) ? $user->roles->pluck('id')->toArray() : Role::members()->get()->pluck('id')->toArray();
             $user->save();
             $user->roles()->sync($roles);
         } catch (Exception $ex) {

@@ -99,7 +99,7 @@ class DashboardController extends AdminController implements Listener
     {
         set_meta('title', trans('antares/foundation::title.home'));
         $this->app->make('events')->fire('version.check');
-        if (auth()->user()->is('member')) {
+        if (auth()->user()->hasRoles('member')) {
             return view('antares/foundation::dashboard.member');
         }
 

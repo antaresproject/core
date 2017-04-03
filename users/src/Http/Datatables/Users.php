@@ -63,7 +63,7 @@ class Users extends DataTable
 
         if (request()->ajax()) {
             $columns = request()->get('columns');
-            $all     = array_where($columns, function ($index, $item) {
+            $all     = array_where($columns, function ($item, $index) {
                 return array_get($item, 'data') == 'status' && array_get($item, 'search.value') == 'all';
             });
             if (!empty($all)) {
@@ -196,7 +196,7 @@ class Users extends DataTable
     protected function statuses()
     {
 
-        $statuses = User::select([DB::raw('count(id) as counter'), 'status'])->clients()->groupBy('status')->get()->lists('counter', 'status')->toArray();
+        $statuses = User::select([DB::raw('count(id) as counter'), 'status'])->clients()->groupBy('status')->get()->pluck('counter', 'status')->toArray();
         return ['all' => trans('antares/users::messages.statuses.all'),
             0     => trans('antares/users::messages.statuses.archived', ['count' => array_get($statuses, 0, 0)]),
             1     => trans('antares/users::messages.statuses.active', ['count' => array_get($statuses, 1, 0)])

@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Form;
 
 use Illuminate\Contracts\Container\Container;
@@ -87,7 +86,7 @@ class User extends FormBuilder implements Presenter
                             ->label(trans('antares/foundation::label.users.roles'))
                             ->attributes(['class' => 'w470'])
                             ->options(function () {
-                                return app('antares.role')->members()->lists('name', 'id');
+                                return app('antares.role')->members()->pluck('name', 'id');
                             })
                             ->value(function ($row) {
                                 $roles = [];

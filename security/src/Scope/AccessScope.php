@@ -18,17 +18,15 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Security\Scope;
 
-use Illuminate\Database\Eloquent\ScopeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Cache;
 use Antares\Model\Role;
 
-class AccessScope implements ScopeInterface
+class AccessScope
 {
 
     /**
@@ -64,7 +62,7 @@ class AccessScope implements ScopeInterface
 
         $uid = user()->id;
         if (get_class($model) === \Antares\Model\User::class) {
-            if(empty($elements)) {
+            if (empty($elements)) {
                 $builder->whereRaw("(tbl_users.id is null or tbl_users.id=?)", [$uid]);
             } else {
                 $in = implode(',', array_values($elements));

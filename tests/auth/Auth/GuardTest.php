@@ -148,7 +148,7 @@ class GuardTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Support\Auth::is() method returning valid roles.
+     * Test Antares\Support\Auth::hasRoles() method returning valid roles.
      *
      * @test
      */
@@ -170,16 +170,16 @@ class GuardTest extends \PHPUnit_Framework_TestCase
         $stub->setDispatcher($events);
         $stub->setUser($user);
 
-        $this->assertTrue($stub->is('admin'));
-        $this->assertTrue($stub->is('user'));
-        $this->assertFalse($stub->is('reseller'));
+        $this->assertTrue($stub->hasRoles('admin'));
+        $this->assertTrue($stub->hasRoles('user'));
+        $this->assertFalse($stub->hasRoles('reseller'));
 
-        $this->assertTrue($stub->is(['admin', 'user']));
-        $this->assertFalse($stub->is(['admin', 'reseller']));
+        $this->assertTrue($stub->hasRoles(['admin', 'user']));
+        $this->assertFalse($stub->hasRoles(['admin', 'reseller']));
     }
 
     /**
-     * Test Antares\Support\Auth::is() method when invalid roles is
+     * Test Antares\Support\Auth::hasRoles() method when invalid roles is
      * returned.
      *
      * @test
@@ -202,12 +202,12 @@ class GuardTest extends \PHPUnit_Framework_TestCase
         $stub->setDispatcher($events);
         $stub->setUser($user);
 
-        $this->assertFalse($stub->is('admin'));
-        $this->assertFalse($stub->is('editor'));
-        $this->assertFalse($stub->is('user'));
+        $this->assertFalse($stub->hasRoles('admin'));
+        $this->assertFalse($stub->hasRoles('editor'));
+        $this->assertFalse($stub->hasRoles('user'));
 
-        $this->assertFalse($stub->is(['admin', 'editor']));
-        $this->assertFalse($stub->is(['admin', 'user']));
+        $this->assertFalse($stub->hasRoles(['admin', 'editor']));
+        $this->assertFalse($stub->hasRoles(['admin', 'user']));
     }
 
     /**

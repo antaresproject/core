@@ -130,7 +130,7 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Support\Auth::is() method returning valid roles.
+     * Test Antares\Support\Auth::hasRoles() method returning valid roles.
      *
      * @test
      */
@@ -147,15 +147,15 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
         $stub        = new SessionGuard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
-        $this->assertTrue($stub->is('admin'));
-        $this->assertTrue($stub->is('editor'));
-        $this->assertFalse($stub->is('user'));
-        $this->assertTrue($stub->is(['admin', 'editor']));
-        $this->assertFalse($stub->is(['admin', 'user']));
+        $this->assertTrue($stub->hasRoles('admin'));
+        $this->assertTrue($stub->hasRoles('editor'));
+        $this->assertFalse($stub->hasRoles('user'));
+        $this->assertTrue($stub->hasRoles(['admin', 'editor']));
+        $this->assertFalse($stub->hasRoles(['admin', 'user']));
     }
 
     /**
-     * Test Antares\Support\Auth::is() method when invalid roles is
+     * Test Antares\Support\Auth::hasRoles() method when invalid roles is
      * returned.
      *
      * @test
@@ -174,11 +174,11 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
         $stub        = new SessionGuard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
-        $this->assertFalse($stub->is('admin'));
-        $this->assertFalse($stub->is('editor'));
-        $this->assertFalse($stub->is('user'));
-        $this->assertFalse($stub->is(['admin', 'editor']));
-        $this->assertFalse($stub->is(['admin', 'user']));
+        $this->assertFalse($stub->hasRoles('admin'));
+        $this->assertFalse($stub->hasRoles('editor'));
+        $this->assertFalse($stub->hasRoles('user'));
+        $this->assertFalse($stub->hasRoles(['admin', 'editor']));
+        $this->assertFalse($stub->hasRoles(['admin', 'user']));
     }
 
     /**

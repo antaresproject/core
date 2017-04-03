@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Memory\Model;
 
 use Antares\Memory\Exception\PermissionNotSavedException;
@@ -179,11 +178,11 @@ class Permission extends Eloquent
         $builder = (!is_null($brandId)) ? static::select($columns)->where('brand_id', '=', $brandId)->orWhere('brand_id') : static::select($columns);
         $models  = $builder->with(['attachedActions'])->get();
         $return  = ['extensions' => ['active' => [], 'available' => [], 'modules' => []],];
-        $roles   = $this->role->lists('name', 'id')->toArray();
+        $roles   = $this->role->pluck('name', 'id')->toArray();
 
 
         foreach ($models as $model) {
-            $actions = $model->attachedActions->lists('name', 'id')->toArray();
+            $actions = $model->attachedActions->pluck('name', 'id')->toArray();
             $isCore  = $this->isCoreComponent($model->name);
 
             if (!$isCore) {
@@ -239,7 +238,7 @@ class Permission extends Eloquent
                 }
                 $actions[$action->id] = $action->name;
             }
-            $brands = !is_null($brandId) ? [$brandId] : $this->brands()->getModel()->lists('id')->toArray();
+            $brands = !is_null($brandId) ? [$brandId] : $this->brands()->getModel()->pluck('id')->toArray();
 
 
             foreach ($values['acl'] as $rule => $isAllowed) {

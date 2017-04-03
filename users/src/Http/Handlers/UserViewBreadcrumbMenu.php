@@ -87,7 +87,7 @@ class UserViewBreadcrumbMenu extends MenuHandler
     protected function getUser()
     {
         if (is_null($this->user)) {
-            $uid        = from_route('users');
+            $uid        = from_route('users', from_route('user'));
             $this->user = User::select(['id', 'firstname', 'lastname', 'status'])->whereId($uid)->first();
         }
         return $this->user;
@@ -116,7 +116,7 @@ class UserViewBreadcrumbMenu extends MenuHandler
 
 
 
-        $uid = from_route('users');
+        $uid = from_route('user');
         if ($canUpdateUser) {
             $this->handler
                     ->add('user-edit', '^:user-view')

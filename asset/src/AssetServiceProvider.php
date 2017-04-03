@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Asset;
 
 use Antares\Asset\Http\Middleware\AfterMiddleware;
@@ -208,26 +207,11 @@ class AssetServiceProvider extends ServiceProvider
     }
 
     /**
-     * booting service provider
-     * 
-     * @param Router $router
+     * Booting service provider
      */
-    public function boot(Router $router)
+    public function boot()
     {
-        $app = $this->app;
-        if (isset($app['twig'])) {
-            $app['twig']->addExtension(new AsseticExtension($app['assetic']));
-
-            $app->extend('assetic.lazy_asset_manager', function ($am, $app) {
-                $am->setLoader('twig', new TwigFormulaLoader($app['twig']));
-                return $am;
-            });
-            $app->extend('assetic.dumper', function ($helper, $app) {
-                $helper->setTwig($app['twig'], $app['twig.loader']);
-                return $helper;
-            });
-        }
-        $router->pushMiddlewareToGroup('web', AfterMiddleware::class);
+        $this->app->make(Router::class)->pushMiddlewareToGroup('web', AfterMiddleware::class);
     }
 
     /**

@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Support\Providers;
 
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -128,10 +127,12 @@ abstract class ModuleServiceProvider extends ServiceProvider
 
     /**
      * (non-PHPdoc)
+     * 
      * @see \Illuminate\Foundation\Support\Providers\RouteServiceProvider::boot()
      */
-    public function boot(Router $router)
+    public function boot()
     {
+        $router = $this->app->make(Router::class);
         $events = $this->app->make(Dispatcher::class);
         $kernel = $this->app->make(Kernel::class);
 

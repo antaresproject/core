@@ -73,7 +73,7 @@ class GroupsFilterAdapter
             return false;
         }
         $index = 0;
-        $value = collect($columns)->first(function($key, $item) use(&$index) {
+        $value = collect($columns)->first(function($item, $key) use(&$index) {
             $value = array_get($item, 'search.value');
             $index = $key;
             return (!is_null($value) && $value !== "");
