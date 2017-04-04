@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Providers;
 
 use Illuminate\Support\AggregateServiceProvider;
@@ -34,11 +33,11 @@ class ConsoleSupportServiceProvider extends AggregateServiceProvider
      */
     protected $providers = [
         'Antares\Foundation\Providers\ArtisanServiceProvider',
-        'Illuminate\Console\ScheduleServiceProvider',
+        //'Illuminate\Console\ScheduleServiceProvider',
         'Antares\Database\MigrationServiceProvider',
-        'Illuminate\Database\SeedServiceProvider',
+        //'Illuminate\Database\SeedServiceProvider',
         'Illuminate\Foundation\Providers\ComposerServiceProvider',
-        'Illuminate\Queue\ConsoleServiceProvider',
+        //'Illuminate\Queue\ConsoleServiceProvider',
         'Antares\Auth\CommandServiceProvider',
         'Antares\Extension\CommandServiceProvider',
         'Antares\Memory\CommandServiceProvider',

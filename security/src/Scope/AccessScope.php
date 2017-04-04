@@ -22,11 +22,12 @@ namespace Antares\Security\Scope;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Cache;
 use Antares\Model\Role;
 
-class AccessScope
+class AccessScope implements Scope
 {
 
     /**

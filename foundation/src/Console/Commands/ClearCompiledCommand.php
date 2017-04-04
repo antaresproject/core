@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -49,7 +48,7 @@ class ClearCompiledCommand extends Command
     public function fire()
     {
         $files = [
-            $this->laravel->getCachedCompilePath(),
+            //$this->laravel->getCachedCompilePath(),
             $this->laravel->getCachedServicesPath(),
             $this->laravel->getCachedExtensionServicesPath(),
         ];

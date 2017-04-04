@@ -19,18 +19,13 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Installation\Http\Controllers;
 
 use Antares\Installation\Processor\Installer as InstallerProcessor;
 use Antares\Foundation\Http\Controllers\BaseController;
 use Antares\Installation\Processor\Installer;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\MessageBag;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Antares\Html\Builder;
 
 class InstallerController extends BaseController
 {
@@ -50,7 +45,6 @@ class InstallerController extends BaseController
         $this->processor = $processor;
         set_meta('navigation::usernav', false);
         set_meta('title', 'Installer');
-
         parent::__construct();
     }
 
@@ -73,6 +67,7 @@ class InstallerController extends BaseController
      */
     public function index()
     {
+
         app('antares.memory')->forgetCache();
         return $this->processor->index($this);
     }
@@ -166,59 +161,7 @@ class InstallerController extends BaseController
      */
     public function prepareSucceed()
     {
-        return $this->redirect(handles('antares::install/license'));
-    }
-
-    /**
-     * setting application license
-     * 
-     * @return View
-     */
-    public function license(Request $request)
-    {
-        return $this->processor->license($this, $request);
-    }
-
-    /**
-     * setting application license
-     * 
-     * @return View
-     */
-    public function licenseFailedValidation(MessageBag $messageBag)
-    {
-        return $this->redirectWithErrors(handles('antares::install/license'), $messageBag);
-    }
-
-    /**
-     * when license details has not been stored
-     * 
-     * @return RedirectResponse
-     */
-    public function licenseFailedStore()
-    {
-        return redirect_with_message(handles('antares::install/license'), trans('Unable to store license file.'), 'error');
-    }
-
-    /**
-     * when license details has been stored
-     * 
-     * @return RedirectResponse
-     */
-    public function licenseSuccessStore()
-    {
-        return redirect_with_message(handles('antares::install/create'), trans('License details has been stored.'), 'success');
-    }
-
-    /**
-     * shows license form
-     * 
-     * @param Builder $form
-     * @param String $result
-     * @return View
-     */
-    public function showLicenseForm($form)
-    {
-        return view('antares/installer::license', compact('form'));
+        return $this->redirect(handles('antares::install/create'));
     }
 
     /**
@@ -261,8 +204,6 @@ class InstallerController extends BaseController
      */
     public function componentsSucceed(array $data)
     {
-
-
         return view('antares/installer::components', $data);
     }
 

@@ -488,7 +488,7 @@ if (!function_exists('from_route')) {
             return null;
         }
         $current = Route::current();
-        return !is_null($current) ? $current->getParameter($key, $default) : $default;
+        return !is_null($current) ? $current->parameter($key, $default) : $default;
     }
 
 }
@@ -531,7 +531,7 @@ if (!function_exists('uri')) {
             return trim(str_replace(url()->to(''), '', $referer), '/');
         }
         $route = Route::getCurrentRoute();
-        return !is_null($route) ? $route->getUri() : null;
+        return !is_null($route) ? $route->uri() : null;
     }
 
 }

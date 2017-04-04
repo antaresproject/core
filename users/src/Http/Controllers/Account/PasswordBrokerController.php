@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Controllers\Account;
 
 use Antares\Foundation\Http\Controllers\AdminController;
@@ -49,7 +48,7 @@ class PasswordBrokerController extends AdminController implements PasswordResetL
      */
     protected function setupMiddleware()
     {
-        $this->middleware('antares.guest');
+        $this->aliasMiddleware('antares.guest');
     }
 
     /**

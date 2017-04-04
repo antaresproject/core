@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 return
         array(
             'Select components and modules'          => 'Select components and modules',
@@ -34,10 +32,5 @@ return
             'The list of required system components' => 'The list of required system components',
             'Available components'                   => 'Available components',
             'The list of available components'       => 'The list of available components',
-            'License Details'                        => 'License Details',
-            'License Key'                            => 'License Key',
-            'License file: '                         => 'License file: ',
             'Submit'                                 => 'Submit',
-            'License details'                        => 'License details',
-            'License key: '                          => 'License key: ',
 );

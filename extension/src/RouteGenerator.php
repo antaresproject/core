@@ -69,8 +69,12 @@ class RouteGenerator implements RouteGeneratorContract
      * @param  string  $handles
      * @param  \Illuminate\Http\Request  $request
      */
-    public function __construct($handles, Request $request)
+    public function __construct($handles = null, Request $request)
     {
+        if (is_null($handles)) {
+            vdump(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
+            exit;
+        }
         $this->request = $request;
         $this->setBaseUrl($this->request->root());
         if (is_null($handles) || !Str::startsWith($handles, ['//', 'http://', 'https://'])) {

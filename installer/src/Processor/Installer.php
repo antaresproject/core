@@ -19,25 +19,18 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Installation\Processor;
 
-use Antares\Installation\Http\Controllers\InstallerController;
-use Antares\Installation\Http\Form\License as LicenseForm;
 use Antares\Contracts\Installation\Installation;
 use Antares\Contracts\Installation\Requirement;
 use Antares\Installation\Repository\Components;
-use Antares\Installation\Repository\License;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\Finder\Finder;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Antares\Support\Facades\Form;
 use Illuminate\Cache\FileStore;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
 use ReflectionException;
 use Antares\Model\User;
 use Exception;
@@ -67,27 +60,18 @@ class Installer
     protected $components;
 
     /**
-     * license repository instance
-     *
-     * @var License 
-     */
-    protected $license;
-
-    /**
      * Create a new processor instance.
      *
      * @param Installation $installer
      * @param Requirement $requirement
      * @param Components $components
-     * @param License $license
      */
-    public function __construct(Installation $installer, Requirement $requirement, Components $components, License $license)
+    public function __construct(Installation $installer, Requirement $requirement, Components $components)
     {
         $this->installer   = $installer;
         $this->requirement = $requirement;
         $this->installer->bootInstallerFiles();
         $this->components  = $components;
-        $this->license     = $license;
     }
 
     /**
@@ -184,33 +168,6 @@ class Installer
         $this->clearCache();
         $this->installer->migrate();
         return $listener->prepareSucceed();
-    }
-
-    /**
-     * processing store license details
-     * 
-     * @param InstallerController $listener
-     * @param Request $request
-     * @return View|RedirectResponse
-     */
-    public function license($listener, Request $request)
-    {
-        $form = LicenseForm::getInstance();
-        if (!$request->isMethod('post')) {
-            return $listener->showLicenseForm($form);
-        }
-        $enabled = config('license.enabled');
-        if ($enabled) {
-            $uploaded = $this->license->uploadLicense($request);
-
-            if (!$uploaded) {
-                return $listener->licenseFailedStore();
-            }
-            if (!$form->isValid()) {
-                return $listener->licenseFailedValidation($form->getMessageBag());
-            }
-        }
-        return $listener->licenseSuccessStore();
     }
 
     /**

@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Middleware;
 
 use Antares\Users\Processor\Activity\UsersActivity;
@@ -49,7 +48,7 @@ class CaptureUserActivityMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if($request->has('userActivity')) {
+        if ($request->has('userActivity')) {
             $this->processor->updateActivity(auth()->user());
             exit();
         }

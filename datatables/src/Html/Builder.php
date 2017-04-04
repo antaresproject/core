@@ -455,7 +455,7 @@ EOD;
 
         if ($this->searchable) {
             $value  = (($value  = $this->getGlobalSearchValue()) !== false) ? $value : '';
-            $return .= '<div class="search-box search-box--dark search-box--big ml25 mr50">
+            $return .= '<div class="search-box search-box--dark search-box--big ' . (!empty($this->selects) ? 'ml25' : '') . ' mr50">
                     <i class="zmdi zmdi-search"></i>
                     <form action="#">
                         <div class="search-box__mdl-textfield mdl-textfield mdl-js-textfield w260" >

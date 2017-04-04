@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation;
 
 use Antares\Contracts\Foundation\Foundation as FoundationContract;
@@ -247,9 +246,7 @@ class Foundation extends RouteManager implements FoundationContract
     {
         if (in_array($name, ['antares'])) {
             $level = app('antares.areas')->findMatched(Request::segment(1), $this->app->make('config')->get('antares/foundation::handles', $default));
-            return $this->app->make('Antares\Extension\RouteGenerator', [
-                        $level, $this->app->make('request'),
-            ]);
+            return new \Antares\Extension\RouteGenerator($level, $this->app->make('request'));
         }
         return parent::generateRouteByName($name, $default);
     }

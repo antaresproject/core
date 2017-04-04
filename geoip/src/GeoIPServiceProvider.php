@@ -18,10 +18,10 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\GeoIP;
 
 use Torann\GeoIP\GeoIPServiceProvider as SupportGeoIpServiceProvider;
+use Illuminate\Contracts\Foundation\Application;
 use Antares\GeoIP\Console\UpdateCommand;
 
 class GeoIPServiceProvider extends SupportGeoIpServiceProvider
@@ -35,11 +35,10 @@ class GeoIPServiceProvider extends SupportGeoIpServiceProvider
     public function register()
     {
         // Register providers.
-        $this->app['geoip'] = $this->app->share(function($app) {
+        $this->app->singleton('geoip', function (Application $app) {
             return new GeoIP($app['config'], $app["session.store"]);
         });
-
-        $this->app['command.geoip.update'] = $this->app->share(function ($app) {
+        $this->app->singleton('command.geoip.update', function (Application $app) {
             return new UpdateCommand($app['config']);
         });
         $this->commands(['command.geoip.update']);

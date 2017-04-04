@@ -139,7 +139,7 @@ class RouteManagerTest extends ApplicationTestCase
     public function testHandlesMethodWithCsrfToken()
     {
         $this->app['session'] = $session              = m::mock(\Illuminate\Session\SessionManager::class);
-        $session->shouldReceive('getToken')->andReturn('StAGiQ');
+        $session->shouldReceive('token')->andReturn('StAGiQ');
         $stub                 = new StubRouteManager($this->app);
 
         $options = ['csrf' => true];

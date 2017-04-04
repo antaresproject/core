@@ -31,7 +31,7 @@ abstract class AdminController extends BaseController
      */
     public function __construct()
     {
-        $this->middleware('antares.installable');
+        //$this->middleware('antares.installable');
         parent::__construct();
     }
 

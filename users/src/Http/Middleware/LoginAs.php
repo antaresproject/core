@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Middleware;
 
 use Closure;
@@ -65,13 +64,13 @@ class LoginAs
      */
     public function handle($request, Closure $next)
     {
-        $as = $request->input('_as');
-
-        if ($this->authorize() && !is_null($as)) {
-            $this->auth->loginUsingId($as);
-
-            return new RedirectResponse($request->url());
-        }
+//        $as = $request->input('_as');
+//
+//        if ($this->authorize() && !is_null($as)) {
+//            $this->auth->loginUsingId($as);
+//
+//            return new RedirectResponse($request->url());
+//        }
 
         return $next($request);
     }

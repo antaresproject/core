@@ -77,7 +77,6 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-
         try {
             $installed = app('antares.installed');
 
@@ -88,7 +87,6 @@ class Handler extends ExceptionHandler
             }
             $factory = app('Illuminate\Contracts\View\Factory');
             $factory->getFinder()->addNamespace('antares/foundation', __DIR__ . '/../foundation/resources/views/');
-
             if ($e instanceof NotFoundHttpException) {
                 return response($factory->make('antares/foundation::exception.404'), 404);
             }
@@ -118,6 +116,7 @@ class Handler extends ExceptionHandler
                 unset($trace[$i]['object']);
             }
 
+
             $data = [
                 'code'      => 500,
                 'type'      => get_class($e),
@@ -143,8 +142,7 @@ class Handler extends ExceptionHandler
             $hasCode = function($file) {
                 return $file !== 'unknown' && is_file($file);
             };
-            $debug = ($installed) ? memory('site.mode') !== 'production' : env('APP_DEBUG');
-
+            $debug     = ($installed) ? memory('site.mode') !== 'production' : env('APP_DEBUG');
             $autoSend  = $installed && memory('notification.send.always') != null;
             $autoSend  = ($ajax or $debug) ? false : $autoSend;
             $arguments = [
@@ -162,7 +160,6 @@ class Handler extends ExceptionHandler
                 'ajax'                => $ajax
             ];
 
-
             if ($e instanceof ModelNotFoundException) {
                 view()->share('content_class', 'error-page');
                 return response(view('antares/foundation::exception.404_model_not_found', $arguments), 404);
@@ -170,6 +167,7 @@ class Handler extends ExceptionHandler
             if ($e instanceof NotFoundHttpException) {
                 return response(view('antares/foundation::exception.404', $arguments), 404);
             }
+
             $this->scripts($autoSend);
             $viewPath = $debug ? 'antares/foundation::exception.500_details' : 'antares/foundation::exception.500_production';
             array_set($arguments, 'solution', config('solution.' . snake_case(get_class($e))));
@@ -193,7 +191,8 @@ class Handler extends ExceptionHandler
             $arguments['content'] = $view->render();
             return response($factory->make($viewPath, $arguments), 500);
         } catch (Exception $e) {
-            
+            vdump($e);
+            exit;
         }
     }
 

@@ -34,7 +34,6 @@ use Antares\Users\Validation\User as Validator;
 use Antares\Foundation\Processor\Processor;
 use Antares\Support\Facades\Foundation;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Antares\Model\User as Eloquent;
 use Illuminate\Support\Facades\DB;

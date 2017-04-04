@@ -47,10 +47,10 @@ class BreadcrumbsMenuDependableActions extends AbstractDependableActions
      * @param \Antares\Foundation\Support\MenuHandler $menu
      * @return void
      */
-    public function handle($menu)
+    public function handle($eventName, array $params = [])
     {
+        $menu       = last($params);
         $this->menu = $menu;
-
         $attributes = $menu->getAttributes();
 
         if (is_null($entity     = array_get($attributes, 'entity')) or empty($dependable = $this->actions)) {

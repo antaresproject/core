@@ -197,12 +197,12 @@ class Foundation extends Twig_Extension
                         return '';
                     }),
             new Twig_SimpleFunction('event_gridable', function () {
-                        $path = \Illuminate\Support\Facades\Route::getCurrentRoute()->getPath();
+                        $path = \Illuminate\Support\Facades\Route::getCurrentRoute()->uri();
                         Event::fire('widgets:render.' . $path . '.right');
                         return '';
                     }),
             new Twig_SimpleFunction('event_gridable', function () {
-                        $path = \Illuminate\Support\Facades\Route::getCurrentRoute()->getPath();
+                        $path = \Illuminate\Support\Facades\Route::getCurrentRoute()->uri();
                         Event::fire('widgets:render.' . $path . '.right');
                         return '';
                     }),

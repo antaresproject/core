@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Authorization;
 
 use Illuminate\Support\ServiceProvider;

@@ -53,51 +53,12 @@ class FoundationTest extends ApplicationTestCase
      */
     private function getInstallableContainerSetup()
     {
-
-
-        $app = $this->app;
-
-
-        $request    = m::mock('\Illuminate\Http\Request');
-        $acl        = $app['antares.acl'];
-        $config     = $app['config'];
-        $event      = $app['events'];
-        $mailer     = $app['antares.mail'];
-        $memory     = $app['antares.memory'];
-        $notifier   = $app['antares.notifier'];
-        $translator = $app['translator'];
-        $widget     = $app['antares.widget'];
-
+        $app                      = $this->app;
+        $request                  = m::mock('\Illuminate\Http\Request');
         $app['env']               = 'production';
         $app['antares.installed'] = false;
         $app['request']           = $request;
 
-        $memoryProvider = m::mock('\Antares\Contracts\Memory\Provider');
-
-        //$memoryProvider->shouldReceive('get')->once()->with('site.name')->andReturn('Antares');
-//        $acl->shouldReceive('make')->once()->andReturn($acl)
-//                ->shouldReceive('attach')->once()->with($memoryProvider)->andReturn($acl);
-//        $mailer->shouldReceive('attach')->once()->with($memoryProvider)->andReturnNull();
-//        $memory->shouldReceive('make')->once()->andReturn($memoryProvider);
-//        $notifier->shouldReceive('setDefaultDriver')->once()->with('antares')->andReturnNull();
-//        $widget->shouldReceive('make')->once()->with('menu.antares')->andReturn($widget)
-//                ->shouldReceive('make')->once()->with('menu.app')->andReturn($widget)
-//                ->shouldReceive('add->title->link')->once()->andReturnNull();
-//        $translator->shouldReceive('get')->andReturn('foo');
-//        $event->shouldReceive('listen')->once()
-//                ->with('antares.started: admin', 'Antares\Foundation\Http\Handlers\UserMenuHandler')->andReturnNull()
-//                ->shouldReceive('listen')->once()
-//                ->with('antares.started: admin', 'Antares\Foundation\Http\Handlers\ExtensionMenuHandler')->andReturnNull()
-//                ->shouldReceive('listen')->once()
-//                ->with('antares.started: admin', 'Antares\Foundation\Http\Handlers\SettingMenuHandler')->andReturnNull()
-//                ->shouldReceive('listen')->once()
-//                ->with('antares.started: admin', 'Antares\Foundation\Http\Handlers\ResourcesMenuHandler')->andReturnNull()
-//                ->shouldReceive('listen')->once()
-//                ->with('antares.ready: admin', 'Antares\Foundation\AdminMenuHandler')->andReturnNull()
-//                ->shouldReceive('fire')->once()->with('antares.started', [$memoryProvider])->andReturnNull();
-//        $config->shouldReceive('get')->once()->with('antares/foundation::handles', '/')->andReturn('admin');
-//        $request->shouldReceive('root')->andReturn('http://localhost')
-//                ->shouldReceive('secure')->andReturn(false);
 
         return $app;
     }

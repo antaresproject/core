@@ -38,4 +38,9 @@ class Route extends BaseRoute
         return parent::name($nameWithArea);
     }
 
+    public function resource($param)
+    {
+        
+    }
+
 }

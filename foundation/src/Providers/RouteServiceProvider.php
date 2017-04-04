@@ -76,8 +76,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $kernel = $this->app->make(Kernel::class);
         $router = $this->app->make(Router::class);
+        $kernel = $this->app->make(Kernel::class);
         $this->registerRouteMiddleware($router, $kernel);
         $this->app->make('events')->fire('antares.ready');
     }

@@ -72,7 +72,6 @@ class Requirement implements RequirementContract
             'writableStorage'        => $this->checkWritableStorage(),
             'writableAsset'          => $this->checkWritableAsset(),
             'writableTickets'        => $this->checkWritableTickets(),
-            'writableLicense'        => $this->checkWritableLicense(),
             'writableLogs'           => $this->checkWritableLogs(),
             'writableTemp'           => $this->checkWritableTemp(),
             'writablePublic'         => $this->checkWriteablePublic(),
@@ -132,17 +131,6 @@ class Requirement implements RequirementContract
     protected function checkWritableLogs()
     {
         $path = rtrim($this->app->make('path.storage'), '/') . '/logs';
-        return $this->isWriteable($path);
-    }
-
-    /**
-     * check license directory is writeable
-     * 
-     * @return array
-     */
-    protected function checkWritableLicense()
-    {
-        $path = rtrim($this->app->make('path.storage'), '/') . '/license';
         return $this->isWriteable($path);
     }
 

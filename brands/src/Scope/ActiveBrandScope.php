@@ -18,14 +18,13 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\Scope;
 
-use Illuminate\Database\Eloquent\ScopeInterface;
+use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class ActiveBrandScope implements ScopeInterface
+class ActiveBrandScope implements Scope
 {
 
     /**

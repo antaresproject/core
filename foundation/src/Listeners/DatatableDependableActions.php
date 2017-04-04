@@ -35,8 +35,10 @@ class DatatableDependableActions extends AbstractDependableActions
      * 
      * @return array
      */
-    public function handle($actions, $row)
+    public function handle($eventName, array $params = [])
     {
+        $actions  = $params[0];
+        $row      = $params[1];
         $elements = $this->getActions($row);
         $return   = [];
         foreach ($elements as $element) {

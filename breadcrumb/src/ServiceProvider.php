@@ -18,10 +18,10 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Breadcrumb;
 
 use DaveJamesMiller\Breadcrumbs\ServiceProvider as BreadcrumbServiceProvider;
+use Illuminate\Contracts\Foundation\Application;
 
 class ServiceProvider extends BreadcrumbServiceProvider
 {
@@ -33,7 +33,7 @@ class ServiceProvider extends BreadcrumbServiceProvider
      */
     public function register()
     {
-        $this->app['breadcrumbs'] = $this->app->share(function($app) {
+        $this->app->singleton('breadcrumbs', function (Application $app) {
             $breadcrumbs = $this->app->make('Antares\Breadcrumb\Manager');
             $reflection  = new \ReflectionClass(get_parent_class());
             $viewPath    = dirname($reflection->getFileName()) . '/../views/';

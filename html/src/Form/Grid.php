@@ -283,9 +283,7 @@ class Grid extends BaseGrid implements GridContract
         }
 
         $primaryEventName = 'forms:' . str_slug($this->name) . '.fieldsets.' . $lastFieldset;
-        if (!Event::firing("forms:*.before")) {
-            Event::fire($primaryEventName . '.before', $this);
-        }
+        Event::fire($primaryEventName . '.before', $this);
 
 
         $fieldset = new Fieldset($this->app, $name, $callback, $this->name, $this->name);
@@ -301,9 +299,7 @@ class Grid extends BaseGrid implements GridContract
 
         $this->keyMap[$name] = $fieldset;
         $return              = $this->fieldsets->push($fieldset);
-        if (!Event::firing("forms:*.after")) {
-            Event::fire($primaryEventName . '.after', $this);
-        }
+        Event::fire($primaryEventName . '.after', $this);
 
         return $return;
     }

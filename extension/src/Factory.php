@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Extension;
 
 use Antares\Contracts\Extension\Dispatcher as DispatcherContract;
@@ -245,10 +244,7 @@ class Factory implements FactoryContract
         !$this->booted() && $this->app->make('Antares\Extension\Bootstrap\LoadExtension')->bootstrap($this->app);
         if (!isset($this->routes[$name])) {
             $key                 = "antares/extension::handles.{$name}";
-            $this->routes[$name] = $this->app->make('Antares\Extension\RouteGenerator', [
-                $this->app->make('config')->get($key, $default),
-                $this->app->make('request'),
-            ]);
+            $this->routes[$name] = new \Antares\Extension\RouteGenerator($this->app->make('config')->get($key, $default), $this->app->make('request'));
         }
 
         return $this->routes[$name];

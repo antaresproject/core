@@ -24,7 +24,6 @@ use Antares\Users\Http\Filter\UserCreatedAtFilter;
 use Antares\Datatables\Services\DataTable;
 use Antares\Support\Facades\Foundation;
 use Illuminate\Support\Facades\DB;
-use Antares\Support\Facades\Form;
 use Antares\Support\Facades\HTML;
 use Antares\Model\User;
 

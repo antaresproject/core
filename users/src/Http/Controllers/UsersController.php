@@ -263,7 +263,7 @@ class UsersController extends AdminController implements UserCreator, UserRemove
     public function updateUserFailed(array $errors)
     {
         $message = trans('antares/foundation::response.db-failed', $errors);
-        return $this->redirectWithMessage(url()->previous(), $message, 'error');
+        return $this->redirectWithMessage(handles("antares::users/index"), $message, 'error');
     }
 
     /**
@@ -274,7 +274,7 @@ class UsersController extends AdminController implements UserCreator, UserRemove
     public function userUpdated()
     {
         $message = trans('antares/foundation::response.users.update');
-        return $this->redirectWithMessage(url()->previous(), $message);
+        return $this->redirectWithMessage(handles("antares::users/index"), $message);
     }
 
     /**
@@ -310,7 +310,7 @@ class UsersController extends AdminController implements UserCreator, UserRemove
     public function usersDeleted()
     {
         $message = trans_choice('antares/foundation::response.users.delete', 2);
-        return $this->redirectWithMessage(URL::previous(), $message);
+        return $this->redirectWithMessage(handles("antares::users/index"), $message);
     }
 
     /**

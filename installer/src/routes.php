@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 use Illuminate\Routing\Router;
 
 $router->group(['prefix' => 'install'], function (Router $router) {
@@ -29,7 +27,6 @@ $router->group(['prefix' => 'install'], function (Router $router) {
     $router->get('done', 'InstallerController@done');
     $router->get('prepare', 'InstallerController@prepare');
 
-    $router->match(['GET', 'POST'], 'license', 'InstallerController@license');
 
     $router->get('components', 'InstallerController@components');
     $router->post('components/store', 'InstallerController@storeComponents');

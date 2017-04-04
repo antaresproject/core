@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Support\Providers\Traits;
 
 use Illuminate\Routing\Router;
@@ -47,6 +46,8 @@ trait MiddlewareProviderTrait
      */
     protected function registerRouteMiddleware(Router $router, Kernel $kernel)
     {
+
+
         foreach ((array) $this->middleware as $middleware) {
             $kernel->pushMiddleware($middleware);
         }
@@ -57,10 +58,10 @@ trait MiddlewareProviderTrait
         $moduleName                         = $this->resolveModuleName();
         $this->routeMiddleware[$moduleName] = FormMiddleware::class;
         if (empty($this->routeMiddleware) && isset($this->routeGroup) && $this->routeGroup !== 'app') {
-            $router->middleware($moduleName, ModuleMiddleware::class);
+            $router->aliasMiddleware($moduleName, ModuleMiddleware::class);
         } else {
             foreach ((array) $this->routeMiddleware as $key => $middleware) {
-                $router->middleware($key, $middleware);
+                $router->aliasMiddleware($key, $middleware);
             }
         }
     }

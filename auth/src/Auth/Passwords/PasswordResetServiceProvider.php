@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Auth\Passwords;
 
 use Illuminate\Contracts\Foundation\Application;
