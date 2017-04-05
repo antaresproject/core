@@ -18,14 +18,12 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Asset;
 
 use Antares\Asset\Factory;
 use Antares\Asset\AssetSymlinker;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Finder\SplFileInfo;
-use Exception;
 
 class AssetPublisher
 {

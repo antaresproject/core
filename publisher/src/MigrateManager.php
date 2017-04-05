@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Publisher;
 
 use Illuminate\Database\Seeder as IlluminateSeeder;
@@ -279,9 +278,8 @@ class MigrateManager implements Publisher
                 continue;
             }
             $files = $this->migrator->getMigrationFiles($path);
-            $this->migrator->requireFiles($path, $files);
             foreach ($files as $file) {
-                $migration           = $this->migrator->resolve($file);
+                $migration           = $this->migrator->resolve(str_replace('.php', '', $file));
                 $migrator            = new stdClass();
                 $migrator->migration = $file;
                 $this->migrator->getRepository()->delete($migrator);

@@ -462,16 +462,20 @@ if (!function_exists('extensions')) {
     /**
      * List of extensions getter
      */
-    function extensions()
+    function extensions($name = null)
     {
         $extensions = app('antares.memory')->make('component')->get('extensions.active');
         $return     = [];
         if (empty($extensions)) {
             return $return;
         }
+        if (!is_null($name)) {
+            return array_get($extensions, 'components/' . $name);
+        }
         foreach ($extensions as $name => $extension) {
             $return[str_replace('components', 'antares', $name)] = $extension;
         }
+
         return $return;
     }
 
@@ -599,15 +603,19 @@ if (!function_exists('brand_logo')) {
     {
         $registry = app('antares.memory')->make('registry');
         $logoPath = config('antares/brands::logo.default_path');
-        if (in_array($param, ['logo', 'favicon'])) {
-            $logo    = $registry->get('brand.configuration.template.favicon');
-            $default = $param == 'logo' ? asset($logoPath . 'logo_tear.png') : asset($logoPath . 'favicon--big.png');
-            return strlen($logo) <= 0 ? $default : asset('img/logos/' . $logo);
-        } elseif ($param == 'big') {
-            $logo = $registry->get('brand.configuration.template.logo');
-            return !is_null($logo) ? asset('img/logos/' . $logo) : $default;
+        try {
+            if (in_array($param, ['logo', 'favicon'])) {
+                $logo    = $registry->get('brand.configuration.template.favicon');
+                $default = $param == 'logo' ? asset($logoPath . 'logo_tear.png') : asset($logoPath . 'favicon--big.png');
+                return strlen($logo) <= 0 ? $default : asset('img/logos/' . $logo);
+            } elseif ($param == 'big') {
+                $logo = $registry->get('brand.configuration.template.logo');
+                return !is_null($logo) ? asset('img/logos/' . $logo) : $default;
+            }
+            return asset('img/logos/' . $param);
+        } catch (\Exception $ex) {
+            return asset($logoPath . 'logo_default_tear.png');
         }
-        return asset('img/logos/' . $param);
     }
 
 }

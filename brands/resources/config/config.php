@@ -17,12 +17,10 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 return [
     'per_page'     => 10,
     'logo'         => [
-        'default_path' => '/_dist/img/theme/antares/logo/',
+        'default_path' => '/img/logos/',
         'destination'  => public_path('img/logos'),
         'rules'        => [
             "acceptedFiles" => ['jpg', 'png', 'jpeg'],

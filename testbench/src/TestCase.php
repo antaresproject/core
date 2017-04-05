@@ -19,14 +19,12 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Testbench;
 
 use Illuminate\Database\Eloquent\Factory;
 use PHPUnit_Framework_TestCase;
 use Antares\Testbench\Traits\WithFactories;
 use Antares\Testbench\Traits\ApplicationTrait;
-use Illuminate\Foundation\Testing\Concerns\ImpersonatesUsers;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Antares\Testbench\Contracts\TestCase as TestCaseContract;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithConsole;
@@ -41,7 +39,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase implements TestCaseCo
     use ApplicationTrait,
         InteractsWithContainer,
         MakesHttpRequests,
-        ImpersonatesUsers,
+    //ImpersonatesUsers,
         InteractsWithConsole,
         InteractsWithDatabase,
         InteractsWithSession,
@@ -83,6 +81,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase implements TestCaseCo
      */
     public function setUp()
     {
+
         if (!$this->app) {
             $this->refreshApplication();
         }
