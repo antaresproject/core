@@ -21,8 +21,10 @@
 return [
     'use_gravatar'                => 'Use gravatar instead',
     'package'                     => [
-        'activation' => 'Activation package: :name',
-        'uninstall'  => 'Uninstall package: :name',
+        'install'       => 'Installing package: :name',
+        'activate'      => 'Activating package: :name',
+        'deactivate'    => 'Deactivating package: :name',
+        'uninstall'     => 'Uninstalling package: :name',
     ],
     'confirm'                     => 'Confirm',
     'select_placeholder_default'  => 'select :name...',

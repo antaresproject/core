@@ -24,14 +24,21 @@ namespace Antares\Acl\Database;
 use Illuminate\Container\Container;
 use Antares\Acl\RoleActionList;
 
+/**
+ * Old version of the ACL migrator.
+ *
+ * Class Migration
+ * @package Antares\Acl\Database
+ * @deprecated
+ */
 class Migration {
-    
+
     /**
      *
-     * @var Container 
+     * @var Container
      */
     protected $container;
-    
+
     /**
      *
      * @var string
@@ -66,7 +73,7 @@ class Migration {
     protected function getProviderMemory() {
         return $this->container->make('antares.memory')->make('component');
     }
-    
+
     /**
      * Set up permissions to the component ACL memory.
      *
@@ -112,5 +119,5 @@ class Migration {
 
         return array_unique($_actions);
     }
-    
+
 }

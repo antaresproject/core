@@ -50,19 +50,6 @@ class Breadcrumb
     }
 
     /**
-     * when shows modules list
-     */
-    public function onModulesList()
-    {
-        if (!Breadcrumbs::exists('modules')) {
-            Breadcrumbs::register('modules', function($breadcrumbs) {
-                $breadcrumbs->push('Modules', handles('antares::modules'));
-            });
-        }
-        view()->share('breadcrumbs', Breadcrumbs::render('modules'));
-    }
-
-    /**
      * when shows components list
      */
     public function onComponentsList()
@@ -76,36 +63,8 @@ class Breadcrumb
     }
 
     /**
-     * when shows new module form
-     */
-    public function onCreate()
-    {
-        $this->onModulesList();
-        Breadcrumbs::register('module-add', function($breadcrumbs) {
-            $breadcrumbs->parent('modules');
-            $breadcrumbs->push('Add Module');
-        });
-        view()->share('breadcrumbs', Breadcrumbs::render('module-add'));
-    }
-
-    /**
-     * when shows module configuration form
-     * 
-     * @param String $module
-     */
-    public function onModuleConfigure($module)
-    {
-        $this->onModulesList();
-        Breadcrumbs::register('module-configure', function($breadcrumbs) use($module) {
-            $breadcrumbs->parent('modules');
-            $breadcrumbs->push('Module ' . $module . ' configuration');
-        });
-        view()->share('breadcrumbs', Breadcrumbs::render('module-configure'));
-    }
-
-    /**
      * when shows component configuration form
-     * 
+     *
      * @param String $component
      */
     public function onComponentConfigure($component)
@@ -113,7 +72,7 @@ class Breadcrumb
         $this->onComponentsList();
         Breadcrumbs::register('component-configure', function($breadcrumbs) use($component) {
             $breadcrumbs->parent('components');
-            $breadcrumbs->push('Component ' . $component . ' configuration');
+            $breadcrumbs->push('Configuration: ' . $component->getFullName());
         });
         view()->share('breadcrumbs', Breadcrumbs::render('component-configure'));
     }

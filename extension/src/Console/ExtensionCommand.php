@@ -1,39 +1,36 @@
 <?php
 
-/**
- * Part of the Antares Project package.
- *
- * NOTICE OF LICENSE
- *
- * Licensed under the 3-clause BSD License.
- *
- * This source file is subject to the 3-clause BSD License that is
- * bundled with this package in the LICENSE file.
- *
- * @package    Antares Core
- * @version    0.9.0
- * @author     Original Orchestral https://github.com/orchestral
- * @author     Antares Team
- * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
- * @link       http://antaresproject.io
- */
- namespace Antares\Extension\Console;
+declare(strict_types=1);
 
+namespace Antares\Extension\Console;
+
+use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
+use Antares\Extension\Manager;
+use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
-use Antares\Contracts\Extension\Listener\Extension;
+use Antares\Extension\Model\Operation;
 
-abstract class ExtensionCommand extends BaseCommand implements Extension
+abstract class ExtensionCommand extends Command implements OperationHandlerContract
 {
-    /**
-     * Abort request when extension requirement mismatched.
-     *
-     * @return mixed
-     */
-    public function abortWhenRequirementMismatched()
-    {
-            }
+
+	/**
+	 * Extension Manager instance.
+	 *
+	 * @var Manager
+	 */
+	protected $manager;
+
+	/**
+	 * ExtensionCommand constructor.
+	 * @param Manager $manager
+	 */
+	public function __construct(Manager $manager)
+	{
+		parent::__construct();
+
+		$this->manager = $manager;
+	}
 
     /**
      * Get the console command arguments.
@@ -56,6 +53,32 @@ abstract class ExtensionCommand extends BaseCommand implements Extension
     {
         return [
             ['force', null, InputOption::VALUE_NONE, 'Force the operation to run when in production.'],
+			['purge', null, InputOption::VALUE_NONE, 'Remove the extension using the composer remove command.'],
         ];
     }
+
+    /**
+     * @param Operation $operation
+     * @return void
+     */
+	public function operationSuccess(Operation $operation) {
+		$this->info($operation->getMessage());
+	}
+
+    /**
+     * @param Operation $operation
+     * @return void
+     */
+	public function operationFailed(Operation $operation) {
+		$this->error($operation->getMessage());
+	}
+
+    /**
+     * @param Operation $operation
+     * @return void
+     */
+	public function operationInfo(Operation $operation) {
+		$this->line($operation->getMessage());
+	}
+
 }

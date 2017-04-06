@@ -58,15 +58,16 @@ class ExtensionServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $finder = $this->app->make('antares.extension.finder');
-
-        foreach ($this->extensions as $name => $path) {
-            if (is_numeric($name)) {
-                $finder->addPath($path);
-            } else {
-                $finder->registerExtension($name, $path);
-            }
-        }
+        // TODO: Refactoring to remove.
+//        $finder = $this->app->make('antares.extension.finder');
+//
+//        foreach ($this->extensions as $name => $path) {
+//            if (is_numeric($name)) {
+//                $finder->addPath($path);
+//            } else {
+//                $finder->registerExtension($name, $path);
+//            }
+//        }
     }
 
     /**

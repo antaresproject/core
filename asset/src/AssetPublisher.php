@@ -20,8 +20,6 @@
 
 namespace Antares\Asset;
 
-use Antares\Asset\Factory;
-use Antares\Asset\AssetSymlinker;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -78,10 +76,17 @@ class AssetPublisher
     protected function getFiles($specified)
     {
         $specified = (array) $specified;
-        if (php_sapi_name() == "cli") {
+
+        if (php_sapi_name() === 'cli') {
             return [];
         }
+
+        if($this->extension === null) {
+            return [];
+        }
+
         $path = app()->make('antares.extension')->getExtensionPathByName($this->extension);
+
         if (!$path) {
             return [];
         }

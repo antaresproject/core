@@ -18,19 +18,26 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
+
 use Illuminate\Routing\Router;
+use Antares\Installation\Http\Middleware\InstallationMiddleware;
 
-$router->group(['prefix' => 'install'], function (Router $router) {
-    $router->get('/', 'InstallerController@index');
-    $router->get('create', 'InstallerController@create');
-    $router->post('create', 'InstallerController@store');
-    $router->get('done', 'InstallerController@done');
-    $router->get('prepare', 'InstallerController@prepare');
+$router->group(['prefix' => 'install', 'middleware' => InstallationMiddleware::class], function (Router $router) {
+    $router->get('/', 'InstallerController@index')->name('installation.installer.index');
+    $router->get('create', 'InstallerController@create')->name('installation.installer.create');
+    $router->post('create', 'InstallerController@store')->name('installation.installer.store');
+    $router->get('done', 'InstallerController@done')->name('installation.installer.done');
+    $router->get('prepare', 'InstallerController@prepare')->name('installation.installer.prepare');
 
+    $router->match(['GET', 'POST'], 'license', 'InstallerController@license')->name('installation.installer.license');
 
-    $router->get('components', 'InstallerController@components');
-    $router->post('components/store', 'InstallerController@storeComponents');
+    $router->get('components', 'InstallerController@components')->name('installation.installer.components');
+    $router->post('components/store', 'InstallerController@storeComponents')->name('installation.installer.storeComponents');
 
-    $router->get('completed', 'InstallerController@completed');
-    $router->get('failed', 'InstallerController@failed');
+    $router->get('completed', 'InstallerController@completed')->name('installation.installer.completed');
+    $router->get('failed', 'InstallerController@failed')->name('installation.installer.failed');
+
+    $router->get('progress', 'ProgressController@index')->name('installation.installer.progress.index');
+    $router->get('progress/preview', 'ProgressController@preview')->name('installation.installer.progress.preview');
+    $router->get('progress/stop', 'ProgressController@stop')->name('installation.installer.progress.stop');
 });

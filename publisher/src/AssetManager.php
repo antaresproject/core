@@ -127,10 +127,8 @@ class AssetManager implements Publisher
      */
     protected function getPathFromExtensionName($name)
     {
-        $finder   = $this->app->make('antares.extension.finder');
-        $basePath = $finder->resolveExtensionPath(rtrim($this->app->make('antares.extension')->option($name, 'path'), '/'));
-
-        $paths = ["{$basePath}/resources/public", "{$basePath}/public"];
+        $basePath   = $this->app->make('antares.extension')->getExtensionPathByName($name);
+        $paths      = ["{$basePath}/resources/public", "{$basePath}/public"];
 
         foreach ($paths as $path) {
             if ($this->app->make('files')->isDirectory($path)) {
@@ -157,7 +155,7 @@ class AssetManager implements Publisher
         try {
             return $this->publisher->delete($path);
         } catch (Exception $ex) {
-            Log::emergency($e);
+            Log::emergency($ex);
             throw new Exception("Unable to delete [{$path}].");
         }
     }

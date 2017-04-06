@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Installation\Scripts;
 
 abstract class AbstractProcessMonitor
@@ -34,18 +33,22 @@ abstract class AbstractProcessMonitor
 
     /**
      * Commands setter
-     * 
+     *
      * @param array $commands
-     * @return \Antares\Installation\Scripts\WindowsProcessMonitor
+     * @return $this
      */
-    public function setCommands($commands)
+    public function setCommands(array $commands)
     {
         $this->commands = $commands;
+
         return $this;
     }
 
     /**
      * Process single command
+     *
+     * @param string $command
      */
     abstract public function process($command);
+
 }

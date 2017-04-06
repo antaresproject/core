@@ -1,87 +1,129 @@
 <?php
 
-/**
- * Part of the Antares Project package.
- *
- * NOTICE OF LICENSE
- *
- * Licensed under the 3-clause BSD License.
- *
- * This source file is subject to the 3-clause BSD License that is
- * bundled with this package in the LICENSE file.
- *
- * @package    Antares Core
- * @version    0.9.0
- * @author     Original Orchestral https://github.com/orchestral
- * @author     Antares Team
- * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
- * @link       http://antaresproject.io
- */
-
-
 namespace Antares\Model;
 
+use Antares\Extension\Config\Settings;
+use Antares\Extension\Contracts\Config\SettingsContract;
+use Antares\Extension\Contracts\ExtensionContract;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model as BaseEloquent;
 
-class Component extends Eloquent
+/**
+ * Class PackageModel
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $vendor
+ * @property int $status
+ * @property bool $required
+ * @property array $options
+ * @property Action[] $actions
+ * @method Builder withActions()
+ */
+class Component extends BaseEloquent
 {
 
-    public $table = 'tbl_components';
-
     /**
-     * @var array
+     * {@inheritdoc}
      */
-    protected $fillable = ['name', 'full_name', 'description', 'status', 'path', 'author', 'url', 'version', 'options'];
-
-    /**
-     * @see docs
-     */
-    public $timestamps = false;
-    protected $casts = [
-        'id'      => 'integer',
-        'status'  => 'boolean',
-        'order'   => 'integer',
-        'options' => 'array',
+    protected $fillable = [
+        'vendor', 'name', 'status', 'options', 'required',
     ];
 
     /**
-     * 
-     * @return type
+     * {@inheritdoc}
      */
-    public function actions()
-    {
-        return $this->hasMany('Antares\Model\Action', 'component_id');
-    }
+    protected $table = 'tbl_components';
 
-    public function config()
-    {
-        return $this->hasOne('Antares\Model\ComponentConfig', 'component_id');
+    /**
+     * {@inheritdoc}
+     */
+    protected $casts = [
+        'id'        => 'integer',
+        'status'    => 'integer',
+        'required' 	=> 'boolean',
+        'options'   => 'array',
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $attributes = [
+        'status'    => ExtensionContract::STATUS_AVAILABLE,
+        'required' 	=> false,
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
+    public $timestamps = false;
+
+    /**
+     * @return int
+     */
+    public function getId() {
+        return $this->id;
     }
 
     /**
-     * fetch one record by name column
-     * @param String $name
-     * @return Eloquent
+     * @return string
      */
-    public static function findOneByName($name)
-    {
-        $names = explode('/', $name);
-        return static::query()->where('name', end($names))->get()->first();
+    public function getVendor() {
+        return $this->vendor;
     }
 
     /**
-     * Return a meta data belong to a user.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $name
-     * @param  int  $userId
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return string
      */
-    public function scopeAction(Builder $query, $name)
-    {
-        return $query->with('Antares\Model\Action')->where('name', $name);
+    public function getName() {
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullName() {
+        return $this->vendor . '/' . $this->name;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatus() {
+        return $this->status;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions() : array {
+        return (array) $this->options;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|Action[]
+     */
+    public function actions() {
+        return $this->hasMany(Action::class, 'component_id');
+    }
+
+    /**
+     * Returns the query with related actions.
+     *
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopeWithActions(Builder $query) {
+        return $query->with(Action::class);
+    }
+
+    /**
+     * @param string $vendor
+     * @param string $name
+     * @return static|null
+     */
+    public static function findByVendorAndName(string $vendor, string $name) {
+        return static::where('vendor', $vendor)->where('name', $name)->first();
     }
 
 }

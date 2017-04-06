@@ -19,44 +19,50 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Installation\Repository;
 
+use Antares\Extension\Processors\Installer;
 use Illuminate\Contracts\Container\Container;
-use Antares\Contracts\Extension\Factory;
+use Antares\Extension\Manager as ExtensionsManager;
 use Antares\Memory\Model\DeferedEvent;
 use Illuminate\Support\Facades\Event;
 
+/**
+ * Class Components
+ * @package Antares\Installation\Repository
+ *
+ * @deprecated
+ *
+ * TODO: to remove
+ */
 class Components
 {
 
     /**
      * extension activator
      *
-     * @var Factory
+     * @var ExtensionsManager
      */
-    protected $factory;
+    protected $extensionsManager;
 
     /**
      * required extensions
      *
-     * @var array 
+     * @var array
      */
     protected $required = [];
 
     /**
      * migrate manager instance
      *
-     * @var \Antares\Publisher\MigrateManager 
+     * @var \Antares\Publisher\MigrateManager
      */
     protected $manager;
 
     /**
-     * extension finder instance
-     *
-     * @var \Antares\Extension\Finder
+     * @var Installer
      */
-    protected $finder;
+    protected $installer;
 
     /**
      * memory instance
@@ -66,63 +72,69 @@ class Components
     protected $memory;
 
     /**
-     * constructing
-     * 
+     * Components constructor.
      * @param Container $container
-     * @param Factory $factory
+     * @param ExtensionsManager $extensionsManager
+     * @param Installer $installer
      */
-    public function __construct(Container $container, Factory $factory)
+    public function __construct(Container $container, ExtensionsManager $extensionsManager, Installer $installer)
     {
-        $this->factory  = $factory;
-        $this->required = config('installer.required', []);
-        $this->manager  = $container->make('antares.publisher.migrate');
-        $this->finder   = $container->make('antares.extension.finder');
-        $this->memory   = $container->make('antares.memory')->make('primary');
+        $this->extensionsManager    = $extensionsManager;
+        $this->installer            = $installer;
+        $this->required             = config('installer.required', []);
+        $this->manager              = $container->make('antares.publisher.migrate');
+        $this->memory               = $container->make('antares.memory')->make('primary');
     }
 
     /**
      * stores and runs components migration files
-     * 
+     *
      * @param array $input
      * @return boolean
      */
     public function store(array $input = [])
     {
-        $list       = $this->finder->detect();
         $extensions = array_get($input, 'extension', []);
         $install    = array_merge($this->required, $extensions);
 
-        $this->factory->detect();
-        $this->factory->finish();
         foreach ($install as $component) {
-            $this->migrateExtension($component, $list);
+            $this->installExtension($component);
         }
+
         Event::fire('antares.install.components');
+
         $this->memory->put('app.installed', 1);
         $this->memory->finish();
+
         return true;
     }
 
     /**
-     * runs extension migration files
-     * 
-     * @param array $component
-     * @param array $list
+     * Installs the given extension.
+     *
+     * @param string $component
      * @return boolean
      */
-    protected function migrateExtension($component, $list)
+    protected function installExtension(string $component)
     {
-        $data = $list->get($component);
-        if (!isset($data['path'])) {
-            return false;
-        }
-        $vendor = $this->finder->resolveExtensionVendorPath($data['path']);
-        $this->manager->package($vendor);
-        $this->manager->seed($component);
-        $this->factory->up($component);
-        $this->factory->refresh($component);
+        $extension = $this->extensionsManager->getAvailableExtensions()->findByName($component);
+
+        $this->installer->run();
+
         DeferedEvent::query()->getModel()->newInstance(['name' => "after.install.{$component}"])->save();
-        return;
+
+
+//        $data = $list->get($component);
+//        if (!isset($data['path'])) {
+//            return false;
+//        }
+//        $vendor = $this->finder->resolveExtensionVendorPath($data['path']);
+//        $this->manager->package($vendor);
+//        $this->manager->seed($component);
+//        $this->factory->up($component);
+//        $this->factory->refresh($component);
+//        DeferedEvent::query()->getModel()->newInstance(['name' => "after.install.{$component}"])->save();
+//        return;
     }
 
 }

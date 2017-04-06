@@ -94,7 +94,7 @@ class WatchDog
             }
         } catch (Exception $ex) {
             app('antares.notifier')
-                    ->setMessage(sprintf('Unable to start monitor process. Exception message: %s with code: %d', [$ex->getMessage(), $ex->getCode()]))
+                    ->setMessage(sprintf('Unable to start monitor process. Exception message: %s with code: %d', $ex->getMessage(), $ex->getCode()))
                     ->alert('high')
                     ->severity('warning');
         }

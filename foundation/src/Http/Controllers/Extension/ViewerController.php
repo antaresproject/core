@@ -19,13 +19,14 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Controllers\Extension;
 
+use Antares\Contracts\Html\Builder;
 use Antares\Foundation\Processor\Extension\Viewer as Processor;
-use Antares\Contracts\Extension\Listener\Viewer as Listener;
+use Illuminate\Http\Request;
+use URL;
 
-class ViewerController extends Controller implements Listener
+class ViewerController extends Controller
 {
 
     /**
@@ -33,10 +34,10 @@ class ViewerController extends Controller implements Listener
      *
      * @param \Antares\Foundation\Processor\Extension\Viewer  $processor
      */
-    public function __construct(Processor $processor)
-    {
-        $this->processor = $processor;
+    public function __construct(Processor $processor) {
         parent::__construct();
+
+        $this->processor = $processor;
     }
 
     /**
@@ -44,8 +45,7 @@ class ViewerController extends Controller implements Listener
      *
      * @return void
      */
-    protected function setupMiddleware()
-    {
+    protected function setupMiddleware() {
         $this->middleware('antares.auth');
         $this->middleware('antares.manage');
     }
@@ -57,25 +57,79 @@ class ViewerController extends Controller implements Listener
      *
      * @return mixed
      */
-    public function index()
-    {
-
-        app('antares.extension')->detect();
+    public function index() {
         set_meta('title', trans('antares/foundation::title.components.list_breadcrumb'));
+
         return $this->processor->index();
     }
 
     /**
-     * Response for list of extensions viewer.
+     * @param string $vendor
+     * @param string $name
+     * @return Builder
+     */
+    public function getConfiguration(string $vendor, string $name) {
+        return $this->processor->showConfigurationForm($this, $vendor, $name);
+    }
+
+    /**
+     * @param Builder $form
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function showConfigurationForm(Builder $form) {
+        return view()->make('antares/foundation::extensions.configure', compact('form'));
+    }
+
+    /**
+     * @param Request $request
+     * @return mixed
+     */
+    public function storeConfiguration(Request $request) {
+        $componentId    = $request->get('id');
+        $options        = array_except($request->all(), ['id']);
+
+        return $this->processor->updateConfiguration($this, $componentId, $options);
+    }
+
+    /**
+     * Handles the failed validation for edited configuration.
      *
-     * @param  array  $data
+     * @param array $messages
+     * @return mixed
+     */
+    public function updateConfigurationValidationFailed(array $messages) {
+        if(request()->ajax()) {
+            return response()->json($messages);
+        }
+
+        $url = URL::previous();
+
+        return $this->redirectWithErrors($url, $messages);
+    }
+
+    /**
+     * Handles the successfully updated configuration.
      *
      * @return mixed
      */
-    public function showExtensions(array $data)
-    {
-        set_meta('title', trans('antares/foundation::title.components.list_breadcrumb'));
-        return view('antares/foundation::extensions.index', $data);
+    public function updateConfigurationSuccess() {
+        $url        = route('admin.extensions.index');
+        $message    = trans('antares/foundation::response.extensions.configuration-success');
+
+        return $this->redirectWithMessage($url, $message);
+    }
+
+    /**
+     * Handles the failed update configuration.
+     *
+     * @param array $errors
+     * @return mixed
+     */
+    public function updateConfigurationFailed(array $errors) {
+        $url        = URL::previous();
+        $message    = trans('antares/foundation::response.extensions.configuration-failed');
+
+        return $this->redirectWithMessage($url, $message, 'error');
     }
 
 }

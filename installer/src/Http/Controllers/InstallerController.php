@@ -24,8 +24,12 @@ namespace Antares\Installation\Http\Controllers;
 use Antares\Installation\Processor\Installer as InstallerProcessor;
 use Antares\Foundation\Http\Controllers\BaseController;
 use Antares\Installation\Processor\Installer;
-use Illuminate\Support\Facades\Input;
+use Antares\Installation\Progress;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\MessageBag;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Antares\Html\Builder;
 
 class InstallerController extends BaseController
 {
@@ -45,6 +49,7 @@ class InstallerController extends BaseController
         $this->processor = $processor;
         set_meta('navigation::usernav', false);
         set_meta('title', 'Installer');
+
         parent::__construct();
     }
 
@@ -67,8 +72,6 @@ class InstallerController extends BaseController
      */
     public function index()
     {
-
-        app('antares.memory')->forgetCache();
         return $this->processor->index($this);
     }
 
@@ -101,11 +104,12 @@ class InstallerController extends BaseController
      *
      * POST (:antares)/install/create
      *
+     * @param Request $request
      * @return mixed
      */
-    public function store()
+    public function store(Request $request)
     {
-        return $this->processor->store($this, Input::all());
+        return $this->processor->store($this, $request->all());
     }
 
     /**
@@ -123,11 +127,14 @@ class InstallerController extends BaseController
      * Show components selection form
      * POST (:antares)/install/components/store
      *
+     * @param Request $request
      * @return mixed
      */
-    public function storeComponents()
+    public function storeComponents(Request $request)
     {
-        return $this->processor->storeComponents($this, Input::all());
+        $selected = (array) $request->get('optional', []);
+
+        return $this->processor->storeComponents($this, $selected);
     }
 
     /**
@@ -161,7 +168,59 @@ class InstallerController extends BaseController
      */
     public function prepareSucceed()
     {
-        return $this->redirect(handles('antares::install/create'));
+        return $this->redirect(handles('antares::install/license'));
+    }
+
+    /**
+     * setting application license
+     * 
+     * @return View
+     */
+    public function license(Request $request)
+    {
+        return $this->processor->license($this, $request);
+    }
+
+    /**
+     * Redirects when license validation failed.
+     *
+     * @param MessageBag $messageBag
+     * @return RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function licenseFailedValidation(MessageBag $messageBag)
+    {
+        return $this->redirectWithErrors(handles('antares::install/license'), $messageBag);
+    }
+
+    /**
+     * when license details has not been stored
+     * 
+     * @return RedirectResponse
+     */
+    public function licenseFailedStore()
+    {
+        return redirect_with_message(handles('antares::install/license'), trans('Unable to store license file.'), 'error');
+    }
+
+    /**
+     * when license details has been stored
+     * 
+     * @return RedirectResponse
+     */
+    public function licenseSuccessStore()
+    {
+        return redirect_with_message(handles('antares::install/create'), trans('License details has been stored.'), 'success');
+    }
+
+    /**
+     * shows license form
+     * 
+     * @param Builder $form
+     * @return View
+     */
+    public function showLicenseForm($form)
+    {
+        return view('antares/installer::license', compact('form'));
     }
 
     /**
@@ -240,13 +299,25 @@ class InstallerController extends BaseController
     }
 
     /**
-     * when installation is failed
-     * 
-     * @return View
+     * When installation is failed.
+     *
+     * @param Progress $progress
+     * @return \Illuminate\Contracts\View\Factory|View
      */
-    public function failed()
+    public function failed(Progress $progress)
     {
-        return view('antares/installer::installation.failed');
+        $additionalMessage = $progress->getFailedMessage();
+
+        return view('antares/installer::installation.failed', compact('additionalMessage'));
+    }
+
+    /**
+     * Returns the view about installation progress.
+     *
+     * @return RedirectResponse
+     */
+    public function showInstallProgress() {
+        return redirect()->to(handles('antares::install/progress'));
     }
 
 }

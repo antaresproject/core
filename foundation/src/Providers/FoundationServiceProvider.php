@@ -21,6 +21,11 @@
 
 namespace Antares\Foundation\Providers;
 
+use Antares\Extension\Events\Activated;
+use Antares\Extension\Events\Deactivated;
+use Antares\Extension\Events\Installed;
+use Antares\Extension\Events\Uninstalled;
+use Antares\Foundation\Listeners\AfterExtensionOperation;
 use Antares\Support\Providers\Traits\AliasesProviderTrait;
 use Antares\Widgets\Http\Middleware\WidgetsMiddleware;
 use Antares\Support\Providers\ServiceProvider;
@@ -59,9 +64,6 @@ class FoundationServiceProvider extends ServiceProvider
         'antares.app'              => ['Antares\Foundation\Foundation', 'Antares\Contracts\Foundation\Foundation'],
         'antares.asset'            => 'Antares\Asset\Factory',
         'antares.decorator'        => 'Antares\View\Decorator',
-        'antares.extension.config' => 'Antares\Extension\ConfigManager',
-        'antares.extension.finder' => ['Antares\Extension\Finder', 'Antares\Contracts\Extension\Finder'],
-        'antares.extension'        => ['Antares\Extension\Factory', 'Antares\Contracts\Extension\Factory'],
         'antares.form'             => ['Antares\Html\Form\Factory', 'Antares\Contracts\Html\Form\Factory'],
         'antares.mail'             => 'Antares\Notifier\Mailer',
         'antares.memory'           => 'Antares\Memory\MemoryManager',
@@ -241,6 +243,13 @@ class FoundationServiceProvider extends ServiceProvider
             });
             return true;
         });
+
+        $this->app->make('events')->listen([
+            Installed::class,
+            Activated::class,
+            Deactivated::class,
+            Uninstalled::class
+        ], AfterExtensionOperation::class);
     }
 
     /**

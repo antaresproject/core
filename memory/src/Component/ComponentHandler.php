@@ -52,7 +52,7 @@ class ComponentHandler extends DefaultHandler implements HandlerContract
     /**
      * finder instance
      *
-     * @var Finder 
+     * @var \Antares\Extension\FilesystemFinder
      */
     protected $finder;
 
@@ -81,7 +81,7 @@ class ComponentHandler extends DefaultHandler implements HandlerContract
 
         parent::__construct($name, $config);
         $this->repository = $repository;
-        $this->finder     = app(\Antares\Extension\Finder::class);
+        $this->finder     = app(\Antares\Extension\FilesystemFinder::class);
         $this->cacheKey   = "db-memory:{$this->storage}-{$this->name}-{$this->getDefaultBrandId()}";
         if (Arr::get($this->config, 'cache', false)) {
             $this->cache = $cache;
@@ -109,7 +109,7 @@ class ComponentHandler extends DefaultHandler implements HandlerContract
         $items    = [];
         $memories = $this->cache instanceof Repository ? $this->getItemsFromCache() : $this->getItemsFromDatabase();
         foreach ($memories as $key => $value) {
-            if ($key == 'extensions') {
+            if ($key === 'extensions') {
                 foreach ($value['available'] as $keyname => $settings) {
                     $this->addKey('available.' . $keyname, ['value' => serialize($settings)]);
                 }
@@ -187,7 +187,7 @@ class ComponentHandler extends DefaultHandler implements HandlerContract
             if (strpos($key, 'extension_') !== false) {
                 continue;
             }
-            if ($key == 'extensions') {
+            if ($key === 'extensions') {
                 foreach ($value['available'] as $keyname => $settings) {
                     $changed[] = $this->write('available.' . $keyname, $settings, $brandId, 'available');
                 }

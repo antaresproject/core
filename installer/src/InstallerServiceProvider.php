@@ -19,13 +19,15 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Installation;
 
 use Antares\Contracts\Installation\Installation as InstallationContract;
 use Antares\Contracts\Installation\Requirement as RequirementContract;
 use Antares\Foundation\Support\Providers\ModuleServiceProvider;
+use Antares\Installation\Listeners\FailedListener;
 use Antares\Installation\Scripts\WatchDog;
+use Antares\Installation\Listeners\IncrementProgress;
+use Illuminate\Routing\Router;
 
 class InstallerServiceProvider extends ModuleServiceProvider
 {
@@ -36,6 +38,16 @@ class InstallerServiceProvider extends ModuleServiceProvider
      * @var string|null
      */
     protected $namespace = 'Antares\Installation\Http\Controllers';
+
+    /**
+     * The subscriber classes to register.
+     *
+     * @var array
+     */
+    protected $subscribe = [
+        FailedListener::class,
+        IncrementProgress::class,
+    ];
 
     /**
      * Register the service provider.
@@ -53,6 +65,18 @@ class InstallerServiceProvider extends ModuleServiceProvider
         });
         $this->app->singleton('antares.watchdog', function($app) {
             return new WatchDog($app->make('config'));
+        });
+
+        $this->app->singleton(Progress::class);
+    }
+
+    public function boot() {
+        $this->loadRoutes();
+
+        $this->app->make('events')->listen('installation.before.installing', function() {
+            $this->app->make('antares.watchdog')->up('automation:start');
+            $job = $this->app->make(SyncAutomation::class)->onQueue('install');
+            return $this->dispatch($job);
         });
     }
 
@@ -76,8 +100,7 @@ class InstallerServiceProvider extends ModuleServiceProvider
      */
     protected function loadRoutes()
     {
-        $path = realpath(__DIR__ . '/../');
-        $this->loadBackendRoutesFrom("{$path}/src/routes.php");
+        $this->loadBackendRoutesFrom(__DIR__ . '/routes.php');
     }
 
 }

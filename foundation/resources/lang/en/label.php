@@ -21,48 +21,48 @@
 
 
 return
-        [
-            'mode'         => 'Mode',
-            'show'         => 'Show',
-            'save_changes' => 'Submit',
-            'add'          => 'Add',
-            'components'   =>
+    [
+        'mode'         => 'Mode',
+        'show'         => 'Show',
+        'save_changes' => 'Submit',
+        'add'          => 'Add',
+        'components'   =>
             [
                 'name' => 'Component name',
             ],
-            'description'  => 'Description',
-            'no-extension' => 'No extension available at the moment',
-            'extensions'   =>
+        'description'  => 'Description',
+        'no-extension' => 'No extension available at the moment',
+        'extensions'   =>
             [
                 'actions'   =>
-                [
-                    'activate'   => 'Activate',
-                    'deactivate' => 'Deactivate',
-                    'uninstall'  => 'Uninstall',
-                    'delete'     => 'Delete',
-                    'update'     => 'Migrate and Publish',
-                ],
+                    [
+                        'activate'   => 'Activate',
+                        'deactivate' => 'Deactivate',
+                        'install'    => 'Install',
+                        'uninstall'  => 'Uninstall',
+                        'configure'  => 'Configure',
+                    ],
                 'publisher' =>
-                [
-                    'host'            => 'Host',
-                    'user'            => 'User',
-                    'password'        => 'Password',
-                    'connection-type' => 'Connection Type',
-                ],
+                    [
+                        'host'            => 'Host',
+                        'user'            => 'User',
+                        'password'        => 'Password',
+                        'connection-type' => 'Connection Type',
+                    ],
                 'handles'   => 'Handle URL',
                 'update'    => 'Update',
                 'header'    =>
-                [
-                    'id'          => 'Id',
-                    'name'        => 'Name',
-                    'description' => 'Description',
-                    'author'      => 'Author',
-                    'version'     => 'Version',
-                    'url'         => 'Documentation',
-                    'status'      => 'Status',
-                ],
+                    [
+                        'id'          => 'Id',
+                        'name'        => 'Name',
+                        'description' => 'Description',
+                        'authors'     => 'Authors',
+                        'version'     => 'Version',
+                        'url'         => 'Documentation',
+                        'status'      => 'Status',
+                    ],
             ],
-            'users'            =>
+        'users'            =>
             [
                 'select_file'     => 'Select file',
                 'register'        => 'Register',
@@ -82,22 +82,22 @@ return
                 'roles'           => 'Roles',
                 'active'          => 'Active',
             ],
-            'account'          =>
+        'account'          =>
             [
                 'confirm_password' => 'Confirm Password',
                 'current_password' => 'Current Password',
                 'new_password'     => 'New Password',
             ],
-            'cancel'           => 'Cancel',
-            'save'             => 'Submit',
-            'settings'         =>
+        'cancel'           => 'Cancel',
+        'save'             => 'Submit',
+        'settings'         =>
             [
                 'application'       => 'Application',
                 'user-registration' => 'Allow User Registration',
                 'mail'              => 'E-mail',
             ],
-            'name'             => 'Name',
-            'email'            =>
+        'name'             => 'Name',
+        'email'            =>
             [
                 'driver'     => 'Driver',
                 'host'       => 'Host',
@@ -113,16 +113,16 @@ return
                 'command'    => 'Sendmail Command',
                 'queue'      => 'Mail via Queue',
             ],
-            'edit'             => 'Edit',
-            'delete'           => 'Delete',
-            'next'             => 'Next',
-            'submit'           => 'Save',
-            'email_host'       => 'Host',
-            'email_username'   => 'Username',
-            'email_password'   => 'Password',
-            'email_port'       => 'Port',
-            'email_encryption' => 'Encryption',
-            'email_address'    => 'Email address',
-            'email_sendmail'   => 'Sendmail Command',
-            'with_selected'    => 'With Selected',
-];
+        'edit'             => 'Edit',
+        'delete'           => 'Delete',
+        'next'             => 'Next',
+        'submit'           => 'Save',
+        'email_host'       => 'Host',
+        'email_username'   => 'Username',
+        'email_password'   => 'Password',
+        'email_port'       => 'Port',
+        'email_encryption' => 'Encryption',
+        'email_address'    => 'Email address',
+        'email_sendmail'   => 'Sendmail Command',
+        'with_selected'    => 'With Selected',
+    ];

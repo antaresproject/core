@@ -22,6 +22,8 @@
 namespace Antares\Installation;
 
 use Antares\Contracts\Installation\Installation as InstallationContract;
+use Antares\Extension\Contracts\ExtensionContract;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Antares\Brands\Model\Brands;
@@ -36,18 +38,17 @@ class Installation implements InstallationContract
 {
 
     /**
-     * Application instance.
+     * Container instance.
      *
-     * @var \Illuminate\Contracts\Foundation\Application
+     * @var Container
      */
     protected $app;
 
     /**
-     * Construct a new instance.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application   $app
+     * Installation constructor.
+     * @param Container $app
      */
-    public function __construct($app)
+    public function __construct(Container $app)
     {
         $this->app = $app;
     }
@@ -113,6 +114,7 @@ class Installation implements InstallationContract
             $this->runApplicationSetup($input);
             return true;
         } catch (Exception $e) {
+            dd($e->getMessage(), $e->getTraceAsString());
             Log::emergency($e);
             $this->app->make('antares.messages')->add('error', $e->getMessage());
             return false;
@@ -124,15 +126,20 @@ class Installation implements InstallationContract
      */
     protected function clear()
     {
-        return DB::transaction(function() {
-                    DB::delete('delete from tbl_permissions');
-                    DB::delete('delete from tbl_component_config');
-                    DB::delete('delete from tbl_actions');
-                    DB::delete('delete from tbl_components');
-                    DB::delete('delete from tbl_user_role');
-                    DB::delete('delete from tbl_users');
-                    DB::delete('delete from tbl_antares_options');
-                });
+        $tables = [
+            'tbl_permissions',
+            'tbl_actions',
+            'tbl_components',
+            'tbl_user_role',
+            'tbl_users',
+            'tbl_antares_options',
+        ];
+
+        return DB::transaction(function() use($tables) {
+            foreach($tables as $table) {
+                DB::delete('delete from ' . $table);
+            }
+        });
     }
 
     /**
@@ -178,20 +185,16 @@ class Installation implements InstallationContract
     }
 
     /**
-     * imports default components settings
-     * @return Antares\Model\Component
+     * @return Component
      */
     protected function importDefaultComponent()
     {
-        $component = $this->app->make('antares.component')->newInstance();
-
-        $component->fill([
-            'name'   => 'acl_antares',
-            'status' => 1
+        return Component::create([
+            'vendor'    => 'antaresproject',
+            'name'      => 'core',
+            'status'    => ExtensionContract::STATUS_ACTIVATED,
+            'required'  => true,
         ]);
-        $component->save();
-
-        return $component;
     }
 
     /**
@@ -260,7 +263,7 @@ class Installation implements InstallationContract
      */
     protected function getBrands()
     {
-        return Brands::query()->get()->all();
+        return Brands::all();
     }
 
     /**
@@ -318,21 +321,11 @@ class Installation implements InstallationContract
             'client-delete',
             'change-app-settings',
             'show-dashboard',
-            'component-activate',
-            'component-migrate',
-            'component-deactivate',
+            'component-install',
             'component-uninstall',
-            'component-delete',
-            'configure-component',
-            'module-configure',
-            'module-create',
-            'modules-list',
-            'module-details',
-            'module-activate',
-            'module-deactivate',
-            'module-migrate',
-            'module-uninstall',
-            'module-delete',
+            'component-activate',
+            'component-deactivate',
+            'component-configure',
             'brand-update',
             'brand-email'
         ];
@@ -384,9 +377,7 @@ class Installation implements InstallationContract
      */
     protected function hasNoExistingUser()
     {
-        $users = $this->app->make('antares.user')->newQuery()->all();
-
-        if (empty($users)) {
+        if (User::count() === 0) {
             return true;
         }
 

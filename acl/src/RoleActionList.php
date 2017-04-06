@@ -18,21 +18,21 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Acl;
 
+use Illuminate\Support\Arr;
 use InvalidArgumentException;
 
 class RoleActionList {
-    
+
     /**
+     * Roles actions list.
      *
-     * @var array
+     * @var Action[][]
      */
-    protected $list;
+    protected $list = [];
     
     /**
-     * 
      * @param string $role
      * @param Action[] $actions
      * @throws InvalidArgumentException
@@ -50,7 +50,6 @@ class RoleActionList {
                 $validActions[] = $action;
             }
         }
-
         
         $this->list[$role] = array_merge($roleActions, $validActions);
     }
@@ -61,7 +60,7 @@ class RoleActionList {
      * @return Action[]
      */
     public function getActionsByRole($role) {
-        return array_get($this->list, $role, []);
+        return Arr::get($this->list, $role, []);
     }
     
     /**
@@ -69,11 +68,7 @@ class RoleActionList {
      * @return Action[]
      */
     public function getActions() {
-        $actions = [];
-        
-        foreach($this->list as $roleActions) {
-            $actions = array_merge($actions, $roleActions);
-        }
+        $actions = call_user_func_array('array_merge', $this->list);
         
         return array_map('unserialize', array_unique(array_map('serialize', $actions)));
     }

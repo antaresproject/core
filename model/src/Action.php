@@ -19,9 +19,15 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Model;
 
+/**
+ * Class Action
+ * @package Antares\Model
+ * @property int $id
+ * @property int $component_id
+ * @property string $name
+ */
 class Action extends Eloquent
 {
 
@@ -33,26 +39,26 @@ class Action extends Eloquent
 
     /**
      * has model any timestamps
-     * 
+     *
      * @var boolean
      */
     public $timestamps = false;
 
     /**
      * fillable array of attributes
-     * 
-     * @var array 
+     *
+     * @var array
      */
     protected $fillable = ['component_id', 'name'];
 
     /**
      * has one relation to extension model
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     *
+     * @return Component|\Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function extension()
     {
-        return $this->hasOne('Antares\Model\Component', 'id', 'component_id');
+        return $this->hasOne(Component::class, 'id', 'component_id');
     }
 
 }

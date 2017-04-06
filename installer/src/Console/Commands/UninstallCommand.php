@@ -39,6 +39,8 @@ class UninstallCommand extends Command implements UninstallListener
 
     public function __construct(Uninstaller $uninstaller)
     {
+        parent::__construct();
+
         $this->uninstaller = $uninstaller;
     }
 
