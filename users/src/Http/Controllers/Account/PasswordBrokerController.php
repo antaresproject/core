@@ -48,7 +48,7 @@ class PasswordBrokerController extends AdminController implements PasswordResetL
      */
     protected function setupMiddleware()
     {
-        $this->aliasMiddleware('antares.guest');
+        $this->middleware('antares.guest');
     }
 
     /**

@@ -49,7 +49,7 @@ class PresenterTest extends \PHPUnit_Framework_TestCase
 
         Container::setInstance($app);
 
-        $app->shouldReceive('make')->once()->with('antares.app', [])->andReturn($antares);
+        $app->shouldReceive('make')->once()->withAnyArgs()->andReturn($antares);
 
         $antares->shouldReceive('handles')->with(m::type('String'), m::type('Array'))
                 ->andReturnUsing(function ($s) {

@@ -45,7 +45,9 @@ class UsersControllerTest extends ApplicationTestCase
                 ->shouldReceive('with')->once()->with(m::type('array'))->andReturnSelf()
                 ->shouldReceive('exists')->once()->withAnyArgs()->andReturn(true)
                 ->shouldReceive('getFinder')->once()->withAnyArgs()->andReturn($finder = m::mock(\Illuminate\View\ViewFinderInterface::class))
-                ->shouldReceive('render')->once()->withNoArgs()->andReturn('foo');
+                ->shouldReceive('render')->once()->withNoArgs()->andReturn('foo')
+                ->shouldReceive('replaceNamespace')->withAnyArgs()->andReturnSelf();
+
         $this->disableMiddlewareForAllTests();
     }
 

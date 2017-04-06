@@ -1,7 +1,7 @@
 <?php
 
-/* C:\Projekty\project\src\core\testing\src/../fixture\resources/views/foo/bar.twig */
-class __TwigTemplate_0c6b6b094f3e802f146a26976dffdbe977dfc400156e134de409f8bb4355b146 extends TwigBridge\Twig\Template
+/* C:\Projekty\dupa\src\core\testing\src/../fixture\resources/views/foo/bar.twig */
+class __TwigTemplate_5b0dfa414b66c4c364fe9730a7b4c3684daadae7a3b61753a1f5e8e1d5e2ffae extends TwigBridge\Twig\Template
 {
     public function __construct(Twig_Environment $env)
     {
@@ -19,7 +19,7 @@ class __TwigTemplate_0c6b6b094f3e802f146a26976dffdbe977dfc400156e134de409f8bb435
 
     public function getTemplateName()
     {
-        return "C:\\Projekty\\project\\src\\core\\testing\\src/../fixture\\resources/views/foo/bar.twig";
+        return "C:\\Projekty\\dupa\\src\\core\\testing\\src/../fixture\\resources/views/foo/bar.twig";
     }
 
     public function getDebugInfo()
@@ -38,6 +38,6 @@ class __TwigTemplate_0c6b6b094f3e802f146a26976dffdbe977dfc400156e134de409f8bb435
     public function getSourceContext()
     {
         return new Twig_Source("{# empty Twig template #}
-", "C:\\Projekty\\project\\src\\core\\testing\\src/../fixture\\resources/views/foo/bar.twig", "");
+", "C:\\Projekty\\dupa\\src\\core\\testing\\src/../fixture\\resources/views/foo/bar.twig", "");
     }
 }

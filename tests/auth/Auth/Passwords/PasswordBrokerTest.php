@@ -97,7 +97,7 @@ class PasswordBrokerTest extends ApplicationTestCase
         $user->shouldReceive('retrieveByCredentials')->once()
                 ->with(array_except($credentials, ['token']))->andReturn($userReminderable);
         $reminders->shouldReceive('exists')->once()->with($userReminderable, 'someuniquetokenkey')->andReturn(true)
-                ->shouldReceive('delete')->once()->with('someuniquetokenkey')->andReturn(true);
+                ->shouldReceive('delete')->once()->withAnyArgs()->andReturn(true);
 
         $this->assertEquals('passwords.reset', $stub->reset($credentials, $callback));
     }

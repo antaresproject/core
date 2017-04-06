@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Notifier;
 
 use Antares\Support\Providers\ServiceProvider;
@@ -97,10 +96,8 @@ class NotifierServiceProvider extends ServiceProvider
      */
     protected function setMailerDependencies($mailer, $app)
     {
-        $mailer->setContainer($app);
-
         if ($app->bound('queue')) {
-            $mailer->setQueue($app->make('queue.connection'));
+            $mailer->setQueue($app->make('queue'));
         }
     }
 

@@ -71,8 +71,8 @@ class PipelineServiceProviderTest extends \PHPUnit_Framework_TestCase
         $router->shouldReceive('before')->once()->with('BeforeFilter')->andReturnNull()
                 ->shouldReceive('after')->once()->with('AfterFilter')->andReturnNull()
                 ->shouldReceive('filter')->once()->with('foo', 'FooFilter')->andReturnNull()
-                ->shouldReceive('middleware')->once()->with('foobar', 'FoobarMiddleware')->andReturnNull()
-                ->shouldReceive('middleware')->once()->with('', "Antares\Form\Middleware\FormMiddleware")->andReturnNull();
+                ->shouldReceive('aliasMiddleware')->once()->with('foobar', 'FoobarMiddleware')->andReturnNull()
+                ->shouldReceive('aliasMiddleware')->once()->with('', "Antares\Form\Middleware\FormMiddleware")->andReturnNull();
 
         $kernel->shouldReceive('pushMiddleware')->once()->with('FooMiddleware')->andReturnNull();
 

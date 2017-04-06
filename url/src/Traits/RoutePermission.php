@@ -18,31 +18,32 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Url\Traits;
 
 use Antares\Acl\RoleActionList;
 use Illuminate\Routing\RouteCollection;
 
-trait RoutePermission {
-    
+trait RoutePermission
+{
+
     /**
      * 
      * @param RouteCollection $routes
      * @param RoleActionList $roleActionList
      */
-    public function bindPermissions(RouteCollection $routes, RoleActionList $roleActionList) {
+    public function bindPermissions(RouteCollection $routes, RoleActionList $roleActionList)
+    {
         $actions = $roleActionList->getActions();
-        
-        foreach($routes as $route) {
-            $action = array_first($actions, function($index, $action) use($route) {
+
+        foreach ($routes as $route) {
+            $action = array_first($actions, function($action, $index) use($route) {
                 return $action->isMatchToRoute($route);
             });
-            
-            if($action) {
+
+            if ($action) {
                 $route->middleware('antares.can:' . $action->getActionAsParameter());
             }
         }
     }
-    
+
 }

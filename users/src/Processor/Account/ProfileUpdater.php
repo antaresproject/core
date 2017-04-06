@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Processor\Account;
 
 use Antares\Contracts\Foundation\Command\Account\ProfileUpdater as ProfileUpdaterContract;
@@ -43,7 +42,8 @@ class ProfileUpdater extends User implements ProfileUpdaterContract
      */
     public function edit(Listener $listener)
     {
-        $eloquent = Auth::user();
+
+        $eloquent = user();
         $form     = $this->presenter->profile($eloquent, 'antares::account');
         Event::fire("antares.form: user.profile", [$eloquent, $form, "user.profile"]);
 
@@ -60,8 +60,7 @@ class ProfileUpdater extends User implements ProfileUpdaterContract
      */
     public function update(Listener $listener, array $input)
     {
-        $user = Auth::user();
-
+        $user = user();
         if (!$this->validateCurrentUser($user, $input)) {
             return $listener->abortWhenUserMismatched();
         }

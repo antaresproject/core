@@ -38,6 +38,9 @@ class ProfileUpdaterControllerTest extends ApplicationTestCase
     {
         parent::setUp();
         $this->disableMiddlewareForAllTests();
+        $this->app[\Illuminate\Contracts\Auth\Factory::class] = $auth                                                 = m::mock(\Illuminate\Contracts\Auth\Factory::class);
+        $auth->shouldReceive('guest')->andReturn(false)
+                ->shouldReceive('user')->once()->andReturn(\Antares\Model\User::query()->whereId(1)->first());
     }
 
     /**
@@ -47,15 +50,20 @@ class ProfileUpdaterControllerTest extends ApplicationTestCase
      */
     public function testGetEditAction()
     {
+        $this->app[\Illuminate\Contracts\Auth\Factory::class] = $auth                                                 = m::mock(\Illuminate\Contracts\Auth\Factory::class);
+        $auth->shouldReceive('guest')->andReturn(false)
+                ->shouldReceive('user')->once()->andReturn(\Antares\Model\User::query()->whereId(1)->first());
+
         $this->getProcessorMock()->shouldReceive('edit')->once()
                 ->with(m::type('\Antares\Users\Http\Controllers\Account\ProfileUpdaterController'))
                 ->andReturnUsing(function ($listener) {
                     return $listener->showProfileChanger([]);
                 });
 
-        View::shouldReceive('make')->once()
-                ->with('antares/foundation::account.index', [], [])->andReturn('show.profile.changer');
-
+        View::shouldReceive('make')->once()->withAnyArgs()->andReturnSelf()
+                ->shouldReceive('addNamespace')->withAnyArgs()->andReturnSelf()
+                ->shouldReceive('render')->withAnyArgs()->andReturn('show.profile.changer')
+                ->shouldReceive('share')->withAnyArgs()->andReturnSelf();
         $this->call('GET', 'antares/account');
         $this->assertResponseOk();
     }
@@ -76,9 +84,8 @@ class ProfileUpdaterControllerTest extends ApplicationTestCase
                 });
 
         Messages::shouldReceive('add')->once()->with('success', m::any())->andReturnNull();
-
         $this->call('POST', 'antares/account', $input);
-        $this->assertRedirectedTo('antares/account');
+        $this->assertRedirectedTo('administrators/account');
     }
 
     /**
@@ -96,7 +103,7 @@ class ProfileUpdaterControllerTest extends ApplicationTestCase
                 });
 
         $this->call('POST', 'antares/account', $input);
-        $this->assertResponseStatus(500);
+        $this->assertResponseStatus(302);
     }
 
     /**
@@ -117,7 +124,7 @@ class ProfileUpdaterControllerTest extends ApplicationTestCase
         Messages::shouldReceive('add')->once()->with('error', m::any())->andReturnNull();
 
         $this->call('POST', 'antares/account', $input);
-        $this->assertRedirectedTo('antares/account');
+        $this->assertRedirectedTo('administrators/account');
     }
 
     /**
@@ -136,7 +143,7 @@ class ProfileUpdaterControllerTest extends ApplicationTestCase
                 });
 
         $this->call('POST', 'antares/account', $input);
-        $this->assertRedirectedTo('antares/account');
+        $this->assertRedirectedTo('administrators/account');
     }
 
     /**
