@@ -21,6 +21,7 @@
 
 
 return [
+    'dd' => 'sdsdsd',
     'validation'                 => [
         'required_min_php_version' => '5.5',
         'required_php_extensions'  => [

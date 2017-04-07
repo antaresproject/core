@@ -21,7 +21,9 @@ class Handler {
      * @param array $commandParameters
      */
     public function __construct(array $commandParameters = []) {
-		putenv('COMPOSER_HOME=' . env('COMPOSER_HOME'));
+        if( env('COMPOSER_HOME') === null) {
+            putenv('COMPOSER_HOME=' . base_path());
+        }
 
 		$this->commandParameters = $commandParameters;
     }
@@ -48,7 +50,9 @@ class Handler {
 					return null;
 				}
 
-				if($callback instanceof Closure) {
+                $buffer = preg_replace("/[\x08]/mu", "\r\n", $buffer);
+
+				if($buffer && $callback instanceof Closure) {
 					$callback($process, $type, $buffer);
 				}
 			});

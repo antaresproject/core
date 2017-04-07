@@ -78,7 +78,10 @@ class OperationFileOutput implements OperationHandlerContract  {
         $content .= "\r\n";
         $content = preg_replace('/[\s]{2,}/mu', '', $content);
 
-        return str_replace("\x08", '', $content);
+        return $content;
+        //$content = preg_replace("/[\x08]{2,}/mu", '', $content);
+
+        //return str_replace("\x08", ' ', $content);
     }
 
 }

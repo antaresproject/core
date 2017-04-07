@@ -72,6 +72,8 @@ class InstallerServiceProvider extends ModuleServiceProvider
 
     public function boot()
     {
+        parent::boot();
+
         $this->loadRoutes();
 
         $this->app->make('events')->listen('installation.before.installing', function() {

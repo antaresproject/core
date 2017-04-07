@@ -118,8 +118,11 @@ class InstallerController extends BaseController
      *
      * @return mixed
      */
-    public function components()
+    public function components(Progress $progress)
     {
+        $progress->reset();
+        $progress->save();
+
         return $this->processor->components($this);
     }
 

@@ -22,7 +22,7 @@ class InstallQueueWorker
      *
      * @var int|null
      */
-    protected $pid = 20;
+    protected $pid = null;
 
     /**
      * Absolute path to the application.
@@ -66,21 +66,22 @@ class InstallQueueWorker
      * Runs process if it is not running.
      *
      * @return InstallQueueWorker
-     * @throws ProcessTimedOutException
      * @throws RuntimeException
      * @throws LogicException
      */
     public function run(): self
     {
         if ($this->pid === null) {
+            ignore_user_abort();
+
             try {
-                ignore_user_abort();
-                $process = new Process('php ' . self::$command . ' &', $this->scriptPath, null, null, 1);
+                $process = new Process('nohup php ' . self::$command . ' &', $this->scriptPath, null, null, 1);
                 $process->run();
-            } catch (ProcessTimedOutException $ex) {
-                
+
+                $this->pid = $process->getPid();
+            } catch (ProcessTimedOutException $e) {
+                // Do nothing.
             }
-            $this->pid = $process->getPid();
         }
 
         return $this;

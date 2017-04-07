@@ -11,7 +11,6 @@ use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
 use Antares\Extension\Events\Activated;
 use Antares\Extension\Events\Activating;
 use Antares\Extension\Events\Failed;
-use Antares\Extension\Exception\ExtensionException;
 use Antares\Extension\Model\Operation;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Illuminate\Container\Container;

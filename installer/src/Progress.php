@@ -11,7 +11,6 @@ use Antares\Memory\MemoryManager;
 use Antares\Memory\Provider;
 use File;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Symfony\Component\Process\Exception\ProcessTimedOutException;
 
 class Progress implements ProgressContract
 {
@@ -82,14 +81,14 @@ class Progress implements ProgressContract
         $this->memory->getHandler()->initiate();
 
         // Steps are the sum of extensions and composer command.
-        $this->stepsCount          = (int) count($this->memory->get('app.installation.components', [])) + 1;
-        $this->completedStepsCount = (int) $this->memory->get('app.installation.completed', 0);
-        $this->isRunning           = (bool) $this->memory->get('app.installing', false);
-        $this->pid                 = $this->memory->get('app.installation.pid');
-        $this->failed              = (bool) $this->memory->get('app.installation.failed', false);
+        $this->stepsCount           = (int) count( $this->memory->get('app.installation.components', []) ) + 1;
+        $this->completedStepsCount  = (int) $this->memory->get('app.installation.completed', 0);
+        $this->isRunning            = (bool) $this->memory->get('app.installing', false);
+        $this->pid                  = $this->memory->get('app.installation.pid');
+        $this->failed               = (bool) $this->memory->get('app.installation.failed', false);
 
-        if ($this->pid) {
-            $this->installQueueWorker->setPid((int) $this->pid);
+        if($this->pid) {
+            $this->installQueueWorker->setPid( (int) $this->pid);
         }
     }
 
@@ -132,6 +131,10 @@ class Progress implements ProgressContract
         } catch (\Exception $e) {
             vdump($e);
             exit;
+            $this->setFailed($e->getMessage());
+            $this->save();
+        }
+        catch(\Exception $e) {
             $this->setFailed($e->getMessage());
             $this->save();
         }

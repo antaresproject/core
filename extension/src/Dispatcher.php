@@ -98,14 +98,14 @@ class Dispatcher {
         foreach ($this->extensions as $extension) {
             try {
                 $this->loader->register($extension);
-                $this->eventDispatcher->fire(new Booted($extension));
+                $this->eventDispatcher->dispatch(new Booted($extension));
             }
             catch(Exception $e) {
                 throw $e;
             }
         }
 
-        $this->eventDispatcher->fire(new BootedAll());
+        $this->eventDispatcher->dispatch(new BootedAll());
         $this->booted = true;
     }
 
