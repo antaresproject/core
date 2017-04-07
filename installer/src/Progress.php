@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Antares\Installation;
 
@@ -13,7 +13,8 @@ use File;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 
-class Progress implements ProgressContract {
+class Progress implements ProgressContract
+{
 
     /**
      * Memory provider instance.
@@ -72,22 +73,23 @@ class Progress implements ProgressContract {
      * @param MemoryManager $memoryManager
      * @param InstallQueueWorker $installQueueWorker
      */
-    public function __construct(MemoryManager $memoryManager, InstallQueueWorker $installQueueWorker) {
-        $this->memory               = $memoryManager->make('primary');
-        $this->installQueueWorker   = $installQueueWorker;
-        $this->filePath             = storage_path('installation.txt');
+    public function __construct(MemoryManager $memoryManager, InstallQueueWorker $installQueueWorker)
+    {
+        $this->memory             = $memoryManager->make('primary');
+        $this->installQueueWorker = $installQueueWorker;
+        $this->filePath           = storage_path('installation.txt');
 
         $this->memory->getHandler()->initiate();
 
         // Steps are the sum of extensions and composer command.
-        $this->stepsCount           = (int) count( $this->memory->get('app.installation.components', []) ) + 1;
-        $this->completedStepsCount  = (int) $this->memory->get('app.installation.completed', 0);
-        $this->isRunning            = (bool) $this->memory->get('app.installing', false);
-        $this->pid                  = $this->memory->get('app.installation.pid');
-        $this->failed               = (bool) $this->memory->get('app.installation.failed', false);
+        $this->stepsCount          = (int) count($this->memory->get('app.installation.components', [])) + 1;
+        $this->completedStepsCount = (int) $this->memory->get('app.installation.completed', 0);
+        $this->isRunning           = (bool) $this->memory->get('app.installing', false);
+        $this->pid                 = $this->memory->get('app.installation.pid');
+        $this->failed              = (bool) $this->memory->get('app.installation.failed', false);
 
-        if($this->pid) {
-            $this->installQueueWorker->setPid($this->pid);
+        if ($this->pid) {
+            $this->installQueueWorker->setPid((int) $this->pid);
         }
     }
 
@@ -96,18 +98,21 @@ class Progress implements ProgressContract {
      *
      * @return string
      */
-    public function getFilePath() : string {
+    public function getFilePath(): string
+    {
         return $this->filePath;
     }
 
     /**
      * Starts the progress state.
      */
-    public function start() {
+    public function start()
+    {
         $this->startQueueWorker();
-        $this->memory->put('app.installation.pid', $this->pid);
 
-        if( ! $this->isRunning()) {
+
+        $this->memory->put('app.installation.pid', $this->pid);
+        if (!$this->isRunning()) {
             File::put($this->filePath, '');
 
             $this->completedStepsCount = 0;
@@ -120,17 +125,20 @@ class Progress implements ProgressContract {
         }
     }
 
-    protected function startQueueWorker() {
+    protected function startQueueWorker()
+    {
         try {
             $this->pid = $this->installQueueWorker->run()->getPid();
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
+            vdump($e);
+            exit;
             $this->setFailed($e->getMessage());
             $this->save();
         }
     }
 
-    protected function runQueue() {
+    protected function runQueue()
+    {
         $extensions = $this->memory->get('app.installation.components');
 
         $job = new BulkExtensionsBackgroundJob($extensions, \Antares\Extension\Processors\Installer::class, $this->getFilePath());
@@ -142,8 +150,9 @@ class Progress implements ProgressContract {
     /**
      * Stops the progress state.
      */
-    public function stop() {
-        if( $this->isRunning() ) {
+    public function stop()
+    {
+        if ($this->isRunning()) {
             $this->reset();
         }
     }
@@ -151,7 +160,8 @@ class Progress implements ProgressContract {
     /**
      * Resets the progress state.
      */
-    public function reset() {
+    public function reset()
+    {
         $this->memory->forget('app.installation.components');
         $this->stepsCount = 0;
 
@@ -162,7 +172,7 @@ class Progress implements ProgressContract {
         $this->memory->put('app.installation.failed', $this->failed);
         $this->memory->put('app.installation.failed_message', '');
 
-        if($this->pid) {
+        if ($this->pid) {
             $this->installQueueWorker->stop();
             $this->pid = null;
             $this->memory->put('app.installation.pid', $this->pid);
@@ -176,11 +186,11 @@ class Progress implements ProgressContract {
      *
      * @return string
      */
-    public function getOutput() : string {
+    public function getOutput(): string
+    {
         try {
             return File::get($this->filePath);
-        }
-        catch(FileNotFoundException $e) {
+        } catch (FileNotFoundException $e) {
             return '';
         }
     }
@@ -190,14 +200,16 @@ class Progress implements ProgressContract {
      *
      * @return int
      */
-    public function getStepsCount() : int {
+    public function getStepsCount(): int
+    {
         return $this->stepsCount;
     }
 
     /**
      * Increments completed steps.
      */
-    public function advanceStep() {
+    public function advanceStep()
+    {
         $this->memory->put('app.installation.completed', ++$this->completedStepsCount);
     }
 
@@ -206,8 +218,9 @@ class Progress implements ProgressContract {
      *
      * @return int
      */
-    public function getPercentageProgress() : int {
-        if($this->stepsCount === 0) {
+    public function getPercentageProgress(): int
+    {
+        if ($this->stepsCount === 0) {
             return 0;
         }
 
@@ -219,7 +232,8 @@ class Progress implements ProgressContract {
      *
      * @return bool
      */
-    public function isFinished() : bool {
+    public function isFinished(): bool
+    {
         return $this->memory->get('app.installed', false) || $this->completedStepsCount === $this->stepsCount;
     }
 
@@ -228,14 +242,16 @@ class Progress implements ProgressContract {
      *
      * @return bool
      */
-    public function isRunning() : bool {
+    public function isRunning(): bool
+    {
         return $this->isRunning;
     }
 
     /**
      * Saves the memory.
      */
-    public function save() {
+    public function save()
+    {
         $this->memory->finish();
     }
 
@@ -244,7 +260,8 @@ class Progress implements ProgressContract {
      *
      * @param string $message
      */
-    public function setFailed(string $message) {
+    public function setFailed(string $message)
+    {
         $this->failed = true;
         $this->memory->put('app.installation.failed', $this->failed);
         $this->memory->put('app.installation.failed_message', $message);
@@ -256,14 +273,16 @@ class Progress implements ProgressContract {
     /**
      * @return bool
      */
-    public function isFailed() : bool {
+    public function isFailed(): bool
+    {
         return $this->failed;
     }
 
     /**
      * @return string
      */
-    public function getFailedMessage() : string {
+    public function getFailedMessage(): string
+    {
         return (string) $this->memory->get('app.installation.failed_message', '');
     }
 

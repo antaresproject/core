@@ -26,7 +26,8 @@ use Antares\Installation\Progress;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
 use SensioLabs\AnsiConverter\Theme\SolarizedTheme;
 
-class ProgressController extends BaseController {
+class ProgressController extends BaseController
+{
 
     /**
      * @var SolarizedTheme
@@ -36,68 +37,73 @@ class ProgressController extends BaseController {
     /**
      * ProgressController constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
 
         $this->theme = new SolarizedTheme();
     }
 
     /**
-	 * Setup controller filters.
-	 *
-	 * @return void
-	 */
-	protected function setupMiddleware() {
-
-	}
+     * Setup controller filters.
+     *
+     * @return void
+     */
+    protected function setupMiddleware()
+    {
+        
+    }
 
     /**
      * @param Progress $progress
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-	public function index(Progress $progress) {
-		$consoleTheme = $this->theme->asArray();
+    public function index(Progress $progress)
+    {
+        $consoleTheme = $this->theme->asArray();
+        $progress->start();
 
-		$progress->start();
 
-		return view('antares/installer::progress', compact('consoleTheme'));
-	}
+        return view('antares/installer::progress', compact('consoleTheme'));
+    }
 
     /**
      * @param Progress $progress
      * @return \Illuminate\Http\JsonResponse
      */
-	public function preview(Progress $progress) {
-        $converter  = new AnsiToHtmlConverter($this->theme);
-        $content    = $progress->getOutput();
-        $console    = $converter->convert($content);
+    public function preview(Progress $progress)
+    {
+        $converter = new AnsiToHtmlConverter($this->theme);
+        $content   = $progress->getOutput();
+        $console   = $converter->convert($content);
 
-        if($progress->isFailed()) {
+        if ($progress->isFailed()) {
             return response()->json([
-                'progress' => $progress->getPercentageProgress(),
-                'redirect' => handles('antares::install/failed'),
+                        'progress' => $progress->getPercentageProgress(),
+                        'redirect' => handles('antares::install/failed'),
             ]);
         }
 
-        if($progress->isFinished()) {
+        if ($progress->isFinished()) {
             return response()->json([
-                'progress' => $progress->getPercentageProgress(),
-                'redirect' => handles('antares::install/completed'),
+                        'progress' => $progress->getPercentageProgress(),
+                        'redirect' => handles('antares::install/completed'),
             ]);
         }
 
-		return response()->json([
-            'progress'  => $progress->getPercentageProgress(),
-            'hash'      => bcrypt($content),
-            'console'   => $console,
+        return response()->json([
+                    'progress' => $progress->getPercentageProgress(),
+                    'hash'     => bcrypt($content),
+                    'console'  => $console,
         ]);
-	}
+    }
 
     /**
      * @param Progress $progress
      * @return \Illuminate\Http\RedirectResponse
      */
-	public function stop(Progress $progress) {
+    public function stop(Progress $progress)
+    {
         $progress->stop();
         $progress->save();
 

@@ -316,7 +316,8 @@ class InstallerController extends BaseController
      *
      * @return RedirectResponse
      */
-    public function showInstallProgress() {
+    public function showInstallProgress()
+    {
         return redirect()->to(handles('antares::install/progress'));
     }
 
