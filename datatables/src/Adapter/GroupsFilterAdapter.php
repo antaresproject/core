@@ -104,6 +104,9 @@ class GroupsFilterAdapter
 
     public function getSessionValue($columnIndex = null)
     {
+        if (php_sapi_name() === 'cli') {
+            return false;
+        }
         $session = request()->session();
         if (!$session->has($this->classname)) {
             return false;

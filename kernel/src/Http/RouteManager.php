@@ -116,8 +116,6 @@ abstract class RouteManager
             try {
                 return route(area() . '.' . $path, $options);
             } catch (Exception $ex) {
-                vdump($ex);
-                exit;
                 return '';
             }
         }

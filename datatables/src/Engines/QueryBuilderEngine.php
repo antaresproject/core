@@ -105,22 +105,18 @@ class QueryBuilderEngine extends BaseEngine
     public function count()
     {
         $myQuery = clone $this->query;
+
         // if its a normal query ( no union, having and distinct word )
         // replace the select with static text to improve performance
         if (!Str::contains(Str::lower($myQuery->toSql()), ['union', 'having', 'distinct', 'order by', 'group by'])) {
             $row_count = $this->connection->getQueryGrammar()->wrap('row_count');
             $myQuery->select($this->connection->raw("'1' as {$row_count}"));
         }
-//        vdump($myQuery->toSql());
-//        exit;
 //        $columnDef  = $this->columnDef['filter']['type'];
 //        $whereQuery = $this->query->getQuery()->newQuery();
 //        call_user_func_array($columnDef['method'], [$whereQuery, $this->request->keyword()]);
 //        $queryBuilder->addNestedWhereQuery($whereQuery, 'or');
 //
-//        vdump($this->columnDef);
-//        exit;
-
         return $this->connection->table($this->connection->raw('(' . $myQuery->toSql() . ') count_row_table'))
                         ->setBindings($myQuery->getBindings())->count();
     }
