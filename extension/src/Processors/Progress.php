@@ -54,6 +54,7 @@ class Progress implements ProgressContract {
     /**
      * Progress constructor.
      * @param MemoryManager $memoryManager
+     * @param InstallQueueWorker $installQueueWorker
      */
     public function __construct(MemoryManager $memoryManager, InstallQueueWorker $installQueueWorker) {
         $this->memory               = $memoryManager->make('primary');

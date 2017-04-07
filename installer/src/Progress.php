@@ -127,6 +127,10 @@ class Progress implements ProgressContract {
             $this->setFailed($e->getMessage());
             $this->save();
         }
+        catch(\Exception $e) {
+            $this->setFailed($e->getMessage());
+            $this->save();
+        }
     }
 
     protected function runQueue() {

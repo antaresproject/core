@@ -20,120 +20,202 @@
 
 namespace Antares\Extension\TestCase;
 
-use Mockery as m;
+use Antares\Extension\Collections\Extensions;
+use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Dispatcher;
+use Antares\Extension\Events\BootedAll;
+use Antares\Extension\Loader;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
+use Mockery as m;
 
 class DispatcherTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * Get mocked Antares\Extension\ProviderRepository.
-     *
-     * @return \Antares\Extension\ProviderRepository
+     * @var \Mockery\MockInterface
      */
-    protected function getProvider()
-    {
-        return m::mock('\Antares\Extension\ProviderRepository', [
-                    m::mock('\Illuminate\Contracts\Foundation\Application'),
-        ]);
+    protected $container;
+
+    /**
+     * @var \Mockery\MockInterface
+     */
+    protected $eventDispatcher;
+
+    /**
+     * @var \Mockery\MockInterface
+     */
+    protected $loader;
+
+    public function setUp() {
+        parent::setUp();
+
+        $this->container        = m::mock(Container::class);
+        $this->loader           = m::mock(Loader::class);
+        $this->eventDispatcher  = m::mock(EventDispatcher::class);
+    }
+
+    public function tearDown() {
+        parent::tearDown();
+        m::close();
     }
 
     /**
-     * Test Antares\Extension\Dispatcher::start() method.
-     *
-     * @test
+     * @return Dispatcher
      */
-    public function testStartMethod()
-    {
-        $provider = $this->getProvider();
-        $config   = m::mock('\Illuminate\Contracts\Config\Repository');
-        $event    = m::mock('\Illuminate\Contracts\Events\Dispatcher');
-        $files    = m::mock('\Illuminate\Filesystem\Filesystem');
-        $finder   = m::mock('\Antares\Extension\Finder');
-
-        $options1 = [
-            'config'      => ['handles' => 'laravel'],
-            'path'        => '/foo/app/laravel/framework/',
-            'source-path' => '/foo/app',
-            'autoload'    => [
-                'source-path::hello.php',
-                'start.php',
-            ],
-            'provides'    => ['Laravel\FrameworkServiceProvider'],
-        ];
-
-        $options2 = [
-            'config' => [],
-            'path'   => '/foo/app/',
-        ];
-
-        $config->shouldReceive('set')->once()
-                ->with('antares/extension::handles.laravel/framework', 'laravel')->andReturnNull();
-        $event->shouldReceive('fire')->once()
-                ->with('extension.started: laravel/framework', [$options1])->andReturnNull()
-                ->shouldReceive('fire')->once()
-                ->with('extension.started', ['laravel/framework', $options1])->andReturnNull()
-                ->shouldReceive('fire')->once()
-                ->with('extension.booted: laravel/framework', [$options1])->andReturnNull()
-                ->shouldReceive('fire')->once()
-                ->with('extension.booted', ['laravel/framework', $options1])->andReturnNull();
-        $files->shouldReceive('isFile')->once()->with('/foo/app/hello.php')->andReturn(true)
-                ->shouldReceive('isFile')->once()->with('/foo/app/start.php')->andReturn(true)
-                ->shouldReceive('isFile')->once()->with('/foo/app/src/antares.php')->andReturn(true)
-                ->shouldReceive('isFile')->once()->with('/foo/app/antares.php')->andReturn(false)
-                ->shouldReceive('getRequire')->once()->with('/foo/app/hello.php')->andReturn(true)
-                ->shouldReceive('getRequire')->once()->with('/foo/app/start.php')->andReturn(true)
-                ->shouldReceive('getRequire')->once()->with('/foo/app/src/antares.php')->andReturn(true);
-        $provider->shouldReceive('provides')->once()
-                ->with(['Laravel\FrameworkServiceProvider'])->andReturn(true);
-
-        $event->shouldReceive('fire')->once()
-                ->with('extension.started: app', [$options2])->andReturnNull()
-                ->shouldReceive('fire')->once()
-                ->with('extension.started', ['app', $options2])->andReturnNull()
-                ->shouldReceive('fire')->once()
-                ->with('extension.booted: app', [$options2])->andReturnNull()
-                ->shouldReceive('fire')->once()
-                ->with('extension.booted', ['app', $options2])->andReturnNull();
-        $files->shouldReceive('isFile')->once()
-                ->with('/foo/app/src/antares.php')->andReturn(false)
-                ->shouldReceive('isFile')->once()
-                ->with('/foo/app/antares.php')->andReturn(true)
-                ->shouldReceive('getRequire')->once()
-                ->with('/foo/app/antares.php')->andReturn(true);
-
-        $finder->shouldReceive('resolveExtensionPath')->andReturnUsing(function ($p) {
-            return $p;
-        });
-
-        $stub = new Dispatcher($config, $event, $files, $finder, $provider);
-
-        $stub->register('laravel/framework', $options1);
-        $stub->register('app', $options2);
-        $stub->boot();
+    protected function getDispatcherInstance() {
+        return new Dispatcher($this->container, $this->eventDispatcher, $this->loader);
     }
 
-    /**
-     * Test Antares\Extension\Dispatcher::finish() method.
-     *
-     * @test
-     */
-    public function testFinishMethod()
-    {
-        $config = m::mock('\Illuminate\Contracts\Config\Repository');
-        $event  = m::mock('\Illuminate\Contracts\Events\Dispatcher');
-        $files  = m::mock('\Illuminate\Filesystem\Filesystem');
-        $finder = m::mock('\Antares\Extension\Finder');
+    public function testBootedMethodOnStart() {
+        $this->assertFalse($this->getDispatcherInstance()->booted());
+    }
 
-        $event->shouldReceive('fire')->once()
-                ->with('extension.done: laravel/framework', [['foo']])
+    public function testRegisterCollectionAndBootMethods() {
+        $extensions = [
+            m::mock(ExtensionContract::class),
+            m::mock(ExtensionContract::class),
+            m::mock(ExtensionContract::class),
+        ];
+
+        foreach($extensions as $extension) {
+            $this->loader
+                ->shouldReceive('register')
+                ->once()
+                ->with($extension)
                 ->andReturnNull()
-                ->shouldReceive('fire')->once()
-                ->with('extension.done', ['laravel/framework', ['foo']])
-                ->andReturnNull();
+                ->getMock();
+        }
 
-        $stub = new Dispatcher($config, $event, $files, $finder, $this->getProvider());
-        $stub->finish('laravel/framework', ['foo']);
+        $this->eventDispatcher
+            ->shouldReceive('fire')
+            ->times(4)
+            ->andReturnNull()
+            ->getMock();
+
+        $dispatcher = $this->getDispatcherInstance();
+
+        $dispatcher->registerCollection(new Extensions($extensions));
+
+        $this->assertFalse($dispatcher->booted());
+
+        $dispatcher->boot();
+
+        $this->assertTrue($dispatcher->booted());
+    }
+
+    public function testRegisterAndBootMethods() {
+        $extension = m::mock(ExtensionContract::class);
+
+        $this->loader
+            ->shouldReceive('register')
+            ->once()
+            ->with($extension)
+            ->andReturnNull()
+            ->getMock();
+
+        $this->eventDispatcher
+            ->shouldReceive('fire')
+            ->times(2)
+            ->andReturnNull()
+            ->getMock();
+
+        $dispatcher = $this->getDispatcherInstance();
+
+        $dispatcher->register($extension);
+
+        $this->assertFalse($dispatcher->booted());
+
+        $dispatcher->boot();
+
+        $this->assertTrue($dispatcher->booted());
+    }
+
+    public function testAfterMethodWithNullCallback() {
+        $callback = null;
+
+        $this->container
+            ->shouldReceive('call')
+            ->never()
+            ->getMock();
+
+        $this->eventDispatcher
+            ->shouldReceive('listen')
+            ->once()
+            ->with(BootedAll::class, $callback)
+            ->andReturnNull()
+            ->getMock();
+
+        $dispatcher = $this->getDispatcherInstance();
+        $dispatcher->after($callback);
+    }
+
+    public function testAfterMethodWithNullCallbackOnBooted() {
+        $callback = null;
+
+        $this->container
+            ->shouldReceive('call')
+            ->never()
+            ->getMock();
+
+        $this->eventDispatcher
+            ->shouldReceive('fire')
+            ->once()
+            ->andReturnNull()
+            ->getMock()
+            ->shouldReceive('listen')
+            ->once()
+            ->with(BootedAll::class, $callback)
+            ->andReturnNull()
+            ->getMock();
+
+        $dispatcher = $this->getDispatcherInstance();
+        $dispatcher->boot();
+        $dispatcher->after($callback);
+    }
+
+    public function testAfterMethodWithCallback() {
+        $callback = function() {};
+
+        $this->container
+            ->shouldReceive('call')
+            ->never()
+            ->getMock();
+
+        $this->eventDispatcher
+            ->shouldReceive('listen')
+            ->once()
+            ->with(BootedAll::class, $callback)
+            ->andReturnNull()
+            ->getMock();
+
+        $dispatcher = $this->getDispatcherInstance();
+        $dispatcher->after($callback);
+    }
+
+    public function testAfterMethodWithCallbackOnBooted() {
+        $callback = function() {};
+
+        $this->container
+            ->shouldReceive('call')
+            ->once()
+            ->with($callback)
+            ->getMock();
+
+        $this->eventDispatcher
+            ->shouldReceive('fire')
+            ->once()
+            ->andReturnNull()
+            ->getMock()
+            ->shouldReceive('listen')
+            ->once()
+            ->with(BootedAll::class, $callback)
+            ->andReturnNull()
+            ->getMock();
+
+        $dispatcher = $this->getDispatcherInstance();
+        $dispatcher->boot();
+        $dispatcher->after($callback);
     }
 
 }

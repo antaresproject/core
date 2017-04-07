@@ -37,6 +37,14 @@ class RequirementTest extends ApplicationTestCase
     }
 
     /**
+     * Teardown the test environment.
+     */
+    public function tearDown()
+    {
+        m::close();
+    }
+
+    /**
      * Test construct Antares\Foundation\Installation\Requirement.
      *
      * @test

@@ -63,17 +63,22 @@ class InstallQueueWorker {
      * Runs process if it is not running.
      *
      * @return InstallQueueWorker
-     * @throws ProcessTimedOutException
      * @throws RuntimeException
      * @throws LogicException
      */
     public function run() : self {
         if($this->pid === null) {
             ignore_user_abort();
-            $process = new Process('php ' . self::$command . ' &', $this->scriptPath, null, null, 1);
-            $process->run();
 
-            $this->pid = $process->getPid();
+            try {
+                $process = new Process('nohup php ' . self::$command . ' &', $this->scriptPath, null, null, 1);
+                $process->run();
+
+                $this->pid = $process->getPid();
+            }
+            catch(ProcessTimedOutException $e) {
+                // Do nothing.
+            }
         }
 
         return $this;

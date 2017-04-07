@@ -11,7 +11,6 @@ use Antares\Extension\Events\Deactivated;
 use Antares\Extension\Events\Deactivating;
 use Antares\Extension\Events\Failed;
 use Antares\Extension\Model\Operation;
-use Antares\Extension\Exception\ExtensionException;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
