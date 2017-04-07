@@ -145,7 +145,7 @@ class Extension implements ExtensionContract {
      * @return bool
      */
     public function isInstalled() : bool {
-        return $this->status === ExtensionContract::STATUS_INSTALLED;
+        return $this->status === ExtensionContract::STATUS_INSTALLED || $this->isActivated();
     }
 
     /**

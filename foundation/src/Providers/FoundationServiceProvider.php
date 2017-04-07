@@ -22,10 +22,12 @@
 namespace Antares\Foundation\Providers;
 
 use Antares\Extension\Events\Activated;
+use Antares\Extension\Events\ComposerFailed;
 use Antares\Extension\Events\Deactivated;
 use Antares\Extension\Events\Installed;
 use Antares\Extension\Events\Uninstalled;
 use Antares\Foundation\Listeners\AfterExtensionOperation;
+use Antares\Foundation\Listeners\StopInstallation;
 use Antares\Support\Providers\Traits\AliasesProviderTrait;
 use Antares\Widgets\Http\Middleware\WidgetsMiddleware;
 use Antares\Support\Providers\ServiceProvider;
@@ -250,6 +252,10 @@ class FoundationServiceProvider extends ServiceProvider
             Deactivated::class,
             Uninstalled::class
         ], AfterExtensionOperation::class);
+
+        $this->app->make('events')->listen([
+            ComposerFailed::class
+        ], StopInstallation::class);
     }
 
     /**

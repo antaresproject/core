@@ -66,7 +66,7 @@ class Progress implements ProgressContract {
         $this->failed               = (bool) $this->memory->get('app.extension.failed', false);
 
         if($this->pid) {
-            $this->installQueueWorker->setPid($this->pid);
+            $this->installQueueWorker->setPid( (int) $this->pid);
         }
     }
 
