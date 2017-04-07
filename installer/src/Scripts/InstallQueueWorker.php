@@ -70,7 +70,7 @@ class InstallQueueWorker {
     public function run() : self {
         if($this->pid === null) {
             ignore_user_abort();
-            $process = new Process('php ' . self::$command . ' &', $this->scriptPath, null, null, 10);
+            $process = new Process('php ' . self::$command . ' &', $this->scriptPath, null, null, 1);
             $process->run();
 
             $this->pid = $process->getPid();

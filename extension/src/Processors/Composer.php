@@ -33,7 +33,6 @@ class Composer {
     public function __construct(ComposerHandler $composerHandler, Dispatcher $dispatcher) {
         $this->composerHandler  = $composerHandler;
         $this->dispatcher       = $dispatcher;
-
     }
 
     /**

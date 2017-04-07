@@ -226,6 +226,7 @@ class Requirement implements RequirementContract
     {
         $modules  = apache_get_modules();
         $required = config('antares/installer::validation.required_apache_modules');
+
         $missing  = array_diff($required, $modules);
         $schema   = ['is' => true, 'data' => ['modules' => $modules]];
         if (!empty($missing)) {

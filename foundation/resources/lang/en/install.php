@@ -142,4 +142,5 @@ return
                 'duplicate' => 'Unable to install when there already user registered.',
             ),
         'verify'           => 'Verify result',
+        'stopAndBack'      => 'Stop and Back',
     );

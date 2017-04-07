@@ -21,7 +21,9 @@ class Handler {
      * @param array $commandParameters
      */
     public function __construct(array $commandParameters = []) {
-		putenv('COMPOSER_HOME=' . env('COMPOSER_HOME'));
+        if( env('COMPOSER_HOME') === null) {
+            putenv('COMPOSER_HOME=' . base_path());
+        }
 
 		$this->commandParameters = $commandParameters;
     }

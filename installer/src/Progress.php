@@ -11,7 +11,6 @@ use Antares\Memory\MemoryManager;
 use Antares\Memory\Provider;
 use File;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Symfony\Component\Process\Exception\ProcessTimedOutException;
 
 class Progress implements ProgressContract {
 
@@ -87,7 +86,7 @@ class Progress implements ProgressContract {
         $this->failed               = (bool) $this->memory->get('app.installation.failed', false);
 
         if($this->pid) {
-            $this->installQueueWorker->setPid($this->pid);
+            $this->installQueueWorker->setPid( (int) $this->pid);
         }
     }
 
