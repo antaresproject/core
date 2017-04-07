@@ -44,8 +44,7 @@ class CssInliner
         if ($message->getContentType() === 'text/html' ||
                 ($message->getContentType() === 'multipart/alternative' && $message->getBody())
         ) {
-            $converter->convert($message->getBody());
-            $message->setBody($converter->convert());
+            $message->setBody($converter->convert($message->getBody()));
         }
 
         foreach ($message->getChildren() as $part) {
