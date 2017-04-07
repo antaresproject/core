@@ -80,7 +80,7 @@ class Progress implements ProgressContract {
         $this->memory->getHandler()->initiate();
 
         // Steps are the sum of extensions and composer command.
-        $this->stepsCount           = (int) count( $this->memory->get('app.installation.components', []) ) + 0;
+        $this->stepsCount           = (int) count( $this->memory->get('app.installation.components', []) ) + 1;
         $this->completedStepsCount  = (int) $this->memory->get('app.installation.completed', 0);
         $this->isRunning            = (bool) $this->memory->get('app.installing', false);
         $this->pid                  = $this->memory->get('app.installation.pid');

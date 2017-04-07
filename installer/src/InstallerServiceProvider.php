@@ -70,7 +70,8 @@ class InstallerServiceProvider extends ModuleServiceProvider
         $this->app->singleton(Progress::class);
     }
 
-    public function boot() {
+    public function boot()
+    {
         parent::boot();
 
         $this->loadRoutes();
@@ -80,14 +81,11 @@ class InstallerServiceProvider extends ModuleServiceProvider
             $job = $this->app->make(SyncAutomation::class)->onQueue('install');
             return $this->dispatch($job);
         });
-
-
         $path = realpath(__DIR__ . '/../resources');
         $this->addViewComponent('installer', 'antares/installer', "{$path}/views");
         $this->addLanguageComponent('antares/installer', 'antares/installer', "{$path}/lang");
         $this->addConfigComponent('antares/installer', 'antares/installer', $path . '/config');
     }
-
 
     /**
      * Load extension routes.

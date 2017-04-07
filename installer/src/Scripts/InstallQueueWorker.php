@@ -7,7 +7,8 @@ use Symfony\Component\Process\Exception\LogicException;
 use Symfony\Component\Process\Exception\RuntimeException;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 
-class InstallQueueWorker {
+class InstallQueueWorker
+{
 
     /**
      * Artisan command.
@@ -33,7 +34,8 @@ class InstallQueueWorker {
     /**
      * StartQueueWorker constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->scriptPath = base_path();
 
         $this->setup();
@@ -42,9 +44,10 @@ class InstallQueueWorker {
     /**
      * Setups the worker for check if there is already run process.
      */
-    protected function setup() {
-        $processes  = [];
-        $pid        = null;
+    protected function setup()
+    {
+        $processes = [];
+        $pid       = null;
 
         exec('ps aux|grep php', $processes);
 
@@ -66,8 +69,9 @@ class InstallQueueWorker {
      * @throws RuntimeException
      * @throws LogicException
      */
-    public function run() : self {
-        if($this->pid === null) {
+    public function run(): self
+    {
+        if ($this->pid === null) {
             ignore_user_abort();
 
             try {
@@ -75,8 +79,7 @@ class InstallQueueWorker {
                 $process->run();
 
                 $this->pid = $process->getPid();
-            }
-            catch(ProcessTimedOutException $e) {
+            } catch (ProcessTimedOutException $e) {
                 // Do nothing.
             }
         }
@@ -89,7 +92,8 @@ class InstallQueueWorker {
      *
      * @param int $pid
      */
-    public function setPid(int $pid) {
+    public function setPid(int $pid)
+    {
         $this->pid = $pid;
     }
 
@@ -98,14 +102,16 @@ class InstallQueueWorker {
      *
      * @return int|null
      */
-    public function getPid() {
+    public function getPid()
+    {
         return $this->pid;
     }
 
     /**
      * Stops the running process.
      */
-    public function stop() {
+    public function stop()
+    {
         exec('kill ' . $this->pid);
     }
 
