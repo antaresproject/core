@@ -113,7 +113,7 @@ class ViewerController extends Controller
      * @return mixed
      */
     public function updateConfigurationSuccess() {
-        $url        = route('admin.extensions.index');
+        $url        = route(area() . '.extensions.index');
         $message    = trans('antares/foundation::response.extensions.configuration-success');
 
         return $this->redirectWithMessage($url, $message);

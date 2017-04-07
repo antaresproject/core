@@ -36,7 +36,7 @@ class SettingsFormBuilder {
      */
     public function build(ExtensionModel $model, SettingsFormContract $settingsForm, SettingsContract $settings) {
         return $this->formFactory->make(function(FormGrid $form) use($model, $settingsForm, $settings) {
-            $url = route('admin.extensions.viewer.configuration.update', ['id' => $model->getId()]);
+            $url = route( area() . '.extensions.viewer.configuration.update', ['id' => $model->getId()]);
 
             $form->simple($url, [], $model);
             $form->name($model->getFullName() . ' Configuration');

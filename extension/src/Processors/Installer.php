@@ -119,7 +119,7 @@ class Installer extends AbstractOperation {
             }
 
             $this->migrateManager->extension($name);
-            $this->assetManager->extension($name);
+            $this->assetManager->extension( str_replace('/', '_', $name));
             $this->importSettings($handler, $extension);
 
             $this->extensionsRepository->save($extension, [
