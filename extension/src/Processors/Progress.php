@@ -138,7 +138,12 @@ class Progress implements ProgressContract {
      */
     public function getOutput() : string {
         try {
-            return File::get($this->filePath);
+            $content = File::get($this->filePath);
+
+            $content = preg_replace("/[\x08]+/", "\r\n", $content);
+            $content = preg_replace("/[\r\n]+/", "\n", $content);
+
+            return $content;
         }
         catch(FileNotFoundException $e) {
             return '';

@@ -43,7 +43,7 @@ class OperationFileOutput implements OperationHandlerContract  {
      * @return void
      */
     public function operationSuccess(Operation $operation) {
-        $this->output->writeln( $this->getNormalizedContent($operation->getMessage()) );
+        $this->output->writeln( $operation->getMessage() );
     }
 
     /**
@@ -51,7 +51,7 @@ class OperationFileOutput implements OperationHandlerContract  {
      * @return void
      */
     public function operationFailed(Operation $operation) {
-        $this->output->writeln( $this->getNormalizedContent($operation->getMessage()) );
+        $this->output->writeln( $operation->getMessage() );
         $this->failed++;
     }
 
@@ -60,7 +60,7 @@ class OperationFileOutput implements OperationHandlerContract  {
      * @return void
      */
     public function operationInfo(Operation $operation) {
-        $this->output->writeln( $this->getNormalizedContent($operation->getMessage()) );
+        $this->output->writeln( $operation->getMessage() );
     }
 
     /**
@@ -68,20 +68,6 @@ class OperationFileOutput implements OperationHandlerContract  {
      */
     public function failed() {
         return $this->failed > 0;
-    }
-
-    /**
-     * @param string $content
-     * @return string
-     */
-    protected function getNormalizedContent(string $content) : string {
-        $content .= "\r\n";
-        $content = preg_replace('/[\s]{2,}/mu', '', $content);
-
-        return $content;
-        //$content = preg_replace("/[\x08]{2,}/mu", '', $content);
-
-        //return str_replace("\x08", ' ', $content);
     }
 
 }

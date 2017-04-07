@@ -29,11 +29,11 @@ class BulkExtensionsBackgroundJob implements ShouldQueue {
     protected $extensionsNames;
 
     /**
-     * Operation class name.
+     * Operations class names.
      *
-     * @var string
+     * @var string[]
      */
-    protected $operationClassName;
+    protected $operationsClassNames;
 
     /**
      * Output file name.
@@ -52,13 +52,13 @@ class BulkExtensionsBackgroundJob implements ShouldQueue {
     /**
      * BulkExtensionsBackgroundJob constructor.
      * @param array $extensionsNames
-     * @param string $operationClassName
+     * @param array $operationsClassNames
      * @param string $outputFileName
      * @param array $flags
      */
-    public function __construct(array $extensionsNames, string $operationClassName, string $outputFileName, array $flags = []) {
+    public function __construct(array $extensionsNames, array $operationsClassNames, string $outputFileName, array $flags = []) {
         $this->extensionsNames      = $extensionsNames;
-        $this->operationClassName   = $operationClassName;
+        $this->operationsClassNames = $operationsClassNames;
         $this->outputFileName       = $outputFileName;
         $this->flags                = $flags;
     }
@@ -76,10 +76,9 @@ class BulkExtensionsBackgroundJob implements ShouldQueue {
      */
     public function handle(Manager $manager, Container $container, Composer $composer)
     {
-        $output     = new OperationFileOutput($this->outputFileName);
-        $operation  = $container->make($this->operationClassName);
+        $output = new OperationFileOutput($this->outputFileName);
 
-        $composer->run($output, $this->extensionsNames);
+        //$composer->run($output, $this->extensionsNames);
 
         if($output->failed()) {
             return;
@@ -91,8 +90,12 @@ class BulkExtensionsBackgroundJob implements ShouldQueue {
             $extensionName  = explode(':', $extensionName)[0];
             $extension      = $manager->getAvailableExtensions()->findByName($extensionName);
 
-            if($extension instanceof ExtensionContract && $operation instanceof OperationContract) {
-                $operation->run($output, $extension, $this->flags);
+            foreach($this->operationsClassNames as $operationClassName) {
+                $operation = $container->make($operationClassName);
+
+                if($extension instanceof ExtensionContract && $operation instanceof OperationContract) {
+                    $operation->run($output, $extension, $this->flags);
+                }
             }
         }
     }

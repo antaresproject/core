@@ -129,4 +129,20 @@ class FilesystemFinder {
 		return $prefix . '/' . implode('/', $namespaces);
     }
 
+    /**
+     * Resolve extension path.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    public function resolveExtensionPath($path) : string
+    {
+        $app  = rtrim( base_path('app'), '/');
+        $base = rtrim( base_path(), '/');
+
+        return str_replace(
+            ['app::', 'vendor::antares', 'base::'], ["{$app}/", "{$base}/src", "{$base}/"], $path
+        );
+    }
+
 }

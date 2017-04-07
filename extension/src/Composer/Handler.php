@@ -50,9 +50,7 @@ class Handler {
 					return null;
 				}
 
-                $buffer = preg_replace("/[\x08]/mu", "\r\n", $buffer);
-
-				if($buffer && $callback instanceof Closure) {
+				if($callback instanceof Closure) {
 					$callback($process, $type, $buffer);
 				}
 			});

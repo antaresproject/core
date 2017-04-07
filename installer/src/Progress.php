@@ -11,6 +11,7 @@ use Antares\Memory\MemoryManager;
 use Antares\Memory\Provider;
 use File;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Support\Facades\Artisan;
 
 class Progress implements ProgressContract {
 
@@ -79,7 +80,7 @@ class Progress implements ProgressContract {
         $this->memory->getHandler()->initiate();
 
         // Steps are the sum of extensions and composer command.
-        $this->stepsCount           = (int) count( $this->memory->get('app.installation.components', []) ) + 1;
+        $this->stepsCount           = (int) count( $this->memory->get('app.installation.components', []) ) + 0;
         $this->completedStepsCount  = (int) $this->memory->get('app.installation.completed', 0);
         $this->isRunning            = (bool) $this->memory->get('app.installing', false);
         $this->pid                  = $this->memory->get('app.installation.pid');
@@ -127,19 +128,20 @@ class Progress implements ProgressContract {
             $this->setFailed($e->getMessage());
             $this->save();
         }
-        catch(\Exception $e) {
-            $this->setFailed($e->getMessage());
-            $this->save();
-        }
     }
 
     protected function runQueue() {
         $extensions = $this->memory->get('app.installation.components');
 
-        $job = new BulkExtensionsBackgroundJob($extensions, \Antares\Extension\Processors\Installer::class, $this->getFilePath());
-        $job->onQueue('install');
+        $operationClasses = [
+            \Antares\Extension\Processors\Installer::class,
+            \Antares\Extension\Processors\Activator::class,
+        ];
 
-        dispatch($job);
+        $installJob = new BulkExtensionsBackgroundJob($extensions, $operationClasses, $this->getFilePath());
+        $installJob->onQueue('install');
+
+        dispatch($installJob);
     }
 
     /**
@@ -172,6 +174,8 @@ class Progress implements ProgressContract {
         }
 
         File::delete($this->filePath);
+
+        //Artisan::call('queue:flush');
     }
 
     /**
@@ -181,7 +185,12 @@ class Progress implements ProgressContract {
      */
     public function getOutput() : string {
         try {
-            return File::get($this->filePath);
+            $content = File::get($this->filePath);
+
+            $content = preg_replace("/[\x08]+/", "\r\n", $content);
+            $content = preg_replace("/[\r\n]+/", "\n", $content);
+
+            return $content;
         }
         catch(FileNotFoundException $e) {
             return '';

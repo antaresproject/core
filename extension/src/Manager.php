@@ -11,6 +11,7 @@ use Antares\Extension\Factories\SettingsFactory;
 use Antares\Extension\Model\ExtensionModel;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Antares\Support\Collection;
+use Dingo\Api\Facade\Route;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
@@ -235,6 +236,25 @@ class Manager {
         }
 
         return $name;
+    }
+
+    /**
+     * get actual extension name based on route
+     *
+     * @return String
+     * @deprecated
+     */
+    public function getActualExtension()
+    {
+        if (is_null(Route::getCurrentRoute())) {
+            return false;
+        }
+        $action = Route::getCurrentRoute()->getActionName();
+        if ($action === 'Closure') {
+            return false;
+        }
+        preg_match("/.+?(?=\\\)(.*)\Http/", $action, $matches);
+        return empty($matches) ? false : strtolower(trim($matches[1], '\\'));
     }
 
 }
