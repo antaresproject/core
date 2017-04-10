@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Asset;
 
 use Symfony\Component\Filesystem\Filesystem;
@@ -48,7 +47,7 @@ class AssetSymlinker
      * @param Filesystem $files
      * @param string $publishPath
      */
-    public function __construct(Filesystem $files, $publishPath)
+    public function __construct(Filesystem $files, $publishPath = null)
     {
         $this->files       = $files;
         $this->publishPath = $publishPath;

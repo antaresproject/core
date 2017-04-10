@@ -129,7 +129,24 @@ class Asset
      */
     public function add($name, $source, $dependencies = [], $attributes = [], $replaces = [])
     {
+
+        if (!is_null($from      = array_get($attributes, 'from')) && !is_null($extension = extensions($from))) {
+
+            if (isset($extension['path'])) {
+
+                $path     = app('antares.extension.finder')->resolveExtensionPath($extension['path']);
+                $realPath = $path . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . $source;
+                if (file_exists($realPath)) {
+                    $symlinker  = app(AssetSymlinker::class);
+                    $symlinker->setPublishPath(public_path('packages/antares'));
+                    $sourceName = last(explode('/', $source));
+                    $symlinker->publish($sourceName, $realPath);
+                    $source     = '/packages/antares/' . $sourceName;
+                }
+            }
+        }
         $type = (pathinfo($source, PATHINFO_EXTENSION) == 'css') ? 'style' : 'script';
+
         return $this->$type($name, $source, $dependencies, $attributes, $replaces);
     }
 
@@ -305,10 +322,15 @@ class Asset
         }
 
         $filename = 'packages/' . str_replace(['/', '}', '{', '?'], '_', uri()) . '.js';
-        $path     = public_path($filename);
-        $input    = implode(PHP_EOL, array_merge($internals, $this->dispatcher->scripts('inline', $this->assets, $this->path)));
-        $jsMin    = new JSMin($input);
-        file_put_contents($path, $jsMin->min());
+        $path     = sandbox_path($filename);
+
+        $input = implode(PHP_EOL, array_merge($internals, $this->dispatcher->scripts('inline', $this->assets, $this->path)));
+
+        if (env('APP_ENV') === 'production') {
+            $input = new JSMin($input);
+        }
+
+        file_put_contents($path, $input);
         $return[] = '<script  src="' . asset($filename) . '?t=' . time() . '" ></script>';
 
 

@@ -435,16 +435,20 @@ if (!function_exists('extensions')) {
     /**
      * List of extensions getter
      */
-    function extensions()
+    function extensions($name = null)
     {
         $extensions = app('antares.memory')->make('component')->get('extensions.active');
         $return     = [];
         if (empty($extensions)) {
             return $return;
         }
+        if (!is_null($name)) {
+            return array_get($extensions, 'components/' . $name);
+        }
         foreach ($extensions as $name => $extension) {
             $return[str_replace('components', 'antares', $name)] = $extension;
         }
+
         return $return;
     }
 
