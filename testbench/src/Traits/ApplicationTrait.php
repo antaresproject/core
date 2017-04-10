@@ -159,7 +159,7 @@ trait ApplicationTrait
         $providers = array_merge($this->getApplicationProviders($app), $this->getPackageProviders($app));
 
         $app['config']['app.aliases']   = $aliases;
-        $app['config']['app.providers'] = $providers;
+        $app['config']['app.providers'] = array_merge($providers, $this->providers);
     }
 
     /**

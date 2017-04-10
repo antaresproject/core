@@ -141,7 +141,6 @@ abstract class ModuleServiceProvider extends ServiceProvider
         $this->registerEventListeners($events);
         $this->registerRouteMiddleware($router, $kernel);
         $this->bootConfiguration();
-        $reflection = new \ReflectionClass(get_called_class());
         $this->bootMemory();
         $this->bootExtensionComponents();
         $this->bootExtensionRouting();
