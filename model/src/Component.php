@@ -5,6 +5,7 @@ namespace Antares\Model;
 use Antares\Extension\Config\Settings;
 use Antares\Extension\Contracts\Config\SettingsContract;
 use Antares\Extension\Contracts\ExtensionContract;
+use Antares\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model as BaseEloquent;
 
@@ -124,6 +125,37 @@ class Component extends BaseEloquent
      */
     public static function findByVendorAndName(string $vendor, string $name) {
         return static::where('vendor', $vendor)->where('name', $name)->first();
+    }
+
+    /**
+     * fetch one record by name column
+     * @param String $name
+     * @return Eloquent
+     */
+    public static function findOneByName($name)
+    {
+        $name = str_replace('_', '-', $name);
+
+        if( ! Str::contains($name, '/') ) {
+            $name = 'antaresproject/component-' . $name;
+        }
+
+        list($vendor, $name) = explode('/', $name);
+
+        return static::findByVendorAndName($vendor, $name);
+    }
+
+    /**
+     * Return a meta data belong to a user.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $name
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAction(Builder $query, $name)
+    {
+        return $query->with(Action::class)->where('name', $name);
     }
 
 }

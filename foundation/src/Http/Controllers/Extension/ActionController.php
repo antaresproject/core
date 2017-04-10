@@ -121,7 +121,6 @@ class ActionController extends Controller {
      */
     private function tryRunOperation(string $operationClassName, string $vendor, string $name) {
         $this->progress->start();
-        $this->progress->save();
 
         $job = new ExtensionsBackgroundJob($vendor . '/' . $name, $operationClassName, $this->progress->getFilePath());
         $job->onQueue('install');

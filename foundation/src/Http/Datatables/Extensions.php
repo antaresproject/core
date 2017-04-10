@@ -112,7 +112,7 @@ class Extensions extends DataTable {
 
             $ConfigurationStatuses = [ExtensionContract::STATUS_INSTALLED, ExtensionContract::STATUS_ACTIVATED];
 
-            if ( $extension->getSettings()->hasData() && in_array($extension->getStatus(), $ConfigurationStatuses, true) && $acl->can('component-configure')) {
+            if ( $acl->can('component-configure') && $this->extension->hasSettingsForm($name) && in_array($extension->getStatus(), $ConfigurationStatuses, true) ) {
                 $configureUrl = URL::route(area() . '.extensions.viewer.configuration.get', [
                     'vendor'    => $extension->getVendorName(),
                     'name'      => $extension->getPackageName(),

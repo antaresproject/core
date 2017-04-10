@@ -6,6 +6,7 @@ namespace Antares\Extension;
 
 use Antares\Extension\Bootstrap\LoadExtension;
 use Antares\Extension\Composer\Handler;
+use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Extension\Repositories\ConfigRepository;
 use Antares\Support\Providers\ServiceProvider as BaseServiceProvider;
 use Composer\Package\Loader\ArrayLoader;
@@ -29,6 +30,7 @@ class ExtensionServiceProvider extends BaseServiceProvider
         $this->registerExtensionDispatcher();
         $this->registerExtensionBootstrap();
         $this->registerComposerHandler();
+        $this->registerComponentsRepository();
     }
 
     /**
@@ -85,6 +87,16 @@ class ExtensionServiceProvider extends BaseServiceProvider
             $config = (array) config('antares/extension::config.composer.parameters', []);
 
             return new Handler($config);
+        });
+    }
+
+    protected function registerComponentsRepository() {
+        $this->app->singleton(ComponentsRepository::class, function() {
+            $branches = (array) config('components.branches', []);
+            $required = (array) config('components.required', []);
+            $optional = (array) config('components.optional', []);
+
+            return new ComponentsRepository($branches, $required, $optional);
         });
     }
 

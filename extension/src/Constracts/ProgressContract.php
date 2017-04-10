@@ -39,9 +39,4 @@ interface ProgressContract {
      */
     public function isRunning() : bool;
 
-    /**
-     * Saves the memory.
-     */
-    public function save();
-
 }

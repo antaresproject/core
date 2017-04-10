@@ -246,16 +246,18 @@ class FoundationServiceProvider extends ServiceProvider
             return true;
         });
 
-        $this->app->make('events')->listen([
-            Installed::class,
-            Activated::class,
-            Deactivated::class,
-            Uninstalled::class
-        ], AfterExtensionOperation::class);
+        if( app('antares.installed') ) {
+            $this->app->make('events')->listen([
+                Installed::class,
+                Activated::class,
+                Deactivated::class,
+                Uninstalled::class
+            ], AfterExtensionOperation::class);
 
-        $this->app->make('events')->listen([
-            ComposerFailed::class
-        ], StopInstallation::class);
+            $this->app->make('events')->listen([
+                ComposerFailed::class
+            ], StopInstallation::class);
+        }
     }
 
     /**

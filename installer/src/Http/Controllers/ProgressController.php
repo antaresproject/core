@@ -105,7 +105,6 @@ class ProgressController extends BaseController
     public function stop(Progress $progress)
     {
         $progress->stop();
-        $progress->save();
 
         return $this->redirect(handles('antares::install/components'));
     }

@@ -80,6 +80,10 @@ class ExtensionsBackgroundJob implements ShouldQueue {
 
         if($extension instanceof ExtensionContract && $operation instanceof OperationContract) {
             $operation->run($output, $extension, $this->flags);
+
+            if($output->failed()) {
+                return;
+            }
         }
     }
 

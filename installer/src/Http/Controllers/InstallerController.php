@@ -121,7 +121,6 @@ class InstallerController extends BaseController
     public function components(Progress $progress)
     {
         $progress->reset();
-        $progress->save();
 
         return $this->processor->components($this);
     }
@@ -171,59 +170,7 @@ class InstallerController extends BaseController
      */
     public function prepareSucceed()
     {
-        return $this->redirect(handles('antares::install/license'));
-    }
-
-    /**
-     * setting application license
-     * 
-     * @return View
-     */
-    public function license(Request $request)
-    {
-        return $this->processor->license($this, $request);
-    }
-
-    /**
-     * Redirects when license validation failed.
-     *
-     * @param MessageBag $messageBag
-     * @return RedirectResponse|\Illuminate\Routing\Redirector
-     */
-    public function licenseFailedValidation(MessageBag $messageBag)
-    {
-        return $this->redirectWithErrors(handles('antares::install/license'), $messageBag);
-    }
-
-    /**
-     * when license details has not been stored
-     * 
-     * @return RedirectResponse
-     */
-    public function licenseFailedStore()
-    {
-        return redirect_with_message(handles('antares::install/license'), trans('Unable to store license file.'), 'error');
-    }
-
-    /**
-     * when license details has been stored
-     * 
-     * @return RedirectResponse
-     */
-    public function licenseSuccessStore()
-    {
-        return redirect_with_message(handles('antares::install/create'), trans('License details has been stored.'), 'success');
-    }
-
-    /**
-     * shows license form
-     * 
-     * @param Builder $form
-     * @return View
-     */
-    public function showLicenseForm($form)
-    {
-        return view('antares/installer::license', compact('form'));
+        return $this->redirect(handles('antares::install/components'));
     }
 
     /**

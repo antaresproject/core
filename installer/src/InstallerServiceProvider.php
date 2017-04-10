@@ -68,6 +68,7 @@ class InstallerServiceProvider extends ModuleServiceProvider
         });
 
         $this->app->singleton(Progress::class);
+        $this->app->singleton(\Antares\Installation\Repository\Installation::class);
     }
 
     public function boot()

@@ -91,7 +91,7 @@ class Uninstaller extends AbstractOperation {
             ]);
 
             if(in_array('purge', $flags, true)) {
-                $command = 'composer remove ' . $extension->getNameWithVersion();
+                $command = 'composer remove ' . $name;
 
                 $process = $this->composerHandler->run($command, function($process, $type, $buffer) use($handler) {
                     if(Str::contains($buffer, 'Error Output')) {

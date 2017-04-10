@@ -3,21 +3,24 @@
 namespace Antares\Foundation\Listeners;
 
 use Antares\Extension\Events\Base;
-use Antares\Extension\Processors\Progress;
+use Antares\Extension\Contracts\ProgressContract;
+use Antares\Extension\Processors\Progress as ExtensionProgress;
+use Antares\Installation\Progress as InstallationProgress;
 
 class AfterExtensionOperation {
 
     /**
-     * @var Progress
+     * @var ProgressContract
      */
     protected $progress;
 
     /**
      * AfterExtensionOperation constructor.
-     * @param Progress $progress
      */
-    public function __construct(Progress $progress) {
-        $this->progress = $progress;
+    public function __construct() {
+        $this->progress = app()->make('antares.installed')
+            ? app()->make(ExtensionProgress::class)
+            : app()->make(InstallationProgress::class);
     }
 
     /**
@@ -25,7 +28,6 @@ class AfterExtensionOperation {
      */
     public function handle(Base $event) {
         $this->progress->setFinished();
-        $this->progress->save();
     }
 
 }

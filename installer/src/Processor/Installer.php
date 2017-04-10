@@ -21,14 +21,11 @@
 
 namespace Antares\Installation\Processor;
 
+use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Installation\Http\Controllers\InstallerController;
-use Antares\Installation\Http\Form\License as LicenseForm;
 use Antares\Contracts\Installation\Requirement;
 use Antares\Installation\Installation;
 use Antares\Installation\Progress;
-use Antares\Installation\Repository\Components;
-use Antares\Installation\Repository\License;
-use Antares\Memory\Provider;
 use Antares\Support\Facades\Config;
 use Illuminate\Http\RedirectResponse;
 use Symfony\Component\Finder\Finder;
@@ -61,24 +58,15 @@ class Installer
     protected $requirement;
 
     /**
-     * license repository instance
-     *
-     * @var License
-     */
-    protected $license;
-
-    /**
      * Create a new processor instance.
      *
      * @param Installation $installer
      * @param Requirement $requirement
-     * @param License $license
      */
-    public function __construct(Installation $installer, Requirement $requirement, License $license)
+    public function __construct(Installation $installer, Requirement $requirement)
     {
         $this->installer   = $installer;
         $this->requirement = $requirement;
-        $this->license     = $license;
 
         $this->installer->bootInstallerFiles();
     }
@@ -185,33 +173,6 @@ class Installer
     }
 
     /**
-     * processing store license details
-     *
-     * @param InstallerController $listener
-     * @param Request $request
-     * @return View|RedirectResponse
-     */
-    public function license($listener, Request $request)
-    {
-        $form = LicenseForm::getInstance();
-        if (!$request->isMethod('post')) {
-            return $listener->showLicenseForm($form);
-        }
-        $enabled = config('license.enabled');
-        if ($enabled) {
-            $uploaded = $this->license->uploadLicense($request);
-
-            if (!$uploaded) {
-                return $listener->licenseFailedStore();
-            }
-            if (!$form->isValid()) {
-                return $listener->licenseFailedValidation($form->getMessageBag());
-            }
-        }
-        return $listener->licenseSuccessStore();
-    }
-
-    /**
      * Display initial user and site configuration page.
      *
      * @param  object  $listener
@@ -240,6 +201,13 @@ class Installer
     }
 
     /**
+     * @return ComponentsRepository
+     */
+    private function getComponentsRepository() {
+        return app()->make(ComponentsRepository::class);
+    }
+
+    /**
      * shows components form
      *
      * @param object $listener
@@ -255,11 +223,10 @@ class Installer
 
                     $form->attributes($attributes);
                     $form->name('Components list');
-                    $list = (array) config('installer', []);
 
-                    $form->fieldset(function ($fieldset) use($list) {
+                    $form->fieldset(function ($fieldset) {
                         $fieldset->legend('Required components');
-                        $required = (array) array_get($list, 'required', []);
+                        $required = array_keys( $this->getComponentsRepository()->getRequired() );
 
                         foreach ($required as $extension) {
                             $fieldset->control('input:checkbox', 'required[]')
@@ -270,9 +237,9 @@ class Installer
                         }
                     });
 
-                    $form->fieldset(function ($fieldset) use($list) {
+                    $form->fieldset(function ($fieldset) {
                         $fieldset->legend('Available optional components');
-                        $optional = (array) array_get($list, 'optional', []);
+                        $optional = array_keys( $this->getComponentsRepository()->getOptional() );
 
                         foreach ($optional as $extension) {
                             $fieldset->control('input:checkbox', 'optional[]')
@@ -305,18 +272,13 @@ class Installer
     public function storeComponents($listener, array $selected)
     {
         try {
-            $required   = (array) config('installer.required', []);
+            $required   = array_keys( $this->getComponentsRepository()->getRequired() );
             $extensions = array_merge($required, $selected);
-
-            $memory = app()->make('antares.memory')->make('primary');
-            $memory->put('app.installation.components', $extensions);
 
             /* @var $progress Progress */
             $progress = app()->make(Progress::class);
+            $progress->setComponents($extensions);
             $progress->start();
-
-            $progress->save();
-            $memory->finish();
         } catch (Exception $e) {
             Log::emergency($e);
             return $listener->doneFailed();

@@ -5,30 +5,24 @@ namespace Antares\Installation\Listeners;
 use Antares\Extension\Events\ComposerFailed;
 use Antares\Extension\Events\Failed;
 use Illuminate\Events\Dispatcher;
-use Antares\Installation\Progress;
-use Antares\Memory\Provider;
-use Illuminate\Contracts\Container\Container;
+use Antares\Extension\Contracts\ProgressContract;
+use Antares\Extension\Processors\Progress as ExtensionProgress;
+use Antares\Installation\Progress as InstallationProgress;
 
 class FailedListener {
 
     /**
-     * @var Provider
-     */
-    protected $memory;
-
-    /**
-     * @var Progress
+     * @var ProgressContract
      */
     protected $progress;
 
     /**
-     * IncrementProgress constructor.
-     * @param Container $container
-     * @param Progress $progress
+     * FailedListener constructor.
      */
-    public function __construct(Container $container, Progress $progress) {
-        $this->memory   = $container->make('antares.memory')->make('primary');
-        $this->progress = $progress;
+    public function __construct() {
+        $this->progress = app()->make('antares.installed')
+            ? app()->make(ExtensionProgress::class)
+            : app()->make(InstallationProgress::class);
     }
 
     /**
@@ -36,8 +30,6 @@ class FailedListener {
      */
     public function onExtensionFailed(Failed $event) {
         $this->progress->setFailed($event->exception->getMessage());
-        $this->progress->save();
-        $this->memory->finish();
     }
 
     /**
@@ -45,8 +37,6 @@ class FailedListener {
      */
     public function onComposerFailed(ComposerFailed $event) {
         $this->progress->setFailed($event->exception->getMessage());
-        $this->progress->save();
-        $this->memory->finish();
     }
 
     /**

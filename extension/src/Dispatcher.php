@@ -99,6 +99,11 @@ class Dispatcher {
             try {
                 $this->loader->register($extension);
                 $this->eventDispatcher->dispatch(new Booted($extension));
+
+                $name = $extension->getPackage()->getName();
+
+                $this->eventDispatcher->dispatch('extension.started', [$name, []]);
+                $this->eventDispatcher->dispatch('extension.started: {$name}', [[]]);
             }
             catch(Exception $e) {
                 throw $e;

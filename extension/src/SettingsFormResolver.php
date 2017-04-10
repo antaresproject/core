@@ -35,6 +35,18 @@ class SettingsFormResolver {
     }
 
     /**
+     * Checks if the given extension has settings form.
+     *
+     * @param ExtensionContract $extension
+     * @return bool
+     */
+    public function hasSettingsForm(ExtensionContract $extension) : bool {
+        $className = $extension->getRootNamespace() . self::$formClassName;
+
+        return class_exists($className);
+    }
+
+    /**
      * Returns the instance of settings form by the given extension.
      *
      * @param ExtensionContract $extension

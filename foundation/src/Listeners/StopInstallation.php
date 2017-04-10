@@ -3,21 +3,24 @@
 namespace Antares\Foundation\Listeners;
 
 use Antares\Extension\Events\ComposerFailed;
-use Antares\Extension\Processors\Progress;
+use Antares\Extension\Contracts\ProgressContract;
+use Antares\Extension\Processors\Progress as ExtensionProgress;
+use Antares\Installation\Progress as InstallationProgress;
 
 class StopInstallation {
 
     /**
-     * @var Progress
+     * @var ProgressContract
      */
     protected $progress;
 
     /**
      * StopInstallation constructor.
-     * @param Progress $progress
      */
-    public function __construct(Progress $progress) {
-        $this->progress = $progress;
+    public function __construct() {
+        $this->progress = app()->make('antares.installed')
+            ? app()->make(ExtensionProgress::class)
+            : app()->make(InstallationProgress::class);
     }
 
     /**
@@ -25,7 +28,6 @@ class StopInstallation {
      */
     public function handle(ComposerFailed $event) {
         $this->progress->setFailed($event->exception->getMessage());
-        $this->progress->save();
     }
 
 }

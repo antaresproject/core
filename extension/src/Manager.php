@@ -220,6 +220,22 @@ class Manager {
     }
 
     /**
+     * Checks if the given extension has settings form.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function hasSettingsForm(string $name) : bool {
+        $extension = $this->getAvailableExtensions()->findByName( $this->getNormalizedName($name) );
+
+        if($extension instanceof ExtensionContract) {
+            return app()->make(SettingsFormResolver::class)->hasSettingsForm($extension);
+        }
+
+        return false;
+    }
+
+    /**
      * @param \Closure|null $callback
      */
     public function after(\Closure $callback = null) {
@@ -231,6 +247,8 @@ class Manager {
      * @return string
      */
     protected function getNormalizedName(string $name) : string {
+        $name = str_replace('_', '-', $name);
+
         if( ! Str::contains($name, '/') ) {
             $name = 'antaresproject/component-' . $name;
         }

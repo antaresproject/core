@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Antares\Extension\Processors;
 
 use Antares\Extension\Contracts\ProgressContract;
+use Antares\Installation\Repository\Installation;
 use Antares\Installation\Scripts\InstallQueueWorker;
 use Antares\Memory\MemoryManager;
 use Antares\Memory\Provider;
@@ -14,11 +15,11 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 class Progress implements ProgressContract {
 
     /**
-     * Memory provider instance.
+     * Installation repository.
      *
-     * @var Provider
+     * @var Installation
      */
-    protected $memory;
+    protected $installation;
 
     /**
      * Install queue worker instance.
@@ -35,35 +36,22 @@ class Progress implements ProgressContract {
     protected $filePath;
 
     /**
-     * Running indicator.
-     *
-     * @var bool
-     */
-    protected $isRunning;
-
-    /**
      * @var int|null
      */
     protected $pid;
 
     /**
-     * @var bool
-     */
-    protected $failed;
-
-    /**
      * Progress constructor.
-     * @param MemoryManager $memoryManager
+     * @param Installation $installation
      * @param InstallQueueWorker $installQueueWorker
+     * @throws \InvalidArgumentException
      */
-    public function __construct(MemoryManager $memoryManager, InstallQueueWorker $installQueueWorker) {
-        $this->memory               = $memoryManager->make('primary');
+    public function __construct(Installation $installation, InstallQueueWorker $installQueueWorker) {
+        $this->installation         = $installation;
         $this->installQueueWorker   = $installQueueWorker;
-        $this->filePath             = storage_path('extension-operation.txt');
-        $this->isRunning            = (bool) $this->memory->get('app.extension.installing', false);
 
-        $this->pid                  = $this->memory->get('app.extension.pid');
-        $this->failed               = (bool) $this->memory->get('app.extension.failed', false);
+        $this->filePath             = storage_path('extension-operation.txt');
+        $this->pid                  = $this->installation->getPid();
 
         if($this->pid) {
             $this->installQueueWorker->setPid( (int) $this->pid);
@@ -84,29 +72,26 @@ class Progress implements ProgressContract {
      */
     public function start() {
         $this->startQueueWorker();
-        $this->memory->put('app.extension.pid', $this->pid);
+
+        if($this->pid) {
+            $this->installation->setPid( (int) $this->pid);
+        }
+
         File::put($this->filePath, '');
 
-        $this->isRunning = true;
-        $this->memory->put('app.extension.installing', $this->isRunning);
+        $this->installation->setStarted(true);
+        $this->installation->save();
     }
 
     /**
      * Resets the progress state.
      */
     public function reset() {
-        $this->memory->forget('app.installation.components');
-        $this->isRunning = false;
-        $this->memory->put('app.extension.installing', $this->isRunning);
-
-        $this->failed = false;
-        $this->memory->put('app.extension.failed', $this->failed);
-        $this->memory->put('app.extension.failed_message', '');
+        $this->installation->forget();
+        $this->installation->save();
 
         if($this->pid) {
             $this->installQueueWorker->stop();
-            $this->pid = null;
-            $this->memory->put('app.extension.pid', $this->pid);
         }
 
         File::delete($this->filePath);
@@ -118,7 +103,6 @@ class Progress implements ProgressContract {
         }
         catch(\Exception $e) {
             $this->setFailed($e->getMessage());
-            $this->save();
         }
     }
 
@@ -156,12 +140,8 @@ class Progress implements ProgressContract {
      * @param string $message
      */
     public function setFailed(string $message) {
-        $this->failed = true;
-        $this->memory->put('app.extension.failed', $this->failed);
-        $this->memory->put('app.extension.failed_message', $message);
-
-        $this->isRunning = false;
-        $this->memory->put('app.extension.installing', $this->isRunning);
+        $this->installation->setFailed(true);
+        $this->installation->setFailedMessage($message);
     }
 
     /**
@@ -170,8 +150,10 @@ class Progress implements ProgressContract {
     public function setFinished() {
         File::delete($this->filePath);
 
-        $this->isRunning = false;
-        $this->memory->put('app.extension.installing', $this->isRunning);
+        $this->installation->setStarted(false);
+        $this->installation->setFinished(true);
+
+        $this->installation->save();
     }
 
     /**
@@ -180,7 +162,7 @@ class Progress implements ProgressContract {
      * @return bool
      */
     public function isFinished() : bool {
-        return ! $this->isRunning;
+        return $this->installation->finished();
     }
 
     /**
@@ -189,28 +171,21 @@ class Progress implements ProgressContract {
      * @return bool
      */
     public function isRunning() : bool {
-        return $this->isRunning;
-    }
-
-    /**
-     * Saves the progress in the memory.
-     */
-    public function save() {
-        $this->memory->finish();
+        return $this->installation->progressing();
     }
 
     /**
      * @return bool
      */
     public function isFailed() : bool {
-        return $this->failed;
+        return $this->installation->failed();
     }
 
     /**
      * @return string
      */
     public function getFailedMessage() : string {
-        return (string) $this->memory->get('app.extension.failed_message', '');
+        return (string) $this->installation->getFailedMessage();
     }
 
 }

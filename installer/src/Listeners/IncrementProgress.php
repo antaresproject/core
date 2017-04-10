@@ -39,11 +39,9 @@ class IncrementProgress {
 
         if($this->progress->isFinished()) {
             $this->memory->put('app.installed', true);
+            $this->memory->finish();
             $this->progress->reset();
         }
-
-        $this->progress->save();
-        $this->memory->finish();
     }
 
     /**
@@ -54,11 +52,9 @@ class IncrementProgress {
 
         if($this->progress->isFinished()) {
             $this->memory->put('app.installed', true);
+            $this->memory->finish();
             $this->progress->reset();
         }
-
-        $this->progress->save();
-        $this->memory->finish();
     }
 
     /**

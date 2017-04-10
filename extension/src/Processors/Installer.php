@@ -12,6 +12,7 @@ use Antares\Extension\Factories\SettingsFactory;
 use Antares\Extension\Model\Operation;
 use Antares\Extension\Events\Installed;
 use Antares\Extension\Events\Installing;
+use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Antares\Extension\Validators\ExtensionValidator;
 use Antares\Extension\Composer\Handler as ComposerHandler;
@@ -55,6 +56,11 @@ class Installer extends AbstractOperation {
     protected $settingsFactory;
 
     /**
+     * @var ComponentsRepository
+     */
+    protected $componentsRepository;
+
+    /**
      * Installer constructor.
      * @param ComposerHandler $composerHandler
      * @param ExtensionValidator $extensionValidator
@@ -63,6 +69,7 @@ class Installer extends AbstractOperation {
      * @param Kernel $kernel
      * @param ExtensionsRepository $extensionsRepository
      * @param SettingsFactory $settingsFactory
+     * @param ComponentsRepository $componentsRepository
      */
     public function __construct(
         ComposerHandler $composerHandler,
@@ -71,7 +78,8 @@ class Installer extends AbstractOperation {
         Dispatcher $dispatcher,
         Kernel $kernel,
         ExtensionsRepository $extensionsRepository,
-        SettingsFactory $settingsFactory
+        SettingsFactory $settingsFactory,
+        ComponentsRepository $componentsRepository
     )
     {
         parent::__construct($container, $dispatcher, $kernel);
@@ -80,6 +88,7 @@ class Installer extends AbstractOperation {
         $this->extensionValidator   = $extensionValidator;
         $this->extensionsRepository = $extensionsRepository;
         $this->settingsFactory      = $settingsFactory;
+        $this->componentsRepository = $componentsRepository;
 
         $this->migrateManager       = $container->make('antares.publisher.migrate');
         $this->assetManager         = $container->make('antares.publisher.asset');
@@ -103,10 +112,10 @@ class Installer extends AbstractOperation {
             $this->extensionValidator->validateAssetsPath($extension);
 
             if(in_array('skip-composer', $flags, false) === false) {
-                $command = 'composer require ' . $extension->getNameWithVersion();
+                $command = 'composer require ' . $name . ':' .  $this->componentsRepository->getTargetBranch($name);
 
                 $process = $this->composerHandler->run($command, function($process, $type, $buffer) use($handler) {
-                    if(Str::contains($buffer, 'Error Output')) {
+                    if(Str::contains($buffer, ['Error Output', 'Exception'])) {
                         throw new ExtensionException($buffer);
                     }
 
