@@ -21,7 +21,6 @@
 namespace Antares\Extension\TestCase;
 
 use Antares\Extension\Collections\Extensions;
-use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Factories\SettingsFactory;
 use Antares\Extension\FilesystemFinder;
 use Antares\Extension\Manager;

@@ -47,6 +47,8 @@ abstract class OperationSetupTestCase extends \PHPUnit_Framework_TestCase
      */
     protected $kernel;
 
+    use ExtensionMockTrait;
+
     public function setUp() {
         parent::setUp();
 
@@ -58,30 +60,6 @@ abstract class OperationSetupTestCase extends \PHPUnit_Framework_TestCase
     public function tearDown() {
         parent::tearDown();
         m::close();
-    }
-
-    /**
-     * @param $name
-     * @return \Mockery\MockInterface
-     */
-    protected function buildExtensionMock($name) {
-        $package = m::mock(CompletePackageInterface::class)
-            ->shouldReceive('getName')
-            ->andReturn($name)
-            ->getMock();
-
-        $settings = m::mock(SettingsContract::class)
-            ->shouldReceive('getData')
-            ->andReturn([])
-            ->getMock();
-
-        return m::mock(ExtensionContract::class)
-            ->shouldReceive('getPackage')
-            ->andReturn($package)
-            ->getMock()
-            ->shouldReceive('getSettings')
-            ->andReturn($settings)
-            ->getMock();
     }
 
     /**

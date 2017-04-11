@@ -10,8 +10,8 @@ use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
 use Antares\Extension\Model\Operation;
 use Antares\Acl\RoleActionList;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use File;
-use Log;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 class Acl {
 
