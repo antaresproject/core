@@ -18,10 +18,10 @@
  * @link       http://antaresproject.io
  */
 
-namespace Antares\Acl\Tests\Database;
+namespace Antares\Acl\Tests;
 
 use Mockery as m;
-use Antares\Acl\Database\Migration;
+use Antares\Acl\Migration;
 use Illuminate\Routing\Route;
 use Antares\Acl\Action;
 use Antares\Acl\RoleActionList;
@@ -59,8 +59,8 @@ class MigrationTest extends \PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-//        parent::tearDown();
-//        m::close();
+        parent::tearDown();
+        m::close();
     }
 
     /**
@@ -68,17 +68,23 @@ class MigrationTest extends \PHPUnit_Framework_TestCase
      */
     protected function getMigrationClass()
     {
-        return new Migration($this->container, 'some_component_name');
+        return new Migration($this->container);
     }
 
     public function testUpMethods()
     {
-        $component = m::mock('\Antares\Contracts\Memory\Provider');
+        $component = m::mock('\Antares\Contracts\Memory\Provider')
+            ->shouldReceive('finish')
+            ->once()
+            ->andReturnNull()
+            ->getMock();
+
         $roles     = m::mock('\Antares\Authorization\Fluent')->makePartial();
         $actions   = m::mock('\Antares\Authorization\Fluent')->makePartial();
 
         $memoryManager = m::mock('\Antares\Memory\MemoryManager')
                 ->shouldReceive('make')
+                ->once()
                 ->with('component')
                 ->andReturn($component)
                 ->getMock();
@@ -102,7 +108,7 @@ class MigrationTest extends \PHPUnit_Framework_TestCase
 
         $acl = m::mock('\Antares\Authorization\Factory')
                 ->shouldReceive('make')
-                ->with('antares/some_component_name')
+                ->with('some_component_name')
                 ->once()
                 ->andReturn($authorization)
                 ->getMock();
@@ -119,14 +125,18 @@ class MigrationTest extends \PHPUnit_Framework_TestCase
                 ->andReturn($memoryManager)
                 ->getMock();
 
-        //$this->getMigrationClass()->up($this->roleActionList);
+        $this->getMigrationClass()->up('some_component_name', $this->roleActionList);
     }
 
     public function testDownMethod()
     {
         $component = m::mock('\Antares\Contracts\Memory\Provider')
                 ->shouldReceive('forget')
-                ->with('acl_antares/some_component_name')
+                ->once()
+                ->with('acl_some_component_name')
+                ->andReturnNull()
+                ->shouldReceive('finish')
+                ->once()
                 ->andReturnNull()
                 ->getMock();
 
@@ -143,7 +153,7 @@ class MigrationTest extends \PHPUnit_Framework_TestCase
                 ->andReturn($memoryManager)
                 ->getMock();
 
-        $this->getMigrationClass()->down();
+        $this->getMigrationClass()->down('some_component_name');
     }
 
 }
