@@ -35,10 +35,6 @@ Foundation::namespaced('Antares\Foundation\Http\Controllers', function (Router $
     $router->get('extensions/{vendor}/{name}/configuration', 'Extension\ViewerController@getConfiguration')->name('extensions.viewer.configuration.get');
     $router->post('extensions/{id}/configuration', 'Extension\ViewerController@storeConfiguration')->name('extensions.viewer.configuration.update');
 
-    $router->get('extensions/debug', function() {
-        dd( \Session::get('installation') );
-    });
-
     $router->get('settings/index', 'SettingsController@edit');
     $router->post('settings/index', 'SettingsController@update');
     $router->get('settings/migrate', 'SettingsController@migrate');

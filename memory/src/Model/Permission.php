@@ -50,7 +50,7 @@ class Permission extends Eloquent
     protected $morphClass = 'Permission';
 
     /**
-     * @var Antares\Model\Role
+     * @var \Antares\Model\Role
      */
     protected $role;
 
@@ -186,7 +186,7 @@ class Permission extends Eloquent
                     $return['extensions']['active'][$name] = $configuration;
                 }
             }
-            $key          = $isCore ? 'acl_antares' : 'acl_antares/' . $configuration['fullname'];
+            $key          = $isCore ? 'acl_antares' : 'acl_' . $this->getNormalizedName($configuration['fullname']);
             $return[$key] = [
                 'acl'     => $this->permissions($model->permissions),
                 'actions' => $actions,
@@ -200,15 +200,30 @@ class Permission extends Eloquent
     }
 
     /**
+     * Returns normalized component name. It is used for backward compatibility.
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function getNormalizedName(string $name) : string {
+        $name = str_replace('antaresproject/component-', 'antares/', $name);
+
+        return str_replace('-', '_', $name);
+    }
+
+    /**
      * updates component permission settings
-     * @param String $name
-     * @param array | mixed $values
-     * @param boolean $isNew
+     *
+     * @param $name
+     * @param $values
+     * @param bool $isNew
+     * @param null $brandId
+     * @return bool
      */
     public function updatePermissions($name, $values, $isNew = false, $brandId = null)
     {
         try {
-            if (is_null($name)) {
+            if ($name === null) {
                 return false;
             }
 
@@ -219,6 +234,10 @@ class Permission extends Eloquent
                     ->where('vendor', '=', $vendor)
                     ->where('name', '=', $name)
                     ->first();
+            }
+            elseif( $name !== 'core' && ! str_contains($name, 'component-')) {
+                $name = 'component-' . str_replace('_', '-', $name);
+                $model = $this->query()->where('name', '=', $name)->first();
             }
             else {
                 $model = $this->query()->where('name', '=', $name)->first();

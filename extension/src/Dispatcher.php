@@ -104,6 +104,9 @@ class Dispatcher {
 
                 $this->eventDispatcher->dispatch('extension.started', [$name, []]);
                 $this->eventDispatcher->dispatch('extension.started: {$name}', [[]]);
+
+                $this->eventDispatcher->dispatch('extension.booted', [$name, []]);
+                $this->eventDispatcher->dispatch('extension.booted: {$name}', [[]]);
             }
             catch(Exception $e) {
                 throw $e;
@@ -111,6 +114,7 @@ class Dispatcher {
         }
 
         $this->eventDispatcher->dispatch(new BootedAll());
+        $this->eventDispatcher->dispatch('antares.extension: booted');
         $this->booted = true;
     }
 
@@ -125,6 +129,7 @@ class Dispatcher {
         }
 
         $this->eventDispatcher->listen(BootedAll::class, $callback);
+        $this->eventDispatcher->listen('antares.extension: booted', $callback);
     }
 
 }

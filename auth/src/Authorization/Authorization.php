@@ -85,17 +85,19 @@ class Authorization implements AuthorizationContract
     /**
      * Initiate acl data from memory.
      *
-     * @return $this
+     * @return void
      */
     protected function initiate()
     {
         $name = $this->name;
         $data = ['acl' => [], 'actions' => [], 'roles' => []];
         $data = array_merge($data, $this->memory->get("acl_{$name}", []));
+
         if (empty($data['roles'])) {
             $roles         = $this->memory->get('acl_antares.roles');
             $data['roles'] = $roles == null ? [] : $roles;
         }
+
         $this->roles->attachKeyValuePair($data['roles']);
         $this->actions->attachKeyValuePair($data['actions']);
 
@@ -103,7 +105,6 @@ class Authorization implements AuthorizationContract
             list($role, $action) = explode(':', $id);
             $this->assign($role, $action, $allow);
         }
-        return;
     }
 
     /**

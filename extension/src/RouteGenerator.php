@@ -216,17 +216,20 @@ class RouteGenerator implements RouteGeneratorContract
      * @param string $prefix
      * @return RouteGenerator
      */
-    public function setPrefix(string $prefix = null) {
+    public function setPrefix(string $prefix = null)
+    {
         $this->prefix = $prefix ?: 'member';
 
         return $this;
     }
+
     /**
      * Sets user level as prefix in route
      *
      * @return RouteGenerator
      */
-    public function setAreaPrefix() {
+    public function setAreaPrefix()
+    {
         if (auth()->guest()) {
             return $this;
         }

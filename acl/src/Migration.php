@@ -50,6 +50,18 @@ class Migration {
     }
 
     /**
+     * Returns normalized component name. It is used for backward compatibility.
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function getNormalizedName(string $name) : string {
+        $name = str_replace('antaresproject/component-', 'antares/', $name);
+
+        return str_replace('-', '_', $name);
+    }
+
+    /**
      * Returns the Memory Provider instance.
      *
      * @return \Antares\Memory\Provider
@@ -67,6 +79,8 @@ class Migration {
      * @throws \RuntimeException
      */
     public function up(string $componentFullName, RoleActionList $roleActionList) {
+        $componentFullName  = $this->getNormalizedName($componentFullName);
+
         $memory     = $this->getMemoryProvider();
         $acl        = $this->getComponentAcl($componentFullName);
         $roles      = $roleActionList->getRoles();
@@ -91,9 +105,10 @@ class Migration {
      * @throws \RuntimeException
      */
     public function down(string $componentFullName) {
-        $memory = $this->getMemoryProvider();
+        $componentFullName  = $this->getNormalizedName($componentFullName);
+        $memory             = $this->getMemoryProvider();
 
-        $memory->forget('acl_antares/' . $componentFullName);
+        $memory->forget('acl_' . $componentFullName);
         $memory->finish();
     }
 

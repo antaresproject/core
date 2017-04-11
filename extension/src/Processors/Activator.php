@@ -14,6 +14,7 @@ use Antares\Extension\Events\Failed;
 use Antares\Extension\Model\Operation;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Events\Dispatcher;
 use Antares\Console\Kernel;
 use File;
@@ -90,6 +91,7 @@ class Activator extends AbstractOperation {
      *
      * @param OperationHandlerContract $handler
      * @param ExtensionContract $extension
+     * @throws \Exception
      */
     private function importAcl(OperationHandlerContract $handler, ExtensionContract $extension) {
         try {
@@ -102,8 +104,11 @@ class Activator extends AbstractOperation {
                 $handler->operationInfo(new Operation('The ACL settings have been successfully imported.'));
             }
         }
-        catch(\Exception $e) {
+        catch(FileNotFoundException $e) {
             // No need to throw an exception because of ACL file can be optional. In that case the required file will be not found.
+        }
+        catch(\Exception $e) {
+            throw $e;
         }
     }
 

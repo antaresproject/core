@@ -78,7 +78,7 @@ class BulkExtensionsBackgroundJob implements ShouldQueue {
     {
         $output = new OperationFileOutput($this->outputFileName);
 
-        //$composer->run($output, $this->extensionsNames);
+        $composer->run($output, $this->extensionsNames);
 
         if($output->failed()) {
             return;

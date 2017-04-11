@@ -112,6 +112,10 @@ class Extensions extends DataTable {
 
             $ConfigurationStatuses = [ExtensionContract::STATUS_INSTALLED, ExtensionContract::STATUS_ACTIVATED];
 
+            if ($isRequired) {
+                return HTML::create('div', '', ['class' => 'disabled'])->get();
+            }
+
             if ( $acl->can('component-configure') && $this->extension->hasSettingsForm($name) && in_array($extension->getStatus(), $ConfigurationStatuses, true) ) {
                 $configureUrl = URL::route(area() . '.extensions.viewer.configuration.get', [
                     'vendor'    => $extension->getVendorName(),
@@ -139,10 +143,6 @@ class Extensions extends DataTable {
             }
             elseif($extension->getStatus() === ExtensionContract::STATUS_ACTIVATED && $acl->can('component-deactivate') && ! $isRequired) {
                 $buttons[] = $this->getButtonLink($extension, 'deactivate', 'minus');
-            }
-
-            if ($isRequired) {
-                return HTML::create('div', '', ['class' => 'disabled'])->get();
             }
 
             if ( ! count($buttons)) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Antares\Extension;
 
+use Antares\Extension\Console\AclCommand;
 use Antares\Extension\Console\ActiveCommand;
 use Antares\Extension\Console\DeactiveCommand;
 use Antares\Extension\Console\InstallCommand;
@@ -24,6 +25,7 @@ class CommandServiceProvider extends ServiceProvider
         'Active'                => 'antares.commands.extension.active',
         'Deactive'              => 'antares.commands.extension.deactive',
 		'List'           		=> 'antares.commands.extension.list',
+        'Acl'                   => 'antares.commands.extension.acl',
 	];
 
 	protected function registerInstallCommand()
@@ -60,5 +62,12 @@ class CommandServiceProvider extends ServiceProvider
 			return $app->make(ListCommand::class);
 		});
 	}
+
+    protected function registerAclCommand()
+    {
+        $this->app->singleton('antares.commands.extension.acl', function (Container $app) {
+            return $app->make(AclCommand::class);
+        });
+    }
 
 }
