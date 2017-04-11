@@ -170,7 +170,7 @@ class InstallerController extends BaseController
      */
     public function prepareSucceed()
     {
-        return $this->redirect(handles('antares::install/components'));
+        return $this->redirect(handles('antares::install/create'));
     }
 
     /**

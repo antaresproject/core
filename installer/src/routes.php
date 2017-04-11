@@ -29,8 +29,6 @@ $router->group(['prefix' => 'install', 'middleware' => InstallationMiddleware::c
     $router->get('done', 'InstallerController@done')->name('installation.installer.done');
     $router->get('prepare', 'InstallerController@prepare')->name('installation.installer.prepare');
 
-    $router->match(['GET', 'POST'], 'license', 'InstallerController@license')->name('installation.installer.license');
-
     $router->get('components', 'InstallerController@components')->name('installation.installer.components');
     $router->post('components/store', 'InstallerController@storeComponents')->name('installation.installer.storeComponents');
 
