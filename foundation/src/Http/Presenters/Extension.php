@@ -76,7 +76,7 @@ class Extension extends Presenter
      */
     public function table()
     {
-        publish(null, ['/packages/core/js/extensions.js']);
+        publish(null, ['/js/extensions.js']);
         $this->breadcrumb->onComponentsList();
 
         return $this->extensions->render('antares/foundation::extensions.index');
