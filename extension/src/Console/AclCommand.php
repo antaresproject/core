@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace Antares\Extension\Console;
 
 use Antares\Acl\Migration;
-use Antares\Acl\RoleActionList;
-use Antares\Extension\Contracts\ExtensionContract;
+use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
 use Antares\Extension\Exception\ExtensionException;
+use Antares\Extension\Model\Operation;
+use Antares\Extension\Processors\Acl;
 use Illuminate\Console\Command;
 use Antares\Extension\Manager;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use File;
-use Log;
 
-class AclCommand extends Command {
+class AclCommand extends Command implements OperationHandlerContract {
 
 	/**
 	 * The console command name.
@@ -31,20 +30,20 @@ class AclCommand extends Command {
 	protected $description = 'Refresh extensions ACL.';
 
     /**
-     * ACL migration instance.
+     * ACL Processor.
      *
-     * @var Migration
+     * @var Acl
      */
-	protected $migration;
+	protected $acl;
 
     /**
      * AclCommand constructor.
      * @param Migration $migration
      */
-    public function __construct(Migration $migration) {
+    public function __construct(Acl $acl) {
         parent::__construct();
 
-        $this->migration = $migration;
+        $this->acl = $acl;
     }
 
     /**
@@ -58,34 +57,35 @@ class AclCommand extends Command {
         $extensions = $manager->getAvailableExtensions()->filterByActivated();
 
         foreach($extensions as $extension) {
-            $this->importAcl($extension);
+            $this->acl->import($this, $extension);
         }
 	}
 
     /**
-     * @param ExtensionContract $extension
+     * @param Operation $operation
+     * @return mixed
      */
-	private function importAcl(ExtensionContract $extension) {
-        $name = $extension->getPackage()->getName();
+    public function operationSuccess(Operation $operation)
+    {
+        $this->info($operation->getMessage());
+    }
 
-	    try {
-            $roleActionList = File::getRequire($extension->getPath() . '/acl.php');
+    /**
+     * @param Operation $operation
+     * @return mixed
+     */
+    public function operationFailed(Operation $operation)
+    {
+        $this->error($operation->getMessage());
+    }
 
-            if($roleActionList instanceof RoleActionList) {
-                $this->migration->down($name);
-                $this->migration->up($name, $roleActionList);
-
-                $this->info('Migrating for ' . $name);
-            }
-        }
-        catch(FileNotFoundException $e) {
-            $this->info('Skipped for ' . $name);
-            // No need to throw an exception because of ACL file can be optional. In that case the required file will be not found.
-        }
-        catch(\Exception $e) {
-	        Log::error($e->getMessage(), $e->getTrace());
-            $this->error($e->getMessage());
-        }
+    /**
+     * @param Operation $operation
+     * @return mixed
+     */
+    public function operationInfo(Operation $operation)
+    {
+        $this->info($operation->getMessage());
     }
 
 }

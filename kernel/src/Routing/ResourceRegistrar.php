@@ -19,6 +19,7 @@
  * @link       http://antaresproject.io
  */
 
+
 namespace Antares\Routing;
 
 use Illuminate\Routing\ResourceRegistrar as BaseResourceRegistrar;

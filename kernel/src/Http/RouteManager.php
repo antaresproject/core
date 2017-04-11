@@ -116,8 +116,6 @@ abstract class RouteManager
             try {
                 return route(area() . '.' . $path, $options);
             } catch (Exception $ex) {
-                vdump($ex);
-                exit;
                 return '';
             }
         }
@@ -247,7 +245,7 @@ abstract class RouteManager
     protected function prepareValidRoute($route, $item, $query, array $options)
     {
         if (!!Arr::get($options, 'csrf', false)) {
-            $query .= (!empty($query) ? '&' : '' ) . '_token=' . $this->app->make('session')->token();
+            $query .= (!empty($query) ? '&' : '' ) . '_token=' . $this->app->make('session')->getToken();
             unset($options['csrf']);
         }
         if (!!Arr::get($options, 'sandbox', false)) {
