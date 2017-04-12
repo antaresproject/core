@@ -19,9 +19,9 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Providers;
 
+use Antares\Foundation\Console\Commands\CoreAclCommand;
 use Illuminate\Contracts\Foundation\Application;
 use Antares\Foundation\Console\Commands\QueueCommand;
 use Antares\Foundation\Console\Commands\AssembleCommand;
@@ -36,8 +36,9 @@ class CommandServiceProvider extends ServiceProvider
      * @var array
      */
     protected $commands = [
-        'Assemble' => 'antares.commands.assemble',
-        'Queue'    => 'antares.commands.queue'
+        'Assemble'  => 'antares.commands.assemble',
+        'Queue'     => 'antares.commands.queue',
+        'CoreAcl'   => 'antares.commands.core-acl',
     ];
 
     /**
@@ -63,6 +64,18 @@ class CommandServiceProvider extends ServiceProvider
     {
         $this->app->singleton('antares.commands.queue', function () {
             return new QueueCommand();
+        });
+    }
+
+    /**
+     * Register the queue command
+     *
+     * @return void
+     */
+    protected function registerCoreAclCommand()
+    {
+        $this->app->singleton('antares.commands.core-acl', function () {
+            return new CoreAclCommand();
         });
     }
 

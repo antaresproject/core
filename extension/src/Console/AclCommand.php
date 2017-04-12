@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Antares\Extension\Console;
 
-use Antares\Acl\Migration;
 use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
 use Antares\Extension\Exception\ExtensionException;
@@ -21,7 +20,7 @@ class AclCommand extends Command implements OperationHandlerContract {
 	 *
 	 * @var string
 	 */
-	protected $name = 'extension:acl:reload {--extension : Extension full name}';
+	protected $signature = 'extension:acl:reload {extension? : Extension full name}';
 
 	/**
 	 * The console command description.
@@ -55,7 +54,7 @@ class AclCommand extends Command implements OperationHandlerContract {
      * @throws FileNotFoundException
 	 */
 	public function handle(Manager $manager) {
-	    $extensionName = $this->option('extension');
+	    $extensionName = $this->argument('extension');
 
 	    if($extensionName) {
             $extension = $manager->getAvailableExtensions()->findByName($extensionName);
@@ -80,6 +79,7 @@ class AclCommand extends Command implements OperationHandlerContract {
     public function operationSuccess(Operation $operation)
     {
         $this->info($operation->getMessage());
+        $this->line('');
     }
 
     /**
@@ -89,6 +89,7 @@ class AclCommand extends Command implements OperationHandlerContract {
     public function operationFailed(Operation $operation)
     {
         $this->error($operation->getMessage());
+        $this->line('');
     }
 
     /**
@@ -97,7 +98,7 @@ class AclCommand extends Command implements OperationHandlerContract {
      */
     public function operationInfo(Operation $operation)
     {
-        $this->info($operation->getMessage());
+        $this->line($operation->getMessage());
     }
 
 }

@@ -51,7 +51,7 @@ class Acl {
 
                 $handler->operationInfo(new Operation('Importing ACL settings for ' . $name . '.'));
                 $this->migration->up($name, $roleActionList);
-                $handler->operationInfo(new Operation('The ACL settings have been successfully imported.'));
+                $handler->operationSuccess(new Operation('The ACL settings have been successfully imported.'));
             }
         }
         catch(FileNotFoundException $e) {
