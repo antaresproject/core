@@ -35,14 +35,20 @@ class Acl {
      *
      * @param OperationHandlerContract $handler
      * @param ExtensionContract $extension
+     * @param bool $reload
      */
-    public function import(OperationHandlerContract $handler, ExtensionContract $extension) {
+    public function import(OperationHandlerContract $handler, ExtensionContract $extension, bool $reload = false) {
         $name = $extension->getPackage()->getName();
 
         try {
             $roleActionList = File::getRequire($extension->getPath() . '/acl.php');
 
             if($roleActionList instanceof RoleActionList) {
+                if($reload) {
+                    $this->migration->down($name);
+                    $handler->operationInfo(new Operation('ACL settings have been flushed for ' . $name . '.'));
+                }
+
                 $handler->operationInfo(new Operation('Importing ACL settings for ' . $name . '.'));
                 $this->migration->up($name, $roleActionList);
                 $handler->operationInfo(new Operation('The ACL settings have been successfully imported.'));

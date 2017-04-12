@@ -20,32 +20,22 @@
 
 namespace Antares\Extension\TestCase;
 
-use Antares\Extension\Contracts\Config\SettingsContract;
 use Antares\Extension\Contracts\ExtensionContract;
-use Antares\Extension\Exception\ExtensionException;
-use Antares\Extension\Factories\SettingsFactory;
-use Antares\Extension\Processors\Installer;
 use Antares\Extension\Composer\Handler as ComposerHandler;
-use Antares\Extension\Repositories\ComponentsRepository;
+use Antares\Extension\Processors\Uninstaller;
 use Antares\Extension\Repositories\ExtensionsRepository;
-use Antares\Extension\Validators\ExtensionValidator;
 use Antares\Publisher\AssetManager;
 use Antares\Publisher\MigrateManager;
 use Mockery as m;
 use Symfony\Component\Process\Process;
 
-class InstalledTest extends OperationSetupTestCase
+class UninstallerTest extends OperationSetupTestCase
 {
 
     /**
      * @var \Mockery\MockInterface
      */
     protected $composerHandler;
-
-    /**
-     * @var \Mockery\MockInterface
-     */
-    protected $extensionValidator;
 
     /**
      * @var \Mockery\MockInterface
@@ -62,36 +52,23 @@ class InstalledTest extends OperationSetupTestCase
      */
     protected $assetManager;
 
-    /**
-     * @var \Mockery\MockInterface
-     */
-    protected $settingsFactory;
-
-    /**
-     * @var \Mockery\MockInterface
-     */
-    protected $componentsRepository;
-
     public function setUp() {
         parent::setUp();
 
         $this->composerHandler      = m::mock(ComposerHandler::class);
-        $this->extensionValidator   = m::mock(ExtensionValidator::class);
         $this->extensionsRepository = m::mock(ExtensionsRepository::class);
         $this->migrateManager       = m::mock(MigrateManager::class);
         $this->assetManager         = m::mock(AssetManager::class);
-        $this->settingsFactory      = m::mock(SettingsFactory::class);
-        $this->componentsRepository = m::mock(ComponentsRepository::class);
 
         $this->container->shouldReceive('make')->once()->with('antares.publisher.migrate')->andReturn($this->migrateManager)->getMock();
         $this->container->shouldReceive('make')->once()->with('antares.publisher.asset')->andReturn($this->assetManager)->getMock();
     }
 
     /**
-     * @return Installer
+     * @return Uninstaller
      */
     public function getOperationProcessor() {
-        return new Installer($this->composerHandler, $this->extensionValidator, $this->container, $this->dispatcher, $this->kernel, $this->extensionsRepository, $this->settingsFactory, $this->componentsRepository);
+        return new Uninstaller($this->composerHandler, $this->container, $this->dispatcher, $this->kernel, $this->extensionsRepository);
     }
 
     public function testWithoutComposerAsSuccess() {
@@ -99,7 +76,6 @@ class InstalledTest extends OperationSetupTestCase
 
         $handler = $this->buildOperationHandlerMock()
             ->shouldReceive('operationInfo')
-            ->twice()
             ->andReturnNull()
             ->getMock()
             ->shouldReceive('operationSuccess')
@@ -111,53 +87,19 @@ class InstalledTest extends OperationSetupTestCase
         $extension = $this->buildExtensionMock($name)
             ->shouldReceive('getPath')
             ->andReturn('/src/component/foo/bar')
-            ->getMock()
-            ->shouldReceive('setSettings')
-            ->andReturnNull()
             ->getMock();
 
         $this->dispatcher->shouldReceive('fire')->twice()->andReturnNull()->getMock();
-        $this->extensionValidator->shouldReceive('validateAssetsPath')->once()->with($extension)->andReturnNull()->getMock();
         $this->composerHandler->shouldReceive('run')->never()->andReturnNull()->getMock();
-        $this->migrateManager->shouldReceive('extension')->once()->with($name)->andReturnNull()->getMock();
-        $this->assetManager->shouldReceive('extension')->once()->with(str_replace('/', '_', $name))->andReturnNull()->getMock();
+        $this->migrateManager->shouldReceive('uninstall')->once()->with($name)->andReturnNull()->getMock();
+        $this->assetManager->shouldReceive('delete')->once()->with(str_replace('/', '_', $name))->andReturnNull()->getMock();
 
         $this->extensionsRepository->shouldReceive('save')->once()->with($extension, [
-            'status'    => ExtensionContract::STATUS_INSTALLED,
-            'options'   => $extension->getSettings()->getData(),
+            'status'    => ExtensionContract::STATUS_AVAILABLE,
+            'options'   => []
         ])->andReturnNull()->getMock();
 
-        $settings = m::mock(SettingsContract::class);
-
-        $this->settingsFactory->shouldReceive('createFromConfig')
-            ->once()
-            ->with('/src/component/foo/bar/resources/config/settings.php')
-            ->andReturn($settings)
-            ->getMock();
-
-        $processor->run($handler, $extension, ['skip-composer']);
-    }
-
-    public function testWithFailedAssetsValidation() {
-        $processor = $this->getOperationProcessor();
-
-        $handler = $this->buildOperationHandlerMock()
-            ->shouldReceive('operationInfo')
-            ->once()
-            ->andReturnNull()
-            ->getMock()
-            ->shouldReceive('operationFailed')
-            ->once()
-            ->andReturnNull()
-            ->getMock();
-
-        $name = 'foo/bar';
-        $extension = $this->buildExtensionMock($name);
-
-        $this->dispatcher->shouldReceive('fire')->twice()->andReturnNull()->getMock();
-        $this->extensionValidator->shouldReceive('validateAssetsPath')->once()->with($extension)->andThrow(ExtensionException::class)->getMock();
-
-        $processor->run($handler, $extension, ['skip-composer']);
+        $processor->run($handler, $extension);
     }
 
     public function testWithComposerAsSuccess() {
@@ -165,7 +107,6 @@ class InstalledTest extends OperationSetupTestCase
 
         $handler = $this->buildOperationHandlerMock()
             ->shouldReceive('operationInfo')
-            ->twice()
             ->andReturnNull()
             ->getMock()
             ->shouldReceive('operationSuccess')
@@ -183,10 +124,8 @@ class InstalledTest extends OperationSetupTestCase
             ->getMock();
 
         $this->dispatcher->shouldReceive('fire')->twice()->andReturnNull()->getMock();
-        $this->extensionValidator->shouldReceive('validateAssetsPath')->once()->with($extension)->andReturnNull()->getMock();
-        $this->migrateManager->shouldReceive('extension')->once()->with($name)->andReturnNull()->getMock();
-        $this->assetManager->shouldReceive('extension')->once()->with(str_replace('/', '_', $name))->andReturnNull()->getMock();
-        $this->componentsRepository->shouldReceive('getTargetBranch')->with($name)->andReturn(m::type('string'))->getMock();
+        $this->migrateManager->shouldReceive('uninstall')->once()->with($name)->andReturnNull()->getMock();
+        $this->assetManager->shouldReceive('delete')->once()->with(str_replace('/', '_', $name))->andReturnNull()->getMock();
 
         $process = m::mock(Process::class)
             ->shouldReceive('stop')
@@ -202,19 +141,88 @@ class InstalledTest extends OperationSetupTestCase
             ->getMock();
 
         $this->extensionsRepository->shouldReceive('save')->once()->with($extension, [
-            'status'    => ExtensionContract::STATUS_INSTALLED,
-            'options'   => $extension->getSettings()->getData(),
+            'status'    => ExtensionContract::STATUS_AVAILABLE,
+            'options'   => []
         ])->andReturnNull()->getMock();
 
-        $settings = m::mock(SettingsContract::class);
+        $processor->run($handler, $extension, ['purge']);
+    }
 
-        $this->settingsFactory->shouldReceive('createFromConfig')
+    public function testWithException() {
+        $processor = $this->getOperationProcessor();
+
+        $handler = $this->buildOperationHandlerMock()
+            ->shouldReceive('operationInfo')
+            ->andReturnNull()
+            ->getMock()
+            ->shouldReceive('operationFailed')
             ->once()
-            ->with('/src/component/foo/bar/resources/config/settings.php')
-            ->andReturn($settings)
+            ->andReturnNull()
+            ->getMock()
+            ->shouldReceive('operationSuccess')
+            ->never()
+            ->andReturnNull()
             ->getMock();
 
-        $processor->run($handler, $extension);
+        $name = 'foo/bar';
+        $extension = $this->buildExtensionMock($name)
+            ->shouldReceive('getPath')
+            ->andReturn('/src/component/foo/bar')
+            ->getMock()
+            ->shouldReceive('setSettings')
+            ->andReturnNull()
+            ->getMock();
+
+        $this->dispatcher->shouldReceive('fire')->twice()->andReturnNull()->getMock();
+        $this->migrateManager->shouldReceive('uninstall')->once()->with($name)->andThrow(\Exception::class)->getMock();
+
+        $processor->run($handler, $extension, ['purge']);
+    }
+
+    public function testWithExceptionInComposer() {
+        $processor = $this->getOperationProcessor();
+
+        $handler = $this->buildOperationHandlerMock()
+            ->shouldReceive('operationInfo')
+            ->andReturnNull()
+            ->getMock()
+            ->shouldReceive('operationFailed')
+            ->once()
+            ->andReturnNull()
+            ->getMock();
+
+        $name = 'foo/bar';
+        $extension = $this->buildExtensionMock($name)
+            ->shouldReceive('getPath')
+            ->andReturn('/src/component/foo/bar')
+            ->getMock()
+            ->shouldReceive('setSettings')
+            ->andReturnNull()
+            ->getMock();
+
+        $this->dispatcher->shouldReceive('fire')->twice()->andReturnNull()->getMock();
+        $this->migrateManager->shouldReceive('uninstall')->once()->with($name)->andReturnNull()->getMock();
+        $this->assetManager->shouldReceive('delete')->once()->with(str_replace('/', '_', $name))->andReturnNull()->getMock();
+
+        $process = m::mock(Process::class)
+            ->shouldReceive('stop')
+            ->andReturnNull()
+            ->getMock()
+            ->shouldReceive('isSuccessful')
+            ->andReturn(false)
+            ->getMock();
+
+        $this->composerHandler->shouldReceive('run')
+            ->withAnyArgs()
+            ->andReturn($process)
+            ->getMock();
+
+        $this->extensionsRepository->shouldReceive('save')->once()->with($extension, [
+            'status'    => ExtensionContract::STATUS_AVAILABLE,
+            'options'   => []
+        ])->andReturnNull()->getMock();
+
+        $processor->run($handler, $extension, ['purge']);
     }
 
 }

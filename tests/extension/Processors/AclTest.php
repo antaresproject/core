@@ -21,6 +21,7 @@
 namespace Antares\Extension\TestCase;
 
 use Antares\Acl\Migration;
+use Antares\Acl\RoleActionList;
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
 use Antares\Extension\Processors\Acl;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -139,4 +140,78 @@ class AclTest extends ApplicationTestCase
 
         $this->getProcessor()->import($handler, $extension);
     }
+
+    public function testWithoutReload() {
+        $extension = $this->buildExtensionMock('aaa')
+            ->shouldReceive('getPath')
+            ->once()
+            ->andReturn(m::type('string'))
+            ->getMock();
+
+        $handler = $this->buildOperationHandlerMock()
+            ->shouldReceive('operationInfo')
+            ->twice()
+            ->andReturnNull()
+            ->getMock();
+
+        $roleActionList = m::mock(RoleActionList::class);
+
+        $file = m::mock(Filesystem::class)
+            ->shouldReceive('getRequire')
+            ->withAnyArgs()
+            ->once()
+            ->andReturn($roleActionList)
+            ->getMock();
+
+        $this->aclMigration
+            ->shouldReceive('up')
+            ->once()
+            ->with('aaa', $roleActionList)
+            ->andReturnNull()
+            ->getMock();
+
+        $this->app->instance('files', $file);
+
+        $this->getProcessor()->import($handler, $extension);
+    }
+
+    public function testWithReload() {
+        $extension = $this->buildExtensionMock('aaa')
+            ->shouldReceive('getPath')
+            ->once()
+            ->andReturn(m::type('string'))
+            ->getMock();
+
+        $handler = $this->buildOperationHandlerMock()
+            ->shouldReceive('operationInfo')
+            ->times(3)
+            ->andReturnNull()
+            ->getMock();
+
+        $roleActionList = m::mock(RoleActionList::class);
+
+        $file = m::mock(Filesystem::class)
+            ->shouldReceive('getRequire')
+            ->withAnyArgs()
+            ->once()
+            ->andReturn($roleActionList)
+            ->getMock();
+
+        $this->aclMigration
+            ->shouldReceive('down')
+            ->once()
+            ->with('aaa')
+            ->andReturnNull()
+            ->getMock()
+            ->shouldReceive('up')
+            ->once()
+            ->with('aaa', $roleActionList)
+            ->andReturnNull()
+            ->getMock();
+
+        $this->app->instance('files', $file);
+
+        $this->getProcessor()->import($handler, $extension, true);
+    }
+
 }

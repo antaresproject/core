@@ -44,6 +44,10 @@ class Composer {
      * @throws \Exception
      */
     public function run(OperationHandlerContract $handler, array $extensionsNames) {
+        if( count($extensionsNames) === 0) {
+            return $handler->operationInfo(new Operation('No extensions to install. Skipping composer.'));
+        }
+
         $names      = implode(' ', $extensionsNames);
         $command    = 'composer require ' . $names . ' --no-progress';
 

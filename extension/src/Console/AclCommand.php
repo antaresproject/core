@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Antares\Extension\Console;
 
 use Antares\Acl\Migration;
+use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
 use Antares\Extension\Exception\ExtensionException;
 use Antares\Extension\Model\Operation;
@@ -20,7 +21,7 @@ class AclCommand extends Command implements OperationHandlerContract {
 	 *
 	 * @var string
 	 */
-	protected $name = 'extension:acl';
+	protected $name = 'extension:acl:reload {--extension : Extension full name}';
 
 	/**
 	 * The console command description.
@@ -38,7 +39,7 @@ class AclCommand extends Command implements OperationHandlerContract {
 
     /**
      * AclCommand constructor.
-     * @param Migration $migration
+     * @param Acl $acl
      */
     public function __construct(Acl $acl) {
         parent::__construct();
@@ -54,10 +55,21 @@ class AclCommand extends Command implements OperationHandlerContract {
      * @throws FileNotFoundException
 	 */
 	public function handle(Manager $manager) {
-        $extensions = $manager->getAvailableExtensions()->filterByActivated();
+	    $extensionName = $this->option('extension');
 
-        foreach($extensions as $extension) {
-            $this->acl->import($this, $extension);
+	    if($extensionName) {
+            $extension = $manager->getAvailableExtensions()->findByName($extensionName);
+
+            if($extension instanceof ExtensionContract) {
+                $this->acl->import($this, $extension, true);
+            }
+        }
+        else {
+            $extensions = $manager->getAvailableExtensions()->filterByActivated();
+
+            foreach($extensions as $extension) {
+                $this->acl->import($this, $extension, true);
+            }
         }
 	}
 

@@ -47,7 +47,7 @@ class Deactivator extends AbstractOperation {
         parent::__construct($container, $dispatcher, $kernel);
 
         $this->extensionsRepository = $extensionsRepository;
-        $this->aclMigration          = $aclMigration;
+        $this->aclMigration         = $aclMigration;
     }
 
     /**

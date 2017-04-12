@@ -83,7 +83,7 @@ class Uninstaller extends AbstractOperation {
             $handler->operationInfo(new Operation('Uninstalling the [' . $name . '] extension.'));
             $this->dispatcher->fire(new Uninstalling($extension));
             $this->migrateManager->uninstall($name);
-            $this->assetManager->delete($name);
+            $this->assetManager->delete(str_replace('/', '_', $name));
 
             $this->extensionsRepository->save($extension, [
                 'status'    => ExtensionContract::STATUS_AVAILABLE,
