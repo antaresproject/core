@@ -1,13 +1,13 @@
 {% extends "antares/foundation::layouts.installer.main" %}
 {% block left_panel_content %}
     {{ parent() }}
-    {% include 'antares/installer::partials._menu' with {'active': 4} %}
+    {% include 'antares/installer::partials._menu' with {'active': 3} %}
 {% endblock %}
 {% block content %}
     <div class="card card--chart-small card--primary-light">
         <div class="card__header">
             <div class="card__header--top">
-                <span>Installation Progress (<span id="progress">0</span>%)</span>
+                <span>{{ trans('antares/foundation::install.steps.install') }} (<span id="progress">0</span>%)</span>
             </div>
         </div>
         <div class="card__content">

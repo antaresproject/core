@@ -23,6 +23,10 @@ namespace Antares\Installation;
 
 use Antares\Contracts\Installation\Installation as InstallationContract;
 use Antares\Extension\Contracts\ExtensionContract;
+use Antares\Extension\Repositories\ComponentsRepository;
+use Antares\Model\Action;
+use Antares\Model\Permission;
+use Antares\Model\Role;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -199,22 +203,17 @@ class Installation implements InstallationContract
 
     /**
      * imports default admin user
+     *
      * @param User $user
-     * @return \Antares\Model\UserRole
+     * @return UserRole
      */
     private function importAdminUserRole(User $user)
     {
-
-        $role        = $this->app->make('antares.role');
-        $adminRoleId = $role::admin()->id;
-        $userRole    = $this->app->make('antares.user.role')->newInstance();
-        $userRole->fill([
+        return UserRole::create([
             'user_id'    => $user->id,
-            'role_id'    => $adminRoleId,
+            'role_id'    => Role::admin()->id,
             'created_at' => Carbon::now()
         ]);
-        $userRole->save();
-        return $userRole;
     }
 
     /**
@@ -225,30 +224,37 @@ class Installation implements InstallationContract
      */
     private function importDefaultUsersPermissions(array $actions)
     {
-        $defaults = config('antares/installer::permissions');
-        foreach ($defaults as $role => $permissions) {
+        $defaults = (array) config('antares/installer::permissions.roles', []);
 
+        foreach ($defaults as $role => $permissions) {
+            /* @var $model Role */
             $model = $this->app->make('antares.role')->newQuery()->where('name', $role)->first();
-            if (is_null($model)) {
+
+            if ($model === null) {
                 continue;
             }
+
             $roleId = $model->id;
+
             $result = array_filter(array_map(function($action) use($permissions) {
-                        if (in_array($action->name, $permissions)) {
-                            return $action;
-                        }
-                    }, $actions));
+                if (in_array($action->name, $permissions)) {
+                    return $action;
+                }
+            }, $actions));
 
             $brands = $this->getBrands();
             foreach ($result as $action) {
                 foreach ($brands as $brand) {
-                    if (!$this->app->make('antares.component.permission')->newInstance([
-                                'brand_id'     => $brand->id,
-                                'component_id' => $action->component_id,
-                                'role_id'      => $roleId,
-                                'action_id'    => $action->id,
-                                'allowed'      => 1,
-                            ])->save()) {
+                    $model = new Permission();
+                    $model->fill([
+                        'brand_id'     => $brand->id,
+                        'component_id' => $action->component_id,
+                        'role_id'      => $roleId,
+                        'action_id'    => $action->id,
+                        'allowed'      => 1,
+                    ]);
+
+                    if( ! $model->save() ) {
                         throw new Exception('Unable to set default user permissions');
                     }
                 }
@@ -287,8 +293,9 @@ class Installation implements InstallationContract
                         'action_id'    => $action->id,
                         'allowed'      => 1,
                     ];
-                    $permissionModel = $this->app->make('antares.component.permission')->newInstance();
+                    $permissionModel = new Permission();
                     $permissionModel->fill($fill);
+
                     if (!$permissionModel->save()) {
                         throw new Exception('Unable to set default user permissions');
                     }
@@ -301,43 +308,26 @@ class Installation implements InstallationContract
      * imports default actions
      * @param Component $component
      * @return array
-     * @throws Exception
+     * @throws \InvalidArgumentException
      */
     private function importDefaultComponentActions(Component $component)
     {
         $componentId = $component->id;
+
         if (!$componentId) {
-            throw new Exception('Invalid component id');
+            throw new \InvalidArgumentException('Invalid component id');
         }
 
-        $defaultActions = [
-            'manage-antares',
-            'manage-users',
-            'manage-roles',
-            'manage-acl',
-            'clients-list',
-            'client-create',
-            'client-update',
-            'client-delete',
-            'change-app-settings',
-            'show-dashboard',
-            'component-install',
-            'component-uninstall',
-            'component-activate',
-            'component-deactivate',
-            'component-configure',
-            'brand-update',
-            'brand-email'
-        ];
-        $actions        = array_map(function($value) use($componentId) {
-            $action = $this->app->make('antares.component.action')->newInstance();
-            $action->fill([
+        $componentName  = $component->name;
+        $defaultActions = (array) config('antares/installer::permissions.components.' . $componentName, []);
+
+        $actions  = array_map(function($value) use($componentId) {
+            return Action::create([
                 'component_id' => $componentId,
                 'name'         => $value,
             ]);
-            $action->save();
-            return $action;
         }, $defaultActions);
+
         return $actions;
     }
 
@@ -348,10 +338,11 @@ class Installation implements InstallationContract
      *
      * @return \Antares\Model\User
      */
-    protected function createUser($input)
+    protected function createUser(array $input)
     {
         User::unguard();
-        $user = $this->app->make('antares.user')->newInstance();
+
+        $user = new User();
 
         $user->fill([
             'email'     => $input['email'],
@@ -409,7 +400,7 @@ class Installation implements InstallationContract
 
             if ($user->save()) {
                 $id       = $user->id;
-                $roleId   = rand(2, 4);
+                $roleId   = random_int(2, 4);
                 $userRole = new UserRole([
                     'user_id'    => $id,
                     'role_id'    => $roleId,
@@ -423,6 +414,24 @@ class Installation implements InstallationContract
                 throw new Exception('Unable to save fake user');
             }
         }
+    }
+
+    /**
+     * Runs process for installing required components.
+     */
+    public function runComponentsInstallation()
+    {
+        /**
+         * @var $progress Progress
+         * @var $componentsRepository ComponentsRepository
+         */
+        $componentsRepository   = app()->make(ComponentsRepository::class);
+        $progress               = app()->make(Progress::class);
+
+        $extensions = array_keys($componentsRepository->getRequired());
+
+        $progress->setComponents($extensions);
+        $progress->start();
     }
 
 }

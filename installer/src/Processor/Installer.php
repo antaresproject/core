@@ -123,6 +123,7 @@ class Installer
         foreach ($finder as $element) {
             File::delete($element);
         }
+
         try {
             $directories = $finder->directories();
             foreach ($directories as $dir) {
@@ -132,9 +133,8 @@ class Installer
                 }
             }
         } catch (Exception $e) {
-            
+            Log::emergency($e);
         }
-        return;
     }
 
     /**
@@ -194,97 +194,13 @@ class Installer
      */
     public function store($listener, array $input)
     {
-        if (!$this->installer->createAdmin($input)) {
-            return $listener->storeFailed();
-        }
-        return $listener->storeSucceed();
-    }
+        if( $this->installer->createAdmin($input) ) {
+            $this->installer->runComponentsInstallation();
 
-    /**
-     * @return ComponentsRepository
-     */
-    private function getComponentsRepository() {
-        return app()->make(ComponentsRepository::class);
-    }
-
-    /**
-     * shows components form
-     *
-     * @param object $listener
-     * @return mixed
-     */
-    public function components($listener)
-    {
-        $form = Form::of('components', function ($form) {
-                    $attributes = [
-                        'url'    => handles("antares::install/components/store"),
-                        'method' => 'POST'
-                    ];
-
-                    $form->attributes($attributes);
-                    $form->name('Components list');
-
-                    $form->fieldset(function ($fieldset) {
-                        $fieldset->legend('Required components');
-                        $required = array_keys( $this->getComponentsRepository()->getRequired() );
-
-                        foreach ($required as $extension) {
-                            $fieldset->control('input:checkbox', 'required[]')
-                                    ->label($extension)
-                                    ->value($extension)
-                                    ->checked()
-                                    ->attributes(['disabled' => 'disabled', 'readonly' => 'readonly']);
-                        }
-                    });
-
-                    $form->fieldset(function ($fieldset) {
-                        $fieldset->legend('Available optional components');
-                        $optional = array_keys( $this->getComponentsRepository()->getOptional() );
-
-                        foreach ($optional as $extension) {
-                            $fieldset->control('input:checkbox', 'optional[]')
-                                    ->label($extension)
-                                    ->value($extension);
-                        }
-
-                        $fieldset->control('button', 'cancel')
-                                ->field(function() {
-                                    return app('html')->link(handles("antares::install/create"), trans('antares/foundation::label.cancel'), ['class' => 'btn btn--md btn--default mdl-button mdl-js-button']);
-                                });
-
-                        $fieldset->control('button', 'button')
-                                ->attributes(['type' => 'submit', 'class' => 'btn btn--md btn--primary mdl-button mdl-js-button'])
-                                ->value(trans('antares/foundation::label.next'));
-                    });
-                });
-
-        return $listener->componentsSucceed(['form' => $form]);
-    }
-
-    /**
-     * launch components/modules installation.
-     *
-     * @param  object  $listener
-     * @param  array   $selected
-     *
-     * @return mixed
-     */
-    public function storeComponents($listener, array $selected)
-    {
-        try {
-            $required   = array_keys( $this->getComponentsRepository()->getRequired() );
-            $extensions = array_merge($required, $selected);
-
-            /* @var $progress Progress */
-            $progress = app()->make(Progress::class);
-            $progress->setComponents($extensions);
-            $progress->start();
-        } catch (Exception $e) {
-            Log::emergency($e);
-            return $listener->doneFailed();
+            return $listener->storeSucceed();
         }
 
-        return $listener->showInstallProgress();
+        return $listener->storeFailed();
     }
 
     /**

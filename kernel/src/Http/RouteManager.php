@@ -245,7 +245,7 @@ abstract class RouteManager
     protected function prepareValidRoute($route, $item, $query, array $options)
     {
         if (!!Arr::get($options, 'csrf', false)) {
-            $query .= (!empty($query) ? '&' : '' ) . '_token=' . $this->app->make('session')->getToken();
+            $query .= (!empty($query) ? '&' : '' ) . '_token=' . $this->app->make('session')->token();
             unset($options['csrf']);
         }
         if (!!Arr::get($options, 'sandbox', false)) {

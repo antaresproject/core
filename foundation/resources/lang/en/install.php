@@ -37,7 +37,7 @@ return
                 'application' => 'Application Information',
                 'done'        => 'Done',
                 'requirement' => 'Check Requirements',
-                'license'     => 'License Details',
+                'install'     => 'Install Antares',
             ),
         'auth'             =>
             array(

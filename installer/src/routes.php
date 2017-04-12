@@ -29,9 +29,6 @@ $router->group(['prefix' => 'install', 'middleware' => InstallationMiddleware::c
     $router->get('done', 'InstallerController@done')->name('installation.installer.done');
     $router->get('prepare', 'InstallerController@prepare')->name('installation.installer.prepare');
 
-    $router->get('components', 'InstallerController@components')->name('installation.installer.components');
-    $router->post('components/store', 'InstallerController@storeComponents')->name('installation.installer.storeComponents');
-
     $router->get('completed', 'InstallerController@completed')->name('installation.installer.completed');
     $router->get('failed', 'InstallerController@failed')->name('installation.installer.failed');
 
