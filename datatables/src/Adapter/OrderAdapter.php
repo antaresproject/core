@@ -98,6 +98,9 @@ class OrderAdapter
 
     public function getSessionValue()
     {
+        if (php_sapi_name() === 'cli') {
+            return false;
+        }
         $session = request()->session();
         $key     = $this->getSessionKey();
         return !$session->has($key) ? false : $session->get($key);

@@ -97,7 +97,8 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
             ['id' => 0, 'name' => 'admin'], ['id' => 1, 'name' => 'editor']
         ]);
         $events->shouldReceive('until')->once()
-                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor']);
+                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor'])
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
         $stub        = new SessionGuard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
@@ -120,7 +121,8 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
             ['id' => 0, 'name' => 'Guest']
         ]);
         $events->shouldReceive('until')->once()
-                ->with('antares.auth: roles', m::any())->andReturnNull();
+                ->with('antares.auth: roles', m::any())->andReturnNull()
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
         $stub        = new SessionGuard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
@@ -130,7 +132,7 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Support\Auth::hasRoles() method returning valid roles.
+     * Test Antares\Support\Auth::is() method returning valid roles.
      *
      * @test
      */
@@ -143,19 +145,21 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
             ['id' => 1, 'name' => 'admin'], ['id' => 2, 'name' => 'editor']
         ]);
         $events->shouldReceive('until')->once()
-                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor']);
-        $stub        = new SessionGuard('web', $this->provider, $this->session);
+                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor'])
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
+
+        $stub = new SessionGuard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
-        $this->assertTrue($stub->hasRoles('admin'));
-        $this->assertTrue($stub->hasRoles('editor'));
-        $this->assertFalse($stub->hasRoles('user'));
-        $this->assertTrue($stub->hasRoles(['admin', 'editor']));
-        $this->assertFalse($stub->hasRoles(['admin', 'user']));
+        $this->assertTrue($stub->is('admin'));
+        $this->assertTrue($stub->is('editor'));
+        $this->assertFalse($stub->is('user'));
+        $this->assertTrue($stub->is(['admin', 'editor']));
+        $this->assertFalse($stub->is(['admin', 'user']));
     }
 
     /**
-     * Test Antares\Support\Auth::hasRoles() method when invalid roles is
+     * Test Antares\Support\Auth::is() method when invalid roles is
      * returned.
      *
      * @test
@@ -168,17 +172,16 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
         $user->roles = new \Antares\Support\Collection([
             ['id' => 1, 'name' => 'Guest']
         ]);
-        $events->shouldReceive('until')
-                ->with('antares.auth: roles', m::any())->once()
-                ->andReturn('foo');
+        $events->shouldReceive('until')->with('antares.auth: roles', m::any())->once()->andReturn('foo')
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
         $stub        = new SessionGuard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
-        $this->assertFalse($stub->hasRoles('admin'));
-        $this->assertFalse($stub->hasRoles('editor'));
-        $this->assertFalse($stub->hasRoles('user'));
-        $this->assertFalse($stub->hasRoles(['admin', 'editor']));
-        $this->assertFalse($stub->hasRoles(['admin', 'user']));
+        $this->assertFalse($stub->is('admin'));
+        $this->assertFalse($stub->is('editor'));
+        $this->assertFalse($stub->is('user'));
+        $this->assertFalse($stub->is(['admin', 'editor']));
+        $this->assertFalse($stub->is(['admin', 'user']));
     }
 
     /**
@@ -194,8 +197,8 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
         $user->roles = new \Antares\Support\Collection([
             ['id' => 1, 'name' => 'admin'], ['id' => 3, 'name' => 'editor']
         ]);
-        $events->shouldReceive('until')->once()
-                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor']);
+        $events->shouldReceive('until')->once()->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor'])
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
         $stub        = new SessionGuard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
@@ -218,9 +221,8 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
         $user->roles = new \Antares\Support\Collection([
             ['id' => 1, 'name' => 'Guest']
         ]);
-        $events->shouldReceive('until')
-                ->with('antares.auth: roles', m::any())->once()
-                ->andReturn('foo');
+        $events->shouldReceive('until')->with('antares.auth: roles', m::any())->once()->andReturn('foo')
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
         $stub        = new SessionGuard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
@@ -241,8 +243,8 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
         $user->roles = new \Antares\Support\Collection([
             ['id' => 1, 'name' => 'admin'], ['id' => 2, 'name' => 'editor']
         ]);
-        $events->shouldReceive('until')->once()
-                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor']);
+        $events->shouldReceive('until')->once()->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor'])
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
         $stub        = new SessionGuard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
@@ -267,9 +269,8 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
         $user->roles = new \Antares\Support\Collection([
             ['id' => 1, 'name' => 'Guest']
         ]);
-        $events->shouldReceive('until')
-                ->with('antares.auth: roles', m::any())->once()
-                ->andReturn('foo');
+        $events->shouldReceive('until')->with('antares.auth: roles', m::any())->once()->andReturn('foo')
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
         $stub        = new SessionGuard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
@@ -293,8 +294,8 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
         $user->roles = new \Antares\Support\Collection([
             ['id' => 1, 'name' => 'editor']
         ]);
-        $events->shouldReceive('until')->once()
-                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor']);
+        $events->shouldReceive('until')->once()->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor'])
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
         $stub        = new SessionGuard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
@@ -317,9 +318,8 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
         $user->roles = new \Antares\Support\Collection([
             ['id' => 1, 'name' => 'Guest']
         ]);
-        $events->shouldReceive('until')
-                ->with('antares.auth: roles', m::any())->once()
-                ->andReturn('foo');
+        $events->shouldReceive('until')->with('antares.auth: roles', m::any())->once()->andReturn('foo')
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
         $stub        = new SessionGuard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
         $stub->setUser($user);
@@ -343,7 +343,8 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
         $events->shouldReceive('until')->never()
                 ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor'])
                 ->shouldReceive('fire')->once()
-                ->with(m::type('\Illuminate\Auth\Events\Logout'))->andReturnNull();
+                ->with(m::type('\Illuminate\Auth\Events\Logout'))->andReturnNull()
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
         $provider->shouldReceive('updateRememberToken')->once();
         $session->shouldReceive('remove')->once()->andReturnNull();
         $stub             = new SessionGuard('web', $provider, $session);

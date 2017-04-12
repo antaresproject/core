@@ -19,12 +19,11 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Notifier\Events;
 
-use Illuminate\Support\Str;
-use Illuminate\Mail\Events\MessageSending;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
+use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Support\Str;
 
 class CssInliner
 {
@@ -41,21 +40,16 @@ class CssInliner
         $message = $sending->message;
 
         $converter = new CssToInlineStyles();
-        $converter->setEncoding($message->getCharset());
-        $converter->setUseInlineStylesBlock();
-        $converter->setCleanup();
 
         if ($message->getContentType() === 'text/html' ||
                 ($message->getContentType() === 'multipart/alternative' && $message->getBody())
         ) {
-            $converter->setHTML($message->getBody());
-            $message->setBody($converter->convert());
+            $message->setBody($converter->convert($message->getBody()));
         }
 
         foreach ($message->getChildren() as $part) {
             if (Str::contains($part->getContentType(), 'text/html')) {
-                $converter->setHTML($part->getBody());
-                $part->setBody($converter->convert());
+                $part->setBody($converter->convert($part->getBody()));
             }
         }
     }

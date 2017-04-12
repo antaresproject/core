@@ -114,7 +114,7 @@ trait ApplicationTrait
         $this->resolveApplicationHttpKernel($app);
         $this->resolveApplicationConsoleKernel($app);
 
-        //$app->make('Illuminate\Foundation\Bootstrap\ConfigureLogging')->bootstrap($app);
+
         $app->make('Illuminate\Foundation\Bootstrap\HandleExceptions')->bootstrap($app);
         $app->make('Illuminate\Foundation\Bootstrap\RegisterFacades')->bootstrap($app);
         $app->make('Illuminate\Foundation\Bootstrap\SetRequestForConsole')->bootstrap($app);
@@ -159,7 +159,7 @@ trait ApplicationTrait
         $providers = array_merge($this->getApplicationProviders($app), $this->getPackageProviders($app));
 
         $app['config']['app.aliases']   = $aliases;
-        $app['config']['app.providers'] = $providers;
+        $app['config']['app.providers'] = array_merge($providers, $this->providers);
     }
 
     /**

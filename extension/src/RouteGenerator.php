@@ -1,6 +1,23 @@
 <?php
 
-declare(strict_types=1);
+/**
+ * Part of the Antares Project package.
+ *
+ * NOTICE OF LICENSE
+ *
+ * Licensed under the 3-clause BSD License.
+ *
+ * This source file is subject to the 3-clause BSD License that is
+ * bundled with this package in the LICENSE file.
+ *
+ * @package    Antares Core
+ * @version    0.9.0
+ * @author     Original Orchestral https://github.com/orchestral
+ * @author     Antares Team
+ * @license    BSD License (3-clause)
+ * @copyright  (c) 2017, Antares Project
+ * @link       http://antaresproject.io
+ */
 
 namespace Antares\Extension;
 
@@ -44,15 +61,17 @@ class RouteGenerator implements RouteGeneratorContract
      *
      * @var string
      */
-    protected $basePrefix = '';
+    protected $basePrefix = null;
 
-	/**
-	 * RouteGenerator constructor.
-	 * @param string $handles
-	 * @param Request $request
-	 */
-    public function __construct($handles, Request $request)
+    /**
+     * Construct a new instance.
+     *
+     * @param  string  $handles
+     * @param  \Illuminate\Http\Request  $request
+     */
+    public function __construct($handles = null, Request $request)
     {
+
         $this->request = $request;
 
         $this->setBaseUrl($this->request->root());
@@ -65,10 +84,7 @@ class RouteGenerator implements RouteGeneratorContract
             $this->domain = array_shift($fragments);
             $this->prefix = array_shift($fragments);
         }
-
-        if($this->prefix === null) {
-			$this->prefix = '/';
-		}
+        !is_null($this->prefix) || $this->prefix = '/';
     }
 
     /**
@@ -133,21 +149,21 @@ class RouteGenerator implements RouteGeneratorContract
      * Get route prefix.
      *
      * @param  bool  $forceBase
+     *
      * @return string
      */
     public function prefix($forceBase = false)
     {
+        if (!is_string($this->prefix)) {
+            return '/';
+        }
         $pattern = trim($this->prefix, '/');
 
         if ($this->domain === null && $forceBase === true) {
             $pattern = trim($this->basePrefix, '/') . "/{$pattern}";
             $pattern = trim($pattern, '/');
         }
-
-        if( empty($pattern) ) {
-			$pattern = '/';
-		}
-
+        empty($pattern) && $pattern = '/';
         return $pattern;
     }
 
@@ -169,6 +185,7 @@ class RouteGenerator implements RouteGeneratorContract
      * Set base URL.
      *
      * @param  string  $root
+     *
      * @return $this
      */
     public function setBaseUrl($root)
@@ -180,6 +197,7 @@ class RouteGenerator implements RouteGeneratorContract
             $this->basePrefix = array_pop($base);
         }
 
+
         $this->baseUrl = array_shift($base);
 
         return $this;
@@ -189,6 +207,7 @@ class RouteGenerator implements RouteGeneratorContract
      * Get route to.
      *
      * @param  string  $to
+     *
      * @return string
      */
     public function to($to)
@@ -216,10 +235,12 @@ class RouteGenerator implements RouteGeneratorContract
      * @param string $prefix
      * @return RouteGenerator
      */
-    public function setPrefix(string $prefix = null)
+    public function setPrefix($prefix = null)
     {
-        $this->prefix = $prefix ?: 'member';
-
+        if (is_null($prefix)) {
+            $this->prefix = 'member';
+        }
+        $this->prefix = $prefix;
         return $this;
     }
 

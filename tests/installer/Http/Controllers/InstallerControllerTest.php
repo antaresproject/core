@@ -85,7 +85,9 @@ class InstallerControllerTest extends ApplicationTestCase
 
 
         $this->call('GET', '/antares/install');
+
         $this->assertResponseStatus(302);
+
         $this->assertRedirectedTo(handles('/'));
     }
 
@@ -146,10 +148,9 @@ class InstallerControllerTest extends ApplicationTestCase
         });
 
         $this->call('GET', 'antares/install/prepare');
-        $this->assertRedirectedTo(handles('antares::install/license'));
+        $this->assertRedirectedTo(handles('antares::install/create'));
     }
 
-//
     /**
      * Test GET /antares/install/create.
      *

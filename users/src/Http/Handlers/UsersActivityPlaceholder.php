@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Handler;
 
 use Antares\Users\Processor\Activity\UsersActivity;
@@ -38,7 +37,6 @@ class UsersActivityPlaceholder
         $this->processor = $processor;
     }
 
-
     /**
      * Users Activity Placeholder
      *
@@ -46,10 +44,13 @@ class UsersActivityPlaceholder
      */
     public function handle()
     {
+        if (!user()) {
+            return;
+        }
         app('antares.widget')
-            ->make('placeholder.left-menu')
-            ->add('user_activity_config')
-            ->value(view('antares/foundation::users.partials._last_activity_config', ['period' => config('antares/users::check_activity_every')]));
+                ->make('placeholder.left-menu')
+                ->add('user_activity_config')
+                ->value(view('antares/foundation::users.partials._last_activity_config', ['period' => config('antares/users::check_activity_every')]));
     }
 
 }

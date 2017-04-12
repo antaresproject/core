@@ -25,10 +25,11 @@ use Illuminate\Database\Eloquent\Factory;
 use PHPUnit_Framework_TestCase;
 use Antares\Testbench\Traits\WithFactories;
 use Antares\Testbench\Traits\ApplicationTrait;
-use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
+use Laravel\BrowserKitTesting\Concerns\MakesHttpRequests;
+use Laravel\BrowserKitTesting\Concerns\ImpersonatesUsers;
+use Laravel\BrowserKitTesting\Concerns\InteractsWithSession;
 use Antares\Testbench\Contracts\TestCase as TestCaseContract;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithConsole;
-use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithContainer;
 use Illuminate\Foundation\Testing\Concerns\MocksApplicationServices;
@@ -39,7 +40,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase implements TestCaseCo
     use ApplicationTrait,
         InteractsWithContainer,
         MakesHttpRequests,
-    //ImpersonatesUsers,
+        ImpersonatesUsers,
         InteractsWithConsole,
         InteractsWithDatabase,
         InteractsWithSession,

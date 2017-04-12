@@ -60,7 +60,7 @@ return [
     'connections' => [
         'sqlite'       => [
             'driver'   => 'sqlite',
-            'database' => database_path('database.sqlite3'),
+            'database' => database_path() . DIRECTORY_SEPARATOR . 'database.sqlite3',
             'prefix'   => '',
         ],
         'remote-mysql' => [

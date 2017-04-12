@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Testing;
 
 use Antares\Foundation\Application;
@@ -95,6 +94,7 @@ abstract class TestCase extends TestbenchTestCase
             return;
         }
         $this->providers = array_merge($this->providers, [$className]);
+
         return $this->providers;
     }
 

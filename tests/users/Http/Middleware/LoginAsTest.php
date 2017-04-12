@@ -74,7 +74,7 @@ class LoginAsTest extends \PHPUnit_Framework_TestCase
 
         $stub = new LoginAs($acl, $auth);
 
-        $this->assertInstanceOf('\Illuminate\Http\RedirectResponse', $stub->handle($request, $next));
+        $this->assertEquals('foo', $stub->handle($request, $next));
     }
 
 }

@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Form;
 
 use Antares\Users\Validation\PictureValidator;

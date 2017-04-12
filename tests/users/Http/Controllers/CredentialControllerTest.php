@@ -23,7 +23,6 @@ namespace Antares\Users\Http\Controllers\TestCase;
 use Antares\Testing\ApplicationTestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\View;
-use Antares\Support\Facades\Meta;
 use Mockery as m;
 
 class CredentialControllerTest extends ApplicationTestCase

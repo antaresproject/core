@@ -160,36 +160,6 @@ class RouteManagerTest extends ApplicationTestCase
         $this->assertFalse($stub->is('info?foo=bar'));
     }
 
-    /**
-     * Test Antares\Http\RouteManager::when() method.
-     *
-     * @test
-     */
-    public function testWhenMethod()
-    {
-
-
-        $stub = new StubRouteManager($this->app);
-
-        $this->assertNull($_SERVER['RouteManagerTest@callback']);
-
-        $stub->when('app::/', function () {
-            $_SERVER['RouteManagerTest@callback'] = 'app::/';
-        });
-
-        $this->app->boot();
-
-        $this->assertEquals('app::/', $_SERVER['RouteManagerTest@callback']);
-
-        $stub->when('app::foo', function () {
-            $_SERVER['RouteManagerTest@callback'] = 'app::foo';
-        });
-
-        $this->app->boot();
-
-        $this->assertNotEquals('app::foo', $_SERVER['RouteManagerTest@callback']);
-    }
-
 }
 
 class StubRouteManager extends RouteManager

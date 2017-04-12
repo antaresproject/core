@@ -510,7 +510,7 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
      */
     public function isNot($roles)
     {
-        return !$this->is($roles);
+        return !$this->hasRoles($roles);
     }
 
     /**

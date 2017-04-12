@@ -33,6 +33,9 @@ class PerPage extends Session
      */
     public function get(DataTable $datatable)
     {
+        if (php_sapi_name() === 'cli') {
+            return 10;
+        }
 
         if (!$this->request->hasSession()) {
             return;
