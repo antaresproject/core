@@ -97,7 +97,7 @@ class Uninstaller {
             $viewNames  = array_keys($viewNames);
 
             if( count($tableNames) ) {
-                $this->connection->statement('DROP TABLE ' . implode(', ', $tableNames) );
+                $this->connection->statement('DROP TABLE IF EXISTS ' . implode(', ', $tableNames) );
             }
 
             if( count($viewNames) ) {

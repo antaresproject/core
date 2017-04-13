@@ -103,6 +103,11 @@ return
                         'name'     => 'Tickets directory',
                         'solution' => 'Change permissions to storage\tickets directory.',
                     ),
+                'writableComposerVendor' =>
+                    array(
+                        'name'     => 'Composer vendor directory',
+                        'solution' => 'Change permissions to vendor directory.',
+                    ),
                 'apacheModules'          =>
                     array(
                         'name'     => 'Apache Modules',

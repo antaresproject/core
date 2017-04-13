@@ -109,8 +109,6 @@ class Installer extends AbstractOperation {
             $name = $extension->getPackage()->getName();
 
             $handler->operationInfo(new Operation('Installing the [' . $name . '] extension.'));
-
-            Artisan::call('backup:db');
             
             $this->dispatcher->fire(new Installing($extension));
             $this->extensionValidator->validateAssetsPath($extension);
