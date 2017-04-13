@@ -22,6 +22,7 @@ use Antares\Console\Kernel;
 use Antares\Publisher\AssetManager;
 use Antares\Publisher\MigrateManager;
 use Illuminate\Support\Str;
+use Artisan;
 
 class Installer extends AbstractOperation {
 
@@ -108,6 +109,9 @@ class Installer extends AbstractOperation {
             $name = $extension->getPackage()->getName();
 
             $handler->operationInfo(new Operation('Installing the [' . $name . '] extension.'));
+
+            Artisan::call('backup:db');
+            
             $this->dispatcher->fire(new Installing($extension));
             $this->extensionValidator->validateAssetsPath($extension);
 

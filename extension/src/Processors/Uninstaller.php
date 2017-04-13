@@ -19,6 +19,7 @@ use Antares\Console\Kernel;
 use Antares\Publisher\AssetManager;
 use Antares\Publisher\MigrateManager;
 use Illuminate\Support\Str;
+use Artisan;
 
 class Uninstaller extends AbstractOperation {
 
@@ -81,6 +82,9 @@ class Uninstaller extends AbstractOperation {
             $name = $extension->getPackage()->getName();
 
             $handler->operationInfo(new Operation('Uninstalling the [' . $name . '] extension.'));
+
+            Artisan::call('backup:db');
+
             $this->dispatcher->fire(new Uninstalling($extension));
             $this->migrateManager->uninstall($name);
             $this->assetManager->delete(str_replace('/', '_', $name));

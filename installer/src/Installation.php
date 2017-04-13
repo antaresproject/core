@@ -152,11 +152,12 @@ class Installation implements InstallationContract
      * @param  array  $input
      *
      * @return void
+     * @throws Exception
      */
     protected function runApplicationSetup($input)
     {
-        $exception = false;
         DB::beginTransaction();
+
         try {
             $this->clear();
             $user      = $this->createUser($input);
@@ -179,13 +180,11 @@ class Installation implements InstallationContract
             ]);
             $this->createFakeUsers($input['password']);
         } catch (Exception $ex) {
-
-            $exception = true;
-            DB::rollback();
+            DB::rollBack();
             throw $ex;
         }
+
         DB::commit();
-        return $exception === false;
     }
 
     /**

@@ -188,7 +188,7 @@ class Installation {
         $data = File::get($this->filePath, true);
 
         if($data) {
-            $data = @unserialize($data);
+            $data = unserialize($data, ['allowed_classes' => false]);
 
             if ($data !== false && $data !== null && is_array($data)) {
                 return $data;
@@ -199,7 +199,6 @@ class Installation {
     }
 
     public function save() {
-
         \Log::info('file', $this->attributes);
 
         File::put($this->filePath, serialize($this->attributes));

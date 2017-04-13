@@ -46,10 +46,11 @@ class UninstallCommand extends Command implements UninstallListener
 
     /**
      * Handles the command task.
+     * @throws \Exception
      */
     public function handle()
     {
-        if ($this->confirm('The Database will be truncated. Do you want to uninstall?')) {
+        if ($this->confirm('The Database will be flushed. Do you want to uninstall?')) {
             $this->uninstaller->truncateTables($this);
             $this->uninstaller->flushCacheAndSession($this);
         }

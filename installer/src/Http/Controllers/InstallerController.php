@@ -140,6 +140,8 @@ class InstallerController extends BaseController
      */
     public function prepareSucceed()
     {
+        app()->make(Progress::class)->reset();
+
         return $this->redirect(handles('antares::install/create'));
     }
 
@@ -172,8 +174,6 @@ class InstallerController extends BaseController
      */
     public function storeSucceed()
     {
-        app()->make(Progress::class)->reset();
-
         return redirect()->to(handles('antares::install/progress'));
     }
 

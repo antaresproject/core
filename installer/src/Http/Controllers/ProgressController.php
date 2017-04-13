@@ -63,7 +63,6 @@ class ProgressController extends BaseController
         $consoleTheme = $this->theme->asArray();
         $progress->start();
 
-
         return view('antares/installer::progress', compact('consoleTheme'));
     }
 
@@ -79,22 +78,22 @@ class ProgressController extends BaseController
 
         if ($progress->isFailed()) {
             return response()->json([
-                        'progress' => $progress->getPercentageProgress(),
-                        'redirect' => handles('antares::install/failed'),
+                'progress' => $progress->getPercentageProgress(),
+                'redirect' => handles('antares::install/failed'),
             ]);
         }
 
         if ($progress->isFinished()) {
             return response()->json([
-                        'progress' => $progress->getPercentageProgress(),
-                        'redirect' => handles('antares::install/completed'),
+                'progress' => $progress->getPercentageProgress(),
+                'redirect' => handles('antares::install/completed'),
             ]);
         }
 
         return response()->json([
-                    'progress' => $progress->getPercentageProgress(),
-                    'hash'     => bcrypt($content),
-                    'console'  => $console,
+            'progress' => $progress->getPercentageProgress(),
+            'hash'     => bcrypt($content),
+            'console'  => $console,
         ]);
     }
 

@@ -24,6 +24,7 @@ namespace Antares\Installation;
 use Antares\Contracts\Installation\Installation as InstallationContract;
 use Antares\Contracts\Installation\Requirement as RequirementContract;
 use Antares\Foundation\Support\Providers\ModuleServiceProvider;
+use Antares\Installation\Console\Commands\UninstallCommand;
 use Antares\Installation\Listeners\FailedListener;
 use Antares\Installation\Scripts\WatchDog;
 use Antares\Installation\Listeners\IncrementProgress;
@@ -69,6 +70,8 @@ class InstallerServiceProvider extends ModuleServiceProvider
 
         $this->app->singleton(Progress::class);
         $this->app->singleton(\Antares\Installation\Repository\Installation::class);
+
+        $this->commands(UninstallCommand::class);
     }
 
     public function boot()

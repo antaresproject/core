@@ -21,6 +21,7 @@
 
 namespace Antares\Installation;
 
+use Illuminate\Support\Arr;
 use PDOException;
 use Symfony\Component\Process\Process;
 use Antares\Contracts\Installation\Requirement as RequirementContract;
@@ -84,7 +85,7 @@ class Requirement implements RequirementContract
 
 
         foreach ($this->checklist as $requirement) {
-            if ($requirement['is'] !== $requirement['should'] && true === $requirement['explicit']) {
+            if ($requirement['explicit'] && $requirement['is'] !== $requirement['should']) {
                 $this->installable = false;
             }
         }
