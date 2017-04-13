@@ -157,9 +157,11 @@ trait ApplicationTrait
 
         $aliases   = array_merge($this->getApplicationAliases($app), $this->getPackageAliases($app));
         $providers = array_merge($this->getApplicationProviders($app), $this->getPackageProviders($app));
-
+        if (isset($this->providers)) {
+            $providers = array_merge($providers, $this->providers);
+        }
         $app['config']['app.aliases']   = $aliases;
-        $app['config']['app.providers'] = array_merge($providers, $this->providers);
+        $app['config']['app.providers'] = $providers;
     }
 
     /**
