@@ -107,13 +107,11 @@ class Extensions extends DataTable {
             $buttons    = [];
             $name       = $extension->getPackage()->getName();
 
-            $ConfigurationStatuses = [ExtensionContract::STATUS_INSTALLED, ExtensionContract::STATUS_ACTIVATED];
-
             if ($extension->isRequired()) {
                 return HTML::create('div', '', ['class' => 'disabled'])->get();
             }
 
-            if ( $acl->can('component-configure') && $this->extension->hasSettingsForm($name) && in_array($extension->getStatus(), $ConfigurationStatuses, true) ) {
+            if ( $acl->can('component-configure') && $this->extension->hasSettingsForm($name) && $extension->getStatus() === ExtensionContract::STATUS_ACTIVATED) {
                 $configureUrl = URL::route(area() . '.extensions.viewer.configuration.get', [
                     'vendor'    => $extension->getVendorName(),
                     'name'      => $extension->getPackageName(),
