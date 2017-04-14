@@ -23,13 +23,11 @@ namespace Antares\Form\Controls;
 
 use Antares\Form\Labels\FileUploadLabel;
 
-class FileType extends AbstractType
+class DropzoneType extends AbstractType
 {
     
     /** @var string */
     protected $type = 'file';
-
-    public $width = '100%';
 
     public function render()
     {
@@ -53,24 +51,6 @@ class FileType extends AbstractType
             'control' => $this,
             'errors'  => $this->messages['errors']?? [],
         ]);
-    }
-
-    /**
-     * @return string
-     */
-    public function getWidth(): string
-    {
-        return $this->width;
-    }
-
-    /**
-     * @param string $width
-     * @return $this
-     */
-    public function setWidth(string $width)
-    {
-        $this->width = $width;
-        return $this;
     }
 
 }
