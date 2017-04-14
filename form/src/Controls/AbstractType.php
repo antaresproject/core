@@ -38,7 +38,7 @@ abstract class AbstractType implements Wrapperable, Attributable
 
     /** @var string */
     protected $id;
-    
+
     /** @var string */
     protected $name;
 
@@ -69,6 +69,12 @@ abstract class AbstractType implements Wrapperable, Attributable
     /** @var string */
     public $appendHtml = '';
 
+    /** @var array use this to change attributes of div wrapping input */
+    public $inputWrapper = [];
+
+    /** @var array use this to change attributes of div wrapping label */
+    public $labelWrapper = [];
+
     /**
      * AbstractType constructor
      *
@@ -79,9 +85,9 @@ abstract class AbstractType implements Wrapperable, Attributable
     {
         $this->setName($name);
         $this->attributes = array_merge($attributes, ['name' => $this->getName()]);
-        $this->wrapper = ['class' => 'col-dt-12'];
+        $this->wrapper    = ['class' => 'col-dt-12'];
     }
-    
+
     /**
      * @return mixed
      */
@@ -89,7 +95,7 @@ abstract class AbstractType implements Wrapperable, Attributable
     {
         return $this->id;
     }
-    
+
     /**
      * @param mixed $id
      */
@@ -97,8 +103,8 @@ abstract class AbstractType implements Wrapperable, Attributable
     {
         $this->id = $id;
     }
-    
-    
+
+
     /**
      * @param AbstractLabel|string $label
      * @return AbstractType
@@ -115,23 +121,23 @@ abstract class AbstractType implements Wrapperable, Attributable
 
         return $this;
     }
-    
+
     /**
      * @return bool
      */
-    public function hasLabel() : bool
+    public function hasLabel(): bool
     {
         return $this->hasLabel;
     }
-    
+
     /**
      * @return AbstractLabel
      */
-    public function getLabel() : AbstractLabel
+    public function getLabel(): AbstractLabel
     {
         return $this->label;
     }
-    
+
     /**
      * @param AbstractDecorator $decorator
      * @return AbstractType
@@ -145,7 +151,7 @@ abstract class AbstractType implements Wrapperable, Attributable
     /**
      * @return string
      */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -154,7 +160,7 @@ abstract class AbstractType implements Wrapperable, Attributable
      * @param string $name
      * @return AbstractType
      */
-    public function setName(string $name) : AbstractType
+    public function setName(string $name): AbstractType
     {
         $this->name = $name;
         return $this;
@@ -163,7 +169,7 @@ abstract class AbstractType implements Wrapperable, Attributable
     /**
      * @return string
      */
-    public function getType() : string
+    public function getType(): string
     {
         return $this->type;
     }
@@ -172,7 +178,7 @@ abstract class AbstractType implements Wrapperable, Attributable
      * @param string $type
      * @return AbstractType
      */
-    public function setType(string $type) : AbstractType
+    public function setType(string $type): AbstractType
     {
         $this->type = $type;
         return $this;
@@ -190,46 +196,46 @@ abstract class AbstractType implements Wrapperable, Attributable
      * @param array|string $value
      * @return AbstractType
      */
-    public function setValue($value) : AbstractType
+    public function setValue($value): AbstractType
     {
         $this->value = $value;
         return $this;
     }
-    
+
     /**
      * @param string $placeholder
      * @return AbstractType
      */
-    public function setPlaceholder($placeholder) : AbstractType
+    public function setPlaceholder($placeholder): AbstractType
     {
         return $this->setAttribute('placeholder', $placeholder);
     }
-    
+
     /**
      * @param string $class
      * @return AbstractType
      */
-    public function addClass($class) : AbstractType
+    public function addClass($class): AbstractType
     {
         return $this->setAttribute('class',
             $this->hasAttribute('class')
                 ? sprintf('%s %s', $this->getAttribute('class'), $class) : $class);
     }
-    
+
     /**
      * @return array
      */
-    public function getMessages() : array
+    public function getMessages(): array
     {
         return $this->messages;
     }
-    
+
     /**
      * @param string $type
      * @param string $message
      * @return AbstractType
      */
-    public function addMessage(string $type, string $message) : AbstractType
+    public function addMessage(string $type, string $message): AbstractType
     {
         $this->messages[$type][] = $message;
         return $this;
@@ -245,16 +251,20 @@ abstract class AbstractType implements Wrapperable, Attributable
 
     /**
      * @param string $orientation
+     *
+     * @return self
      */
     public function setOrientation(string $orientation)
     {
         $this->orientation = $orientation;
+
+        return $this;
     }
 
     /**
      * lookup for validation errors for this control
      */
-    private function findErrors()
+    protected function findErrors()
     {
         $session = session();
         if (!$session->has('errors') || !$session->get('errors')->hasBag('default')) {
@@ -278,9 +288,45 @@ abstract class AbstractType implements Wrapperable, Attributable
     }
 
     /**
+     * @return array
+     */
+    public function getInputWrapper(): array
+    {
+        return $this->inputWrapper;
+    }
+
+    /**
+     * @param array $inputWrapper
+     * @return AbstractType
+     */
+    public function setInputWrapper(array $inputWrapper)
+    {
+        $this->inputWrapper = $inputWrapper;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLabelWrapper(): array
+    {
+        return $this->labelWrapper;
+    }
+
+    /**
+     * @param array $labelWrapper
+     * @return AbstractType
+     */
+    public function setLabelWrapper(array $labelWrapper)
+    {
+        $this->labelWrapper = $labelWrapper;
+        return $this;
+    }
+
+    /**
      * @return string
      */
-    public function __toString() : string
+    public function __toString(): string
     {
         try {
             return $this->decorator instanceof AbstractType
@@ -291,6 +337,16 @@ abstract class AbstractType implements Wrapperable, Attributable
     }
 
     /**
+     * Rendering this very control
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    protected function renderControl()
+    {
+        return view('antares/foundation::form.controls.' . $this->type, ['control' => $this]);
+    }
+
+    /**
      * Render control to html
      *
      * @return string
@@ -298,19 +354,56 @@ abstract class AbstractType implements Wrapperable, Attributable
     protected function render()
     {
         $this->findErrors();
-
-        if(!$this->label instanceof AbstractLabel && $this->type != 'hidden') {
-            $this->setLabel(new Label(ucfirst($this->name)));
+        $this->fixWrappers();
+        if (!$this->label instanceof AbstractLabel && $this->type != 'hidden') {
+            $this->setLabel(new Label(ucfirst(str_replace('_', ' ', $this->name))));
         }
 
-        $input = view('antares/foundation::form.controls.' . $this->type, ['control' => $this]);
-
         return view('antares/foundation::form.' . $this->orientation, [
-            'label'   => ($this->label instanceof AbstractLabel)? $this->getLabel()->render():'',
-            'input'   => $input,
-            'control' => $this,
-            'errors'  => $this->messages['errors']?? [],
+            'label'       => ($this->label instanceof AbstractLabel) ? $this->getLabel()->render() : '',
+            'input'       => $this->renderControl(),
+            'orientation' => $this->orientation,
+            'control'     => $this,
+            'errors'      => $this->messages['errors']?? [],
         ]);
+    }
+
+    private function fixWrappers()
+    {
+        //
+        /**
+         * @TODO make orientation an object with predefined attributes
+         */
+        $labelWrapper = (isset($this->labelWrapper['class']) && !empty($this->labelWrapper['class']));
+        $inputWrapper = (isset($this->inputWrapper['class']) && !empty($this->inputWrapper['class']));
+
+        switch ($this->orientation) {
+            case 'horizontal':
+                if(!$labelWrapper) {
+                    $this->labelWrapper['class'] = 'col-dt-2 col-2 col-mb-2';
+                }
+                if(!$inputWrapper) {
+                    $this->inputWrapper['class'] = 'col-dt-6 col-6 col-mb-6';
+                }
+                break;
+            case 'vertical':
+                if(!$labelWrapper) {
+                    $this->labelWrapper['class'] = 'child-align-top col-16 mb2';
+                }
+                if(!$inputWrapper) {
+                    $this->inputWrapper['class'] = 'form-block col-dt-16 col-16 col-mb-16';
+                }
+                break;
+            default:
+                if(!$labelWrapper) {
+                    $this->labelWrapper['class'] = 'col-dt-2 col-2 col-mb-2';
+                }
+                if(!$inputWrapper) {
+                    $this->inputWrapper['class'] = 'col-dt-6 col-6 col-mb-6';
+                }
+                break;
+        }
+
     }
 
 }

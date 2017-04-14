@@ -23,6 +23,18 @@ namespace Antares\Form\Controls;
 
 class HiddenType extends AbstractType
 {
+
+    /**
+     * HiddenType constructor.
+     * @param string $name
+     * @param array $attributes
+     */
+    public function __construct(string $name, array $attributes = [])
+    {
+        parent::__construct($name, $attributes);
+        $this->setWrapper(['class' => 'hide']);
+    }
+
     
     /** @var string */
     protected $type = 'hidden';

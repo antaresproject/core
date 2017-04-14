@@ -1,11 +1,11 @@
-<div class="form-block">
-    <div class="col-dt-2 col-2 col-mb-2">
-        {{ label|raw }}
-    </div>
-    {% if control.hasWrapper %}
-    <div {{ control.getWrapper|stringify }} >
-        {% endif %}
-        <div class="col-dt-6 col-6 col-mb-6 {{ control.getWrapper()['class'] }}">
+{% if control.hasWrapper %}
+<div {{ control.getWrapper|stringify }} >
+    {% endif %}
+    <div class="form-block" {{ orientation }}>
+        <div {{ control.getLabelWrapper()|stringify }}>
+            {{ label|raw }}
+        </div>
+        <div {{ control.getInputWrapper()|stringify }}>
             <div class="input-field">
                 {{ control.prependHtml|raw }}
                 {{ input|raw }}
@@ -19,7 +19,7 @@
             </span>
             {% endif %}
         </div>
-        {% if control.hasWrapper %}
     </div>
-    {% endif %}
+    {% if control.hasWrapper %}
 </div>
+{% endif %}
