@@ -48,7 +48,7 @@ class LanguageType extends SelectType
     private function setCountriesFromDB()
     {
         /** @var Country $item */
-        foreach(app(Languages::class)->all() as $item) {
+        foreach (app(Languages::class)->all() as $item) {
             $this->valueOptions[] = new Option($item->id, $item->name, ['data-country' => $item->code]);
         }
     }
@@ -59,8 +59,11 @@ class LanguageType extends SelectType
     public function render()
     {
         $this->setAttribute('data-flag-select--search', 'true');
-        $this->addWrapper('class', 'input-field input-field--icon');
-        $this->prependHtml = sprintf('<span class="input-field__icon"><span class="flag-icon flag-icon-us"></span></span>');
+        $this->setInputWrapper(['class' => '']);
+        $this->prependHtml = '<div class="input-field input-field--icon">';
+        $this->prependHtml .= sprintf('<span class="input-field__icon"><span class="flag-icon flag-icon-us"></span></span>');
+        $this->appendHtml  = '</div>';
+
 
         return parent::render();
     }
