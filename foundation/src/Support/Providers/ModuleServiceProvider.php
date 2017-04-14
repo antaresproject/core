@@ -192,7 +192,8 @@ abstract class ModuleServiceProvider extends ServiceProvider
      */
     protected function loadRoutes()
     {
-        $path   = $this->extensionPath;
+        $path = $this->extensionPath;
+
         $routes = [
             'backend'  => [
                 $path . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'backend.php',
@@ -202,6 +203,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
                 $path . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'frontend.php'
             ]
         ];
+
 
         foreach ($routes as $keyname => $routePaths) {
             foreach ($routePaths as $route) {
@@ -263,7 +265,9 @@ abstract class ModuleServiceProvider extends ServiceProvider
     protected function bootExtensionRouting()
     {
         if (!$this->app->routesAreCached()) {
+
             $this->afterExtensionLoaded(function () {
+
                 $this->loadRoutes();
             });
         }
