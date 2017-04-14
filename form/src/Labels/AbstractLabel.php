@@ -32,25 +32,25 @@ use Antares\Form\Traits\WrapperTrait;
  * Date: 24.03.17
  * Time: 11:16
  */
-abstract class AbstractLabel implements Attributable, Wrapperable
+abstract class AbstractLabel implements Attributable
 {
 
-    use AttributesTrait, WrapperTrait;
+    use AttributesTrait;
 
     /** @var string */
-    public $name;
+    protected $name;
 
     /** @var string */
-    public $type;
+	protected $type;
+
     /** @var string */
-    public $wrapper;
-    /** @var string */
-    public $info;
+	protected $info;
+
     /** @var AbstractType */
     protected $control;
 
     /**
-     * AbstractLabel constructor.
+     * AbstractLabel constructor
      *
      * @param string            $name
      * @param string            $info
@@ -104,6 +104,38 @@ abstract class AbstractLabel implements Attributable, Wrapperable
     {
         $this->control = $control;
     }
+
+	/**
+	 * @return string
+	 */
+	public function getName(): string
+	{
+		return $this->name;
+	}
+
+	/**
+	 * @param string $name
+	 */
+	public function setName(string $name)
+	{
+		$this->name = $name;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getInfo(): string
+	{
+		return $this->info;
+	}
+
+	/**
+	 * @param string $info
+	 */
+	public function setInfo(string $info)
+	{
+		$this->info = $info;
+	}
 
     public function render()
     {

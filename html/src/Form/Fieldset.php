@@ -321,7 +321,6 @@ class Fieldset extends BaseGrid implements FieldsetContract
      */
     public function addType(AbstractType $type)
     {
-        $type->setOrientation($this->orientation);
         $this->controls[] = $type;
     }
 
