@@ -19,23 +19,24 @@
  * @link           http://antaresproject.io
  */
 
-namespace Antares\Form\Controls;
+namespace Antares\Form\Decorators;
 
-use Antares\Form\Decorators\AbstractDecorator;
-use Antares\Form\Decorators\HiddenDecorator;
+use Antares\Form\Controls\AbstractType;
 
-class HiddenType extends AbstractType
+class HiddenDecorator extends AbstractDecorator
 {
 
-    /** @var string */
-    protected $type = 'hidden';
+	/** @var string */
+	protected $name = 'hidden';
 
-    public function render()
-    {
-        if(!$this->decorator instanceof AbstractDecorator) {
-            $this->setDecorator((new HiddenDecorator()));
-        }
-        return parent::render();
-    }
+	/**
+	 * @param AbstractType $control
+	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+	 */
+	public function render(AbstractType $control)
+	{
+		$this->wrapper['class'] = 'hide';
+	    return parent::render($control);
+	}
 
 }

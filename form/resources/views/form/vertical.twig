@@ -1,5 +1,5 @@
-{% if control.hasWrapper %}
-    <div {{ control.getWrapper|stringify }} >
+{% if decorator.hasWrapper %}
+    <div {{ decorator.getWrapper|stringify }} >
 {% endif %}
     <div {{ labelWrapper|stringify }}>
         {{ label|raw }}
@@ -22,6 +22,6 @@
     </span>
     {% endif %}
 
-{% if control.hasWrapper %}
+{% if decorator.hasWrapper %}
     </div>
 {% endif %}

@@ -102,9 +102,9 @@ class Fieldset extends BaseGrid implements FieldsetContract
     /**
      * Create a new Fieldset instance.
      *
-     * @param  Container  $app
-     * @param  string  $name
-     * @param  \Closure  $callback
+     * @param  Container $app
+     * @param  string $name
+     * @param  \Closure $callback
      */
     public function __construct(Container $app, $name, Closure $callback = null, $formName = null)
     {
@@ -117,9 +117,9 @@ class Fieldset extends BaseGrid implements FieldsetContract
     /**
      * Load grid configuration.
      *
-     * @param  Repository  $config
-     * @param  ControlContract  $control
-     * @param  Template  $presenter
+     * @param  Repository $config
+     * @param  ControlContract $control
+     * @param  Template $presenter
      *
      * @return void
      */
@@ -134,8 +134,8 @@ class Fieldset extends BaseGrid implements FieldsetContract
     /**
      * Build basic fieldset.
      *
-     * @param  string  $name
-     * @param  \Closure  $callback
+     * @param  string $name
+     * @param  \Closure $callback
      *
      * @return void
      */
@@ -152,7 +152,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
 
     /**
      * Updates the Fieldset closure.
-     * 
+     *
      * @param Closure|null $callback
      */
     public function update(Closure $callback = null)
@@ -182,17 +182,17 @@ class Fieldset extends BaseGrid implements FieldsetContract
      *      });
      * </code>
      *
-     * @param  string  $type
-     * @param  mixed   $name
-     * @param  mixed   $callback
+     * @param  string $type
+     * @param  mixed $name
+     * @param  mixed $callback
      *
      * @return Fluent
      */
     public function control($type, $name, $callback = null)
     {
-        
+
         list($name, $control) = $this->buildControl($name, $callback, $type);
-        
+
         $primaryEventName = 'forms:' . str_slug($this->formName) . '.controls.' . $name;
         Event::fire($primaryEventName . '.before', $this);
 
@@ -204,7 +204,6 @@ class Fieldset extends BaseGrid implements FieldsetContract
         $this->keyMap[$name] = empty($this->keyMap) ? count($this->controls) - 1 : last($this->keyMap) + 1;
 
 
-
         Event::fire($primaryEventName . '.after', $this);
 
         return $control;
@@ -212,7 +211,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
 
     /**
      * Add customfield to form
-     * 
+     *
      * @param Grid $grid
      * @param String $name
      */
@@ -236,10 +235,10 @@ class Fieldset extends BaseGrid implements FieldsetContract
         }
 
         $fieldView = \Antares\Customfields\Model\FieldView::query()->where([
-                    'name'          => $name,
-                    'brand_id'      => brand_id(),
-                    'category_name' => $category,
-                    'imported'      => 0])->first();
+            'name'          => $name,
+            'brand_id'      => brand_id(),
+            'category_name' => $category,
+            'imported'      => 0])->first();
         if (is_null($fieldView)) {
             return;
         }
@@ -248,7 +247,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
 
     /**
      * Add single customfield
-     * 
+     *
      * @param Grid $grid
      * @param \Antares\Customfield\CustomField $field
      */
@@ -266,14 +265,14 @@ class Fieldset extends BaseGrid implements FieldsetContract
         }
         $grid->rules(array_merge($grid->rules, $customfield->getRules()));
 
-        $grid->row->saved(function($row) use($customfield) {
+        $grid->row->saved(function ($row) use ($customfield) {
             $customfield->onSave($row);
         });
     }
 
     /**
      * Adds customfields by fieldset name
-     * 
+     *
      * @param Grid $grid
      * @param String $name
      * @return $this
@@ -305,17 +304,17 @@ class Fieldset extends BaseGrid implements FieldsetContract
             $query->whereNotIn('name', $reserved);
         }
 
-        $fields = $query->whereHas('fieldFieldset', function($query) use($name) {
-                    $query->whereHas('fieldset', function($subquery) use($name) {
-                        $subquery->where('name', $name);
-                    });
-                })->get();
+        $fields = $query->whereHas('fieldFieldset', function ($query) use ($name) {
+            $query->whereHas('fieldset', function ($subquery) use ($name) {
+                $subquery->where('name', $name);
+            });
+        })->get();
         foreach ($fields as $field) {
             $this->addCustomfield($grid, $field);
         }
         return $this;
     }
-    
+
     /**
      * @param AbstractType $type
      */
@@ -326,7 +325,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
 
     /**
      * Add control to controls collection
-     * 
+     *
      * @param \Antares\Html\Form\Field $control
      * @return $this
      */
@@ -335,11 +334,11 @@ class Fieldset extends BaseGrid implements FieldsetContract
         $renderable = $control instanceof \Illuminate\Contracts\Support\Renderable;
 
 
-        $control->setField(function($row, $cont, $templates) use($control, $renderable) {
+        $control->setField(function ($row, $cont, $templates) use ($control, $renderable) {
 
             $control = app(Control::class)
-                    ->setTemplates($this->control->getTemplates())
-                    ->setPresenter($this->control->getPresenter());
+                ->setTemplates($this->control->getTemplates())
+                ->setPresenter($this->control->getPresenter());
 
             $field = $control->buildFieldByType($cont->type, $row, $cont);
             $cont->setModel($row);
@@ -354,7 +353,6 @@ class Fieldset extends BaseGrid implements FieldsetContract
         });
 
 
-
         $this->controls[] = $control;
         return $this;
     }
@@ -362,8 +360,8 @@ class Fieldset extends BaseGrid implements FieldsetContract
     /**
      * Build control.
      *
-     * @param  mixed  $name
-     * @param  mixed  $callback
+     * @param  mixed $name
+     * @param  mixed $callback
      *
      * @return array
      */
@@ -394,7 +392,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
      *     $fieldset->legend('User Information');
      * </code>
      *
-     * @param  string  $name
+     * @param  string $name
      *
      * @return string
      */
@@ -419,7 +417,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
 
     /**
      * detach control from controls collection
-     * 
+     *
      * @param FieldContract $control
      * @return Fieldset
      */
@@ -438,11 +436,11 @@ class Fieldset extends BaseGrid implements FieldsetContract
 
     /**
      * controls setter
-     * 
+     *
      * @param array $controls
      * @return Fieldset
      */
-    public function setControls(array $controls = array())
+    public function setControls(array $controls = [])
     {
         $this->controls = $controls;
         return $this;
@@ -450,7 +448,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
 
     /**
      * gets field by name
-     * 
+     *
      * @param String $name
      * @return Field
      * @throws Exception
@@ -466,7 +464,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
 
     /**
      * get control list by type
-     * 
+     *
      * @param String $name
      * @return array
      */
@@ -483,7 +481,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
 
     /**
      * whether fieldset has control specified by name
-     * 
+     *
      * @param String $name
      * @return boolean
      */
@@ -494,7 +492,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
 
     /**
      * fieldset layout setter
-     * 
+     *
      * @param String $layout
      * @param array $params
      * @return \Antares\Html\Form\Fieldset
@@ -507,8 +505,8 @@ class Fieldset extends BaseGrid implements FieldsetContract
     }
 
     /**
-     * renders custom fieldset view 
-     * 
+     * renders custom fieldset view
+     *
      * @return \Illuminate\View\View
      */
     public function render($row = null)
@@ -528,7 +526,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
 
     /**
      * retrives all controls from fieldsets
-     * 
+     *
      * @return array
      */
     public function controls()
@@ -547,7 +545,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
 
     /**
      * whether fieldset has layout
-     * 
+     *
      * @return boolean
      */
     public function hasLayout()

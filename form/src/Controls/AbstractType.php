@@ -320,7 +320,7 @@ abstract class AbstractType implements Attributable
     {
         $this->findErrors();
 
-        if (!$this->label instanceof AbstractLabel && $this->type != 'hidden') {
+        if (!$this->label instanceof AbstractLabel) {
             $this->setLabel(new Label(ucfirst(str_replace('_', ' ', $this->name))));
         }
         if (!$this->decorator instanceof AbstractDecorator) {
