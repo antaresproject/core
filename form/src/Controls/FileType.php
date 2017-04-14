@@ -29,36 +29,13 @@ class FileType extends AbstractType
     /** @var string */
     protected $type = 'file';
 
-    public $width = '100%';
-
     public function render()
     {
         //$this->setOrientation('labelonly');
         $this->addAttribute('class', $this->name);
         $this->addAttribute('id', $this->name);
-        if(!$this->hasWrapper()) {
-            $this->setWrapper(['class' => 'input-field']);
-        }
 
         return parent::render();
-    }
-
-    /**
-     * @return string
-     */
-    public function getWidth(): string
-    {
-        return $this->width;
-    }
-
-    /**
-     * @param string $width
-     * @return $this
-     */
-    public function setWidth(string $width)
-    {
-        $this->width = $width;
-        return $this;
     }
 
 }

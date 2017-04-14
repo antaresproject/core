@@ -59,7 +59,6 @@ class LanguageType extends SelectType
     public function render()
     {
         $this->setAttribute('data-flag-select--search', 'true');
-        $this->setInputWrapper(['class' => '']);
         $this->prependHtml = '<div class="input-field input-field--icon">';
         $this->prependHtml .= sprintf('<span class="input-field__icon"><span class="flag-icon flag-icon-us"></span></span>');
         $this->appendHtml  = '</div>';

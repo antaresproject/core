@@ -21,36 +21,30 @@
 
 namespace Antares\Form\Controls;
 
-use Antares\Form\Labels\FileUploadLabel;
-
 class DropzoneType extends AbstractType
 {
-    
+
     /** @var string */
     protected $type = 'file';
 
+    /**
+     * Rendering this very control
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function renderControl()
+    {
+        return view('antares/foundation::form.controls.dropzone', ['control' => $this]);
+    }
+
     public function render()
     {
-        $this->setOrientation('labelonly');
+        app('antares.asset')->container('antares/foundation::application')->add('webpack_brand_settings', '/webpack/view_brand_settings.js', ['app_cache']);
+
         $this->addAttribute('class', $this->name);
         $this->addAttribute('id', $this->name);
-        if(!$this->label instanceof FileUploadLabel) {
-            $oldLabel = clone $this->label;
-            $this->label = new FileUploadLabel($oldLabel->name, $this);
-        }
 
-        $this->findErrors();
-        $this->getLabel()->inputHtml = view('antares/foundation::form.controls.' . $this->type, ['control' => $this]);
-        $this->getLabel()->controlName = $this->name;
-        if(!$this->hasWrapper()) {
-            $this->setWrapper(['class' => 'input-field']);
-        }
-
-        return view('antares/foundation::form.' . $this->orientation, [
-            'label'   => $this->getLabel()->render(),
-            'control' => $this,
-            'errors'  => $this->messages['errors']?? [],
-        ]);
+        return parent::render();
     }
 
 }
