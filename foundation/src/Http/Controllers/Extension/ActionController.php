@@ -21,14 +21,13 @@
 
 namespace Antares\Foundation\Http\Controllers\Extension;
 
+use Antares\Extension\ExtensionProgress;
 use Antares\Extension\Jobs\ExtensionsBackgroundJob;
 use Antares\Extension\Manager;
 use Antares\Extension\Processors\Activator;
 use Antares\Extension\Processors\Deactivator;
 use Antares\Extension\Processors\Installer;
-use Antares\Extension\Processors\Progress;
 use Antares\Extension\Processors\Uninstaller;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ActionController extends Controller {
 
@@ -38,16 +37,16 @@ class ActionController extends Controller {
     protected $extensionManager;
 
     /**
-     * @var Progress
+     * @var ExtensionProgress
      */
     protected $progress;
 
     /**
      * ActionController constructor.
      * @param Manager $extensionManager
-     * @param Progress $progress
+     * @param ExtensionProgress $progress
      */
-    public function __construct(Manager $extensionManager, Progress $progress) {
+    public function __construct(Manager $extensionManager, ExtensionProgress $progress) {
         parent::__construct();
 
         $this->extensionManager = $extensionManager;
@@ -83,7 +82,7 @@ class ActionController extends Controller {
      * @return mixed
      */
     public function install(string $vendor, string $name) {
-        return $this->tryRunOperation(Installer::class, $vendor, $name);
+        return $this->tryRunOperation([Installer::class, Activator::class], $vendor, $name);
     }
 
     /**
@@ -92,7 +91,7 @@ class ActionController extends Controller {
      * @return mixed
      */
     public function uninstall(string $vendor, string $name) {
-        return $this->tryRunOperation(Uninstaller::class, $vendor, $name);
+        return $this->tryRunOperation([Uninstaller::class], $vendor, $name);
     }
 
     /**
@@ -101,7 +100,7 @@ class ActionController extends Controller {
      * @return mixed
      */
     public function activate(string $vendor, string $name) {
-        return $this->tryRunOperation(Activator::class, $vendor, $name);
+        return $this->tryRunOperation([Activator::class], $vendor, $name);
     }
 
     /**
@@ -110,19 +109,20 @@ class ActionController extends Controller {
      * @return mixed
      */
     public function deactivate(string $vendor, string $name) {
-        return $this->tryRunOperation(Deactivator::class, $vendor, $name);
+        return $this->tryRunOperation([Deactivator::class], $vendor, $name);
     }
 
     /**
-     * @param string $operationClassName
+     * @param array $operationsClassNames
      * @param string $vendor
      * @param string $name
      * @return mixed
      */
-    private function tryRunOperation(string $operationClassName, string $vendor, string $name) {
+    private function tryRunOperation(array $operationsClassNames, string $vendor, string $name) {
+        $this->progress->setSteps( count($operationsClassNames) );
         $this->progress->start();
 
-        $job = new ExtensionsBackgroundJob($vendor . '/' . $name, $operationClassName, $this->progress->getFilePath());
+        $job = new ExtensionsBackgroundJob($vendor . '/' . $name, $operationsClassNames, $this->progress->getFilePath());
         $job->onQueue('install');
 
         dispatch($job);

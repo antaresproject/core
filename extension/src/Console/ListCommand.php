@@ -29,7 +29,7 @@ class ListCommand extends Command {
     /**
      * @var array
      */
-	protected static $columns = ['name', 'version', 'installed', 'activated', 'path', 'namespace'];
+	protected static $columns = ['name', 'version', 'required', 'installed', 'activated', 'path', 'namespace'];
 
 	/**
 	 * Execute the console command.
@@ -42,6 +42,7 @@ class ListCommand extends Command {
 		$extensions = $manager->getAvailableExtensions()->map(function(ExtensionContract $extension) {
 			$mapped = array_intersect_key($extension->toArray(), array_flip(static::$columns));
 
+            $mapped['required']  = $mapped['required'] ? 'Yes' : 'No';
 			$mapped['installed'] = $mapped['installed'] ? 'Yes' : 'No';
             $mapped['activated'] = $mapped['activated'] ? 'Yes' : 'No';
 

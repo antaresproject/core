@@ -11,6 +11,7 @@ use Antares\Extension\Exception\ExtensionException;
 use Antares\Extension\Model\Operation;
 use Antares\Extension\Events\Uninstalled;
 use Antares\Extension\Events\Uninstalling;
+use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Antares\Extension\Composer\Handler as ComposerHandler;
 use Illuminate\Container\Container;
@@ -50,16 +51,18 @@ class Uninstaller extends AbstractOperation {
      * @param Dispatcher $dispatcher
      * @param Kernel $kernel
      * @param ExtensionsRepository $extensionsRepository
+     * @param ComponentsRepository $componentsRepository
      */
     public function __construct(
         ComposerHandler $composerHandler,
         Container $container,
         Dispatcher $dispatcher,
         Kernel $kernel,
-        ExtensionsRepository $extensionsRepository
+        ExtensionsRepository $extensionsRepository,
+        ComponentsRepository $componentsRepository
     )
     {
-        parent::__construct($container, $dispatcher, $kernel);
+        parent::__construct($container, $dispatcher, $kernel, $componentsRepository);
 
         $this->composerHandler      = $composerHandler;
         $this->extensionsRepository = $extensionsRepository;
@@ -80,6 +83,10 @@ class Uninstaller extends AbstractOperation {
     public function run(OperationHandlerContract $handler, ExtensionContract $extension, array $flags = []) {
         try {
             $name = $extension->getPackage()->getName();
+
+            if($this->componentsRepository->isRequired($name)) {
+                throw new ExtensionException('The package [' . $name . '] cannot be uninstalled due is required for whole system.');
+            }
 
             $handler->operationInfo(new Operation('Uninstalling the [' . $name . '] extension.'));
 

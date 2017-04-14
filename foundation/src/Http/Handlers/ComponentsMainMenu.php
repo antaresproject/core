@@ -33,7 +33,7 @@ class ComponentsMainMenu extends MenuHandler
      */
     protected $menu = [
         'id'       => 'components',
-        'position' => '>:module',
+        'position' => '>:system.system_informations',
         'title'    => 'Components',
         'link'     => 'antares/foundation::/extensions',
         'icon'     => 'zmdi-apps',

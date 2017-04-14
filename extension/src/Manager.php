@@ -94,6 +94,7 @@ class Manager {
 
             if($extension instanceof ExtensionModel) {
                 $foundExtension->setStatus($extension->getStatus());
+                $foundExtension->setIsRequired($extension->isRequired());
                 $foundExtension->getSettings()->updateData($extension->getOptions());
             }
         }

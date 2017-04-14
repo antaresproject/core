@@ -12,14 +12,14 @@ abstract class Base implements EventContract {
     /**
      * @var ExtensionContract
      */
-	public $extensionContract;
+	public $extension;
 
     /**
      * Base constructor.
-     * @param ExtensionContract $extensionContract
+     * @param ExtensionContract $extension
      */
-	public function __construct(ExtensionContract $extensionContract) {
-		$this->extensionContract = $extensionContract;
+	public function __construct(ExtensionContract $extension) {
+		$this->extension = $extension;
 	}
 
 }

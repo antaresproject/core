@@ -76,22 +76,33 @@ class ProgressController extends BaseController
         $content   = $progress->getOutput();
         $console   = $converter->convert($content);
 
+        $percentageProgress = $progress->getPercentageProgress();
+
+        if($percentageProgress === 0) {
+            // Fake progress for composer installation.
+            $percentageProgress = 7;
+        }
+
         if ($progress->isFailed()) {
+            $progress->reset();
+
             return response()->json([
-                'progress' => $progress->getPercentageProgress(),
+                'progress' => $percentageProgress,
                 'redirect' => handles('antares::install/failed'),
             ]);
         }
 
         if ($progress->isFinished()) {
+            $progress->reset();
+
             return response()->json([
-                'progress' => $progress->getPercentageProgress(),
+                'progress' => $percentageProgress,
                 'redirect' => handles('antares::install/completed'),
             ]);
         }
 
         return response()->json([
-            'progress' => $progress->getPercentageProgress(),
+            'progress' => $percentageProgress,
             'hash'     => bcrypt($content),
             'console'  => $console,
         ]);

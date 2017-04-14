@@ -6,8 +6,7 @@ use Antares\Extension\Events\ComposerFailed;
 use Antares\Extension\Events\Failed;
 use Illuminate\Events\Dispatcher;
 use Antares\Extension\Contracts\ProgressContract;
-use Antares\Extension\Processors\Progress as ExtensionProgress;
-use Antares\Installation\Progress as InstallationProgress;
+use Antares\Installation\Progress;
 
 class FailedListener {
 
@@ -18,11 +17,10 @@ class FailedListener {
 
     /**
      * FailedListener constructor.
+     * @param Progress $progress
      */
-    public function __construct() {
-        $this->progress = app()->make('antares.installed')
-            ? app()->make(ExtensionProgress::class)
-            : app()->make(InstallationProgress::class);
+    public function __construct(Progress $progress) {
+        $this->progress = $progress;
     }
 
     /**
@@ -46,15 +44,18 @@ class FailedListener {
      */
     public function subscribe(Dispatcher $events)
     {
-        $events->listen(
-            Failed::class,
-            static::class . '@onExtensionFailed'
-        );
+        if( ! app()->make('antares.installed') ) {
+            $events->listen(
+                Failed::class,
+                static::class . '@onExtensionFailed'
+            );
 
-        $events->listen(
-            ComposerFailed::class,
-            static::class . '@onComposerFailed'
-        );
+            $events->listen(
+                ComposerFailed::class,
+                static::class . '@onComposerFailed'
+            );
+        }
+
     }
 
 }

@@ -35,25 +35,22 @@ class IncrementProgress {
      * @param Activated $event
      */
     public function onExtensionSuccess(Activated $event) {
-        $this->progress->advanceStep();
-
-        if($this->progress->isFinished()) {
-            $this->memory->put('app.installed', true);
-            $this->memory->finish();
-            $this->progress->reset();
-        }
+        $this->advanceProgress();
     }
 
     /**
      * @param ComposerSuccess $event
      */
     public function onComposerSuccess(ComposerSuccess $event) {
+        $this->advanceProgress();
+    }
+
+    private function advanceProgress() {
         $this->progress->advanceStep();
 
-        if($this->progress->isFinished()) {
+        if( $this->progress->isFinished() ) {
             $this->memory->put('app.installed', true);
             $this->memory->finish();
-            $this->progress->reset();
         }
     }
 
@@ -64,15 +61,17 @@ class IncrementProgress {
      */
     public function subscribe(Dispatcher $events)
     {
-        $events->listen(
-            Activated::class,
-            static::class . '@onExtensionSuccess'
-        );
+        if( ! app()->make('antares.installed') ) {
+            $events->listen(
+                Activated::class,
+                static::class . '@onExtensionSuccess'
+            );
 
-        $events->listen(
-            ComposerSuccess::class,
-            static::class . '@onComposerSuccess'
-        );
+            $events->listen(
+                ComposerSuccess::class,
+                static::class . '@onComposerSuccess'
+            );
+        }
     }
 
 }

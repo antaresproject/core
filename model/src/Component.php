@@ -62,36 +62,43 @@ class Component extends BaseEloquent
     /**
      * @return int
      */
-    public function getId() {
+    public function getId() : int {
         return $this->id;
     }
 
     /**
      * @return string
      */
-    public function getVendor() {
+    public function getVendor() : string {
         return $this->vendor;
     }
 
     /**
      * @return string
      */
-    public function getName() {
+    public function getName() : string {
         return $this->name;
     }
 
     /**
      * @return string
      */
-    public function getFullName() {
+    public function getFullName() : string {
         return $this->vendor . '/' . $this->name;
     }
 
     /**
      * @return int
      */
-    public function getStatus() {
+    public function getStatus() : int {
         return $this->status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRequired() : bool {
+        return $this->required;
     }
 
     /**
@@ -130,7 +137,7 @@ class Component extends BaseEloquent
     /**
      * fetch one record by name column
      * @param String $name
-     * @return Eloquent
+     * @return static|null
      */
     public static function findOneByName($name)
     {

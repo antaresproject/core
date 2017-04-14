@@ -21,20 +21,13 @@
 
 namespace Antares\Installation\Processor;
 
-use Antares\Extension\Repositories\ComponentsRepository;
-use Antares\Installation\Http\Controllers\InstallerController;
 use Antares\Contracts\Installation\Requirement;
 use Antares\Installation\Installation;
-use Antares\Installation\Progress;
 use Antares\Support\Facades\Config;
-use Illuminate\Http\RedirectResponse;
 use Symfony\Component\Finder\Finder;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
-use Antares\Support\Facades\Form;
 use Illuminate\Cache\FileStore;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
 use ReflectionException;
 use Antares\Model\User;
 use Exception;

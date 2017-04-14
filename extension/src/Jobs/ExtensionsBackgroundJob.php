@@ -28,11 +28,11 @@ class ExtensionsBackgroundJob implements ShouldQueue {
     protected $extensionName;
 
     /**
-     * Operation class name.
+     * Operations class names.
      *
-     * @var string
+     * @var string[]
      */
-    protected $operationClassName;
+    protected $operationsClassNames;
 
     /**
      * Output file name.
@@ -51,13 +51,13 @@ class ExtensionsBackgroundJob implements ShouldQueue {
     /**
      * ExtensionsBackgroundJob constructor.
      * @param string $extensionName
-     * @param string $operationClassName
+     * @param array $operationsClassNames
      * @param string $outputFileName
      * @param array $flags
      */
-    public function __construct(string $extensionName, string $operationClassName, string $outputFileName, array $flags = []) {
+    public function __construct(string $extensionName, array $operationsClassNames, string $outputFileName, array $flags = []) {
         $this->extensionName        = $extensionName;
-        $this->operationClassName   = $operationClassName;
+        $this->operationsClassNames   = $operationsClassNames;
         $this->outputFileName       = $outputFileName;
         $this->flags                = $flags;
     }
@@ -75,14 +75,17 @@ class ExtensionsBackgroundJob implements ShouldQueue {
     public function handle(Manager $manager, Container $container)
     {
         $output     = new OperationFileOutput($this->outputFileName);
-        $operation  = $container->make($this->operationClassName);
         $extension  = $manager->getAvailableExtensions()->findByName($this->extensionName);
 
-        if($extension instanceof ExtensionContract && $operation instanceof OperationContract) {
-            $operation->run($output, $extension, $this->flags);
+        foreach($this->operationsClassNames as $operationClassName) {
+            $operation = $container->make($operationClassName);
 
-            if($output->failed()) {
-                return;
+            if($extension instanceof ExtensionContract && $operation instanceof OperationContract) {
+                $operation->run($output, $extension, $this->flags);
+
+                if($output->failed()) {
+                    return;
+                }
             }
         }
     }

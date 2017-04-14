@@ -9,6 +9,7 @@ use Antares\Extension\Contracts\Config\SettingsContract;
 use Antares\Extension\Contracts\ExtensionContract;
 use Composer\Package\CompletePackageInterface;
 use Composer\Package\PackageInterface;
+use Illuminate\Support\Arr;
 
 class Extension implements ExtensionContract {
 
@@ -194,6 +195,27 @@ class Extension implements ExtensionContract {
     }
 
     /**
+     * Returns friendly name of the module from the composer extra attribute.
+     *
+     * @return string
+     */
+    public function getFriendlyName() : string {
+        $extra          = $this->getPackage()->getExtra();
+        $regularName    = str_replace('component-', '', $this->getPackageName());
+
+        return (string) Arr::get($extra, 'friendly-name', $regularName);
+    }
+
+    /**
+     * Returns the component type.
+     *
+     * @return string
+     */
+    public function getFriendlyType() : string {
+        return $this->isRequired() ? 'Core' : 'Additional';
+    }
+
+    /**
      * Get the instance as an array.
      *
      * @return array
@@ -204,10 +226,14 @@ class Extension implements ExtensionContract {
             'vendorName'    => $this->getVendorName(),
             'packageName'   => $this->getPackageName(),
             'version'       => $this->package->getVersion(),
+            'required'      => $this->isRequired(),
             'installed'     => $this->isInstalled(),
             'activated'     => $this->isActivated(),
             'path'          => $this->getPath(),
             'namespace'     => $this->getRootNamespace(),
+            'friendlyName'  => $this->getFriendlyName(),
+            'type'          => $this->getFriendlyType(),
+            'status'        => $this->getStatus(),
         ];
     }
 

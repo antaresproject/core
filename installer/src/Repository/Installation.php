@@ -56,18 +56,48 @@ class Installation {
     }
 
     /**
-     * @return bool
+     * @param int $steps
+     * @return void
      */
-    public function finished() : bool {
-        return (bool) $this->getCustom('finished', false);
+    public function setSteps(int $steps) {
+        $this->setCustom('steps', $steps);
     }
 
     /**
-     * @param bool $state
+     * @return int
+     */
+    public function getSteps() : int {
+        return (int) $this->getCustom('steps', 0);
+    }
+
+    /**
+     * @param int $steps
      * @return void
      */
-    public function setFinished(bool $state) {
-        $this->setCustom('finished', $state);
+    public function setCompletedSteps(int $steps) {
+        $this->setCustom('completed_steps', $steps);
+    }
+
+    /**
+     * @return int
+     */
+    public function getCompletedSteps() : int {
+        return (int) $this->getCustom('completed_steps', 0);
+    }
+
+    /**
+     * @return void
+     */
+    public function forgetStepsInfo() {
+        $this->forgetCustom('steps');
+        $this->forgetCustom('completed_steps');
+    }
+
+    /**
+     * @return bool
+     */
+    public function finished() : bool {
+        return $this->started() && $this->getCompletedSteps() >= $this->getSteps();
     }
 
     /**
@@ -125,6 +155,21 @@ class Installation {
      */
     public function setFailedMessage(string $message) {
         $this->setCustom('failed_message', $message);
+    }
+
+    /**
+     * @return string
+     */
+    public function getSuccessMessage() : string {
+        return (string) $this->getCustom('success_message', '');
+    }
+
+    /**
+     * @param string $message
+     * @return void
+     */
+    public function setSuccessMessage(string $message) {
+        $this->setCustom('success_message', $message);
     }
 
     /**

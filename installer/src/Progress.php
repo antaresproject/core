@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Antares\Installation;
 
 use Antares\Extension\Contracts\ProgressContract;
-use Antares\Extension\Jobs\BulkExtensionsBackgroundJob;
-use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Installation\Scripts\InstallQueueWorker;
-use File;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use \Antares\Installation\Repository\Installation as InstallationRepository;
+use File;
 
 class Progress implements ProgressContract {
 
@@ -36,9 +34,18 @@ class Progress implements ProgressContract {
     protected $filePath;
 
     /**
+     * Process PID.
+     *
      * @var int|null
      */
     protected $pid;
+
+    /**
+     * File path name.
+     *
+     * @var string
+     */
+    protected $filePathName = 'installation.txt';
 
     /**
      * Progress constructor.
@@ -49,7 +56,7 @@ class Progress implements ProgressContract {
     public function __construct(InstallationRepository $installation, InstallQueueWorker $installQueueWorker) {
         $this->installation         = $installation;
         $this->installQueueWorker   = $installQueueWorker;
-        $this->filePath             = storage_path('installation.txt');
+        $this->filePath             = storage_path($this->filePathName);
 
         $this->pid = $this->installation->getPid();
 
@@ -59,12 +66,11 @@ class Progress implements ProgressContract {
     }
 
     /**
-     * @param array $components
+     * @param int $steps
      */
-    public function setComponents(array $components) {
-        // Steps are the sum of extensions and composer command.
-        $this->installation->setCustom('steps', 1 + count($components));
-        $this->installation->setCustom('components', $components);
+    public function setSteps(int $steps) {
+        $this->installation->forgetStepsInfo();
+        $this->installation->setSteps($steps);
     }
 
     /**
@@ -86,10 +92,9 @@ class Progress implements ProgressContract {
             $this->installation->setPid( (int) $this->pid);
         }
 
-        if( ! $this->installation->failed() && ! $this->installation->progressing() ) {
+        if( ! $this->installation->progressing() ) {
             File::put($this->filePath, '');
 
-            $this->installation->forgetCustom('steps_completed');
             $this->installation->setStarted(true);
 
             $this->runQueue();
@@ -107,33 +112,8 @@ class Progress implements ProgressContract {
         }
     }
 
-    /**
-     * @return ComponentsRepository
-     */
-    private function getComponentsRepository() {
-        return app()->make(ComponentsRepository::class);
-    }
-
     protected function runQueue() {
-        $components = (array) $this->installation->getCustom('components');
-        $components = $this->getComponentsRepository()->getWithBranches($components);
-        $extensions = [];
-
-        foreach($components as $component => $branch) {
-            $extensions[] = $component . ':' . $branch;
-        }
-
-        $operationClasses = [
-            \Antares\Extension\Processors\Installer::class,
-            \Antares\Extension\Processors\Activator::class,
-        ];
-
-        $installJob = new BulkExtensionsBackgroundJob($extensions, $operationClasses, $this->getFilePath());
-        $installJob->onQueue('install');
-
-        dispatch($installJob);
-
-        $this->installation->forgetCustom('components');
+        // Do not delete.
     }
 
     /**
@@ -184,30 +164,26 @@ class Progress implements ProgressContract {
      * @return int
      */
     public function getStepsCount() : int {
-        return (int) $this->installation->getCustom('steps', 0);
+        return $this->installation->getSteps();
     }
 
     /**
      * @return int
      */
     public function getCompletedSteps() : int {
-        return (int) $this->installation->getCustom('steps_completed', 0);
+        return $this->installation->getCompletedSteps();
     }
 
     /**
      * Increments completed steps.
      */
     public function advanceStep() {
-        $completed = $this->getCompletedSteps();
+        if($this->installation->started()) {
+            $completed = $this->getCompletedSteps();
 
-        $this->installation->setCustom('steps_completed', ++$completed);
-
-        if($this->isFinished()) {
-            $this->installation->setStarted(false);
-            $this->installation->setFinished(true);
+            $this->installation->setCompletedSteps(++$completed);
+            $this->installation->save();
         }
-
-        $this->installation->save();
     }
 
     /**
@@ -234,7 +210,7 @@ class Progress implements ProgressContract {
      * @return bool
      */
     public function isFinished() : bool {
-        return $this->getCompletedSteps() === $this->getStepsCount();
+        return $this->installation->finished();
     }
 
     /**
@@ -269,6 +245,23 @@ class Progress implements ProgressContract {
      */
     public function getFailedMessage() : string {
         return (string) $this->installation->getFailedMessage();
+    }
+
+    /**
+     * Sets the progress as failed.
+     *
+     * @param string $message
+     */
+    public function setSuccessMessage(string $message) {
+        $this->installation->setSuccessMessage($message);
+        $this->installation->save();
+    }
+
+    /**
+     * @return string
+     */
+    public function getSuccessMessage() : string {
+        return (string) $this->installation->getSuccessMessage();
     }
 
 }

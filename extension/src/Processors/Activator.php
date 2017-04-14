@@ -10,6 +10,7 @@ use Antares\Extension\Events\Activated;
 use Antares\Extension\Events\Activating;
 use Antares\Extension\Events\Failed;
 use Antares\Extension\Model\Operation;
+use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
@@ -36,16 +37,18 @@ class Activator extends AbstractOperation {
      * @param Kernel $kernel
      * @param ExtensionsRepository $extensionsRepository
      * @param Acl $aclMigration
+     * @param ComponentsRepository $componentsRepository
      */
     public function __construct(
         Container $container,
         Dispatcher $dispatcher,
         Kernel $kernel,
         ExtensionsRepository $extensionsRepository,
-        Acl $aclMigration
+        Acl $aclMigration,
+        ComponentsRepository $componentsRepository
     )
     {
-        parent::__construct($container, $dispatcher, $kernel);
+        parent::__construct($container, $dispatcher, $kernel, $componentsRepository);
 
         $this->extensionsRepository = $extensionsRepository;
         $this->aclMigration          = $aclMigration;

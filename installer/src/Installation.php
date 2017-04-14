@@ -23,6 +23,7 @@ namespace Antares\Installation;
 
 use Antares\Contracts\Installation\Installation as InstallationContract;
 use Antares\Extension\Contracts\ExtensionContract;
+use Antares\Extension\Jobs\BulkExtensionsBackgroundJob;
 use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Model\Action;
 use Antares\Model\Permission;
@@ -426,11 +427,28 @@ class Installation implements InstallationContract
          */
         $componentsRepository   = app()->make(ComponentsRepository::class);
         $progress               = app()->make(Progress::class);
+        $extensions             = array_keys($componentsRepository->getRequired());
 
-        $extensions = array_keys($componentsRepository->getRequired());
-
-        $progress->setComponents($extensions);
+        // Steps are the sum of extensions and composer command.
+        $progress->setSteps(1 + count($extensions));
         $progress->start();
+
+        $components = $componentsRepository->getWithBranches($extensions);
+        $extensions = [];
+
+        foreach($components as $component => $branch) {
+            $extensions[] = $component . ':' . $branch;
+        }
+
+        $operationClasses = [
+            \Antares\Extension\Processors\Installer::class,
+            \Antares\Extension\Processors\Activator::class,
+        ];
+
+        $installJob = new BulkExtensionsBackgroundJob($extensions, $operationClasses, $progress->getFilePath());
+        $installJob->onQueue('install');
+
+        dispatch($installJob);
     }
 
 }

@@ -28,7 +28,6 @@ use Antares\Installation\Console\Commands\UninstallCommand;
 use Antares\Installation\Listeners\FailedListener;
 use Antares\Installation\Scripts\WatchDog;
 use Antares\Installation\Listeners\IncrementProgress;
-use Illuminate\Routing\Router;
 
 class InstallerServiceProvider extends ModuleServiceProvider
 {
@@ -68,8 +67,8 @@ class InstallerServiceProvider extends ModuleServiceProvider
             return new WatchDog($app->make('config'));
         });
 
-        $this->app->singleton(Progress::class);
         $this->app->singleton(\Antares\Installation\Repository\Installation::class);
+        $this->app->singleton(Progress::class);
 
         $this->commands(UninstallCommand::class);
     }

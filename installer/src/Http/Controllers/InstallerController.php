@@ -140,7 +140,12 @@ class InstallerController extends BaseController
      */
     public function prepareSucceed()
     {
-        app()->make(Progress::class)->reset();
+        /* @var $progress Progress */
+        $progress = app()->make(Progress::class);
+
+        if($progress->isFailed()) {
+            $progress->reset();
+        }
 
         return $this->redirect(handles('antares::install/create'));
     }
@@ -184,6 +189,10 @@ class InstallerController extends BaseController
      */
     public function doneSucceed()
     {
+        /* @var $progress Progress */
+        $progress = app()->make(Progress::class);
+        $progress->reset();
+
         app('antares.messages')->add('success', trans('Installation is completed. Now you can login to administration area.'));
         return $this->redirect(handles('antares::install/completed'));
     }
@@ -195,6 +204,10 @@ class InstallerController extends BaseController
      */
     public function doneFailed()
     {
+        /* @var $progress Progress */
+        $progress = app()->make(Progress::class);
+        $progress->reset();
+
         app('antares.messages')->add('error', trans('Installation failed. Please try again or contact with software provider.'));
         return $this->redirect(handles('antares::install/failed'));
     }
@@ -206,6 +219,10 @@ class InstallerController extends BaseController
      */
     public function completed()
     {
+        /* @var $progress Progress */
+        $progress = app()->make(Progress::class);
+        $progress->reset();
+
         return view('antares/installer::installation.completed');
     }
 

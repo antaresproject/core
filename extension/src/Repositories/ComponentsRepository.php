@@ -107,4 +107,14 @@ class ComponentsRepository {
                 : self::$defaultBranch;
     }
 
+    /**
+     * Determines if the given component is required for the system.
+     *
+     * @param string $component
+     * @return bool
+     */
+    public function isRequired(string $component) : bool {
+        return in_array($component, $this->required, true);
+    }
+
 }

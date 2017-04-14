@@ -57,11 +57,6 @@ class Installer extends AbstractOperation {
     protected $settingsFactory;
 
     /**
-     * @var ComponentsRepository
-     */
-    protected $componentsRepository;
-
-    /**
      * Installer constructor.
      * @param ComposerHandler $composerHandler
      * @param ExtensionValidator $extensionValidator
@@ -83,13 +78,12 @@ class Installer extends AbstractOperation {
         ComponentsRepository $componentsRepository
     )
     {
-        parent::__construct($container, $dispatcher, $kernel);
+        parent::__construct($container, $dispatcher, $kernel, $componentsRepository);
 
         $this->composerHandler      = $composerHandler;
         $this->extensionValidator   = $extensionValidator;
         $this->extensionsRepository = $extensionsRepository;
         $this->settingsFactory      = $settingsFactory;
-        $this->componentsRepository = $componentsRepository;
 
         $this->migrateManager       = $container->make('antares.publisher.migrate');
         $this->assetManager         = $container->make('antares.publisher.asset');
@@ -136,6 +130,7 @@ class Installer extends AbstractOperation {
             $this->extensionsRepository->save($extension, [
                 'status'    => ExtensionContract::STATUS_INSTALLED,
                 'options'   => $extension->getSettings()->getData(),
+                'required'  => $this->componentsRepository->isRequired($name),
             ]);
 
             $this->dispatcher->fire(new Installed($extension));

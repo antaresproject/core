@@ -60,7 +60,14 @@ return
                         'version'     => 'Version',
                         'url'         => 'Documentation',
                         'status'      => 'Status',
+                        'type'        => 'Type',
                     ],
+
+                'statuses' => [
+                    'inactive'  => 'Inactive',
+                    'active'    => 'Active',
+                    'available' => 'Available',
+                ],
             ],
         'users'            =>
             [

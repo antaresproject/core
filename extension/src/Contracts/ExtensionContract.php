@@ -115,4 +115,18 @@ interface ExtensionContract extends Arrayable, Jsonable {
      */
     public function getSettings() : SettingsContract;
 
+    /**
+     * Returns friendly short name of the module from the composer extra attribute.
+     *
+     * @return string
+     */
+    public function getFriendlyName() : string;
+
+    /**
+     * Returns the component type.
+     *
+     * @return string
+     */
+    public function getFriendlyType() : string;
+
 }
