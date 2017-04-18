@@ -22,7 +22,7 @@ use Antares\Console\Kernel;
 use Antares\Publisher\AssetManager;
 use Antares\Publisher\MigrateManager;
 use Illuminate\Support\Str;
-use Artisan;
+use Symfony\Component\Process\Process;
 
 class Installer extends AbstractOperation {
 
@@ -110,9 +110,9 @@ class Installer extends AbstractOperation {
             if(in_array('skip-composer', $flags, false) === false) {
                 $command = 'composer require ' . $name . ':' .  $this->componentsRepository->getTargetBranch($name);
 
-                $process = $this->composerHandler->run($command, function($process, $type, $buffer) use($handler) {
+                $process = $this->composerHandler->run($command, function(Process $process, $type, $buffer) use($handler) {
                     if(Str::contains($buffer, ['Error Output', 'Exception'])) {
-                        throw new ExtensionException($buffer);
+                        throw new ExtensionException($process->getErrorOutput());
                     }
 
                     $handler->operationInfo(new Operation($buffer));

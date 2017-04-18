@@ -19,6 +19,7 @@ use Illuminate\Events\Dispatcher;
 use Antares\Console\Kernel;
 use Antares\Publisher\AssetManager;
 use Antares\Publisher\MigrateManager;
+use Symfony\Component\Process\Process;
 use Illuminate\Support\Str;
 use Artisan;
 
@@ -102,9 +103,9 @@ class Uninstaller extends AbstractOperation {
             if(in_array('purge', $flags, true)) {
                 $command = 'composer remove ' . $name;
 
-                $process = $this->composerHandler->run($command, function($process, $type, $buffer) use($handler) {
+                $process = $this->composerHandler->run($command, function(Process $process, $type, $buffer) use($handler) {
                     if(Str::contains($buffer, 'Error Output')) {
-                        throw new ExtensionException($buffer);
+                        throw new ExtensionException($process->getErrorOutput());
                     }
 
                     $handler->operationInfo(new Operation($buffer));

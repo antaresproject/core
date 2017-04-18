@@ -24,6 +24,8 @@ declare(strict_types=1);
 namespace Antares\Foundation\Http\Datatables;
 
 use Antares\Contracts\Authorization\Authorization;
+use Antares\Datatables\Adapter\GroupsFilterAdapter;
+use Antares\Datatables\Engines\CollectionEngine;
 use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Manager as ExtensionFactory;
 use Antares\Datatables\Services\DataTable;
@@ -31,7 +33,6 @@ use Antares\Extension\Model\Types;
 use Illuminate\Contracts\View\Factory;
 use Antares\Datatables\Datatables;
 use Antares\Support\Collection;
-use Antares\Support\Facades\Form;
 use HTML;
 use URL;
 use Closure;
@@ -44,6 +45,13 @@ class Extensions extends DataTable {
      * @var Factory
      */
     protected $extension;
+
+    /**
+     * Index of type column.
+     *
+     * @var int
+     */
+    protected $typeColumnIndex = 5;
 
     /**
      * Extensions constructor.
@@ -61,8 +69,35 @@ class Extensions extends DataTable {
      * @return Collection
      */
     public function query() {
+        $collection = $this->extension->getAvailableExtensions();
 
-        return $this->extension->getAvailableExtensions();
+        return $this->filterByType($collection);
+    }
+
+    /**
+     * @return GroupsFilterAdapter
+     */
+    protected function getGroupsFilterAdapter() : GroupsFilterAdapter {
+        $groupsFilterAdapter = app(GroupsFilterAdapter::class);
+        $groupsFilterAdapter->setClassname(get_class($this))->setIndex($this->typeColumnIndex);
+
+        return $groupsFilterAdapter;
+    }
+
+    /**
+     * @param \Antares\Extension\Collections\Extensions $query
+     * @return \Antares\Extension\Collections\Extensions
+     */
+    protected function filterByType(\Antares\Extension\Collections\Extensions $query) {
+        $value = $this->getGroupsFilterAdapter()->getSelected($this->typeColumnIndex);
+
+        if( request()->ajax() || $value === '') {
+            return $query;
+        }
+
+        return $query->filter(function(ExtensionContract $extension) use($value) {
+            return $extension->getFriendlyType() === $value;
+        });
     }
 
     /**
@@ -89,6 +124,10 @@ class Extensions extends DataTable {
     public function html() {
         publish(null, ['/foundation/public/js/extensions.js']);
 
+        $options = [
+            'data-prefix' => trans('antares/foundation::messages.select_extension_type'),
+        ];
+
         return $this->setName('Extensions')
             ->addColumn(['data' => 'friendlyName', 'name' => 'friendlyName', 'title' => trans('antares/foundation::label.extensions.header.name')])
             ->addColumn(['data' => 'description', 'name' => 'description', 'title' => trans('antares/foundation::label.extensions.header.description')])
@@ -98,30 +137,33 @@ class Extensions extends DataTable {
             ->addColumn(['data' => 'type', 'name' => 'type', 'title' => trans('antares/foundation::label.extensions.header.type')])
             ->addAction(['name' => 'edit', 'title' => '', 'class' => 'dt-row-actions'])
             ->setDeferedData()
-            ->addGroupSelect($this->getTypesDropdownForm());
+            ->addGroupSelect($this->getTypes(), $this->typeColumnIndex, Types::TYPE_ADDITIONAL, $options)
+        ->parameters([
+            'aoColumnDefs' => [
+                ['width' => '15%', 'targets' => 0],
+                ['width' => '40%', 'targets' => 1],
+                ['width' => '22%', 'targets' => 2],
+                ['width' => '7%', 'targets' => 3],
+                ['width' => '10%', 'targets' => 4],
+                ['width' => '10%', 'targets' => 5],
+                ['width' => '1%', 'targets' => 6],
+        ]]);
     }
 
     /**
-     * Creates select for categories
-     *
-     * @return String
+     * @return array
      */
-    protected function getTypesDropdownForm() : string
+    protected function getTypes() : array
     {
-        $default    = Types::TYPE_ADDITIONAL;
-        $types      = [];
+        $types = [
+            '' => trans('antares/foundation::messages.extension_type_all'),
+        ];
 
         foreach(Types::all() as $type) {
             $types[$type] = $type;
         }
 
-        $options = [
-            'data-prefix'               => trans('antares/foundation::messages.select_extension_type'),
-            'data-selectAR--mdl-big'    => 'true',
-            'class'                     => 'select2--prefix'
-        ];
-
-        return Form::select('category', $types, $default, $options);
+        return $types;
     }
 
     /**
@@ -238,9 +280,7 @@ class Extensions extends DataTable {
      */
     protected function getDescriptionColumn() : Closure {
         return function(ExtensionContract $extension) {
-            $description = $extension->getPackage()->getDescription();
-
-            return '<span class="dots dots-long" data-toggle="tooltip" data-placement="top" title="' . $description . '">' . $description . '</span>';
+            return $extension->getPackage()->getDescription();
         };
     }
 

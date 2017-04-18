@@ -11,6 +11,7 @@ use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
 use Antares\Extension\Exception\ExtensionException;
 use Antares\Extension\Model\Operation;
 use Antares\Extension\Composer\Handler as ComposerHandler;
+use Symfony\Component\Process\Process;
 use Illuminate\Support\Str;
 
 class Composer {
@@ -54,9 +55,9 @@ class Composer {
         try {
             $handler->operationInfo(new Operation('Running composer command.'));
 
-            $process = $this->composerHandler->run($command, function($process, $type, $buffer) use($handler) {
+            $process = $this->composerHandler->run($command, function(Process $process, $type, $buffer) use($handler) {
                 if(Str::contains($buffer, ['Error Output', 'Exception'])) {
-                    throw new ExtensionException($buffer);
+                    throw new ExtensionException($process->getErrorOutput());
                 }
 
                 $handler->operationInfo(new Operation($buffer));
