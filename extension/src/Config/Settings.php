@@ -25,15 +25,22 @@ class Settings implements SettingsContract {
     protected $phrases = [];
 
     /**
-     * Settings constructor.
-     * @param array $data (optional) Settings data.
-     * @param array $rules (optional) Validation rules.
-     * @param array $phrases (optional) Validation phrases.
+     * @var string
      */
-    public function __construct(array $data = [], array $rules = [], array $phrases = []) {
-        $this->data     = $data;
-        $this->rules    = $rules;
-        $this->phrases  = $phrases;
+    protected $customUrl;
+
+    /**
+     * Settings constructor.
+     * @param array $data
+     * @param array $rules
+     * @param array $phrases
+     * @param string $customUrl
+     */
+    public function __construct(array $data = [], array $rules = [], array $phrases = [], string $customUrl = '') {
+        $this->data         = $data;
+        $this->rules        = $rules;
+        $this->phrases      = $phrases;
+        $this->customUrl    = $customUrl;
     }
 
     /**
@@ -96,15 +103,25 @@ class Settings implements SettingsContract {
     }
 
     /**
+     * Returns custom URL for settings.
+     *
+     * @return string
+     */
+    public function getCustomUrl() : string {
+        return $this->customUrl;
+    }
+
+    /**
      * Get the instance as an array.
      *
      * @return array
      */
     public function toArray() : array {
         return [
-            'data'      => $this->getData(),
-            'rules'     => $this->getValidationRules(),
-            'phrases'   => $this->getValidationPhrases(),
+            'data'          => $this->getData(),
+            'rules'         => $this->getValidationRules(),
+            'phrases'       => $this->getValidationPhrases(),
+            'custom_rul'    => $this->getCustomUrl(),
         ];
     }
 

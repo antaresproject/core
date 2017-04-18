@@ -53,4 +53,11 @@ interface SettingsContract extends Arrayable {
      */
     public function getValidationPhrases() : array;
 
+    /**
+     * Returns custom URL for settings.
+     *
+     * @return string
+     */
+    public function getCustomUrl() : string;
+
 }

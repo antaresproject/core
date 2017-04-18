@@ -51,8 +51,9 @@ class SettingsFactory {
         $data       = (array) Arr::get($configData, 'data', []);
         $rules      = (array) Arr::get($configData, 'rules', []);
         $phrases    = (array) Arr::get($configData, 'phrases', []);
+        $customUrl  = (string) Arr::get($configData, 'custom_url', '');
 
-        return new Settings($data, $rules, $phrases);
+        return new Settings($data, $rules, $phrases, $customUrl);
     }
 
 }

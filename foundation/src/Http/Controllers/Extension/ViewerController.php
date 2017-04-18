@@ -81,6 +81,14 @@ class ViewerController extends Controller
     }
 
     /**
+     * @param string $customUrl
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function redirectToCustomUrl(string $customUrl) {
+        return redirect()->to($customUrl);
+    }
+
+    /**
      * @param Request $request
      * @return mixed
      */

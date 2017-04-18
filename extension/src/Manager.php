@@ -230,6 +230,10 @@ class Manager {
         $extension = $this->getAvailableExtensions()->findByName( $this->getNormalizedName($name) );
 
         if($extension instanceof ExtensionContract) {
+            if($extension->getSettings()->getCustomUrl()) {
+                return true;
+            }
+
             return app()->make(SettingsFormResolver::class)->hasSettingsForm($extension);
         }
 

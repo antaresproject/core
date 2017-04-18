@@ -83,6 +83,12 @@ class Viewer extends Processor implements Command
         $extension      = $this->manager->getExtensionByVendorAndName($vendor, $name);
 
         if($component && $extension) {
+            $customUrl = $extension->getSettings()->getCustomUrl();
+
+            if($customUrl) {
+                return $handler->redirectToCustomUrl($customUrl);
+            }
+
             $settingsForm   = $this->settingsFormResolver->tryGetSettingsForm($extension);
             $form           = $this->presenter->form($component, $settingsForm, $extension->getSettings());
 
