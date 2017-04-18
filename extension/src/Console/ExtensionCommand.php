@@ -7,7 +7,7 @@ namespace Antares\Extension\Console;
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
 use Antares\Extension\Manager;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
+use Illuminate\Support\Arr;
 use Symfony\Component\Console\Input\InputArgument;
 use Antares\Extension\Model\Operation;
 
@@ -21,6 +21,13 @@ abstract class ExtensionCommand extends Command implements OperationHandlerContr
 	 */
 	protected $manager;
 
+    /**
+     * @var array
+     */
+    protected $validOptions = [
+        'skip-composer',
+    ];
+
 	/**
 	 * ExtensionCommand constructor.
 	 * @param Manager $manager
@@ -33,6 +40,13 @@ abstract class ExtensionCommand extends Command implements OperationHandlerContr
 	}
 
     /**
+     * @return array
+     */
+	protected function getValidOptions() {
+        return Arr::only($this->options(), $this->validOptions);
+    }
+
+    /**
      * Get the console command arguments.
      *
      * @return array
@@ -41,19 +55,6 @@ abstract class ExtensionCommand extends Command implements OperationHandlerContr
     {
         return [
             ['name', InputArgument::REQUIRED, 'Extension Name.'],
-        ];
-    }
-
-    /**
-     * Get the console command options.
-     *
-     * @return array
-     */
-    protected function getOptions()
-    {
-        return [
-            ['force', null, InputOption::VALUE_NONE, 'Force the operation to run when in production.'],
-			['purge', null, InputOption::VALUE_NONE, 'Remove the extension using the composer remove command.'],
         ];
     }
 

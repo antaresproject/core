@@ -14,11 +14,11 @@ class UninstallCommand extends ExtensionCommand {
 
 
 	/**
-	 * The console command name.
+	 * The console command signature.
 	 *
 	 * @var string
 	 */
-	protected $name = 'extension:uninstall';
+    protected $signature = 'extension:uninstall {name} {--purge}';
 
 	/**
 	 * The console command description.
@@ -26,6 +26,13 @@ class UninstallCommand extends ExtensionCommand {
 	 * @var string
 	 */
 	protected $description = 'Uninstall an extension.';
+
+    /**
+     * @var array
+     */
+    protected $validOptions = [
+        'purge',
+    ];
 
 	/**
 	 * Execute the console command.
@@ -43,9 +50,7 @@ class UninstallCommand extends ExtensionCommand {
         $extension  = $this->manager->getAvailableExtensions()->findByName($name);
 
         if($extension instanceof ExtensionContract) {
-            $purge = $this->option('purge');
-
-            $uninstaller->run($this, $extension, compact('purge'));
+            $uninstaller->run($this, $extension, $this->getValidOptions());
         }
         else {
             $this->error("Unable to find extension [{$name}].");

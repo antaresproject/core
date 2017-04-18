@@ -13,11 +13,11 @@ class InstallCommand extends ExtensionCommand {
 	use ConfirmableTrait;
 
 	/**
-	 * The console command name.
+	 * The console command signature.
 	 *
 	 * @var string
 	 */
-	protected $name = 'extension:install';
+	protected $signature = 'extension:install {name} {--skip-composer}';
 
 	/**
 	 * The console command description.
@@ -25,6 +25,13 @@ class InstallCommand extends ExtensionCommand {
 	 * @var string
 	 */
 	protected $description = 'Install an extension.';
+
+    /**
+     * @var array
+     */
+	protected $validOptions = [
+	    'skip-composer',
+    ];
 
 	/**
 	 * Execute the console command.
@@ -41,7 +48,7 @@ class InstallCommand extends ExtensionCommand {
 		$extension  = $this->manager->getAvailableExtensions()->findByName($name);
 
 		if($extension instanceof ExtensionContract) {
-			$installer->run($this, $extension);
+			$installer->run($this, $extension, $this->getValidOptions());
 		}
 		else {
 			$this->error("Unable to find extension [{$name}].");
