@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 return
 
         array(
@@ -118,7 +116,7 @@ return
                     'name'     => 'PHP Version',
                     'solution' => 'Update your php version.',
                 ),
-                'title'                  => 'System Requirement',
+                'title'                  => 'System Requirements',
                 'description'            => 'Please ensure the following requirement is profilled before installing Antares.',
                 'requirement'            => 'Requirement',
                 'status'                 => 'Status',

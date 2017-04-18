@@ -23,8 +23,8 @@ namespace Antares\Foundation;
 
 use Antares\Contracts\Foundation\Foundation as FoundationContract;
 use Antares\Logger\Http\Middleware\LoggerMiddleware;
-use Illuminate\Support\Facades\Request;
 use Antares\Contracts\Memory\Provider;
+use Antares\Extension\RouteGenerator;
 use Antares\Http\RouteManager;
 use Exception;
 use Closure;
@@ -130,7 +130,6 @@ class Foundation extends RouteManager implements FoundationContract
         if (in_array($name, ['antares', 'antares/foundation'])) {
             $name = 'antares';
         }
-
         return parent::route($name, $default);
     }
 
@@ -185,9 +184,7 @@ class Foundation extends RouteManager implements FoundationContract
         $memory->put('site.name', 'Antares');
 
         $this->menu()->add('install')
-                ->title('Install')
-                ->link($this->handles('antares::install'))
-                ->icon('zmdi-desktop-windows');
+                ->link($this->handles('antares::install'));
 
         $this->app['antares.installed'] = false;
         return $memory;
@@ -244,9 +241,10 @@ class Foundation extends RouteManager implements FoundationContract
      */
     protected function generateRouteByName($name, $default)
     {
-        if (in_array($name, ['antares'])) {
-            $level = app('antares.areas')->findMatched(Request::segment(1), $this->app->make('config')->get('antares/foundation::handles', $default));
-            return new \Antares\Extension\RouteGenerator($level, $this->app->make('request'));
+        $segment = request()->segment(1);
+        if (in_array($name, ['antares']) && $segment !== 'install') {
+            $level = app('antares.areas')->findMatched($segment, $this->app->make('config')->get('antares/foundation::handles', $default));
+            return new RouteGenerator($level, $this->app->make('request'));
         }
         return parent::generateRouteByName($name, $default);
     }

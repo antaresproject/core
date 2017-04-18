@@ -795,7 +795,7 @@ EOD;
         }
         array_push($this->massActions, $massAction);
         $this->massActions = array_merge($this->massActions, (array) event('datatables:' . uri() . ':after.massactions.action.' . $name, [$this->massActions, $model], true));
-
+        $this->massActions = array_unique($this->massActions);
         return $this;
     }
 

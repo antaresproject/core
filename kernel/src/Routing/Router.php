@@ -36,7 +36,7 @@ class Router extends BaseRouter
      */
     public function auth()
     {
-        // Authentication Routes...
+        // Authentication Routes...        
         $this->get('login', 'Auth\AuthenticateController@show');
         $this->post('login', 'Auth\AuthenticateController@attempt');
         $this->get('logout', 'Auth\DeauthenticateController@logout');

@@ -235,6 +235,7 @@ class Installer
                     $list       = $this->getComponentsList();
 
                     $form->name('Components list');
+                    $form->layout('antares/installer::partials._components_form');
                     $form->fieldset(function ($fieldset) use($list) {
 
                         $fieldset->legend('Required components');
@@ -261,16 +262,11 @@ class Installer
                                     ->value($name)
                                     ->help(implode(', ', array_only($data, ['description', 'author', 'version'])))
                                     ->checked($checked);
-                            ;
                         }
-                        $fieldset->control('button', 'cancel')
-                                ->field(function() {
-                                    return app('html')->link(handles("antares::install/create"), trans('antares/foundation::label.cancel'), ['class' => 'btn btn--md btn--default mdl-button mdl-js-button']);
-                                });
 
                         $fieldset->control('button', 'button')
                                 ->attributes(['type' => 'submit', 'class' => 'btn btn--md btn--primary mdl-button mdl-js-button'])
-                                ->value(trans('antares/foundation::label.next'));
+                                ->value(trans('antares/foundation::label.next') . ' <i class="pl8 zmdi zmdi-long-arrow-right"></i>');
                     });
                 });
         return $listener->componentsSucceed(['form' => $form]);

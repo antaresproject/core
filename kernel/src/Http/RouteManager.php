@@ -89,6 +89,7 @@ abstract class RouteManager
      */
     public function group($name, $default, $attributes = [], Closure $callback = null)
     {
+
         $route      = $this->route($name, $default);
         $attributes = array_merge($attributes, [
             'prefix' => $route->prefix(),

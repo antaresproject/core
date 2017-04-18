@@ -4,30 +4,14 @@
     {% include 'antares/installer::partials._menu' with {'active': 5} %}    
 {% endblock %}
 {% block content %}  
-    <div class="card card--chart-small card--primary-light">
-        <div class="card__header">
-            <div class="card__header--top">
-                <span>Done</span>
-            </div> 
+    <div class="col-group">
+        <div class="col-16">
+            <h1>{{ trans('Installation completed') }}</h1>
         </div>
-        <div class="card__header-chart" >
-            <span class="card__indicator">
-                {{ trans('Installation completed') }}
-            </span>
+        <div class="col-16">
+            <a href="{{ handles('antares/foundation::login') }}" class="btn btn--primary mdl-button mdl-js-button mdl-js-ripple-effect" >
+                {{ trans('Login page') }} <i class="zmdi zmdi-sign-in"></i>
+            </a> 
         </div>
-        <div class="card__content"> 
-            <div class="alert alert--bg alert--glow alert--success alert--lg alert--border mb20">
-                <i class="alert__icon zmdi zmdi-check-circle"></i>
-                <div>
-                    <span>Platform has been installed successfully.</span>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <a href="{{ handles('antares/foundation::login') }}" class="btn btn--s-extra-large btn--primary mdl-button mdl-js-button mdl-js-ripple-effect" >
-                        {{ trans('Login page') }} <i class="zmdi zmdi-sign-in"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div> 
+    </div>
 {% endblock %}  

@@ -51,7 +51,7 @@ class Breadcrumb
     }
 
     /**
-     * on preview user details
+     * On preview user details
      */
     public function onShowUser(Model $model)
     {

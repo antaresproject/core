@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 return [
     'validation'                 => [
         'required_min_php_version' => '5.5',
@@ -49,5 +47,6 @@ return [
             'show-dashboard',
             'client-update'
         ]
-    ]
+    ],
+    'fake_users_count'           => 1
 ];

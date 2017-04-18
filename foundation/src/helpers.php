@@ -603,10 +603,11 @@ if (!function_exists('brand_logo')) {
     {
         $registry = app('antares.memory')->make('registry');
         $logoPath = config('antares/brands::logo.default_path');
+
         try {
             if (in_array($param, ['logo', 'favicon'])) {
                 $logo    = $registry->get('brand.configuration.template.favicon');
-                $default = $param == 'logo' ? asset($logoPath . 'logo_tear.png') : asset($logoPath . 'favicon--big.png');
+                $default = $param == 'logo' ? asset($logoPath . 'logo_tear.png') : asset($logoPath . 'logo_default_tear.png');
                 return strlen($logo) <= 0 ? $default : asset('img/logos/' . $logo);
             } elseif ($param == 'big') {
                 $logo = $registry->get('brand.configuration.template.logo');

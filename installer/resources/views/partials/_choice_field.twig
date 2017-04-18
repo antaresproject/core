@@ -1,8 +1,0 @@
-<div class="col-group">
-    {{ Form.label(name, options['label'],options['label_attr'])|raw }} 
-    {% for child in options['children'] %} 
-        <div class="form-block">
-            {{ child.render({'selected':options['selected']}, true, true, false)|raw }} 
-        </div>
-    {% endfor %} 
-</div>
