@@ -143,7 +143,10 @@ class Component extends BaseEloquent
     {
         $name = str_replace('_', '-', $name);
 
-        if( ! Str::contains($name, '/') ) {
+        if($name === 'core') {
+            $name = 'antaresproject/core';
+        }
+        else if( ! Str::contains($name, '/') ) {
             $name = 'antaresproject/component-' . $name;
         }
 
