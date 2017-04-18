@@ -131,7 +131,7 @@ class Extensions extends DataTable {
         return $this->setName('Extensions')
             ->addColumn(['data' => 'friendlyName', 'name' => 'friendlyName', 'title' => trans('antares/foundation::label.extensions.header.name')])
             ->addColumn(['data' => 'description', 'name' => 'description', 'title' => trans('antares/foundation::label.extensions.header.description')])
-            ->addColumn(['data' => 'authors', 'name' => 'authors', 'title' => trans('antares/foundation::label.extensions.header.authors')])
+            ->addColumn(['data' => 'authors', 'name' => 'authors', 'title' => trans('antares/foundation::label.extensions.header.authors'), 'orderable' => false])
             ->addColumn(['data' => 'version', 'name' => 'version', 'title' => trans('antares/foundation::label.extensions.header.version')])
             ->addColumn(['data' => 'status', 'name' => 'status', 'title' => trans('antares/foundation::label.extensions.header.status')])
             ->addColumn(['data' => 'type', 'name' => 'type', 'title' => trans('antares/foundation::label.extensions.header.type')])
