@@ -212,7 +212,7 @@ class Extension implements ExtensionContract {
      * @return string
      */
     public function getFriendlyType() : string {
-        return $this->isRequired() ? 'Core' : 'Additional';
+        return Types::getTypeByExtension($this);
     }
 
     /**

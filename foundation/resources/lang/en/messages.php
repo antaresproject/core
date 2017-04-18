@@ -36,6 +36,7 @@ return [
     ],
     'confirm'                     => 'Confirm',
     'select_placeholder_default'  => 'select :name...',
+    'select_extension_type'       => 'Select type',
     'sidebar'                     => [
         'notifications'  => 'Notifications',
         'alerts'         => 'Alerts',

@@ -27,9 +27,11 @@ use Antares\Contracts\Authorization\Authorization;
 use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Manager as ExtensionFactory;
 use Antares\Datatables\Services\DataTable;
+use Antares\Extension\Model\Types;
 use Illuminate\Contracts\View\Factory;
 use Antares\Datatables\Datatables;
 use Antares\Support\Collection;
+use Antares\Support\Facades\Form;
 use HTML;
 use URL;
 use Closure;
@@ -95,7 +97,31 @@ class Extensions extends DataTable {
             ->addColumn(['data' => 'status', 'name' => 'status', 'title' => trans('antares/foundation::label.extensions.header.status')])
             ->addColumn(['data' => 'type', 'name' => 'type', 'title' => trans('antares/foundation::label.extensions.header.type')])
             ->addAction(['name' => 'edit', 'title' => '', 'class' => 'dt-row-actions'])
-            ->setDeferedData();
+            ->setDeferedData()
+            ->addGroupSelect($this->getTypesDropdownForm());
+    }
+
+    /**
+     * Creates select for categories
+     *
+     * @return String
+     */
+    protected function getTypesDropdownForm() : string
+    {
+        $default    = Types::TYPE_ADDITIONAL;
+        $types      = [];
+
+        foreach(Types::all() as $type) {
+            $types[$type] = $type;
+        }
+
+        $options = [
+            'data-prefix'               => trans('antares/foundation::messages.select_extension_type'),
+            'data-selectAR--mdl-big'    => 'true',
+            'class'                     => 'select2--prefix'
+        ];
+
+        return Form::select('category', $types, $default, $options);
     }
 
     /**
