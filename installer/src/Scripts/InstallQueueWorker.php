@@ -2,6 +2,7 @@
 
 namespace Antares\Installation\Scripts;
 
+use Illuminate\Support\Arr;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\LogicException;
 use Symfony\Component\Process\Exception\RuntimeException;
@@ -46,10 +47,8 @@ class InstallQueueWorker
      */
     protected function setup()
     {
-        $processes = [];
         $pid       = null;
-
-        exec('ps aux|grep php', $processes);
+        $processes = $this->runCommand('ps aux|grep php');
 
         foreach ($processes as $process) {
             if (!str_contains($process, self::$command)) {
@@ -60,6 +59,28 @@ class InstallQueueWorker
 
             $this->pid = (int) $pid;
         }
+    }
+
+    /**
+     * Run command if is not in during tests.
+     *
+     * @param string $command
+     * @return array The command output
+     */
+    protected function runCommand(string $command) : array {
+        $processes = [];
+
+        if(PHP_SAPI === 'cli') {
+            $firstArgument = Arr::get($_SERVER, 'argv.0', '');
+
+            if(strpos($firstArgument, 'phpunit') !== FALSE) {
+                return $processes;
+            }
+        }
+
+        exec($command, $processes);
+
+        return $processes;
     }
 
     /**

@@ -153,6 +153,8 @@ class ManagerTest extends TestCase
             ->andReturn(2)
             ->shouldReceive('getOptions')
             ->andReturn($options)
+            ->shouldReceive('isRequired')
+            ->andReturn(false)
             ->getMock();
 
         $this->app->instance(ExtensionModel::class, $model);

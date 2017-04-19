@@ -22,7 +22,7 @@
 namespace Antares\Installation\Processor;
 
 use Antares\Contracts\Installation\Requirement;
-use Antares\Installation\Installation;
+use Antares\Contracts\Installation\Installation;
 use Antares\Support\Facades\Config;
 use Symfony\Component\Finder\Finder;
 use Illuminate\Support\Facades\App;

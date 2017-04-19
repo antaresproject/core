@@ -121,7 +121,7 @@ class Settings implements SettingsContract {
             'data'          => $this->getData(),
             'rules'         => $this->getValidationRules(),
             'phrases'       => $this->getValidationPhrases(),
-            'custom_rul'    => $this->getCustomUrl(),
+            'custom_url'    => $this->getCustomUrl(),
         ];
     }
 

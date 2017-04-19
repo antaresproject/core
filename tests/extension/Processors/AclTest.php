@@ -150,7 +150,10 @@ class AclTest extends ApplicationTestCase
 
         $handler = $this->buildOperationHandlerMock()
             ->shouldReceive('operationInfo')
-            ->twice()
+            ->once()
+            ->andReturnNull()
+            ->shouldReceive('operationSuccess')
+            ->once()
             ->andReturnNull()
             ->getMock();
 
@@ -184,7 +187,10 @@ class AclTest extends ApplicationTestCase
 
         $handler = $this->buildOperationHandlerMock()
             ->shouldReceive('operationInfo')
-            ->times(3)
+            ->twice()
+            ->andReturnNull()
+            ->shouldReceive('operationSuccess')
+            ->once()
             ->andReturnNull()
             ->getMock();
 

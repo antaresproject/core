@@ -23,6 +23,7 @@ namespace Antares\Extension\TestCase;
 use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Processors\Acl;
 use Antares\Extension\Processors\Activator;
+use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Mockery as m;
 
@@ -39,18 +40,24 @@ class ActivatorTest extends OperationSetupTestCase
      */
     protected $aclMigration;
 
+    /**
+     * @var \Mockery\MockInterface
+     */
+    protected $componentRepository;
+
     public function setUp() {
         parent::setUp();
 
         $this->extensionsRepository = m::mock(ExtensionsRepository::class);
         $this->aclMigration         = m::mock(Acl::class);
+        $this->componentRepository  = m::mock(ComponentsRepository::class);
     }
 
     /**
      * @return Activator
      */
     public function getOperationProcessor() {
-        return new Activator($this->container, $this->dispatcher, $this->kernel, $this->extensionsRepository, $this->aclMigration);
+        return new Activator($this->container, $this->dispatcher, $this->kernel, $this->extensionsRepository, $this->aclMigration, $this->componentRepository);
     }
 
     public function testAsSuccess() {

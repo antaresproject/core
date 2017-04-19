@@ -23,6 +23,7 @@ namespace Antares\Extension\TestCase;
 use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Composer\Handler as ComposerHandler;
 use Antares\Extension\Processors\Uninstaller;
+use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Antares\Publisher\AssetManager;
 use Antares\Publisher\MigrateManager;
@@ -52,6 +53,11 @@ class UninstallerTest extends OperationSetupTestCase
      */
     protected $assetManager;
 
+    /**
+     * @var \Mockery\MockInterface
+     */
+    protected $componentRepository;
+
     public function setUp() {
         parent::setUp();
 
@@ -59,6 +65,7 @@ class UninstallerTest extends OperationSetupTestCase
         $this->extensionsRepository = m::mock(ExtensionsRepository::class);
         $this->migrateManager       = m::mock(MigrateManager::class);
         $this->assetManager         = m::mock(AssetManager::class);
+        $this->componentRepository  = m::mock(ComponentsRepository::class);
 
         $this->container->shouldReceive('make')->once()->with('antares.publisher.migrate')->andReturn($this->migrateManager)->getMock();
         $this->container->shouldReceive('make')->once()->with('antares.publisher.asset')->andReturn($this->assetManager)->getMock();
@@ -68,11 +75,17 @@ class UninstallerTest extends OperationSetupTestCase
      * @return Uninstaller
      */
     public function getOperationProcessor() {
-        return new Uninstaller($this->composerHandler, $this->container, $this->dispatcher, $this->kernel, $this->extensionsRepository);
+        return new Uninstaller($this->composerHandler, $this->container, $this->dispatcher, $this->kernel, $this->extensionsRepository, $this->componentRepository);
     }
 
     public function testWithoutComposerAsSuccess() {
         $processor = $this->getOperationProcessor();
+
+        $this->componentRepository
+            ->shouldReceive('isRequired')
+            ->once()
+            ->andReturn(false)
+            ->getMock();
 
         $handler = $this->buildOperationHandlerMock()
             ->shouldReceive('operationInfo')
@@ -104,6 +117,12 @@ class UninstallerTest extends OperationSetupTestCase
 
     public function testWithComposerAsSuccess() {
         $processor = $this->getOperationProcessor();
+
+        $this->componentRepository
+            ->shouldReceive('isRequired')
+            ->once()
+            ->andReturn(false)
+            ->getMock();
 
         $handler = $this->buildOperationHandlerMock()
             ->shouldReceive('operationInfo')
@@ -151,6 +170,12 @@ class UninstallerTest extends OperationSetupTestCase
     public function testWithException() {
         $processor = $this->getOperationProcessor();
 
+        $this->componentRepository
+            ->shouldReceive('isRequired')
+            ->once()
+            ->andReturn(false)
+            ->getMock();
+
         $handler = $this->buildOperationHandlerMock()
             ->shouldReceive('operationInfo')
             ->andReturnNull()
@@ -181,6 +206,12 @@ class UninstallerTest extends OperationSetupTestCase
 
     public function testWithExceptionInComposer() {
         $processor = $this->getOperationProcessor();
+
+        $this->componentRepository
+            ->shouldReceive('isRequired')
+            ->once()
+            ->andReturn(false)
+            ->getMock();
 
         $handler = $this->buildOperationHandlerMock()
             ->shouldReceive('operationInfo')
@@ -221,6 +252,41 @@ class UninstallerTest extends OperationSetupTestCase
             'status'    => ExtensionContract::STATUS_AVAILABLE,
             'options'   => []
         ])->andReturnNull()->getMock();
+
+        $processor->run($handler, $extension, ['purge']);
+    }
+
+    public function testWithExceptionForRequiredComponent() {
+        $processor = $this->getOperationProcessor();
+
+        $this->componentRepository
+            ->shouldReceive('isRequired')
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+
+        $handler = $this->buildOperationHandlerMock()
+            ->shouldReceive('operationInfo')
+            ->andReturnNull()
+            ->getMock()
+            ->shouldReceive('operationFailed')
+            ->once()
+            ->andReturnNull()
+            ->getMock();
+
+        $name = 'foo/bar';
+        $extension = $this->buildExtensionMock($name)
+            ->shouldReceive('getPath')
+            ->andReturn('/src/component/foo/bar')
+            ->getMock()
+            ->shouldReceive('setSettings')
+            ->andReturnNull()
+            ->getMock();
+
+        $this->dispatcher->shouldReceive('fire')->once()->andReturnNull()->getMock();
+        $this->migrateManager->shouldReceive('uninstall')->never()->getMock();
+        $this->assetManager->shouldReceive('delete')->never()->getMock();
+        $this->extensionsRepository->shouldReceive('save')->never()->getMock();
 
         $processor->run($handler, $extension, ['purge']);
     }

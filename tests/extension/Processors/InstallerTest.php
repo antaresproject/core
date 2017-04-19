@@ -97,6 +97,12 @@ class InstalledTest extends OperationSetupTestCase
     public function testWithoutComposerAsSuccess() {
         $processor = $this->getOperationProcessor();
 
+        $this->componentsRepository
+            ->shouldReceive('isRequired')
+            ->once()
+            ->andReturn(false)
+            ->getMock();
+
         $handler = $this->buildOperationHandlerMock()
             ->shouldReceive('operationInfo')
             ->twice()
@@ -125,6 +131,7 @@ class InstalledTest extends OperationSetupTestCase
         $this->extensionsRepository->shouldReceive('save')->once()->with($extension, [
             'status'    => ExtensionContract::STATUS_INSTALLED,
             'options'   => $extension->getSettings()->getData(),
+            'required'  => false,
         ])->andReturnNull()->getMock();
 
         $settings = m::mock(SettingsContract::class);
@@ -162,6 +169,12 @@ class InstalledTest extends OperationSetupTestCase
 
     public function testWithComposerAsSuccess() {
         $processor = $this->getOperationProcessor();
+
+        $this->componentsRepository
+            ->shouldReceive('isRequired')
+            ->once()
+            ->andReturn(true)
+            ->getMock();
 
         $handler = $this->buildOperationHandlerMock()
             ->shouldReceive('operationInfo')
@@ -204,6 +217,7 @@ class InstalledTest extends OperationSetupTestCase
         $this->extensionsRepository->shouldReceive('save')->once()->with($extension, [
             'status'    => ExtensionContract::STATUS_INSTALLED,
             'options'   => $extension->getSettings()->getData(),
+            'required'  => true,
         ])->andReturnNull()->getMock();
 
         $settings = m::mock(SettingsContract::class);

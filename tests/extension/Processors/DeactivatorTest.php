@@ -24,6 +24,7 @@ use Antares\Acl\Migration;
 use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Processors\Acl;
 use Antares\Extension\Processors\Deactivator;
+use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Mockery as m;
 
@@ -40,22 +41,34 @@ class DeactivatorTest extends OperationSetupTestCase
      */
     protected $aclMigration;
 
+    /**
+     * @var \Mockery\MockInterface
+     */
+    protected $componentRepository;
+
     public function setUp() {
         parent::setUp();
 
         $this->extensionsRepository = m::mock(ExtensionsRepository::class);
         $this->aclMigration         = m::mock(Migration::class);
+        $this->componentRepository  = m::mock(ComponentsRepository::class);
     }
 
     /**
      * @return Deactivator
      */
     public function getOperationProcessor() {
-        return new Deactivator($this->container, $this->dispatcher, $this->kernel, $this->extensionsRepository, $this->aclMigration);
+        return new Deactivator($this->container, $this->dispatcher, $this->kernel, $this->extensionsRepository, $this->aclMigration, $this->componentRepository);
     }
 
     public function testAsSuccess() {
         $processor = $this->getOperationProcessor();
+
+        $this->componentRepository
+            ->shouldReceive('isRequired')
+            ->once()
+            ->andReturn(false)
+            ->getMock();
 
         $handler = $this->buildOperationHandlerMock()
             ->shouldReceive('operationInfo')
@@ -85,6 +98,12 @@ class DeactivatorTest extends OperationSetupTestCase
     public function testWithException() {
         $processor = $this->getOperationProcessor();
 
+        $this->componentRepository
+            ->shouldReceive('isRequired')
+            ->once()
+            ->andReturn(false)
+            ->getMock();
+
         $handler = $this->buildOperationHandlerMock()
             ->shouldReceive('operationInfo')
             ->andReturnNull()
@@ -102,6 +121,33 @@ class DeactivatorTest extends OperationSetupTestCase
 
         $this->dispatcher->shouldReceive('fire')->twice()->andReturnNull()->getMock();
         $this->aclMigration->shouldReceive('down')->once()->with($name)->andThrow(\Exception::class)->getMock();
+
+        $processor->run($handler, $extension);
+    }
+
+    public function testWithExceptionForRequiredComponent() {
+        $processor = $this->getOperationProcessor();
+
+        $this->componentRepository
+            ->shouldReceive('isRequired')
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+
+        $handler = $this->buildOperationHandlerMock()
+            ->shouldReceive('operationFailed')
+            ->once()
+            ->andReturnNull()
+            ->getMock();
+
+        $name = 'foo/bar';
+        $extension = $this->buildExtensionMock($name)
+            ->shouldReceive('getPath')
+            ->andReturn('/src/component/foo/bar')
+            ->getMock();
+
+        $this->dispatcher->shouldReceive('fire')->once()->andReturnNull()->getMock();
+        $this->aclMigration->shouldReceive('down')->never()->getMock();
 
         $processor->run($handler, $extension);
     }

@@ -56,15 +56,15 @@ class InstallerServiceProvider extends ModuleServiceProvider
      */
     public function register()
     {
-        $this->app->bind(InstallationContract::class, function ($app) {
-            return new Installation($app);
+        $this->app->bind(InstallationContract::class, function () {
+            return new Installation($this->app);
         });
 
-        $this->app->bind(RequirementContract::class, function ($app) {
-            return new Requirement($app);
+        $this->app->bind(RequirementContract::class, function () {
+            return new Requirement($this->app);
         });
-        $this->app->singleton('antares.watchdog', function($app) {
-            return new WatchDog($app->make('config'));
+        $this->app->singleton('antares.watchdog', function() {
+            return new WatchDog($this->app->make('config'));
         });
 
         $this->app->singleton(\Antares\Installation\Repository\Installation::class);

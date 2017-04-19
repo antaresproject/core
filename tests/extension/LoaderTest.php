@@ -1,227 +1,184 @@
 <?php
 
-/**
- * Part of the Antares Project package.
- *
- * NOTICE OF LICENSE
- *
- * Licensed under the 3-clause BSD License.
- *
- * This source file is subject to the 3-clause BSD License that is
- * bundled with this package in the LICENSE file.
- *
- * @package    Antares Core
- * @version    0.9.0
- * @author     Antares Team
- * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
- * @link       http://antaresproject.io
- */
-
 namespace Antares\Extension\TestCase;
 
 use Antares\Extension\Contracts\ExtensionContract;
-use Antares\Extension\Loader;
-use Antares\Extension\Manager;
-use Antares\Foundation\Application;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Filesystem\Filesystem;
 use Mockery as m;
+use Illuminate\Support\ServiceProvider;
+use Antares\Extension\Loader;
 
-class LoaderTest extends \PHPUnit_Framework_TestCase
+class ProviderRepositoryTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
-     * @var \Mockery\MockInterface
+     * Teardown the test environment.
      */
-    protected $application;
+    public function tearDown()
+    {
+        m::close();
+    }
 
-    /**
-     * @var \Mockery\MockInterface
-     */
-    protected $manager;
+    public function testRegisterExtensionProviders() {
+        $service = 'Antares\Extension\TestCase\FooServiceProvider';
+        $manifestPath = '/var/www/laravel/bootstrap/cache';
 
-    /**
-     * @var \Mockery\MockInterface
-     */
-    protected $filesystem;
+        $mock = m::mock($service);
+        $app = m::mock('\Antares\Foundation\Application');
+        $events = m::mock('\Illuminate\Contracts\Events\Dispatcher');
+        $files = m::mock('\Illuminate\Filesystem\Filesystem');
 
-    /**
-     * @var \Mockery\MockInterface
-     */
-    protected $extension;
+        $app->shouldReceive('getCachedExtensionServicesPath')->once()->andReturn("{$manifestPath}/extension.php")->getMock();
 
-    /**
-     * @var string
-     */
-    protected $providersPath = '';
+        $extensionPath    = '/dummy/path';
+        $providersPath    = $extensionPath . '/providers.php';
 
-    public function setUp() {
-        parent::setUp();
-
-        $this->application  = m::mock(Application::class);
-        $this->manager      = m::mock(Manager::class);
-        $this->filesystem   = m::mock(Filesystem::class);
-
-        $extensionPath          = '/dummy/path';
-        $this->providersPath    = $extensionPath . '/providers.php';
-
-        $this->extension = m::mock(ExtensionContract::class)
+        $extension = m::mock(ExtensionContract::class)
             ->shouldReceive('getPath')
             ->once()
             ->andReturn($extensionPath)
             ->getMock();
-    }
 
-    public function tearDown() {
-        parent::tearDown();
-        m::close();
+        $files
+            ->shouldReceive('exists')
+            ->once()
+            ->with($providersPath)
+            ->andReturn(false);
+
+        $stub = new Loader($app, $events, $files);
+
+        $stub->registerExtensionProviders($extension);
     }
 
     /**
-     * @return Loader
+     * Test Orchestra\Extension\ProviderRepository::provides()
+     * method.
      */
-    protected function getLoaderInstance() {
-        return new Loader($this->application, $this->manager, $this->filesystem);
-    }
+    public function testServicesMethodWhenEager()
+    {
+        $service = 'Antares\Extension\TestCase\FooServiceProvider';
+        $manifestPath = '/var/www/laravel/bootstrap/cache';
 
-    public function testRegisterWithoutProviders() {
-        $this->filesystem
-            ->shouldReceive('exists')
-            ->once()
-            ->with($this->providersPath)
-            ->andReturn(false);
+        $mock = m::mock($service);
+        $app = m::mock('\Antares\Foundation\Application');
+        $events = m::mock('\Illuminate\Contracts\Events\Dispatcher');
+        $files = m::mock('\Illuminate\Filesystem\Filesystem');
 
-        $this->getLoaderInstance()->register($this->extension);
-    }
-
-    public function testRegisterWithOneProvider() {
-        $providers = [
-            'path/to/class/one',
+        $schema = [
+            'eager'    => true,
+            'when'     => [],
+            'deferred' => [],
         ];
 
-        $this->filesystem
-            ->shouldReceive('exists')
-            ->once()
-            ->with($this->providersPath)
-            ->andReturn(true)
-            ->getMock()
-            ->shouldReceive('getRequire')
-            ->once()
-            ->with($this->providersPath)
-            ->andReturn($providers)
-            ->getMock();
+        $app->shouldReceive('getCachedExtensionServicesPath')->once()->andReturn("{$manifestPath}/extension.php")
+            ->shouldReceive('resolveProvider')->once()
+            ->with($service)->andReturn($mock)
+            ->shouldReceive('register')->once()->with($mock)->andReturn($mock);
+        $files->shouldReceive('exists')->once()
+            ->with("{$manifestPath}/extension.php")->andReturn(false)
+            ->shouldReceive('put')->once()
+            ->with("{$manifestPath}/extension.php", '<?php return '.var_export([$service => $schema], true).';')
+            ->andReturnNull();
 
-        $serviceProviderInstance = m::mock(ServiceProvider::class)
-            ->shouldReceive('isDeferred')
-            ->once()
-            ->andReturn(false)
-            ->getMock();
+        $mock->shouldReceive('isDeferred')->once()->andReturn(! $schema['eager']);
 
-        $this->application
-            ->shouldReceive('resolveProviderClass')
-            ->once()
-            ->with($providers[0])
-            ->andReturn($serviceProviderInstance)
-            ->getMock()
-            ->shouldReceive('register')
-            ->once()
-            ->with($serviceProviderInstance)
-            ->andReturn($serviceProviderInstance)
-            ->getMock();
+        $stub = new Loader($app, $events, $files);
+        $stub->loadManifest();
+        $stub->provides([$service]);
 
-        $this->getLoaderInstance()->register($this->extension);
+        $this->assertTrue($stub->shouldRecompile());
+        $this->assertNull($stub->writeManifest());
     }
 
-    public function testRegisterWithManyProvider() {
-        $providers = [
-            'path/to/class/one',
-            'path/to/class/two',
-            'path/to/class/three',
+    /**
+     * Test Orchestra\Extension\ProviderRepository::provides()
+     * method.
+     */
+    public function testServicesMethodWhenDeferred()
+    {
+        $service = 'Antares\Extension\TestCase\FooServiceProvider';
+        $manifestPath = '/var/www/laravel/bootstrap/cache';
+
+        $mock = m::mock($service);
+        $app = m::mock('\Antares\Foundation\Application');
+        $events = m::mock('\Illuminate\Contracts\Events\Dispatcher');
+        $files = m::mock('\Illuminate\Filesystem\Filesystem');
+
+        $schema = [
+            'eager'    => false,
+            'when'     => [],
+            'deferred' => [
+                'foo' => $service,
+            ],
         ];
 
-        $this->filesystem
-            ->shouldReceive('exists')
-            ->once()
-            ->with($this->providersPath)
-            ->andReturn(true)
-            ->getMock()
-            ->shouldReceive('getRequire')
-            ->once()
-            ->with($this->providersPath)
-            ->andReturn($providers)
-            ->getMock();
+        $app->shouldReceive('getCachedExtensionServicesPath')->once()->andReturn("{$manifestPath}/extension.php")
+            ->shouldReceive('resolveProvider')->once()
+            ->with($service)->andReturn($mock)
+            ->shouldReceive('addDeferredServices')->once()->andReturn([
+                'foo' => $service,
+            ]);
+        $files->shouldReceive('exists')->once()
+            ->with("{$manifestPath}/extension.php")->andReturn(false)
+            ->shouldReceive('put')->once()
+            ->with("{$manifestPath}/extension.php", '<?php return '.var_export([$service => $schema], true).';')
+            ->andReturnNull();
 
-        $serviceProviderInstance = m::mock(ServiceProvider::class)
-            ->shouldReceive('isDeferred')
-            ->times(3)
-            ->andReturn(false)
-            ->getMock();
+        $mock->shouldReceive('isDeferred')->once()->andReturn(! $schema['eager'])
+            ->shouldReceive('provides')->once()->andReturn(array_keys($schema['deferred']))
+            ->shouldReceive('when')->once()->andReturn($schema['when']);
 
-        foreach($providers as $provider) {
-            $this->application
-                ->shouldReceive('resolveProviderClass')
-                ->once()
-                ->with($provider)
-                ->andReturn($serviceProviderInstance)
-                ->getMock();
-        }
+        $stub = new Loader($app, $events, $files);
+        $stub->loadManifest();
+        $stub->provides([$service]);
 
-        $this->application
-            ->shouldReceive('register')
-            ->times(3)
-            ->with($serviceProviderInstance)
-            ->andReturn($serviceProviderInstance)
-            ->getMock();
-
-        $this->getLoaderInstance()->register($this->extension);
+        $this->assertTrue($stub->shouldRecompile());
+        $this->assertNull($stub->writeManifest());
     }
 
-    public function testRegisterAsDeferred() {
-        $providers = [
-            'path/to/class/one',
+    /**
+     * Test Orchestra\Extension\ProviderRepository::provides()
+     * method.
+     */
+    public function testServicesMethodWhenManifestExists()
+    {
+        $service = 'Antares\Extension\TestCase\FooServiceProvider';
+        $manifestPath = '/var/www/laravel/bootstrap/cache';
+
+        $mock = m::mock($service);
+        $app = m::mock('\Antares\Foundation\Application');
+        $events = m::mock('\Illuminate\Contracts\Events\Dispatcher');
+        $files = m::mock('\Illuminate\Filesystem\Filesystem');
+        $manifestPath = '/var/www/laravel/bootstrap/cache';
+
+        $schema = [
+            'eager'    => true,
+            'when'     => [],
+            'deferred' => [],
         ];
 
-        $this->filesystem
-            ->shouldReceive('exists')
-            ->once()
-            ->with($this->providersPath)
-            ->andReturn(true)
-            ->getMock()
-            ->shouldReceive('getRequire')
-            ->once()
-            ->with($this->providersPath)
-            ->andReturn($providers)
-            ->getMock();
+        $app->shouldReceive('getCachedExtensionServicesPath')->once()->andReturn("{$manifestPath}/extension.php")
+            ->shouldReceive('register')->once()->with($service)->andReturnNull();
+        $files->shouldReceive('exists')->once()->with("{$manifestPath}/extension.php")->andReturn(true)
+            ->shouldReceive('getRequire')->once()->with("{$manifestPath}/extension.php")
+            ->andReturn([$service => $schema]);
 
-        $serviceProviderInstance = m::mock(ServiceProvider::class)
-            ->shouldReceive('isDeferred')
-            ->once()
-            ->andReturn(true)
-            ->getMock()
-            ->shouldReceive('provides')
-            ->once()
-            ->andReturn(m::type('array'))
-            ->getMock();
+        $stub = new Loader($app, $events, $files);
+        $stub->loadManifest();
+        $stub->provides([$service]);
 
-        $services = [];
+        $this->assertFalse($stub->shouldRecompile());
+        $this->assertNull($stub->writeManifest());
+    }
+}
 
-        $this->application
-            ->shouldReceive('resolveProviderClass')
-            ->once()
-            ->with($providers[0])
-            ->andReturn($serviceProviderInstance)
-            ->getMock()
-            ->shouldReceive('getDeferredServices')
-            ->once()
-            ->andReturn($services)
-            ->shouldReceive('setDeferredServices')
-            ->once()
-            ->with($services)
-            ->andReturnNull()
-            ->getMock();
-
-        $this->getLoaderInstance()->register($this->extension);
+class FooServiceProvider extends ServiceProvider
+{
+    public function register()
+    {
+        //
     }
 
+    public function when()
+    {
+        return [];
+    }
 }

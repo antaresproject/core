@@ -124,10 +124,33 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
         ];
 
         $expected = compact('data', 'rules', 'phrases');
+        $expected['custom_url'] = '';
 
         $settings = new Settings($data, $rules, $phrases);
 
         $this->assertEquals($expected, $settings->toArray());
+    }
+
+    public function testEmptyCustomUrl() {
+        $rules = [
+            'a' => 'foo',
+            'b' => 'bar',
+        ];
+
+        $settings = new Settings([], $rules);
+
+        $this->assertEquals('', $settings->getCustomUrl());
+    }
+
+    public function testExistedCustomUrl() {
+        $rules = [
+            'a' => 'foo',
+            'b' => 'bar',
+        ];
+
+        $settings = new Settings([], $rules, [], 'some/url');
+
+        $this->assertEquals('some/url', $settings->getCustomUrl());
     }
 
 }

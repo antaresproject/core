@@ -71,7 +71,7 @@ class MigrateManager implements Publisher
         $this->app      = $app;
         $this->migrator = $migrator;
         $this->seeder   = $seeder;
-        $this->manager  = app()->make('antares.extension');
+        $this->manager  = app()->make(Manager::class);
     }
 
     /**

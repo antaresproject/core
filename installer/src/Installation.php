@@ -119,7 +119,6 @@ class Installation implements InstallationContract
             $this->runApplicationSetup($input);
             return true;
         } catch (Exception $e) {
-            dd($e->getMessage(), $e->getTraceAsString());
             Log::emergency($e);
             $this->app->make('antares.messages')->add('error', $e->getMessage());
             return false;
@@ -418,7 +417,9 @@ class Installation implements InstallationContract
     }
 
     /**
-     * Runs process for installing required components.
+     * Sets queue for installation of components.
+     *
+     * @return void
      */
     public function runComponentsInstallation()
     {
