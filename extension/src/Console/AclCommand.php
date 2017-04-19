@@ -74,7 +74,7 @@ class AclCommand extends Command implements OperationHandlerContract {
 
     /**
      * @param Operation $operation
-     * @return mixed
+     * @return void
      */
     public function operationSuccess(Operation $operation)
     {
@@ -84,7 +84,7 @@ class AclCommand extends Command implements OperationHandlerContract {
 
     /**
      * @param Operation $operation
-     * @return mixed
+     * @return void
      */
     public function operationFailed(Operation $operation)
     {
@@ -94,7 +94,7 @@ class AclCommand extends Command implements OperationHandlerContract {
 
     /**
      * @param Operation $operation
-     * @return mixed
+     * @return void
      */
     public function operationInfo(Operation $operation)
     {

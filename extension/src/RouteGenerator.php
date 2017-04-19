@@ -237,10 +237,8 @@ class RouteGenerator implements RouteGeneratorContract
      */
     public function setPrefix($prefix = null)
     {
-        if (is_null($prefix)) {
-            $this->prefix = 'member';
-        }
-        $this->prefix = $prefix;
+        $this->prefix = ($prefix === null) ? 'member' : $prefix;
+
         return $this;
     }
 

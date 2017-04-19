@@ -66,7 +66,7 @@ class OperationFileOutput implements OperationHandlerContract  {
     /**
      * @return bool
      */
-    public function failed() {
+    public function failed() : bool {
         return $this->failed > 0;
     }
 

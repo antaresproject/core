@@ -42,7 +42,7 @@ abstract class ExtensionCommand extends Command implements OperationHandlerContr
     /**
      * @return array
      */
-	protected function getValidOptions() {
+	protected function getValidOptions() : array {
         return Arr::only($this->options(), $this->validOptions);
     }
 

@@ -43,12 +43,6 @@ return [
         'tickets'
     ],
     'permissions'                => [
-        'member' => [
-            'show-dashboard',
-            'client-update'
-        ]
-    ],
-    'fake_users_count'           => 1
         'roles' => [
             'member' => [
                 'show-dashboard',
@@ -76,5 +70,6 @@ return [
                 'brand-email',
             ],
         ],
-    ]
+    ],
+    'fake_users_count' => 1,
 ];

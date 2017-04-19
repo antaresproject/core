@@ -171,7 +171,7 @@ class Loader
     /**
      * Write the service manifest file to disk.
      *
-     * @return array
+     * @return void
      */
     public function writeManifest()
     {
@@ -183,7 +183,7 @@ class Loader
     /**
      * Write an empty service manifest file to disk.
      *
-     * @return array
+     * @return void
      */
     public function writeFreshManifest()
     {
@@ -288,7 +288,9 @@ class Loader
      */
     protected function loadQueuedServiceProvider($provider, array $options)
     {
-        foreach ($options['when'] as $listen) {
+        $listeners = (array) Arr::get($options, 'when', []);
+
+        foreach ($listeners as $listen) {
             $this->events->listen($listen, function () use ($provider, $options) {
                 $instance = Arr::get($options, 'instance', $provider);
 

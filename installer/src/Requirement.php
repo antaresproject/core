@@ -21,7 +21,6 @@
 
 namespace Antares\Installation;
 
-use Illuminate\Support\Arr;
 use PDOException;
 use Symfony\Component\Process\Process;
 use Antares\Contracts\Installation\Requirement as RequirementContract;

@@ -269,15 +269,21 @@ class Manager {
      */
     public function getActualExtension()
     {
-        if (is_null(Route::getCurrentRoute())) {
-            return false;
+        $route = Route::getCurrentRoute();
+
+        if($route instanceof \Illuminate\Routing\Route) {
+            $action = $route->getActionName();
+
+            if ($action === 'Closure') {
+                return false;
+            }
+
+            preg_match("/.+?(?=\\\)(.*)\Http/", $action, $matches);
+            return empty($matches) ? false : strtolower(trim($matches[1], '\\'));
+
         }
-        $action = Route::getCurrentRoute()->getActionName();
-        if ($action === 'Closure') {
-            return false;
-        }
-        preg_match("/.+?(?=\\\)(.*)\Http/", $action, $matches);
-        return empty($matches) ? false : strtolower(trim($matches[1], '\\'));
+
+        return false;
     }
 
 }
