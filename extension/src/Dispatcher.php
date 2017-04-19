@@ -72,7 +72,10 @@ class Dispatcher {
     }
 
     /**
+     * Register the collection of extensions.
+     *
      * @param Extensions $extensions
+     * @throws Exception
      */
     public function registerCollection(Extensions $extensions) {
         foreach ($extensions as $extension) {
@@ -84,9 +87,12 @@ class Dispatcher {
      * Register the extension.
      *
      * @param  ExtensionContract $extension
+     * @throws Exception
      */
     public function register(ExtensionContract $extension) {
         $this->extensions[] = $extension;
+
+        $this->loader->registerExtensionProviders($extension);
     }
 
     /**
@@ -97,7 +103,6 @@ class Dispatcher {
     public function boot() {
         foreach ($this->extensions as $extension) {
             try {
-                $this->loader->register($extension);
                 $this->eventDispatcher->dispatch(new Booted($extension));
 
                 $name = $extension->getPackage()->getName();
@@ -115,6 +120,8 @@ class Dispatcher {
 
         $this->eventDispatcher->dispatch(new BootedAll());
         $this->eventDispatcher->dispatch('antares.extension: booted');
+
+        $this->loader->writeManifest();
         $this->booted = true;
     }
 
