@@ -29,6 +29,7 @@ use Antares\Datatables\Html\Builder;
 use Antares\Datatables\Datatables;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Exception;
 
 abstract class DataTable extends BaseDataTableService
 {
@@ -60,6 +61,16 @@ abstract class DataTable extends BaseDataTableService
      * @var PerPage 
      */
     protected $perPageAdapter = null;
+
+    /**
+     * Default quick search settings
+     *
+     * @var String
+     */
+    protected $search = [
+        'view'     => 'antares/search::admin.partials._default_row',
+        'category' => 'Foundation'
+    ];
 
     /**
      * Construct
@@ -284,6 +295,39 @@ abstract class DataTable extends BaseDataTableService
         if (!isset($this->ajax)) {
             $groupsFilter->apply($query);
         }
+    }
+
+    public function setPerPage($perPage)
+    {
+        $this->perPage = $perPage;
+        return $this;
+    }
+
+    /**
+     * Gets quick search params
+     * 
+     * @return String
+     */
+    public function getQuickSearchRow(array $data = [])
+    {
+        $pattern = '';
+        try {
+            $pattern = $this->getPatternUrl();
+        } catch (Exception $ex) {
+            
+        }
+        $view = array_get($this->search, 'view');
+        if (!view()->exists($view)) {
+            return false;
+        }
+        $return = [
+            'content'  => view($view, $data)->render(),
+            'category' => array_get($this->search, 'category'),
+        ];
+        if (is_null($id     = array_get($data, 'id'))) {
+            array_set($return, 'id', str_replace('{id}', $id, $pattern));
+        }
+        return $return;
     }
 
 }

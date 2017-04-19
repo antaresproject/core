@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Datatables\Engines;
 
 use Illuminate\Database\Eloquent\Builder;

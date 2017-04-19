@@ -569,6 +569,7 @@ abstract class BaseEngine implements DataTableEngineContract
      */
     public function make($mDataSupport = false, $orderFirst = false)
     {
+
         $this->totalRecords = $this->totalCount();
         if ($this->totalRecords) {
             $this->orderRecords(!$orderFirst);
@@ -599,7 +600,6 @@ abstract class BaseEngine implements DataTableEngineContract
      */
     public function filterRecords()
     {
-
         if ($this->autoFilter && $this->request->isSearchable()) {
             $this->filtering();
         } else {

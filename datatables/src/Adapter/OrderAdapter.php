@@ -101,7 +101,8 @@ class OrderAdapter
         if (php_sapi_name() === 'cli') {
             return false;
         }
-        $session = request()->session();
+
+        $session = session()->driver();
         $key     = $this->getSessionKey();
         return !$session->has($key) ? false : $session->get($key);
     }

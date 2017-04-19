@@ -19,11 +19,9 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Model;
 
 use Antares\Logger\Traits\LogRecorder;
-use Antares\Search\Traits\SearchTrait;
 use Carbon\Carbon;
 
 /**
@@ -39,8 +37,7 @@ use Carbon\Carbon;
 class UserActivity extends Eloquent
 {
 
-    use LogRecorder,
-        SearchTrait;
+    use LogRecorder;
 
     // Disables the log record in this model.
     protected $auditEnabled   = true;

@@ -152,9 +152,11 @@ class CollectionEngine extends BaseEngine
      */
     public function filtering()
     {
+        if ($this->request->hasHeader('search-protection')) {
+            $this->request->setSearchableColumnIndex($this->columns, $this->columnDef['filter']);
+        }
         $columns          = $this->request['columns'];
-        $this->collection = $this->collection->filter(
-                function ($row) use ($columns) {
+        $this->collection = $this->collection->filter(function ($row) use ($columns) {
             $data                  = $this->serialize($row);
             $this->isFilterApplied = true;
             $found                 = [];

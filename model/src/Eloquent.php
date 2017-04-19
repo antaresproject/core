@@ -34,16 +34,6 @@ abstract class Eloquent extends Model
         Customfields;
 
     /**
-     * Default quick search settings
-     *
-     * @var String
-     */
-    protected $search = [
-        'view'     => 'antares/search::admin.partials._default_row',
-        'category' => 'Foundation'
-    ];
-
-    /**
      * Determine if the model instance uses soft deletes.
      *
      * @return bool
@@ -119,29 +109,6 @@ abstract class Eloquent extends Model
     public static function getLogTitle($id, $model)
     {
         return false;
-    }
-
-    /**
-     * Gets quick search params
-     * 
-     * @return String
-     */
-    public function getQuickSearchRow()
-    {
-        $pattern = '';
-        try {
-            $pattern = $this->getPatternUrl();
-        } catch (\Exception $ex) {
-            
-        }
-        return [
-            'content'  => view(array_get($this->search, 'view'), [
-                'model' => $this
-            ])->render(),
-            'url'      => str_replace('{id}', $this->id, $pattern),
-            'category' => array_get($this->search, 'category'),
-            'total'    => $this->total
-        ];
     }
 
 }

@@ -232,7 +232,9 @@ class Builder extends BaseBuilder
 
     protected function getGlobalSearchValue()
     {
+
         if (request()->has('search') && !is_array($value = request()->get('search'))) {
+
             return $value;
         }
         return false;
@@ -284,7 +286,9 @@ class Builder extends BaseBuilder
             }
             $cols = 'data.columns = ' . JavaScriptDecorator::decorate($columns) . ';';
         }
-        $ajax = <<<EOD
+
+        $eventAfterSearch = (request()->has('search') && !request()->ajax()) ? '$(document).trigger( "datatables.searchLoaded", [ data ] );' : '';
+        $ajax             = <<<EOD
             function (data, callback, settings) {                        
                     if(data.draw===1){
                         $cols
@@ -303,6 +307,7 @@ class Builder extends BaseBuilder
                         "data": data,
                         "success": callback
                     }).always(function (data) {
+                        $eventAfterSearch
                         if (instance.length > 0) {
                             instance.LoadingOverlay('hide');
                         }                 

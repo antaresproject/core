@@ -75,6 +75,7 @@ class HtmlServiceProvider extends ServiceProvider
      */
     protected function registerCustomfieldsFinder()
     {
+
         $this->app->singleton('customfields', function () {
             return new CustomfieldsFinder();
         });

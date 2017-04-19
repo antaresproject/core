@@ -35,7 +35,6 @@ use Antares\Contracts\Notification\Recipient;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Antares\Logger\Traits\LogRecorder;
-use Antares\Search\Traits\SearchTrait;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
@@ -59,8 +58,7 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
         QueryFilterTrait,
         CanResetPassword,
         SoftDeletes,
-        LogRecorder,
-        SearchTrait;
+        LogRecorder;
 
     // Disables the log record in this model.
     protected $auditEnabled   = true;
@@ -84,16 +82,6 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
      * @var string
      */
     protected $morphClass = 'User';
-
-    /**
-     * Quick search settings
-     *
-     * @var String
-     */
-    protected $search = [
-        'view'     => 'antares/foundation::users.partials._search_row',
-        'category' => 'Users'
-    ];
 
     /**
      * Available user status as constant.
@@ -137,34 +125,6 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
      */
     protected $casts = [
         'id' => 'integer',
-    ];
-
-    /**
-     * model boost
-     *
-     * @var mixed
-     */
-    protected $boost = 1.0;
-
-    /**
-     * search url pattern to redirect after search row click
-     *
-     * @var String
-     */
-    protected $searchUrlPattern = 'antares/foundation::users/{id}/edit';
-
-    /**
-     * Searchable rules.
-     *
-     * @var array
-     */
-    protected $searchable = [
-        'columns' => [
-            'tbl_users.email'     => 10,
-            'tbl_users.firstname' => 10,
-            'tbl_users.lastname'  => 10,
-            'tbl_users.id'        => 2,
-        ],
     ];
 
     /**

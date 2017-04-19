@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Extension;
 
 use Illuminate\Support\ServiceProvider;

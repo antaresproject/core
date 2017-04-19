@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Datatables;
 
 use Yajra\Datatables\Request as YajraRequest;
@@ -34,12 +33,59 @@ class Request extends YajraRequest
 {
 
     /**
+     * Get searchable column indexes
+     *
+     * @return array
+     */
+    public function searchableColumnIndex()
+    {
+        $searchable = [];
+        for ($i = 0, $c = count($this->get('columns')); $i < $c; $i++) {
+            if ($this->isColumnSearchable($i, false)) {
+                $searchable[] = $i;
+            }
+        }
+
+        return $searchable;
+    }
+
+    public function setSearchableColumnIndex($columns, $filters)
+    {
+
+        if ($this->has('columns')) {
+            return $this;
+        }
+        $replace = [];
+        foreach ($columns as $column) {
+            $replace[] = [
+                "data"       => $column,
+                "name"       => $column,
+                "searchable" => true,
+                "orderable"  => false,
+                "search"     => [
+                    'value' => ''
+                ],
+            ];
+        }
+        $this->merge([
+            'columns' => $replace
+        ]);
+    }
+
+    /**
      * Check if Datatables is searchable.
      *
      * @return bool
      */
     public function isSearchable()
     {
+        if (request()->has('inline_search')) {
+            $this->replace([
+                'start'  => 0,
+                'length' => 25,
+                'search' => request()->get('inline_search')
+            ]);
+        }
         $search = (array) $this->get('search');
         return isset($search['value']) ? $search['value'] != '' : false;
     }

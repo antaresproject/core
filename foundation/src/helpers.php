@@ -86,9 +86,10 @@ if (!function_exists('user_status')) {
      */
     function user_status($user, $html = true)
     {
-        $name = ((int) $user->status) ? 'ACTIVE' : 'Archived';
+        $user = (array) $user;
+        $name = ((int) $user['status']) ? 'ACTIVE' : 'Archived';
         if ($html) {
-            return ((int) $user->status) ? '<span class="label-basic label-basic--success">' . $name . '</span>' : '<span class="label-basic label-basic--danger">' . $name . '</span>';
+            return ((int) $user['status']) ? '<span class="label-basic label-basic--success">' . $name . '</span>' : '<span class="label-basic label-basic--danger">' . $name . '</span>';
         }
         return $name;
     }

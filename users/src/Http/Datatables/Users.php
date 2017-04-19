@@ -38,6 +38,23 @@ class Users extends DataTable
     public $perPage = 25;
 
     /**
+     * Quick search settings
+     *
+     * @var String
+     */
+    protected $search = [
+        'view'     => 'antares/foundation::users.partials._search_row',
+        'category' => 'Users'
+    ];
+
+    /**
+     * search url pattern to redirect after search row click
+     *
+     * @var String
+     */
+    protected $searchUrlPattern = 'antares/foundation::users/{id}/edit';
+
+    /**
      * Filters definition
      *
      * @var array
@@ -61,7 +78,7 @@ class Users extends DataTable
         ]);
 
         if (request()->ajax()) {
-            $columns = request()->get('columns');
+            $columns = request()->get('columns', []);
             $all     = array_where($columns, function ($item, $index) {
                 return array_get($item, 'data') == 'status' && array_get($item, 'search.value') == 'all';
             });
@@ -86,50 +103,53 @@ class Users extends DataTable
         $canDeleteUser  = $acl->can('user-delete');
         $canLoginAsUser = $acl->can('login-as-user');
 
-        return $this->prepare()
-                        ->filterColumn('firstname', function ($query, $keyword) {
-                            $query->where('firstname', 'like', "%$keyword%");
-                        })
-                        ->filterColumn('lastname', function ($query, $keyword) {
-                            $query->where('lastname', 'like', "%$keyword%");
-                        })
-                        ->filterColumn('email', function ($query, $keyword) {
-                            $query->where('email', 'like', "%$keyword%");
-                        })
-                        ->filterColumn('status', function ($query, $keyword) {
-                            $value = null;
-                            switch ($keyword) {
-                                case 'archived':
-                                    $value = 0;
-                                    break;
-                                case 'active':
-                                    $value = 1;
-                                    break;
-                                default:
-                                    if (is_numeric($keyword) && $keyword <= 1) {
-                                        $value = $keyword;
-                                    }
-                                    break;
+        $return = $this->prepare()
+                ->filterColumn('firstname', function ($query, $keyword) {
+                    $query->where('firstname', 'like', "%$keyword%");
+                })
+                ->filterColumn('lastname', function ($query, $keyword) {
+                    $query->where('lastname', 'like', "%$keyword%");
+                })
+                ->filterColumn('email', function ($query, $keyword) {
+                    $query->where('email', 'like', "%$keyword%");
+                })
+                ->filterColumn('status', function ($query, $keyword) {
+                    $value = null;
+                    switch ($keyword) {
+                        case 'archived':
+                            $value = 0;
+                            break;
+                        case 'active':
+                            $value = 1;
+                            break;
+                        default:
+                            if (is_numeric($keyword) && $keyword <= 1) {
+                                $value = $keyword;
                             }
-                            if (!is_null($value)) {
-                                $query->where('status', '=', $value);
-                            }
-                        })
-                        ->editColumn('firstname', function ($row = null) {
-                            return ($row->firstname) ? $row->firstname : '---';
-                        })
-                        ->editColumn('lastname', function ($row = null) {
-                            return ($row->lastname) ? $row->lastname : '---';
-                        })
-                        ->editColumn('email', $this->getUserEmail($query = null))
-                        ->editColumn('created_at', function ($model) {
-                            return format_x_days($model->created_at);
-                        })
-                        ->editColumn('status', function ($model) {
-                            return ((int) $model->status) ? '<span class="label-basic label-basic--success">ACTIVE</span>' : '<span class="label-basic label-basic--danger">Archived</span>';
-                        })
-                        ->addColumn('action', $this->getActionsColumn($canUpdateUser, $canDeleteUser, $canLoginAsUser))
-                        ->make(true);
+                            break;
+                    }
+                    if (!is_null($value)) {
+                        $query->where('status', '=', $value);
+                    }
+                })
+                ->editColumn('firstname', function ($row = null) {
+                    return ($row->firstname) ? $row->firstname : '---';
+                })
+                ->editColumn('lastname', function ($row = null) {
+                    return ($row->lastname) ? $row->lastname : '---';
+                })
+                ->editColumn('email', $this->getUserEmail($query = null))
+                ->editColumn('created_at', function ($model) {
+                    return format_x_days($model->created_at);
+                })
+                ->editColumn('status', function ($model) {
+                    return ((int) $model->status) ? '<span class="label-basic label-basic--success">ACTIVE</span>' : '<span class="label-basic label-basic--danger">Archived</span>';
+                })
+                ->addColumn('action', $this->getActionsColumn($canUpdateUser, $canDeleteUser, $canLoginAsUser))
+                ->make(true);
+        return $return;
+//        vdump($return->original['input']);
+//        exit;
     }
 
     /**
@@ -252,6 +272,16 @@ class Users extends DataTable
         return function ($row) {
             return HTML::link('mailto:' . $row->email, $row->email);
         };
+    }
+
+    /**
+     * Gets patterned url for search engines
+     *
+     * @return String
+     */
+    public static function getPatternUrl()
+    {
+        return handles('antares::users/{id}');
     }
 
 }

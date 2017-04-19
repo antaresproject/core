@@ -86,7 +86,7 @@ class GroupsFilterAdapter
         if (empty($value)) {
             return false;
         }
-        $session = request()->session();
+        $session = session()->driver();
 
         if ($session->has($this->classname)) {
             $values = $session->get($this->classname);
@@ -107,7 +107,7 @@ class GroupsFilterAdapter
         if (php_sapi_name() === 'cli') {
             return false;
         }
-        $session = request()->session();
+        $session = session()->driver();
         if (!$session->has($this->classname)) {
             return false;
         }

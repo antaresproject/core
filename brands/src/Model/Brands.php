@@ -18,18 +18,15 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\Model;
 
-use Antares\Search\Traits\SearchTrait;
 use Antares\Logger\Traits\LogRecorder;
 use Antares\Model\Eloquent;
 
 class Brands extends Eloquent
 {
 
-    use LogRecorder,
-        SearchTrait;
+    use LogRecorder;
 
     // Disables the log record in this model.
     protected $auditEnabled   = true;
@@ -56,27 +53,6 @@ class Brands extends Eloquent
         'default' => false,
     ];
     protected $fillable   = ['name', 'description', 'status', 'default'];
-
-    /**
-     * Default quick search settings
-     *
-     * @var String
-     */
-    protected $search = [
-        'view'     => 'antares/foundation::brands.partials._search_row',
-        'category' => 'Brands'
-    ];
-
-    /**
-     * Searchable rules.
-     *
-     * @var array
-     */
-    protected $searchable = [
-        'columns' => [
-            'tbl_brands.name' => 10,
-        ]
-    ];
 
     /**
      * Query scope for latest by specified field.
