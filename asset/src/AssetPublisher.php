@@ -116,13 +116,13 @@ class AssetPublisher
      */
     public function publishAndPropagate(array $files = array(), $extension = null, $before = [])
     {
+        $container = $this->assetFactory->container($this->position);
         if (empty($files)) {
-            return $this;
+            return $container;
         }
         if (!is_null($extension)) {
             $this->extension = $extension;
         }
-        $container = $this->assetFactory->container($this->position);
         foreach ($files as $file) {
             if ($file->getRealPath() !== false) {
                 $name      = $this->extension . DIRECTORY_SEPARATOR . $file->getRelativePathname();

@@ -18,20 +18,18 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 return
 
-    array(
-        'solution'         => 'Solution',
-        'modules'          =>
+        array(
+            'solution'         => 'Solution',
+            'modules'          =>
             array(
                 'invalid-category'  => 'Module has invalid category. You can use only: domains, products, fraud, addons as module namespace.',
                 'invalid-structure' => 'Module has invalid structure. Only PSR-4 is allowed.',
                 'invalid-manifest'  => 'Module has invalid manifest file',
                 'invalid-name'      => 'Module has invalid name. The name is reserved',
             ),
-        'steps'            =>
+            'steps'            =>
             array(
                 'account'     => 'Create Administrator',
                 'application' => 'Application Information',
@@ -39,17 +37,17 @@ return
                 'requirement' => 'Check Requirements',
                 'install'     => 'Install Antares',
             ),
-        'auth'             =>
+            'auth'             =>
             array(
                 'title'       => 'Authentication Setting',
                 'driver'      => 'Driver',
                 'requirement' =>
-                    array(
-                        'driver' => 'Antares require Auth using the Eloquent Driver',
-                    ),
+                array(
+                    'driver' => 'Antares require Auth using the Eloquent Driver',
+                ),
                 'model'       => 'Model',
             ),
-        'database'         =>
+            'database'         =>
             array(
                 'title'    => 'Database Setting',
                 'type'     => 'Database Type',
@@ -58,46 +56,46 @@ return
                 'username' => 'Username',
                 'password' => 'Password',
             ),
-        'hide-password'    => 'Database password is hidden for security.',
-        'connection'       =>
+            'hide-password'    => 'Database password is hidden for security.',
+            'connection'       =>
             array(
                 'status'  => 'Connection Status',
                 'success' => 'Successful',
                 'fail'    => 'Failed',
             ),
-        'mysqlDumpCommand' =>
+            'mysqlDumpCommand' =>
             array(
                 'status'  => 'Mysqldump command availability',
                 'success' => 'Available',
                 'fail'    => 'Not available',
             ),
-        'system'           =>
+            'system'           =>
             array(
                 'writablePublicPackages' =>
-                    array(
-                        'name'     => 'Packages directory',
-                        'solution' => 'Change permissions to public\packages directory.',
-                    ),
+                array(
+                    'name'     => 'Packages directory',
+                    'solution' => 'Change permissions to public\packages directory.',
+                ),
                 'writablePublic'         =>
-                    array(
-                        'name'     => 'Public directory',
-                        'solution' => 'Change permissions to public directory.',
-                    ),
+                array(
+                    'name'     => 'Public directory',
+                    'solution' => 'Change permissions to public directory.',
+                ),
                 'writableTemp'           =>
-                    array(
-                        'name'     => 'Temp directory',
-                        'solution' => 'Change permissions to storage\temp directory.',
-                    ),
+                array(
+                    'name'     => 'Temp directory',
+                    'solution' => 'Change permissions to storage\temp directory.',
+                ),
                 'writableLogs'           =>
-                    array(
-                        'name'     => 'Logs directory',
-                        'solution' => 'Change permissions to storage\logs directory.',
-                    ),
+                array(
+                    'name'     => 'Logs directory',
+                    'solution' => 'Change permissions to storage\logs directory.',
+                ),
                 'writableLicense'        =>
-                    array(
-                        'name'     => 'License directory',
-                        'solution' => 'Change permissions to storage\license directory.',
-                    ),
+                array(
+                    'name'     => 'License directory',
+                    'solution' => 'Change permissions to storage\license directory.',
+                ),
                 'writableTickets'        =>
                     array(
                         'name'     => 'Tickets directory',
@@ -109,43 +107,42 @@ return
                         'solution' => 'Change permissions to vendor directory.',
                     ),
                 'apacheModules'          =>
-                    array(
-                        'name'     => 'Apache Modules',
-                        'solution' => 'Install missing apache modules.',
-                    ),
+                array(
+                    'name'     => 'Apache Modules',
+                    'solution' => 'Install missing apache modules.',
+                ),
                 'phpExtensions'          =>
-                    array(
-                        'name'     => 'PHP Extensions',
-                        'solution' => 'Install missing php extensions.',
-                    ),
+                array(
+                    'name'     => 'PHP Extensions',
+                    'solution' => 'Install missing php extensions.',
+                ),
                 'version'                =>
-                    array(
-                        'name'     => 'PHP Version',
-                        'solution' => 'Update your php version.',
-                    ),
-                'title'                  => 'System Requirement',
+                array(
+                    'name'     => 'PHP Version',
+                    'solution' => 'Update your php version.',
+                ),
+                'title'                  => 'System Requirements',
                 'description'            => 'Please ensure the following requirement is profilled before installing Antares.',
                 'requirement'            => 'Requirement',
                 'status'                 => 'Status',
                 'writableStorage'        =>
-                    array(
-                        'name' => 'Storage directory',
-                    ),
+                array(
+                    'name' => 'Storage directory',
+                ),
                 'writableAsset'          =>
-                    array(
-                        'name' => 'Assets directory',
-                    ),
+                array(
+                    'name' => 'Assets directory',
+                ),
             ),
-        'status'           =>
+            'status'           =>
             array(
                 'work'  => 'Workable',
                 'not'   => 'Not Workable',
                 'still' => 'Still Workable',
             ),
-        'user'             =>
+            'user'             =>
             array(
                 'duplicate' => 'Unable to install when there already user registered.',
             ),
-        'verify'           => 'Verify result',
-        'stopAndBack'      => 'Stop and Back',
-    );
+            'verify'           => 'Verify result',
+);

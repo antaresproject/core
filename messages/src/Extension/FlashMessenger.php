@@ -19,13 +19,12 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Messages\Extension;
 
-use Twig_Extension;
-use Twig_SimpleFunction;
-use Antares\Asset\Factory;
 use Antares\Contracts\Messages\MessageBag;
+use Antares\Asset\Factory;
+use Twig_SimpleFunction;
+use Twig_Extension;
 
 class FlashMessenger extends Twig_Extension
 {
@@ -87,8 +86,8 @@ class FlashMessenger extends Twig_Extension
             }
             foreach ($this->scripts['resources'] as $name => $configuration) {
                 (is_array($configuration)) ?
-                                $this->container->add($name, $configuration[0], $configuration[1]) :
-                                $this->container->add($name, $configuration);
+                        $this->container->add($name, $configuration[0], $configuration[1]) :
+                        $this->container->add($name, $configuration);
             }
 
             $this->container->inlineScript('flash-messenger', sprintf($this->inline(), $html));
@@ -121,7 +120,7 @@ class FlashMessenger extends Twig_Extension
 
 
                 array_walk($flashMessages, function($current) use ($key, &$html) {
-                    $html.= "generate('{$key}', '{$current}');\n";
+                    $html .= "generate('{$key}', '{$current}');\n";
                 });
             }
         }

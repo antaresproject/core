@@ -6,21 +6,31 @@
 {% block content %}       
     {% set databaseSettings=checklist|array_only(['databaseConnection', 'mysqlDumpCommand']) %}   
     {% set checklist=unset(checklist,['databaseConnection','mysqlDumpCommand']) %}   
+    {% set formbuilder=app('form') %}
+    {{ formbuilder.open({'url':handles('antares::install/prepare'), 'method':'GET','class':'form--hor'})|raw }}
+    {% if token is not null %}
+        {{ formbuilder.token()|raw }}
+    {% endif %}    
+    {% for hidden in hiddens %}
+        {{ hidden|raw }}
+    {% endfor %}
+
     <div class="col-group">
-        <div class="col-16">
+        <div class="col-dt-16 col-mb-16"> 
             {% include 'antares/installer::index._requirement' %}
-        </div>
-        <div class="col-16">
             {% include 'antares/installer::index._database' %}
+            <div class="separator"></div>
         </div>
     </div>
     {% if (installable==true) %}        
         <div class="app-content__footer">
             <div class="btn-group">
-                <a href="{{ handles('antares::install/prepare') }}" class="btn btn--md btn--primary mdl-button mdl-js-button mdl-js-ripple-effect">
+                <button type="submit" class="btn btn--md btn--primary mdl-button mdl-js-button mdl-js-ripple-effect">
                     {{ trans('antares/foundation::label.next') }} <i class="pl8 zmdi zmdi-long-arrow-right"></i>
-                </a>
+                </button>
             </div>
         </div>
     {% endif %}
+    {{ formbuilder.close()|raw }}
+
 {% endblock %}

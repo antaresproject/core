@@ -47,6 +47,7 @@ class DatatableDependableActions extends AbstractDependableActions
                 $return = array_merge($return, $resolved);
             }
         }
+
         return $return;
     }
 

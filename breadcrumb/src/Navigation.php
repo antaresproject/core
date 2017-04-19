@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Breadcrumb;
 
 use Illuminate\Container\Container;
@@ -26,7 +25,8 @@ use DaveJamesMiller\Breadcrumbs\Manager as Breadcrumbs;
 use Illuminate\Contracts\View\Factory as View;
 use Illuminate\Routing\UrlGenerator;
 
-abstract class Navigation {
+abstract class Navigation
+{
 
     /**
      *
@@ -45,13 +45,18 @@ abstract class Navigation {
      */
     protected $view;
 
-    public function __construct(Container $container, UrlGenerator $url, View $view) {
-        $this->breadcrumbs  = $container->make('breadcrumbs');
-        $this->url          = $url;
-        $this->view         = $view;
+    public function __construct(Container $container, UrlGenerator $url, View $view)
+    {
+        $this->breadcrumbs = $container->make('breadcrumbs');
+        $this->url         = $url;
+        $this->view        = $view;
     }
 
-    protected function shareOnView($name) {
+    protected function shareOnView($name)
+    {
+        if (php_sapi_name() === 'cli') {
+            return;
+        }
         $this->view->share('breadcrumbs', $this->breadcrumbs->render($name));
     }
 

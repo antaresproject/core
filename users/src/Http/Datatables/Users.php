@@ -200,19 +200,6 @@ class Users extends DataTable
             0     => trans('antares/users::messages.statuses.archived', ['count' => array_get($statuses, 0, 0)]),
             1     => trans('antares/users::messages.statuses.active', ['count' => array_get($statuses, 1, 0)])
         ];
-
-//
-//
-//        $selected = app('request')->ajax() ? null : 1;
-//        return Form::select('status', [
-//                    'all' => trans('antares/users::messages.statuses.all'),
-//                    0     => trans('antares/users::messages.statuses.archived', ['count' => array_get($statuses, 0, 0)]),
-//                    1     => trans('antares/users::messages.statuses.active', ['count' => array_get($statuses, 1, 0)]),
-//                        ], $selected, [
-//                    'data-prefix'            => '',
-//                    'data-selectAR--mdl-big' => "true",
-//                    'class'                  => 'users-select-status mr24 select2--prefix',
-//        ]);
     }
 
     /**
@@ -242,10 +229,7 @@ class Users extends DataTable
             }
             if (!is_null($user) && $user->id !== $row->id && $canLoginAsUser) {
                 $this->addTableAction('login_as', $row, $html->link(handles("login/with/{$row->id}"), trans('antares/control::label.login_as', ['fullname' => $row->fullname]), [
-                            'class'            => 'triggerable confirm',
-                            'data-icon'        => 'odnoklassniki',
-                            'data-title'       => trans("Are you sure?"),
-                            'data-description' => trans('antares/control::label.login_as', ['fullname' => $row->fullname]),
+                            'data-icon' => 'odnoklassniki',
                 ]));
             }
 

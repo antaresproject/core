@@ -57,20 +57,18 @@ class GeoIP extends SupportGeoIP
 
     public function getLocation($ip = null)
     {
-//        try {
-//            $ip       = is_null($ip) ? request()->ip() : $ip;
-//            $client   = new Client();
-//            $res      = $client->createRequest('GET', self::LOCATION . $ip);
-//            $response = $res->send();
-//            if ($response->getStatusCode() === 200) {
-//                $body = $response->getBody(true);
-//                return json_decode($body, true);
-//            }
-//        } catch (Exception $ex) {
-//            
-//        }
-
-        return parent::getLocation($ip);
+        try {
+            $ip       = is_null($ip) ? request()->ip() : $ip;
+            $client   = new Client();
+            $res      = $client->createRequest('GET', self::LOCATION . $ip);
+            $response = $res->send();
+            if ($response->getStatusCode() === 200) {
+                $body = $response->getBody(true);
+                return json_decode($body, true);
+            }
+        } catch (Exception $ex) {
+            
+        }
     }
 
     /**

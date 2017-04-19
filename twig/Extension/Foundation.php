@@ -159,6 +159,9 @@ class Foundation extends Twig_Extension
                         app('antares.meta')->set($arguments[0], $arguments[1]);
                         return;
                     }),
+            new Twig_SimpleFunction('get_base_meta_title', function ($default = null) {
+                        return memory('site.name', $default);
+                    }),
             new Twig_SimpleFunction('get_meta', function ($name) {
                         $arguments = func_get_args();
                         $default   = isset($arguments[1]) ? $arguments[1] : null;

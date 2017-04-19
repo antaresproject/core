@@ -56,7 +56,8 @@ class UserViewBreadcrumbMenu extends MenuHandler
      */
     public function getTitleAttribute($value)
     {
-        return $this->getUser()->fullname;
+        $user = $this->getUser();
+        return '#' . $user->id . ' ' . $user->fullname;
     }
 
     /**
@@ -141,12 +142,7 @@ class UserViewBreadcrumbMenu extends MenuHandler
                     ->add('user-login-as', '^:user-view')
                     ->title(trans('antares/control::label.login_as', ['fullname' => $user->fullname]))
                     ->link(handles("login/with/{$uid}"))
-                    ->icon('zmdi-odnoklassniki')
-                    ->attributes([
-                        'class'            => 'triggerable confirm',
-                        'data-title'       => trans("Are you sure?"),
-                        'data-description' => trans('antares/control::label.login_as', ['fullname' => $user->fullname])]
-            );
+                    ->icon('zmdi-odnoklassniki');
         }
     }
 

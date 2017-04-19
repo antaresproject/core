@@ -1,69 +1,79 @@
-<div class="card card--chart-small card--primary-light">
-    <div class="card__header">
-        <div class="card__header--top">
-            <span>{{ trans('antares/foundation::install.database.title') }}</span>
-        </div> 
-    </div>
-    <div class="card__header-chart" >
-        <span class="card__indicator">
-            {{ trans('antares/foundation::install.verify', {'filename':'<code title="'~base_path('resources/config/database.php')~'">resources/config/database.php</code>'})|raw }} 
-        </span>
-    </div>
-    <div class="card__content"> 
-        <div class="form-block">
-            <label>{{ trans('antares/foundation::install.database.type') }}</label>
-            <input disabled  type="text" value="{{ database['driver'] }}" class="w370">
+<fieldset name="inputs">
+    <legend>{{ trans('antares/foundation::install.database.title') }}</legend>
+    <div class="col-group">                
+
+        <div class="form-block" > 
+            <div class="col-dt-2 col-2 col-mb-2">
+                <label class="form-block__name">{{ trans('antares/foundation::install.database.type') }}</label>
+            </div>
+            <div class="col-dt-6 col-6 col-mb-6">
+                <div class="input-field ">                
+                    <input disabled  type="text" value="{{ database['driver'] }}" class="w370">
+                </div> 
+            </div>               
         </div>
         {% if database['host'] is defined %}
-            <div class="form-block">
-                <label>{{ trans('antares/foundation::install.database.host') }}</label>
-                <input disabled type="text" value="{{ database['host'] }}" class="w370">
+            <div class="form-block" > 
+                <div class="col-dt-2 col-2 col-mb-2">
+                    <label class="form-block__name">{{ trans('antares/foundation::install.database.host') }}</label>
+                </div>
+                <div class="col-dt-6 col-6 col-mb-6">
+                    <div class="input-field ">                
+                        <input disabled type="text" value="{{ database['host'] }}" class="w370">
+                    </div> 
+                </div>               
             </div>
         {% endif %}
-        <div class="form-block">
-            <label>{{ trans('antares/foundation::install.database.name') }}</label>
-            <input disabled type="text" value="{{ database['database'] }}" class="w370">
+        <div class="form-block" > 
+            <div class="col-dt-2 col-2 col-mb-2">
+                <label class="form-block__name">{{ trans('antares/foundation::install.database.name') }}</label>
+            </div>
+            <div class="col-dt-6 col-6 col-mb-6">
+                <div class="input-field ">                
+                    <input disabled type="text" value="{{ database['database'] }}" class="w370">
+                </div> 
+            </div>               
         </div>
-        <div class="form-block">
-            <label>{{ trans('antares/foundation::install.connection.status') }}</label>
-            {% if databaseSettings.databaseConnection['is']==true %}  
-                <div class="alert alert--sm alert--glow alert--success alert--sm alert--border mb20">
-                    <i class="alert__icon zmdi zmdi-check-circle"></i>
-                    <div>
+        <div class="form-block" > 
+            <div class="col-dt-2 col-2 col-mb-2">
+                <label class="form-block__name">{{ trans('antares/foundation::install.connection.status') }}</label>
+            </div>
+            <div class="col-dt-6 col-6 col-mb-6">
+                <div class="input-field ">                
+                    {% if databaseSettings.databaseConnection['is']==true %}  
+                        <input data-icheck="true" type="checkbox" checked="checked">
                         {{ trans('antares/foundation::install.connection.success') }}
-                    </div>
-                </div>
-            {% else %}                
-                <div class="alert alert--sm alert--glow alert--error alert--sm alert--border mb20">
-                    <i class="alert__icon zmdi zmdi-alert-circle-o"></i>
-                    <div>
-                        {{ trans('antares/foundation::install.connection.fail') }}
-                        {% if databaseSettings.databaseConnection['data']['error'] is defined %} 
-                            <p>
-                                <strong>Error:</strong> {{ databaseSettings.databaseConnection['data']['error']}}
-                            </p>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endif %}
+                    {% else %}                
+                        <div class="alert alert--sm alert--glow alert--error alert--sm alert--border mb20">
+                            <i class="alert__icon zmdi zmdi-alert-circle-o"></i>
+                            <div>
+                                {{ trans('antares/foundation::install.connection.fail') }}
+                                {% if databaseSettings.databaseConnection['data']['error'] is defined %} 
+                                    <p>
+                                        <strong>Error:</strong> {{ databaseSettings.databaseConnection['data']['error']}}
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div> 
+            </div>               
         </div>
-        <div class="form-block">
-            <label>{{ trans('antares/foundation::install.mysqlDumpCommand.status')}}</label>
-            {% if databaseSettings.mysqlDumpCommand['is']==true %}  
-                <div class="alert alert--sm alert--glow alert--success alert--sm alert--border mb20">
-                    <i class="alert__icon zmdi zmdi-check-circle"></i>
-                    <div>
+        <div class="form-block" > 
+            <div class="col-dt-2 col-2 col-mb-2">
+                <label class="form-block__name">{{ trans('antares/foundation::install.mysqlDumpCommand.status')}}</label>
+            </div>
+            <div class="col-dt-6 col-6 col-mb-6">
+                <div class="input-field ">                
+                    {% if databaseSettings.mysqlDumpCommand['is']==true %}  
+                        <input data-icheck="true" type="checkbox" checked="checked">
                         {{ trans('antares/foundation::install.mysqlDumpCommand.success')}}
-                    </div>
-                </div>
-            {% else %}
-                <div class="alert alert--sm alert--glow alert--error alert--sm alert--border mb20">
-                    <i class="alert__icon zmdi zmdi-alert-circle-o"></i>
-                    <div>
+                    {% else %}
+                        <input data-icheck="true" type="checkbox" disabled="disabled">
                         {{ trans('antares/foundation::install.mysqlDumpCommand.fail')}}                   
-                    </div>
-                </div>
-            {% endif %}            
+                    {% endif %} 
+                </div> 
+            </div>               
         </div>
     </div>
-</div>
+</fieldset>

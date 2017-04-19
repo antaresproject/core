@@ -18,10 +18,7 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 return [
-    'dd' => 'sdsdsd',
     'validation'                 => [
         'required_min_php_version' => '5.5',
         'required_php_extensions'  => [
@@ -46,6 +43,12 @@ return [
         'tickets'
     ],
     'permissions'                => [
+        'member' => [
+            'show-dashboard',
+            'client-update'
+        ]
+    ],
+    'fake_users_count'           => 1
         'roles' => [
             'member' => [
                 'show-dashboard',

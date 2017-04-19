@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Listeners;
 
 use Closure;
@@ -83,7 +82,7 @@ class DatatableMassActionsDependableActions extends DatatableDependableActions
     {
         $class = array_get($attributes, 'class', '');
         if (!str_contains($class, $cssClass)) {
-            $class.=' ' . $cssClass;
+            $class .= ' ' . $cssClass;
         }
         return array_set($attributes, 'class', $class);
     }

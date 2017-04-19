@@ -98,31 +98,27 @@ class Installer
      */
     protected function clearStorage()
     {
-        $finder = new Finder();
-        $paths  = (array) config('antares/installer::storage_path', []);
-        $finder = $finder->files()->ignoreVCS(true);
-
+        $filesystem = File::getFacadeRoot();
+        $finder     = new Finder();
+        $paths      = config('antares/installer::storage_path');
+        $finder     = $finder->files()->ignoreVCS(true);
         foreach ($paths as $path) {
             $current = storage_path($path);
-
             if (!is_dir($current)) {
                 continue;
             }
             $finder = $finder->in($current);
         }
-
         $finder->exclude('.gitignore');
-
         foreach ($finder as $element) {
-            File::delete($element);
+            $filesystem->delete($element);
         }
-
         try {
             $directories = $finder->directories();
             foreach ($directories as $dir) {
-                $files = File::allFiles($dir->getPath(), true);
+                $files = $filesystem->allFiles($dir->getPath(), true);
                 if (empty($files)) {
-                    File::deleteDirectory($dir->getPath());
+                    $filesystem->deleteDirectory($dir->getPath());
                 }
             }
         } catch (Exception $e) {
@@ -132,7 +128,7 @@ class Installer
 
     /**
      * clear global cache
-     *
+     * 
      * @return boolean
      */
     protected function clearCache()

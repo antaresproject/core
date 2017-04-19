@@ -59,9 +59,10 @@ return [
      */
     'connections' => [
         'sqlite'       => [
-            'driver'   => 'sqlite',
-            'database' => database_path() . DIRECTORY_SEPARATOR . 'database.sqlite3',
-            'prefix'   => '',
+            'driver'    => 'sqlite',
+            'database'  => database_path() . DIRECTORY_SEPARATOR . 'database.sqlite3',
+            'prefix'    => '',
+            'collation' => 'utf8_general_ci',
         ],
         'remote-mysql' => [
             'driver'    => 'mysql',

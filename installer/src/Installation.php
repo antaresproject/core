@@ -384,7 +384,8 @@ class Installation implements InstallationContract
     {
 
         $faker = Faker::create();
-        for ($i = 0; $i < 200; $i++) {
+        $count = config('antares/installer::fake_users_count', 1);
+        for ($i = 0; $i < $count; $i++) {
             User::unguard();
             $user = $this->app->make('antares.user')->newInstance();
             $fill = [
