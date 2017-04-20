@@ -21,6 +21,7 @@
 
 namespace Antares\Publisher;
 
+use Antares\Extension\Manager;
 use Illuminate\Database\Seeder as IlluminateSeeder;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Database\Migrations\Migrator;
@@ -52,6 +53,13 @@ class MigrateManager implements Publisher
     protected $seeder;
 
     /**
+     * Extensions manager instance.
+     *
+     * @var Manager
+     */
+    protected $manager;
+
+    /**
      * Construct a new instance.
      * 
      * @param Container $app
@@ -63,6 +71,7 @@ class MigrateManager implements Publisher
         $this->app      = $app;
         $this->migrator = $migrator;
         $this->seeder   = $seeder;
+        $this->manager  = app()->make(Manager::class);
     }
 
     /**
@@ -133,11 +142,13 @@ class MigrateManager implements Publisher
      */
     protected function getPaths($name, $directory = 'migrations')
     {
-        $extension  = $this->app->make('antares.extension');
-        $finder     = $this->app->make('antares.extension.finder');
-        $extension->fill();
-        $basePath   = $finder->resolveExtensionPath(rtrim($extension->option($name, 'path'), '/'));
-        $sourcePath = $finder->resolveExtensionPath(rtrim($extension->option($name, 'source-path'), '/'));
+        $package = $this->manager->getAvailableExtensions()->findByName($name);
+
+        if($package === null) {
+            return [];
+        }
+
+        $basePath = $package->getPath();
 
         $paths = [
             "{$basePath}/resources/database/{$directory}/",
@@ -145,13 +156,6 @@ class MigrateManager implements Publisher
             "{$basePath}/src/{$directory}/",
         ];
 
-        if ($basePath !== $sourcePath && !empty($sourcePath)) {
-            $paths = array_merge($paths, [
-                "{$sourcePath}/resources/database/{$directory}/",
-                "{$sourcePath}/resources/{$directory}/",
-                "{$sourcePath}/src/{$directory}/",
-            ]);
-        }
         return $paths;
     }
 
@@ -211,20 +215,19 @@ class MigrateManager implements Publisher
      */
     protected function uninstallPathes($name, $directory = 'migrations')
     {
-        $finder     = $this->app->make('antares.extension.finder');
-        $basePathes = [
-            $finder->resolveExtensionPath(rtrim('vendor::antares/' . $name, '/')),
-            $finder->resolveExtensionPath(rtrim('vendor::antares/modules/' . $name, '/')),
-        ];
-        $paths      = [];
-        foreach ($basePathes as $basePath) {
-            $paths[] = [
-                "{$basePath}/resources/database/{$directory}/",
-                "{$basePath}/resources/{$directory}/",
-                "{$basePath}/src/{$directory}/",
-            ];
+        $package = $this->manager->getAvailableExtensions()->findByName($name);
+
+        if($package === null) {
+            return [];
         }
-        return array_flatten($paths);
+
+        $basePath = $package->getPath();
+
+        return [
+            "{$basePath}/resources/database/{$directory}/",
+            "{$basePath}/resources/{$directory}/",
+            "{$basePath}/src/{$directory}/",
+        ];
     }
 
     /**

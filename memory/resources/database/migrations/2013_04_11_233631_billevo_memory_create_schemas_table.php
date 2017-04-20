@@ -42,7 +42,6 @@ class BillevoMemoryCreateSchemasTable extends Migration
         $this->down();
         try {
             $this->createComponentsTbl();
-            $this->createComponentsConfigTbl();
             $this->createActionsTbl();
             $this->createRolesTbl();
             $this->createBrandsTbl();
@@ -71,7 +70,6 @@ class BillevoMemoryCreateSchemasTable extends Migration
         Schema::dropIfExists('tbl_permissions');
         Schema::dropIfExists('tbl_roles');
         Schema::dropIfExists('tbl_actions');
-        Schema::dropIfExists('tbl_component_config');
         Schema::dropIfExists('tbl_components');
         Schema::dropIfExists('tbl_brands');
         Schema::dropIfExists('tbl_antares_options');
@@ -108,37 +106,13 @@ class BillevoMemoryCreateSchemasTable extends Migration
     {
         Schema::create('tbl_components', function (Blueprint $table) {
             $table->increments('id')->unsigned();
+            $table->string('vendor');
             $table->string('name');
-            $table->string('full_name', 500);
-            $table->text('description')->nullable();
             $table->tinyInteger('status')->default(1);
-            $table->string('path', 500);
-            $table->string('author')->nullable();
-            $table->string('url')->nullable();
-            $table->string('version')->nullable();
-            $table->integer('order')->default(1)->unsigned();
-            $table->unique('name');
+            $table->boolean('required')->default(0);
             $table->text('options')->nullable();
-        });
-    }
 
-    /**
-     * COMPONENT CONFIG TABLE
-     */
-    private function createComponentsConfigTbl()
-    {
-        Schema::create('tbl_component_config', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('component_id')->unsigned();
-            $table->string('handles');
-            $table->string('autoload', 500)->nullable();
-            $table->string('provides', 500)->nullable();
-        });
-        Schema::table('tbl_component_config', function (Blueprint $table) {
-            $table->foreign('component_id')
-                    ->references('id')
-                    ->on('tbl_components')
-                    ->onDelete('cascade');
+            $table->unique(['vendor', 'name']);
         });
     }
 

@@ -19,245 +19,117 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Controllers\Extension;
 
-use Antares\Contracts\Extension\Listener\Activator as ActivatorListener;
-use Antares\Contracts\Extension\Listener\Deactivator as DeactivatorListener;
-use Antares\Contracts\Extension\Listener\Delete as DeleteListener;
-use Antares\Contracts\Extension\Listener\Migrator as MigratorListener;
-use Antares\Contracts\Extension\Listener\Uninstaller as UninstallListener;
-use Antares\Extension\Processor\Activator as ActivatorProcessor;
-use Antares\Extension\Processor\Deactivator as DeactivatorProcessor;
-use Antares\Extension\Processor\Delete as DeleteProcessor;
-use Antares\Extension\Processor\Migrator as MigratorProcessor;
-use Antares\Extension\Processor\Uninstaller as UninstallerProcessor;
-use Antares\Support\Facades\Publisher;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Fluent;
+use Antares\Extension\ExtensionProgress;
+use Antares\Extension\Jobs\ExtensionsBackgroundJob;
+use Antares\Extension\Manager;
+use Antares\Extension\Processors\Activator;
+use Antares\Extension\Processors\Deactivator;
+use Antares\Extension\Processors\Installer;
+use Antares\Extension\Processors\Uninstaller;
 
-class ActionController extends Controller implements ActivatorListener, DeactivatorListener, MigratorListener, UninstallListener, DeleteListener
-{
+class ActionController extends Controller {
+
+    /**
+     * @var Manager
+     */
+    protected $extensionManager;
+
+    /**
+     * @var ExtensionProgress
+     */
+    protected $progress;
+
+    /**
+     * ActionController constructor.
+     * @param Manager $extensionManager
+     * @param ExtensionProgress $progress
+     */
+    public function __construct(Manager $extensionManager, ExtensionProgress $progress) {
+        parent::__construct();
+
+        $this->extensionManager = $extensionManager;
+        $this->progress         = $progress;
+    }
 
     /**
      * Setup controller filters.
      *
      * @return void
      */
-    protected function setupMiddleware()
-    {
+    protected function setupMiddleware() {
         $this->middleware('antares.auth');
         $this->middleware('antares.manage');
         $this->middleware('antares.csrf');
 
-        $this->middleware('antares.can::component-activate', ['only' => ['activate'],]);
-        $this->middleware('antares.can::component-migrate', ['only' => ['migrate'],]);
-        $this->middleware('antares.can::component-deactivate', ['only' => ['deactivate'],]);
-        $this->middleware('antares.can::component-uninstall', ['only' => ['uninstall'],]);
-        $this->middleware('antares.can::component-delete', ['only' => ['delete'],]);
+        $this->canMiddleware('install');
+        $this->canMiddleware('uninstall');
+        $this->canMiddleware('activate');
+        $this->canMiddleware('deactivate');
     }
 
     /**
-     * Activate an extension.
-     *
-     * GET (:antares)/extensions/activate/(:name)
-     *
-     * @param  ActivatorProcessor  $activator
-     * @param  string  $vendor
-     * @param  string|null  $package
-     *
-     * @return mixed
+     * @param string $operation
      */
-    public function activate(ActivatorProcessor $activator, $vendor, $package = null)
-    {
-        return $activator->activate($this, $this->getExtension($vendor, $package));
+    private function canMiddleware(string $operation) {
+        $this->middleware('antares.can::component-' . $operation, ['only' => [$operation]]);
     }
 
     /**
-     * Update an extension, run migration and asset publish command.
-     *
-     * GET (:antares)/extensions/activate/(:name)
-     *
-     * @param  MigratorProcessor  $migrator
-     * @param  string  $vendor
-     * @param  string|null  $package
-     *
+     * @param string $vendor
+     * @param string $name
      * @return mixed
      */
-    public function migrate(MigratorProcessor $migrator, $vendor, $package = null)
-    {
-        return $migrator->migrate($this, $this->getExtension($vendor, $package));
+    public function install(string $vendor, string $name) {
+        return $this->tryRunOperation([Installer::class, Activator::class], $vendor, $name);
     }
 
     /**
-     * Deactivate an extension.
-     *
-     * GET (:antares)/extensions/deactivate/(:name)
-     *
-     * @param  DeactivatorProcessor  $deactivator
-     * @param  string  $vendor
-     * @param  string|null  $package
-     *
+     * @param string $vendor
+     * @param string $name
      * @return mixed
      */
-    public function deactivate(DeactivatorProcessor $deactivator, $vendor, $package = null)
-    {
-        return $deactivator->deactivate($this, $this->getExtension($vendor, $package));
+    public function uninstall(string $vendor, string $name) {
+        return $this->tryRunOperation([Uninstaller::class], $vendor, $name);
     }
 
     /**
-     * uninstalling an extension.
-     * GET (:antares)/extensions/uninstall/(:name)
-     * @param  DeactivatorProcessor  $deactivator
-     * @param  string  $vendor
-     * @param  string|null  $package
+     * @param string $vendor
+     * @param string $name
      * @return mixed
      */
-    public function uninstall(UninstallerProcessor $uninstaller, $vendor, $package = null)
-    {
-        $extension   = $this->getExtension($vendor, $package);
-        $uninstalled = $uninstaller->uninstall($this, $extension);
-        return ($uninstalled) ? $this->uninstallHasSucceed($extension) : $this->uninstallHasFailed($extension, []);
+    public function activate(string $vendor, string $name) {
+        return $this->tryRunOperation([Activator::class], $vendor, $name);
     }
 
     /**
-     * delete an extension.
-     * GET (:antares)/extensions/delete/(:name)
-     * @param UninstallerProcessor $uninstaller
-     * @param DeleteProcessor $delete
-     * @param  string  $vendor
-     * @param  string|null  $package
+     * @param string $vendor
+     * @param string $name
      * @return mixed
      */
-    public function delete(UninstallerProcessor $uninstaller, DeleteProcessor $delete, $vendor, $package = null)
-    {
-        return $delete->delete($this, $uninstaller, $this->getExtension($vendor, $package));
+    public function deactivate(string $vendor, string $name) {
+        return $this->tryRunOperation([Deactivator::class], $vendor, $name);
     }
 
     /**
-     * Response when extension delete has failed.
-     * @param  Fluent  $extension
-     * @param  array  $errors
+     * @param array $operationsClassNames
+     * @param string $vendor
+     * @param string $name
      * @return mixed
      */
-    public function deleteHasFailed(Fluent $extension, array $errors)
-    {
-        return $this->queueToPublisher($extension);
-    }
+    private function tryRunOperation(array $operationsClassNames, string $vendor, string $name) {
+        $this->progress->setSteps( count($operationsClassNames) );
+        $this->progress->start();
 
-    /**
-     * Response when extension delete has succeed.
-     * @param  Fluent  $extension
-     * @return mixed
-     */
-    public function deleteHasSucceed(Fluent $extension)
-    {
-        $message = trans('antares/foundation::response.extensions.delete.success', $extension->getAttributes());
-        return $this->redirectWithMessage(handles('antares::extensions'), $message);
-    }
+        $job = new ExtensionsBackgroundJob($vendor . '/' . $name, $operationsClassNames, $this->progress->getFilePath());
+        $job->onQueue('install');
 
-    /**
-     * Response when extension uninstall has failed.
-     * @param  Fluent  $extension
-     * @param  array  $errors
-     * @return mixed
-     */
-    public function uninstallHasFailed(Fluent $extension, array $errors)
-    {
-        $message = trans('antares/foundation::response.extensions.uninstall.error', $extension->getAttributes());
-        return $this->redirectWithMessage(handles('antares::extensions'), $message, 'error');
-    }
+        dispatch($job);
 
-    /**
-     * Response when extension uninstall has succeed.
-     * @param  Fluent  $extension
-     * @return mixed
-     */
-    public function uninstallHasSucceed(Fluent $extension)
-    {
-        Event::fire('after.uninstall.' . $extension->name);
-        $message = trans('antares/foundation::response.extensions.uninstall.success', $extension->getAttributes());
-        return $this->redirectWithMessage(handles('antares::extensions'), $message);
-    }
-
-    /**
-     * Response when extension activation has failed.
-     *
-     * @param  Fluent  $extension
-     * @param  array  $errors
-     *
-     * @return mixed
-     */
-    public function activationHasFailed(Fluent $extension, array $errors)
-    {
-        app('antares.messages')->add('error', trans('Component has not been activated. Migration failed.'));
-        return $this->queueToPublisher($extension);
-    }
-
-    /**
-     * Response when extension activation has succeed.
-     *
-     * @param  Fluent  $extension
-     *
-     * @return mixed
-     */
-    public function activationHasSucceed(Fluent $extension)
-    {
-        Event::fire('after.install.' . $extension->name);
-        $message = trans('antares/foundation::response.extensions.activate', $extension->getAttributes());
-        return $this->redirectWithMessage(handles('antares::extensions'), $message);
-    }
-
-    /**
-     * Response when extension deactivation has succeed.
-     *
-     * @param  Fluent  $extension
-     *
-     * @return mixed
-     */
-    public function deactivationHasSucceed(Fluent $extension)
-    {
-        $message = trans('antares/foundation::response.extensions.deactivate', $extension->getAttributes());
-        return $this->redirectWithMessage(handles('antares::extensions'), $message);
-    }
-
-    /**
-     * Response when extension migration has failed.
-     *
-     * @param  Fluent $extension
-     * @param  array $errors
-     *
-     * @return mixed
-     */
-    public function migrationHasFailed(Fluent $extension, array $errors)
-    {
-        return $this->queueToPublisher($extension);
-    }
-
-    /**
-     * Response when extension migration has succeed.
-     *
-     * @param  Fluent $extension
-     *
-     * @return mixed
-     */
-    public function migrationHasSucceed(Fluent $extension)
-    {
-        $message = trans('antares/foundation::response.extensions.migrate', $extension->getAttributes());
-        return $this->redirectWithMessage(handles('antares::extensions'), $message);
-    }
-
-    /**
-     * Queue publishing asset to publisher.
-     *
-     * @param  Fluent  $extension
-     *
-     * @return mixed
-     */
-    protected function queueToPublisher(Fluent $extension)
-    {
-        Publisher::queue($extension->get('name'));
-        return $this->redirect(handles('antares::extensions'));
+        return response()->json([
+            'success' => true,
+        ]);
     }
 
 }

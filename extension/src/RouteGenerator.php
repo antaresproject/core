@@ -31,7 +31,7 @@ class RouteGenerator implements RouteGeneratorContract
     /**
      * Request instance.
      *
-     * @var \Illuminate\Http\Request
+     * @var Request
      */
     protected $request;
 
@@ -40,21 +40,21 @@ class RouteGenerator implements RouteGeneratorContract
      *
      * @var string
      */
-    protected $domain = null;
+    protected $domain;
 
     /**
      * Handles path.
      *
      * @var string
      */
-    protected $prefix = null;
+    protected $prefix;
 
     /**
      * Base URL.
      *
      * @var string
      */
-    protected $baseUrl = null;
+    protected $baseUrl = '';
 
     /**
      * Base URL prefix.
@@ -73,8 +73,10 @@ class RouteGenerator implements RouteGeneratorContract
     {
 
         $this->request = $request;
+
         $this->setBaseUrl($this->request->root());
-        if (is_null($handles) || !Str::startsWith($handles, ['//', 'http://', 'https://'])) {
+
+        if ($handles === null || ! Str::startsWith($handles, ['//', 'http://', 'https://'])) {
             $this->prefix = $handles;
         } else {
             $handles      = substr(str_replace(['http://', 'https://'], '//', $handles), 2);
@@ -96,7 +98,7 @@ class RouteGenerator implements RouteGeneratorContract
     {
         $pattern = $this->domain;
 
-        if (is_null($pattern) && $forceBase === true) {
+        if ($pattern === null && $forceBase === true) {
             $pattern = $this->baseUrl;
         } elseif (Str::contains($pattern, '{{domain}}')) {
             $pattern = str_replace('{{domain}}', $this->baseUrl, $pattern);
@@ -117,13 +119,13 @@ class RouteGenerator implements RouteGeneratorContract
         $path   = $this->path();
         $prefix = $this->prefix();
 
-        foreach (func_get_args() as $pattern) {
-            $pattern = ($pattern === '*' ? "{$prefix}*" : "{$prefix}/{$pattern}");
-            $pattern = trim($pattern, '/');
+        foreach (func_get_args() as $_pattern) {
+			$_pattern = ($_pattern === '*' ? "{$prefix}*" : "{$prefix}/{$_pattern}");
+			$_pattern = trim($_pattern, '/');
 
-            empty($pattern) && $pattern = '/';
+            empty($_pattern) && $_pattern = '/';
 
-            if (Str::is($pattern, $path)) {
+            if (Str::is($_pattern, $path)) {
                 return true;
             }
         }
@@ -139,6 +141,7 @@ class RouteGenerator implements RouteGeneratorContract
     public function path()
     {
         $pattern = trim($this->request->path(), '/');
+
         return $pattern === '' ? '/' : $pattern;
     }
 
@@ -155,7 +158,8 @@ class RouteGenerator implements RouteGeneratorContract
             return '/';
         }
         $pattern = trim($this->prefix, '/');
-        if (is_null($this->domain) && $forceBase === true) {
+
+        if ($this->domain === null && $forceBase === true) {
             $pattern = trim($this->basePrefix, '/') . "/{$pattern}";
             $pattern = trim($pattern, '/');
         }
@@ -211,6 +215,7 @@ class RouteGenerator implements RouteGeneratorContract
         $root    = $this->root();
         $to      = trim($to, '/');
         $pattern = trim("{$root}/{$to}", '/');
+
         return $pattern !== '/' ? $pattern : '';
     }
 
@@ -226,30 +231,30 @@ class RouteGenerator implements RouteGeneratorContract
 
     /**
      * Member prefix setter
-     * 
-     * @param String $prefix
-     * @return \Antares\Extension\RouteGenerator
+     *
+     * @param string $prefix
+     * @return RouteGenerator
      */
     public function setPrefix($prefix = null)
     {
-        if (is_null($prefix)) {
-            $this->prefix = 'member';
-        }
-        $this->prefix = $prefix;
+        $this->prefix = ($prefix === null) ? 'member' : $prefix;
+
         return $this;
     }
 
     /**
      * Sets user level as prefix in route
-     * 
-     * @return \Antares\Extension\RouteGenerator
+     *
+     * @return RouteGenerator
      */
     public function setAreaPrefix()
     {
         if (auth()->guest()) {
             return $this;
         }
+
         $this->prefix = app('antares.areas')->getUserArea();
+
         return $this;
     }
 

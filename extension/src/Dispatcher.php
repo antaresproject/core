@@ -1,214 +1,142 @@
 <?php
 
-/**
- * Part of the Antares Project package.
- *
- * NOTICE OF LICENSE
- *
- * Licensed under the 3-clause BSD License.
- *
- * This source file is subject to the 3-clause BSD License that is
- * bundled with this package in the LICENSE file.
- *
- * @package    Antares Core
- * @version    0.9.0
- * @author     Original Orchestral https://github.com/orchestral
- * @author     Antares Team
- * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
- * @link       http://antaresproject.io
- */
-
+declare(strict_types=1);
 
 namespace Antares\Extension;
 
-use Illuminate\Support\Str;
-use Illuminate\Support\Arr;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Contracts\Config\Repository as Config;
-use Antares\Contracts\Extension\Finder as FinderContract;
+use Antares\Extension\Collections\Extensions;
+use Antares\Extension\Contracts\ExtensionContract;
+use Antares\Extension\Events\Booted;
+use Antares\Extension\Events\BootedAll;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
-use Antares\Contracts\Extension\Dispatcher as DispatcherContract;
+use Closure;
+use Exception;
 
-class Dispatcher implements DispatcherContract
-{
+class Dispatcher {
 
     /**
-     * Config Repository instance.
+     * Container instance.
      *
-     * @var \Illuminate\Contracts\Config\Repository
+     * @var Container
      */
-    protected $config;
+    protected $container;
 
     /**
-     * Filesystem instance.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
+	 * Event dispatcher instance.
+	 *
+     * @var EventDispatcher
      */
-    protected $dispatcher;
+    protected $eventDispatcher;
 
     /**
-     * Filesystem instance.
+     * Loader instance.
      *
-     * @var \Illuminate\Filesystem\Filesystem
+     * @var Loader
      */
-    protected $files;
+    protected $loader;
 
     /**
-     * Finder instance.
+     * Booted indicator.
      *
-     * @var \Antares\Contracts\Extension\Finder
+     * @var bool
      */
-    protected $finder;
+    protected $booted = false;
 
     /**
-     * Provider instance.
-     *
-     * @var \Antares\Extension\ProviderRepository
-     */
-    protected $provider;
-
-    /**
-     * List of extensions to be boot.
-     *
-     * @var array
+	 * List of extensions.
+	 *
+     * @var ExtensionContract[]
      */
     protected $extensions = [];
 
     /**
-     * Construct a new Application instance.
-     *
-     * @param  \Illuminate\Contracts\Config\Repository  $config
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $dispatcher
-     * @param  \Illuminate\Filesystem\Filesystem  $files
-     * @param  \Antares\Contracts\Extension\Finder  $finder
-     * @param  \Antares\Extension\ProviderRepository  $provider
+     * Dispatcher constructor.
+     * @param Container $container
+     * @param EventDispatcher $eventDispatcher
+     * @param Loader $loader
      */
-    public function __construct(Config $config, EventDispatcher $dispatcher, Filesystem $files, FinderContract $finder, ProviderRepository $provider)
-    {
-        $this->config     = $config;
-        $this->dispatcher = $dispatcher;
-        $this->files      = $files;
-        $this->finder     = $finder;
-        $this->provider   = $provider;
+    public function __construct(Container $container, EventDispatcher $eventDispatcher, Loader $loader) {
+        $this->container        = $container;
+        $this->eventDispatcher  = $eventDispatcher;
+        $this->loader           = $loader;
+    }
+
+    /**
+     * Checks if booted.
+     *
+     * @return bool
+     */
+    public function booted() : bool {
+        return $this->booted;
+    }
+
+    /**
+     * Register the collection of extensions.
+     *
+     * @param Extensions $extensions
+     * @throws Exception
+     */
+    public function registerCollection(Extensions $extensions) {
+        foreach ($extensions as $extension) {
+            $this->register($extension);
+        }
     }
 
     /**
      * Register the extension.
      *
-     * @param  string  $name
-     * @param  array   $options
-     *
-     * @return void
+     * @param  ExtensionContract $extension
+     * @throws Exception
      */
-    public function register($name, array $options)
-    {
-        $handles = Arr::get($options, 'config.handles');
-        if (!is_null($handles)) {
+    public function register(ExtensionContract $extension) {
+        $this->extensions[] = $extension;
 
-            $this->config->set("antares/extension::handles.{$name}", $handles);
-        }
-        $services = Arr::get($options, 'provides', []);
-
-        !empty($services) && $this->provider->provides($services);
-
-        $this->extensions[$name] = $options;
-        $this->start($name, $options);
+        $this->loader->registerExtensionProviders($extension);
     }
 
     /**
      * Boot all extensions.
      *
-     * @return void
+     * @throws Exception
      */
-    public function boot()
-    {
-        foreach ($this->extensions as $name => $options) {
-            $this->fireEvent($name, $options, 'booted');
-        }
-    }
+    public function boot() {
+        foreach ($this->extensions as $extension) {
+            try {
+                $this->eventDispatcher->dispatch(new Booted($extension));
 
-    /**
-     * Start the extension.
-     *
-     * @param  string  $name
-     * @param  array   $options
-     *
-     * @return void
-     */
-    public function start($name, array $options)
-    {
-        $file   = $this->files;
-        $finder = $this->finder;
+                $name = $extension->getPackage()->getName();
 
-        $base     = rtrim($options['path'], '/');
-        $source   = rtrim(Arr::get($options, 'source-path', $base), '/');
-        $autoload = Arr::get($options, 'autoload', []);
+                $this->eventDispatcher->dispatch('extension.started', [$name, []]);
+                $this->eventDispatcher->dispatch('extension.started: {$name}', [[]]);
 
-        foreach ($this->getAutoloadFiles($autoload) as $path) {
-            $path = str_replace(
-                    ['source-path::', 'app::/'], ["{$source}/", 'app::'], $path
-            );
-            $path = $finder->resolveExtensionPath($path);
-
-            if ($file->isFile($path)) {
-                $file->getRequire($path);
+                $this->eventDispatcher->dispatch('extension.booted', [$name, []]);
+                $this->eventDispatcher->dispatch('extension.booted: {$name}', [[]]);
+            }
+            catch(Exception $e) {
+                throw $e;
             }
         }
 
-        $this->fireEvent($name, $options, 'started');
+        $this->eventDispatcher->dispatch(new BootedAll());
+        $this->eventDispatcher->dispatch('antares.extension: booted');
+
+        $this->loader->writeManifest();
+        $this->booted = true;
     }
 
     /**
-     * Shutdown an extension.
+     * Create an event listener or execute it directly.
      *
-     * @param  string  $name
-     * @param  array   $options
-     *
-     * @return void
+     * @param Closure|null $callback
      */
-    public function finish($name, array $options)
-    {
-        $this->fireEvent($name, $options, 'done');
-    }
+    public function after(Closure $callback = null) {
+        if ($callback && $this->booted()) {
+            $this->container->call($callback);
+        }
 
-    /**
-     * Fire events.
-     *
-     * @param  string  $name
-     * @param  array   $options
-     * @param  string  $type
-     *
-     * @return void
-     */
-    protected function fireEvent($name, $options, $type = 'started')
-    {
-        $this->dispatcher->fire("extension.{$type}", [$name, $options]);
-        $this->dispatcher->fire("extension.{$type}: {$name}", [$options]);
-    }
-
-    /**
-     * Get list of available paths for the extension.
-     *
-     * @param  array  $autoload
-     *
-     * @return array
-     */
-    protected function getAutoloadFiles(array $autoload)
-    {
-        $resolver = function ($path) {
-            if (Str::contains($path, '::')) {
-                return $path;
-            }
-
-            return 'source-path::' . ltrim($path, '/');
-        };
-
-        $paths = array_map($resolver, $autoload);
-
-        return array_merge(
-                $paths, ['source-path::src/antares.php', 'source-path::antares.php']
-        );
+        $this->eventDispatcher->listen(BootedAll::class, $callback);
+        $this->eventDispatcher->listen('antares.extension: booted', $callback);
     }
 
 }

@@ -20,6 +20,7 @@
 
 namespace Antares\Security\Traits;
 
+use Antares\Extension\FilesystemFinder;
 use Illuminate\Support\Facades\Schema;
 use Antares\Security\Database\Cryptor;
 use ReflectionClass;
@@ -44,7 +45,7 @@ trait DbCryptTrait
     /**
      * whether cryptor is enabled
      *
-     * @var type 
+     * @var bool
      */
     private $enabled = false;
 
@@ -73,7 +74,7 @@ trait DbCryptTrait
     private function getPackage()
     {
         $reflection = new ReflectionClass(get_called_class());
-        return bound('antares.extension.finder') ? app('antares.extension.finder')->resolveNamespace($reflection->getFileName(), true) : null;
+        return app()->make(FilesystemFinder::class)->resolveNamespace($reflection->getFileName(), true);
     }
 
     /**

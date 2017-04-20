@@ -18,29 +18,31 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Acl;
 
 use Illuminate\Routing\Route;
+use Illuminate\Support\Str;
 
 class Action {
-    
+
     /**
+     * Route name.
      *
-     * @var string
+     * @var
      */
     protected $routeName;
-    
+
     /**
+     * Action name.
      *
-     * @var string
+     * @var
      */
     protected $action;
-    
+
     /**
-     * 
-     * @param string $routeName
-     * @param string $action
+     * Action constructor.
+     * @param $routeName
+     * @param $action
      */
     public function __construct($routeName, $action) {
         $this->routeName    = $routeName;
@@ -48,36 +50,43 @@ class Action {
     }
     
     /**
-     * 
+     * Returns the route name (without area).
+     *
      * @return string
      */
     public function getRouteName() {
         return $this->routeName;
     }
-    
+
     /**
-     * 
+     * Returns the action.
+     *
      * @return string
      */
     public function getAction() {
         return $this->action;
     }
-    
+
     /**
-     * 
+     * Returns the action as slug name.
+     *
      * @return string
      */
     public function getActionAsParameter() {
-        return str_slug($this->action);
+        return Str::slug($this->action);
     }
-    
+
     /**
-     * 
+     * Determines if the given route (and area) match to the action.
+     *
      * @param Route $route
+     * @param string|null $area
      * @return bool
      */
-    public function isMatchToRoute(Route $route) {
-        return str_is($this->getRouteName(), $route->getName());
+    public function isMatchToRoute(Route $route, string $area = null) {
+        $areaPart = $area ? $area . '.' : '';
+
+        return Str::is($areaPart . $this->getRouteName(), $route->getName());
     }
     
 }

@@ -82,7 +82,7 @@ class WindowsProcessMonitor extends AbstractProcessMonitor
      */
     public function process($command)
     {
-        $started = $this->isProcessStarted($command);
+        $started = $this->isProcessStarted();
         if ($started) {
             return true;
         }

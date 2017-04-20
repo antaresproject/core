@@ -20,6 +20,7 @@
 
 namespace Antares\Brands\TestCase;
 
+use Antares\Extension\ExtensionServiceProvider;
 use Mockery as m;
 use Antares\Brands\BrandsServiceProvider;
 use Antares\Testbench\TestCase;
@@ -37,6 +38,9 @@ class BrandsServiceProviderTest extends TestCase
         $app           = $this->app;
         $app['events'] = m::mock('\Illuminate\Contracts\Events\Dispatcher');
         $app['files']  = m::mock('\Illuminate\Filesystem\Filesystem');
+
+        $extensionStub = new ExtensionServiceProvider($app);
+        $extensionStub->register();
 
         $stub = new BrandsServiceProvider($app);
         $stub->register();

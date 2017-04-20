@@ -72,7 +72,7 @@ class Foundation extends RouteManager implements FoundationContract
      */
     public function installed()
     {
-        return $this->app->make('antares.installed');
+        return (bool) $this->app->make('antares.installed');
     }
 
     /**

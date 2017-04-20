@@ -72,10 +72,12 @@ class Requirement implements RequirementContract
             'writableStorage'        => $this->checkWritableStorage(),
             'writableAsset'          => $this->checkWritableAsset(),
             'writableTickets'        => $this->checkWritableTickets(),
+            'writableLicense'        => $this->checkWritableLicense(),
             'writableLogs'           => $this->checkWritableLogs(),
             'writableTemp'           => $this->checkWritableTemp(),
-            'writablePublic'         => $this->checkWriteablePublic(),
-            'writablePublicPackages' => $this->checkWriteablePublicPackages(),
+            'writablePublic'         => $this->checkWritablePublic(),
+            'writablePublicPackages' => $this->checkWritablePublicPackages(),
+            'writableComposerVendor' => $this->checkWritableComposerVendor(),
             'version'                => $this->getPhpVersion(),
             'phpExtensions'          => $this->getRegisteredPhpExtensions(),
             'apacheModules'          => $this->checkInstalledApacheModules()
@@ -83,7 +85,7 @@ class Requirement implements RequirementContract
 
 
         foreach ($this->checklist as $requirement) {
-            if ($requirement['is'] !== $requirement['should'] && true === $requirement['explicit']) {
+            if ($requirement['explicit'] && $requirement['is'] !== $requirement['should']) {
                 $this->installable = false;
             }
         }
@@ -91,67 +93,89 @@ class Requirement implements RequirementContract
     }
 
     /**
-     * check public packages directory is writeable
-     * 
+     * check public packages directory is writable
+     *
      * @return array
      */
-    protected function checkWriteablePublicPackages()
+    protected function checkWritablePublicPackages()
     {
         $path = rtrim($this->app->make('path.public'), '/') . '/packages';
-        return $this->isWriteable($path);
+        return $this->isWritable($path);
     }
 
     /**
-     * check public directory is writeable
-     * 
+     * check if composer vendor is writable
+     *
      * @return array
      */
-    protected function checkWriteablePublic()
+    protected function checkWritableComposerVendor()
     {
-        $path = rtrim($this->app->make('path.public'), '/') . '/';
-        return $this->isWriteable($path);
+        $path = base_path('vendor');
+        return $this->isWritable($path);
     }
 
     /**
-     * check temp directory is writeable
-     * 
+     * check public directory is writable
+     *
+     * @return array
+     */
+    protected function checkWritablePublic()
+    {
+        $path = rtrim($this->app->make('path.public'), '/') . '/';
+        return $this->isWritable($path);
+    }
+
+    /**
+     * check temp directory is writable
+     *
      * @return array
      */
     protected function checkWritableTemp()
     {
         $path = rtrim($this->app->make('path.storage'), '/') . '/temp';
-        return $this->isWriteable($path);
+        return $this->isWritable($path);
     }
 
     /**
-     * check logs directory is writeable
-     * 
+     * check logs directory is writable
+     *
      * @return array
      */
     protected function checkWritableLogs()
     {
         $path = rtrim($this->app->make('path.storage'), '/') . '/logs';
-        return $this->isWriteable($path);
+        return $this->isWritable($path);
     }
 
     /**
-     * check tickets directory is writeable
-     * 
+     * check license directory is writable
+     *
+     * @return array
+     */
+    protected function checkWritableLicense()
+    {
+        $path = rtrim($this->app->make('path.storage'), '/') . '/license';
+        return $this->isWritable($path);
+    }
+
+    /**
+     * check tickets directory is writable
+     *
      * @return array
      */
     protected function checkWritableTickets()
     {
         $path = rtrim($this->app->make('path.storage'), '/') . '/tickets';
-        return $this->isWriteable($path);
+        return $this->isWritable($path);
     }
 
     /**
-     * does the directory is writeable
-     * 
+     * does the directory is writable
+     *
      * @param String $path
      * @return array
      */
-    protected function isWriteable($path)
+    protected function isWritable($path)
     {
 
         $schema = [
@@ -214,6 +238,7 @@ class Requirement implements RequirementContract
     {
         $modules  = apache_get_modules();
         $required = config('antares/installer::validation.required_apache_modules');
+
         $missing  = array_diff($required, $modules);
         $schema   = ['is' => true, 'data' => ['modules' => $modules]];
         if (!empty($missing)) {

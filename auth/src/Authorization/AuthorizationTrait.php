@@ -68,18 +68,19 @@ trait AuthorizationTrait
     public function checkAuthorization($roles, $action)
     {
         $action = $this->actions->search($action);
-        if (is_null($action)) {
-            
+
+        if ($action === null) {
+            return false;
         }
 
         foreach ((array) $roles as $role) {
             if (is_array($role)) {
                 $role = current($role);
             }
+
             $role = $this->roles->search($role);
 
-            if (!is_null($role) && isset($this->acl[$role . ':' . $action])) {
-
+            if ($role !== null && isset($this->acl[$role . ':' . $action])) {
                 return $this->acl[$role . ':' . $action];
             }
         }

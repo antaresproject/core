@@ -19,15 +19,14 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Installation\Processor;
 
 use Illuminate\Database\Connection;
 use Illuminate\Contracts\Console\Kernel;
-use Illuminate\Session\Store as Session;
 use Illuminate\Log\Writer as Logger;
 use Antares\Installation\Contracts\UninstallListener;
 use Exception;
+use File;
 
 class Uninstaller {
 
@@ -42,11 +41,6 @@ class Uninstaller {
     protected $kernel;
 
     /**
-     * @var Session
-     */
-    protected $session;
-
-    /**
      * @var Logger
      */
     protected $logger;
@@ -56,13 +50,11 @@ class Uninstaller {
      * 
      * @param Connection $connection
      * @param Kernel $kernel
-     * @param Session $session
      * @param Logger $logger
      */
-    public function __construct(Connection $connection, Kernel $kernel, Session $session, Logger $logger) {
+    public function __construct(Connection $connection, Kernel $kernel, Logger $logger) {
         $this->connection   = $connection;
         $this->kernel       = $kernel;
-        $this->session      = $session;
         $this->logger       = $logger;
     }
 
@@ -74,10 +66,13 @@ class Uninstaller {
     public function flushCacheAndSession(UninstallListener $listener) {
         try {
             $this->kernel->call('cache:clear');
-            $this->kernel->call('view:clear');
-            $this->session->flush();
 
-            $listener->uninstallSuccess('Cache and session has been flushed successfully.');
+            File::cleanDirectory( storage_path('framework/sessions') );
+            File::cleanDirectory( storage_path('logs') );
+            File::delete( storage_path('installation.txt') );
+            File::delete( storage_path('installation-config.txt') );
+
+            $listener->uninstallSuccess('Cache and session have been flushed successfully.');
         }
         catch(Exception $e) {
             $this->logger->emergency($e->getMessage());
@@ -98,15 +93,21 @@ class Uninstaller {
 
         try {
             $tableNames = $this->connection->getDoctrineSchemaManager()->listTableNames();
+            $viewNames  = $this->connection->getDoctrineSchemaManager()->listViews();
+            $viewNames  = array_keys($viewNames);
 
-            foreach($tableNames as $tableName) {
-                $this->connection->table($tableName)->truncate();
+            if( count($tableNames) ) {
+                $this->connection->statement('DROP TABLE IF EXISTS ' . implode(', ', $tableNames) );
+            }
+
+            if( count($viewNames) ) {
+                $this->connection->statement('DROP VIEW IF EXISTS ' . implode(', ', $viewNames) );
             }
 
             $this->connection->statement('SET FOREIGN_KEY_CHECKS=1;');
             $this->connection->commit();
 
-            $listener->uninstallSuccess('Database tables has been truncated successfully.');
+            $listener->uninstallSuccess('Database tables and views have been removed successfully.');
         }
         catch(Exception $e) {
             $this->connection->rollBack();

@@ -1,39 +1,50 @@
 <?php
 
-/**
- * Part of the Antares Project package.
- *
- * NOTICE OF LICENSE
- *
- * Licensed under the 3-clause BSD License.
- *
- * This source file is subject to the 3-clause BSD License that is
- * bundled with this package in the LICENSE file.
- *
- * @package    Antares Core
- * @version    0.9.0
- * @author     Original Orchestral https://github.com/orchestral
- * @author     Antares Team
- * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
- * @link       http://antaresproject.io
- */
- namespace Antares\Extension\Console;
+declare(strict_types=1);
 
-use Symfony\Component\Console\Input\InputOption;
+namespace Antares\Extension\Console;
+
+use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
+use Antares\Extension\Manager;
+use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 use Symfony\Component\Console\Input\InputArgument;
-use Antares\Contracts\Extension\Listener\Extension;
+use Antares\Extension\Model\Operation;
 
-abstract class ExtensionCommand extends BaseCommand implements Extension
+abstract class ExtensionCommand extends Command implements OperationHandlerContract
 {
+
+	/**
+	 * Extension Manager instance.
+	 *
+	 * @var Manager
+	 */
+	protected $manager;
+
     /**
-     * Abort request when extension requirement mismatched.
-     *
-     * @return mixed
+     * @var array
      */
-    public function abortWhenRequirementMismatched()
-    {
-            }
+    protected $validOptions = [
+        'skip-composer',
+    ];
+
+	/**
+	 * ExtensionCommand constructor.
+	 * @param Manager $manager
+	 */
+	public function __construct(Manager $manager)
+	{
+		parent::__construct();
+
+		$this->manager = $manager;
+	}
+
+    /**
+     * @return array
+     */
+	protected function getValidOptions() : array {
+        return Arr::only($this->options(), $this->validOptions);
+    }
 
     /**
      * Get the console command arguments.
@@ -48,14 +59,27 @@ abstract class ExtensionCommand extends BaseCommand implements Extension
     }
 
     /**
-     * Get the console command options.
-     *
-     * @return array
+     * @param Operation $operation
+     * @return void
      */
-    protected function getOptions()
-    {
-        return [
-            ['force', null, InputOption::VALUE_NONE, 'Force the operation to run when in production.'],
-        ];
-    }
+	public function operationSuccess(Operation $operation) {
+		$this->info($operation->getMessage());
+	}
+
+    /**
+     * @param Operation $operation
+     * @return void
+     */
+	public function operationFailed(Operation $operation) {
+		$this->error($operation->getMessage());
+	}
+
+    /**
+     * @param Operation $operation
+     * @return void
+     */
+	public function operationInfo(Operation $operation) {
+		$this->line($operation->getMessage());
+	}
+
 }

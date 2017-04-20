@@ -20,12 +20,24 @@
  */
 return [
     'use_gravatar'                => 'Use gravatar instead',
-    'package'                     => [
-        'activation' => 'Activation package: :name',
-        'uninstall'  => 'Uninstall package: :name',
+    'extensions' => [
+        'modal_title' => [
+            'install'       => 'Extension installation',
+            'activate'      => 'Extension activation',
+            'deactivate'    => 'Extension deactivation',
+            'uninstall'     => 'Extension uninstallation',
+        ],
+        'modal_content' => [
+            'install'       => 'The :name extension will be installed. Do you want to proceed?',
+            'activate'      => 'The :name extension will be activated. Do you want to proceed?',
+            'deactivate'    => 'The :name extension will be deactivated. Do you want to proceed?',
+            'uninstall'     => 'The :name extension will be uninstalled. Do you want to proceed?',
+        ],
     ],
     'confirm'                     => 'Confirm',
     'select_placeholder_default'  => 'select :name...',
+    'select_extension_type'       => 'Type',
+    'extension_type_all'          => 'All',
     'sidebar'                     => [
         'notifications'  => 'Notifications',
         'alerts'         => 'Alerts',

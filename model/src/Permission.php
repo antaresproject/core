@@ -19,8 +19,9 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Model;
+
+use Antares\Brands\Model\Brands;
 
 class Permission extends Eloquent
 {
@@ -45,13 +46,16 @@ class Permission extends Eloquent
     public $timestamps = false;
 
     /**
-     * @var type 
+     * @var array
      */
     protected $fillable = ['brand_id', 'component_id', 'role_id', 'action_id', 'allowed'];
 
+    /**
+     * @return Brands[]|\Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function brands()
     {
-        return $this->hasMany('Antares\Brands\Model\Brands', 'brand_id');
+        return $this->hasMany(Brands::class, 'brand_id');
     }
 
 }

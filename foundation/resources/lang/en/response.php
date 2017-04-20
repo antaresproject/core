@@ -28,7 +28,9 @@ return
                 'migrate'   => 'Extension migrations has been down',
                 'uninstall' => [
                     'success' => 'Extension has been uninstalled.'
-                ]
+                ],
+                'configuration-success' => 'The extensions has been configured successfully.',
+                'configuration-failed' => 'An error occurred during updating the extension configuration.',
             ],
             'safe-mode'  => 'Antares is running on safe mode.',
             'account'    =>

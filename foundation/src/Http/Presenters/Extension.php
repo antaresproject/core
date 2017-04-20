@@ -19,14 +19,14 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Presenters;
 
-use Antares\Contracts\Html\Form\Factory as FormFactory;
-use Antares\Contracts\Html\Form\Grid as FormGrid;
+use Antares\Extension\Config\SettingsFormBuilder;
+use Antares\Extension\Contracts\Config\SettingsContract;
+use Antares\Extension\Contracts\Config\SettingsFormContract;
+use Antares\Extension\Model\ExtensionModel;
 use Antares\Foundation\Http\Datatables\Extensions;
 use Antares\Foundation\Http\Breadcrumb\Breadcrumb;
-use Antares\Contracts\Html\Form\Fieldset;
 
 class Extension extends Presenter
 {
@@ -48,68 +48,50 @@ class Extension extends Presenter
     /**
      * extensions datatable
      *
-     * @var Extensions 
+     * @var Extensions
      */
     protected $extensions = null;
 
     /**
-     * Construct a new Extension presenter.
-     * 
-     * @param FormFactory $form
+     * @var SettingsFormBuilder
+     */
+    protected $formBuilder;
+
+    /**
+     * Extension constructor.
+     * @param SettingsFormBuilder $formBuilder
      * @param Breadcrumb $breadcrumb
      * @param Extensions $extensions
      */
-    public function __construct(FormFactory $form, Breadcrumb $breadcrumb, Extensions $extensions)
-    {
-        $this->form       = $form;
-        $this->breadcrumb = $breadcrumb;
-        $this->extensions = $extensions;
-    }
-
-    /**
-     * Form View Generator for Antares\Extension.
-     *
-     * @param  \Illuminate\Support\Fluent  $model
-     * @param  string  $name
-     *
-     * @return \Antares\Contracts\Html\Form\Builder
-     */
-    public function configure($model, $name)
-    {
-        $this->breadcrumb->onComponentConfigure($name);
-        return $this->form->of("antares.extension: {$name}", function (FormGrid $form) use ($model, $name) {
-                    $form->setup($this, "antares::extensions/{$name}/configure", $model);
-
-                    $handles      = data_get($model, 'handles', $this->extension->option($name, 'handles'));
-                    $configurable = data_get($model, 'configurable', true);
-
-                    $form->fieldset(function (Fieldset $fieldset) use ($handles, $name, $configurable) {
-                        if (!is_null($handles) && $configurable !== false) {
-                            $fieldset->control('input:text', 'handles')
-                                    ->label(trans('antares/foundation::label.extensions.handles'))
-                                    ->value($handles);
-                        }
-
-                        $fieldset->control('input:text', 'migrate')
-                                ->label(trans('antares/foundation::label.extensions.update'))
-                                ->field(function () use ($name) {
-                                    return app('html')->link(
-                                                    handles("antares::extensions/{$name}/update", ['csrf' => true]), trans('antares/foundation::label.extensions.actions.update'), ['class' => 'btn btn--md btn--primary mdl-button mdl-js-button mdl-js-ripple-effect']
-                                    );
-                                });
-                    });
-                });
+    public function __construct(SettingsFormBuilder $formBuilder, Breadcrumb $breadcrumb, Extensions $extensions) {
+        $this->formBuilder  = $formBuilder;
+        $this->breadcrumb   = $breadcrumb;
+        $this->extensions   = $extensions;
     }
 
     /**
      * create table instance
-     * 
+     *
      * @return \Illuminate\View\View
      */
     public function table()
     {
+        publish(null, ['/js/extensions.js']);
         $this->breadcrumb->onComponentsList();
+
         return $this->extensions->render('antares/foundation::extensions.index');
+    }
+
+    /**
+     * @param ExtensionModel $component
+     * @param SettingsFormContract $settingsForm
+     * @param SettingsContract $settings
+     * @return \Antares\Contracts\Html\Builder
+     */
+    public function form(ExtensionModel $component, SettingsFormContract $settingsForm, SettingsContract $settings) {
+        $this->breadcrumb->onComponentConfigure($component);
+
+        return $this->formBuilder->build($component, $settingsForm, $settings);
     }
 
 }

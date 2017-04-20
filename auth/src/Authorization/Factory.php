@@ -64,7 +64,7 @@ class Factory implements FactoryContract
      */
     public function make($name = null, Provider $memory = null)
     {
-        if (is_null($name)) {
+        if ($name === null) {
             $name = 'default';
         }
 

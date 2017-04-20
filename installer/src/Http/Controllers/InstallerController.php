@@ -24,7 +24,8 @@ namespace Antares\Installation\Http\Controllers;
 use Antares\Installation\Processor\Installer as InstallerProcessor;
 use Antares\Foundation\Http\Controllers\BaseController;
 use Antares\Installation\Processor\Installer;
-use Illuminate\Support\Facades\Input;
+use Antares\Installation\Progress;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class InstallerController extends BaseController
@@ -45,6 +46,7 @@ class InstallerController extends BaseController
         $this->processor = $processor;
         set_meta('navigation::usernav', false);
         set_meta('title', 'Installer');
+
         parent::__construct();
     }
 
@@ -67,8 +69,6 @@ class InstallerController extends BaseController
      */
     public function index()
     {
-
-        app('antares.memory')->forgetCache();
         return $this->processor->index($this);
     }
 
@@ -101,33 +101,12 @@ class InstallerController extends BaseController
      *
      * POST (:antares)/install/create
      *
+     * @param Request $request
      * @return mixed
      */
-    public function store()
+    public function store(Request $request)
     {
-        return $this->processor->store($this, Input::all());
-    }
-
-    /**
-     * Show components selection form
-     * GET (:antares)/install/components
-     *
-     * @return mixed
-     */
-    public function components()
-    {
-        return $this->processor->components($this);
-    }
-
-    /**
-     * Show components selection form
-     * POST (:antares)/install/components/store
-     *
-     * @return mixed
-     */
-    public function storeComponents()
-    {
-        return $this->processor->storeComponents($this, Input::all());
+        return $this->processor->store($this, $request->all());
     }
 
     /**
@@ -161,6 +140,13 @@ class InstallerController extends BaseController
      */
     public function prepareSucceed()
     {
+        /* @var $progress Progress */
+        $progress = app()->make(Progress::class);
+
+        if($progress->isFailed()) {
+            $progress->reset();
+        }
+
         return $this->redirect(handles('antares::install/create'));
     }
 
@@ -193,18 +179,7 @@ class InstallerController extends BaseController
      */
     public function storeSucceed()
     {
-        return $this->redirect(handles('antares::install/components'));
-    }
-
-    /**
-     * Response for components selection page
-     *
-     * @param  array   $data
-     * @return mixed
-     */
-    public function componentsSucceed(array $data)
-    {
-        return view('antares/installer::components', $data);
+        return redirect()->to(handles('antares::install/progress'));
     }
 
     /**
@@ -214,6 +189,10 @@ class InstallerController extends BaseController
      */
     public function doneSucceed()
     {
+        /* @var $progress Progress */
+        $progress = app()->make(Progress::class);
+        $progress->reset();
+
         app('antares.messages')->add('success', trans('Installation is completed. Now you can login to administration area.'));
         return $this->redirect(handles('antares::install/completed'));
     }
@@ -225,6 +204,10 @@ class InstallerController extends BaseController
      */
     public function doneFailed()
     {
+        /* @var $progress Progress */
+        $progress = app()->make(Progress::class);
+        $progress->reset();
+
         app('antares.messages')->add('error', trans('Installation failed. Please try again or contact with software provider.'));
         return $this->redirect(handles('antares::install/failed'));
     }
@@ -236,17 +219,24 @@ class InstallerController extends BaseController
      */
     public function completed()
     {
+        /* @var $progress Progress */
+        $progress = app()->make(Progress::class);
+        $progress->reset();
+
         return view('antares/installer::installation.completed');
     }
 
     /**
-     * when installation is failed
-     * 
-     * @return View
+     * When installation is failed.
+     *
+     * @param Progress $progress
+     * @return \Illuminate\Contracts\View\Factory|View
      */
-    public function failed()
+    public function failed(Progress $progress)
     {
-        return view('antares/installer::installation.failed');
+        $additionalMessage = $progress->getFailedMessage();
+
+        return view('antares/installer::installation.failed', compact('additionalMessage'));
     }
 
 }

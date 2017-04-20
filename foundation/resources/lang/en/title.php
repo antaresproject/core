@@ -110,4 +110,5 @@ return
                 'area'  => 'Drop files here to upload',
             ),
             'staff'           => 'Staff',
+            'antares_team'    => 'Antares Project Development Team',
 );

@@ -21,19 +21,17 @@
 
 namespace Antares\Installation\Processor;
 
-use Antares\Contracts\Installation\Installation;
 use Antares\Contracts\Installation\Requirement;
-use Antares\Installation\Repository\Components;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\File;
+use Antares\Contracts\Installation\Installation;
+use Antares\Support\Facades\Config;
 use Symfony\Component\Finder\Finder;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
-use Antares\Support\Facades\Form;
 use Illuminate\Cache\FileStore;
 use ReflectionException;
 use Antares\Model\User;
 use Exception;
+use Illuminate\Support\Facades\File;
 
 class Installer
 {
@@ -53,25 +51,17 @@ class Installer
     protected $requirement;
 
     /**
-     * components repository instance
-     *
-     * @var Components
-     */
-    protected $components;
-
-    /**
      * Create a new processor instance.
      *
      * @param Installation $installer
      * @param Requirement $requirement
-     * @param Components $components
      */
-    public function __construct(Installation $installer, Requirement $requirement, Components $components)
+    public function __construct(Installation $installer, Requirement $requirement)
     {
         $this->installer   = $installer;
         $this->requirement = $requirement;
+
         $this->installer->bootInstallerFiles();
-        $this->components  = $components;
     }
 
     /**
@@ -83,6 +73,8 @@ class Installer
      */
     public function index($listener)
     {
+        app('antares.memory')->forgetCache();
+
         $requirement = $this->requirement;
         $installable = $requirement->check();
         list($database, $auth, $authentication) = $this->getRunningConfiguration();
@@ -102,7 +94,7 @@ class Installer
     }
 
     /**
-     * Clearing storage files before installation 
+     * Clearing storage files before installation
      */
     protected function clearStorage()
     {
@@ -130,9 +122,8 @@ class Installer
                 }
             }
         } catch (Exception $e) {
-            
+            Log::emergency($e);
         }
-        return;
     }
 
     /**
@@ -192,111 +183,13 @@ class Installer
      */
     public function store($listener, array $input)
     {
-        if (!$this->installer->createAdmin($input)) {
-            return $listener->storeFailed();
+        if( $this->installer->createAdmin($input) ) {
+            $this->installer->runComponentsInstallation();
+
+            return $listener->storeSucceed();
         }
-        return $listener->storeSucceed();
-    }
 
-    /**
-     * launch components/modules installation.
-     *
-     * @param  object  $listener
-     * @param  array   $input
-     *
-     * @return mixed
-     */
-    public function storeComponents($listener, array $input)
-    {
-        try {
-            $this->components->store($input);
-            app('antares.memory')->make('component')->finish();
-        } catch (Exception $e) {
-            Log::emergency($e);
-            return $listener->doneFailed();
-        }
-        return $this->done($listener);
-    }
-
-    /**
-     * shows components form
-     * 
-     * @param object $listener
-     * @return mixed
-     */
-    public function components($listener)
-    {
-        $form = Form::of('components', function ($form) {
-                    $attributes = [
-                        'url'    => handles("antares::install/components/store"),
-                        'method' => 'POST'
-                    ];
-                    $form->attributes($attributes);
-                    $list       = $this->getComponentsList();
-
-                    $form->name('Components list');
-                    $form->layout('antares/installer::partials._components_form');
-                    $form->fieldset(function ($fieldset) use($list) {
-
-                        $fieldset->legend('Required components');
-                        $required = array_get($list, 'required', []);
-                        foreach ($required as $name => $data) {
-                            $fieldset->control('input:checkbox', 'required[]')
-                                    ->label(array_get($data, 'full_name'))
-                                    ->value($name)
-                                    ->help(implode(', ', array_only($data, ['description', 'author', 'version'])))
-                                    ->checked()
-                                    ->attributes(['disabled' => 'disabled', 'readonly' => 'readonly']);
-                            ;
-                        }
-                    });
-                    $form->fieldset(function ($fieldset) use($list) {
-                        $fieldset->legend('Available optional components');
-                        $available = array_get($list, 'list', []);
-                        $optional  = array_get($list, 'optional', []);
-
-                        foreach ($available as $name => $data) {
-                            $checked = in_array($name, $optional);
-                            $fieldset->control('input:checkbox', 'extension[]')
-                                    ->label(array_get($data, 'full_name'))
-                                    ->value($name)
-                                    ->help(implode(', ', array_only($data, ['description', 'author', 'version'])))
-                                    ->checked($checked);
-                        }
-
-                        $fieldset->control('button', 'button')
-                                ->attributes(['type' => 'submit', 'class' => 'btn btn--md btn--primary mdl-button mdl-js-button'])
-                                ->value(trans('antares/foundation::label.next') . ' <i class="pl8 zmdi zmdi-long-arrow-right"></i>');
-                    });
-                });
-        return $listener->componentsSucceed(['form' => $form]);
-    }
-
-    /**
-     * Gets list of available components
-     * 
-     * @return array
-     */
-    protected function getComponentsList()
-    {
-        $config     = config('installer.required', []);
-        $optional   = config('installer.optional', []);
-        $list       = app('antares.extension.finder')->detect();
-        $required   = [];
-        $components = [];
-        $list->each(function($element, $key) use($config, &$list, &$required, &$components) {
-            if (in_array($key, $config)) {
-                $required = array_add($required, $element['name'], $element);
-                $list->forget($key);
-            } else {
-                $components[$key] = $element;
-            }
-        });
-        return [
-            'optional' => $optional,
-            'list'     => $components,
-            'required' => $required
-        ];
+        return $listener->storeFailed();
     }
 
     /**
@@ -308,7 +201,6 @@ class Installer
      */
     public function done($listener)
     {
-        app('antares.extension')->detect();
         return $listener->doneSucceed();
     }
 

@@ -167,7 +167,8 @@ class FoundationTest extends ApplicationTestCase
         $app['request'] = $request        = m::mock('\Illuminate\Http\Request');
 
         $request->shouldReceive('root')->andReturn('http://localhost')
-                ->shouldReceive('secure')->andReturn(false);
+                ->shouldReceive('secure')->andReturn(false)
+                ->shouldReceive('segment')->andReturn(1)->getMock();
 
 
         $stub = new StubRouteManager($app);
@@ -191,7 +192,8 @@ class FoundationTest extends ApplicationTestCase
 
         $request->shouldReceive('root')->andReturn('http://localhost')
                 ->shouldReceive('secure')->andReturn(false)
-                ->shouldReceive('path')->times(4)->andReturn('/');
+                ->shouldReceive('segment')->andReturn(1)
+                ->shouldReceive('path')->times(4)->andReturn('/')->getMock();
 
 
         $stub = new StubRouteManager($app);

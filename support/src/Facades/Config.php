@@ -31,6 +31,6 @@ class Config extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'antares.extension.config';
+        return 'config';
     }
 }

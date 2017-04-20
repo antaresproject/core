@@ -35,7 +35,7 @@ return
                 'application' => 'Application Information',
                 'done'        => 'Done',
                 'requirement' => 'Check Requirements',
-                'license'     => 'License Details',
+                'install'     => 'Install Antares',
             ),
             'auth'             =>
             array(
@@ -97,10 +97,15 @@ return
                     'solution' => 'Change permissions to storage\license directory.',
                 ),
                 'writableTickets'        =>
-                array(
-                    'name'     => 'Tickets directory',
-                    'solution' => 'Change permissions to storage\tickets directory.',
-                ),
+                    array(
+                        'name'     => 'Tickets directory',
+                        'solution' => 'Change permissions to storage\tickets directory.',
+                    ),
+                'writableComposerVendor' =>
+                    array(
+                        'name'     => 'Composer vendor directory',
+                        'solution' => 'Change permissions to vendor directory.',
+                    ),
                 'apacheModules'          =>
                 array(
                     'name'     => 'Apache Modules',

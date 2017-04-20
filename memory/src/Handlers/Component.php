@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Memory\Handlers;
 
 use Antares\Memory\Exception\ComponentNotSavedException;
@@ -73,16 +72,9 @@ class Component extends ComponentHandler
                         $model = $first;
                     }
 
-                    $model->fill($value + ['status' => ($flag == 'active')]);
+                    $model->fill($value + ['status' => ($flag === 'active')]);
                     if (!$model->save()) {
                         throw new ComponentNotSavedException('Unable to save primary module configuration');
-                    }
-                    $moduleConfig               = (!is_null($model->config) && $model->config->exists) ? $model->config : $model->config()->getModel();
-                    $moduleConfig->fill($value);
-                    $moduleConfig->handles      = (isset($value['config']['handles']) && !empty($value['config']['handles']) ? $value['config']['handles'] : '');
-                    $moduleConfig->component_id = $model->id;
-                    if (!$moduleConfig->save()) {
-                        throw new ComponentNotSavedException('Unable to save module secondary configuration');
                     }
                 }
             });

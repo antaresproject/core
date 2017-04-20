@@ -1,47 +1,55 @@
 <?php
 
-/**
- * Part of the Antares Project package.
- *
- * NOTICE OF LICENSE
- *
- * Licensed under the 3-clause BSD License.
- *
- * This source file is subject to the 3-clause BSD License that is
- * bundled with this package in the LICENSE file.
- *
- * @package    Antares Core
- * @version    0.9.0
- * @author     Original Orchestral https://github.com/orchestral
- * @author     Antares Team
- * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
- * @link       http://antaresproject.io
- */
-
+declare(strict_types=1);
 
 namespace Antares\Extension\Bootstrap;
 
-use Illuminate\Contracts\Foundation\Application;
+use Antares\Extension\Dispatcher;
+use Antares\Extension\Exception\ExtensionException;
+use Antares\Extension\Manager;
+use Illuminate\Container\Container;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Exception;
 
-class LoadExtension
-{
+class LoadExtension {
 
-    /**
-     * Bootstrap the given application.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     *
-     * @return void
-     */
-    public function bootstrap(Application $app)
-    {
+	/**
+	 * Dispatcher instance.
+	 *
+	 * @var Dispatcher
+	 */
+	protected $dispatcher;
 
-        $extension = $app->make('antares.extension');
+	/**
+	 * Extension Manager instance.
+	 *
+	 * @var Manager
+	 */
+	protected $manager;
 
-        $memory = $app->make('antares.memory')->makeOrFallback();
-        $extension->attach($memory);
-        $extension->boot();
-    }
+	/**
+	 * LoadExtension constructor.
+	 * @param Dispatcher $dispatcher
+	 * @param Manager $manager
+	 */
+	public function __construct(Dispatcher $dispatcher, Manager $manager) {
+		$this->dispatcher 	= $dispatcher;
+		$this->manager 		= $manager;
+	}
+
+	/**
+	 * Bootstrap the given application.
+	 *
+	 * @param Container $app
+     * @throws ExtensionException
+     * @throws FileNotFoundException
+     * @throws Exception
+	 */
+	public function bootstrap(Container $app) {
+	    $extensions = $this->manager->getAvailableExtensions()->filterByActivated();
+
+        $this->dispatcher->registerCollection($extensions);
+        $this->dispatcher->boot();
+	}
 
 }

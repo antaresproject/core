@@ -47,4 +47,12 @@ interface Installation
      * @return bool
      */
     public function createAdmin($input, $allowMultiple = true);
+
+    /**
+     * Sets queue for installation of components.
+     *
+     * @return void
+     */
+    public function runComponentsInstallation();
+
 }

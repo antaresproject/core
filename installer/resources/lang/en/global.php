@@ -18,19 +18,13 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-return
-        array(
-            'Select components and modules'          => 'Select components and modules',
-            'Login page'                             => 'Login page',
-            'Installation completed'                 => 'Installation completed',
-            'Default Components and Modules'         => 'Default Components and Modules',
-            'Next'                                   => 'Next',
-            'Following php extensions are installed' => 'Following php extensions are installed',
-            'Following apache modules are installed' => 'Following apache modules are installed',
-            'Again'                                  => 'Again',
-            'Required components'                    => 'Required components',
-            'The list of required system components' => 'The list of required system components',
-            'Available components'                   => 'Available components',
-            'The list of available components'       => 'The list of available components',
-            'Submit'                                 => 'Submit',
-);
+
+return [
+    'Select components and modules'          => 'Select components and modules',
+    'Login page'                             => 'Login page',
+    'Installation completed'                 => 'Installation completed',
+    'Next'                                   => 'Next',
+    'Following php extensions are installed' => 'Following php extensions are installed',
+    'Following apache modules are installed' => 'Following apache modules are installed',
+    'Again'                                  => 'Again',
+];

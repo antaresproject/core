@@ -1,0 +1,86 @@
+{% extends "antares/foundation::layouts.installer.main" %}
+{% block left_panel_content %}
+    {{ parent() }}
+    {% include 'antares/installer::partials._menu' with {'active': 3} %}
+{% endblock %}
+{% block content %}
+    <div class="card card--chart-small card--primary-light">
+        <div class="card__header">
+            <div class="card__header--top">
+                <span>{{ trans('antares/foundation::install.steps.install') }} (<span id="progress">0</span>%)</span>
+            </div>
+        </div>
+        <div class="card__content">
+            <div class="form-block">
+                <div id="install-progress-console" data-url="{{ handles('antares::install/progress/preview') }}"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-content__footer">
+        <div class="btn-group">
+            <a href="{{ handles('antares::install/progress/stop') }}" class="btn btn--md btn--default mdl-button mdl-js-button">
+                {{ trans('antares/foundation::install.stopAndBack') }}
+            </a>
+        </div>
+    </div>
+
+    <style>
+        #install-progress-console {
+            width:100%;
+            padding:5px 10px;
+            box-sizing:border-box;
+            border:none;
+            border-radius:0;
+            background:{{ consoleTheme.black }};
+            color:white;
+            font-family: "Consolas", "Ubuntu Mono", "Monaco", monospace;
+            font-size:12px;
+            height:600px;
+            overflow-y:scroll;
+            overflow-x:hidden;
+            white-space:pre-wrap;
+            position:relative;
+        }
+    </style>
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.6.16/css/perfect-scrollbar.min.css" />
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.6.16/js/perfect-scrollbar.jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.6.16/js/perfect-scrollbar.min.js"></script>
+    <script type="text/javascript">
+        (function($) {
+            var
+                $progress = $('#progress'),
+                $console = $('#install-progress-console'),
+                url = $console.data('url'),
+                lastHash = '';
+
+            $console.perfectScrollbar();
+
+            (function refresh() {
+                $.get(url).then(function(response) {
+                    if( parseInt(response.progress) > parseInt($progress.text())) {
+                        $progress.text(response.progress);
+                    }
+
+                    if(response.redirect) {
+                        window.location.replace(response.redirect);
+                    }
+                    else {
+                        var text = response.console.replace(/\r\n/g,"\n");
+
+                        if(response.hash !== lastHash) {
+                            $console.html(text).scrollTop( $console.get(0).scrollHeight );
+                            lastHash = response.hash;
+                        }
+
+                        setTimeout(refresh, 2000);
+                    }
+                });
+            })();
+
+        })(jQuery);
+    </script>
+{% endblock %}

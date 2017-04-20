@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Part of the Antares Project package.
  *
@@ -19,209 +21,334 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Datatables;
 
-use Antares\Contracts\Extension\Factory as ExtensionFactory;
+use Antares\Contracts\Authorization\Authorization;
+use Antares\Datatables\Adapter\GroupsFilterAdapter;
+use Antares\Datatables\Engines\CollectionEngine;
+use Antares\Extension\Contracts\ExtensionContract;
+use Antares\Extension\Manager as ExtensionFactory;
 use Antares\Datatables\Services\DataTable;
-use Illuminate\Database\Eloquent\Builder;
+use Antares\Extension\Model\Types;
 use Illuminate\Contracts\View\Factory;
 use Antares\Datatables\Datatables;
 use Antares\Support\Collection;
+use HTML;
+use URL;
+use Closure;
 
-class Extensions extends DataTable
-{
-
-    /**
-     * we are ignoring every package form following directory
-     * @var String
-     */
-    private static $ignorePath = 'modules';
-
-    /**
-     * hwo many rows per page
-     *
-     * @var mixed
-     */
-    public $perPage = 25;
+class Extensions extends DataTable {
 
     /**
      * extension factory
      *
-     * @var Factory2
+     * @var Factory
      */
-    protected $extension = null;
+    protected $extension;
 
     /**
-     * constructing
-     * 
+     * Index of type column.
+     *
+     * @var int
+     */
+    protected $typeColumnIndex = 5;
+
+    /**
+     * Extensions constructor.
      * @param Datatables $datatables
      * @param Factory $viewFactory
      * @param ExtensionFactory $extensions
      */
-    public function __construct(Datatables $datatables, Factory $viewFactory, ExtensionFactory $extensions)
-    {
+    public function __construct(Datatables $datatables, Factory $viewFactory, ExtensionFactory $extensions) {
         parent::__construct($datatables, $viewFactory);
+
         $this->extension = $extensions;
     }
 
     /**
-     * @return Builder
+     * @return Collection
      */
-    public function query()
-    {
+    public function query() {
+        $collection = $this->extension->getAvailableExtensions();
 
-        $extensions = $this->extension->detect();
-        $return     = new Collection();
-        foreach ($extensions as $name => $extension) {
-            if (starts_with($extension['path'], 'base::src/' . self::$ignorePath)) {
-                continue;
-            }
-            $return->push([
-                'full_name'   => $extension['full_name'],
-                'description' => $extension['description'],
-                'author'      => $extension['author'],
-                'version'     => $extension['version'],
-                'url'         => $extension['url'],
-                'name'        => $name,
-                'activated'   => $this->extension->activated($name),
-                'started'     => $this->extension->started($name),
-            ]);
+        return $this->filterByType($collection);
+    }
+
+    /**
+     * @return GroupsFilterAdapter
+     */
+    protected function getGroupsFilterAdapter() : GroupsFilterAdapter {
+        $groupsFilterAdapter = app(GroupsFilterAdapter::class);
+        $groupsFilterAdapter->setClassname(get_class($this))->setIndex($this->typeColumnIndex);
+
+        return $groupsFilterAdapter;
+    }
+
+    /**
+     * @param \Antares\Extension\Collections\Extensions $query
+     * @return \Antares\Extension\Collections\Extensions
+     */
+    protected function filterByType(\Antares\Extension\Collections\Extensions $query) {
+        $value = $this->getGroupsFilterAdapter()->getSelected($this->typeColumnIndex);
+
+        if( request()->ajax() || $value === '') {
+            return $query;
         }
-        return $return;
+
+        return $query->filter(function(ExtensionContract $extension) use($value) {
+            return $extension->getFriendlyType() === $value;
+        });
     }
 
     /**
      * {@inheritdoc}
      */
-    public function ajax()
-    {
-        $acl          = app('antares.acl')->make('antares');
-        $canActivate  = $acl->can('component-activate');
-        $canUninstall = $acl->can('component-uninstall');
-        $required     = config('installer.required');
+    public function ajax() {
+        $acl = app('antares.acl')->make('antares');
+
         return $this->prepare()
-                        ->addColumn('id', '')
-                        ->addColumn('url', $this->getDocumenationColumn())
-                        ->addColumn('full_name', $this->getNameColumn())
-                        ->addColumn('status', $this->getStatusColumn())
-                        ->addColumn('description', $this->getDescriptionRow())
-                        ->addColumn('action', $this->getActionsColumn($canActivate, $canUninstall, $required))
-                        ->make(true);
+            ->addColumn('id', '')
+            ->addColumn('friendlyName', $this->getNameColumn())
+            ->addColumn('status', $this->getStatusColumn())
+            ->addColumn('description', $this->getDescriptionColumn())
+            ->addColumn('authors', $this->getAuthorsColumn())
+            ->addColumn('version', $this->getVersionColumn())
+            ->addColumn('type', $this->getTypeColumn())
+            ->addColumn('action', $this->getActionsColumn($acl))
+            ->make(true);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function html()
-    {
+    public function html() {
+        publish(null, ['/foundation/public/js/extensions.js']);
+
+        $options = [
+            'data-prefix' => trans('antares/foundation::messages.select_extension_type'),
+        ];
+
         return $this->setName('Extensions')
-                        ->addColumn(['data' => 'id', 'name' => 'id', 'title' => trans('Id')])
-                        ->addColumn(['data' => 'full_name', 'name' => 'full_name', 'title' => trans('antares/foundation::label.extensions.header.name')])
-                        ->addColumn(['data' => 'description', 'name' => 'description', 'title' => trans('antares/foundation::label.extensions.header.description')])
-                        ->addColumn(['data' => 'author', 'name' => 'author', 'title' => trans('antares/foundation::label.extensions.header.author')])
-                        ->addColumn(['data' => 'version', 'name' => 'version', 'title' => trans('antares/foundation::label.extensions.header.version')])
-                        ->addColumn(['data' => 'url', 'name' => 'url', 'title' => trans('antares/foundation::label.extensions.header.url')])
-                        ->addColumn(['data' => 'status', 'name' => 'status', 'title' => trans('antares/foundation::label.extensions.header.status')])
-                        ->addAction(['name' => 'edit', 'title' => '', 'class' => 'dt-row-actions'])
-                        ->setDeferedData();
+            ->addColumn(['data' => 'friendlyName', 'name' => 'friendlyName', 'title' => trans('antares/foundation::label.extensions.header.name')])
+            ->addColumn(['data' => 'description', 'name' => 'description', 'title' => trans('antares/foundation::label.extensions.header.description')])
+            ->addColumn(['data' => 'authors', 'name' => 'authors', 'title' => trans('antares/foundation::label.extensions.header.authors'), 'orderable' => false])
+            ->addColumn(['data' => 'version', 'name' => 'version', 'title' => trans('antares/foundation::label.extensions.header.version')])
+            ->addColumn(['data' => 'status', 'name' => 'status', 'title' => trans('antares/foundation::label.extensions.header.status')])
+            ->addColumn(['data' => 'type', 'name' => 'type', 'title' => trans('antares/foundation::label.extensions.header.type')])
+            ->addAction(['name' => 'edit', 'title' => '', 'class' => 'dt-row-actions'])
+            ->setDeferedData()
+            ->addGroupSelect($this->getTypes(), $this->typeColumnIndex, Types::TYPE_ADDITIONAL, $options)
+        ->parameters([
+            'aoColumnDefs' => [
+                ['width' => '15%', 'targets' => 0],
+                ['width' => '40%', 'targets' => 1],
+                ['width' => '22%', 'targets' => 2],
+                ['width' => '7%', 'targets' => 3],
+                ['width' => '10%', 'targets' => 4],
+                ['width' => '10%', 'targets' => 5],
+                ['width' => '1%', 'targets' => 6],
+        ]]);
     }
 
     /**
-     * Get actions column for table builder.
-     * 
-     * @return callable
+     * @return array
      */
-    protected function getActionsColumn($canActivate, $canUninstall, array $required = array())
+    protected function getTypes() : array
     {
+        $types = [
+            '' => trans('antares/foundation::messages.extension_type_all'),
+        ];
 
-        return function ($row) use($canActivate, $canUninstall, $required) {
+        foreach(Types::all() as $type) {
+            $types[$type] = $type;
+        }
 
-            $html = app('html');
-            $btns = [];
-            if ((!$row['started'] or ! $row['activated']) and $canActivate) {
-                $btns[] = $html->link(handles("antares::extensions/{$row['name']}/activate", ['csrf' => true]), trans('antares/foundation::label.extensions.actions.activate'), ['class' => "triggerable confirm", 'data-title' => trans("Do you really want to activate package?"), 'data-icon' => 'plus', 'data-description' => trans('antares/foundation::messages.package.activation', ['name' => $row['full_name']])]);
-            } else {
-                if ($canUninstall and ! in_array($row['name'], $required)) {
-                    $btns[] = $html->link(handles("antares::extensions/{$row['name']}/uninstall", ['csrf' => true]), trans('antares/foundation::label.extensions.actions.uninstall'), ['class' => "triggerable confirm", 'data-title' => trans("Do you really want to uninstall package?"), 'data-icon' => 'minus', 'data-description' => trans('antares/foundation::messages.package.uninstall', ['name' => $row['full_name']])]);
+        return $types;
+    }
+
+    /**
+     * @param Authorization $acl
+     * @return Closure
+     */
+    protected function getActionsColumn(Authorization $acl) : Closure {
+        return function(ExtensionContract $extension) use($acl) {
+            $buttons    = [];
+            $name       = $extension->getPackage()->getName();
+
+            if ($extension->isRequired()) {
+                return HTML::create('div', '', ['class' => 'disabled'])->get();
+            }
+
+            if ( $acl->can('component-configure') && $this->extension->hasSettingsForm($name) && $extension->getStatus() === ExtensionContract::STATUS_ACTIVATED) {
+                $configureUrl = URL::route(area() . '.extensions.viewer.configuration.get', [
+                    'vendor'    => $extension->getVendorName(),
+                    'name'      => $extension->getPackageName(),
+                    'csrf'      => true,
+                ]);
+
+                $label  = trans('antares/foundation::label.extensions.actions.configure');
+
+                $params = [
+                    'data-icon' => 'wrench',
+                ];
+
+                $buttons[] = (string) HTML::link($configureUrl, $label, $params);
+            }
+
+            if ($extension->getStatus() === ExtensionContract::STATUS_AVAILABLE && $acl->can('component-install')) {
+                $buttons[] = $this->getButtonLink($extension, 'install', 'plus');
+            }
+            if ($extension->getStatus() === ExtensionContract::STATUS_INSTALLED && $acl->can('component-activate')) {
+                $buttons[] = $this->getButtonLink($extension, 'activate', 'plus');
+            }
+
+            if( ! $extension->isRequired()) {
+                if ($extension->getStatus() === ExtensionContract::STATUS_INSTALLED && $acl->can('component-uninstall')) {
+                    $buttons[] = $this->getButtonLink($extension, 'uninstall', 'minus');
+                }
+                elseif($extension->getStatus() === ExtensionContract::STATUS_ACTIVATED && $acl->can('component-deactivate')) {
+                    $buttons[] = $this->getButtonLink($extension, 'deactivate', 'minus');
                 }
             }
-            if (in_array($row['name'], $required)) {
-                return $html->create('div', '', ['class' => 'disabled'])->get();
-            }
 
-            if (empty($btns)) {
+            if ( ! count($buttons)) {
                 return '';
             }
-            $section    = $html->create('div', $html->raw(implode('', $btns)), ['class' => 'mass-actions-menu', 'style' => 'display:none;'])->get();
-            $indicators = $html->create('i', $this->createCircles(), ['class' => 'ma-trigger'])->get();
-            return '<i class="zmdi zmdi-more"></i>' . $html->raw(implode('', [$section, $indicators]))->get();
+
+            $section    = HTML::create('div', HTML::raw(implode('', $buttons)), ['class' => 'mass-actions-menu', 'style' => 'display:none;'])->get();
+            $indicators = HTML::create('i', '', ['class' => 'ma-trigger'])->get();
+
+            return '<i class="zmdi zmdi-more"></i>' . HTML::raw(implode('', [$section, $indicators]))->get();
         };
     }
 
     /**
-     * create circle dots action value
-     * @return String
+     * Returns buttons for each row.
+     *
+     * @param ExtensionContract $extension
+     * @param string $action
+     * @param string $icon
+     * @return string
      */
-    protected function createCircles()
-    {
-        $html = app('html');
-        $html->create('i', '', ['class' => 'zmdi zmdi-more']);
+    protected function getButtonLink(ExtensionContract $extension, string $action, string $icon) : string {
+        $actionUrl = URL::route(area() . '.extensions.' . $action, [
+            'vendor'    => $extension->getVendorName(),
+            'name'      => $extension->getPackageName(),
+            'csrf'      => true,
+        ]);
+
+        $name   = $extension->getFriendlyName();
+        $url    = URL::route(area() . '.extensions.progress.index');
+        $label  = trans('antares/foundation::label.extensions.actions.' . $action);
+
+        $params = [
+            'class'             => 'bindable component-prompt-modal',
+            'data-title'        => trans('antares/foundation::messages.extensions.modal_title.' . $action),
+            'data-icon'         => $icon,
+            'data-action-url'   => $actionUrl,
+            'data-description'  => trans('antares/foundation::messages.extensions.modal_content.' . $action, compact('name')),
+        ];
+
+        return (string) HTML::link($url, $label, $params);
     }
 
     /**
-     * get status column
-     * @return String
+     * Returns status column.
+     *
+     * @return Closure
      */
-    protected function getStatusColumn()
-    {
-        return function ($row) {
-            if (!$row['started'] or ! $row['activated']) {
-                return '<span class="label-basic label-basic--default">Inactive</span>';
-            } else {
-                return '<span class="label-basic label-basic--success">ACTIVE</span>';
+    protected function getStatusColumn() : Closure {
+        return function(ExtensionContract $extension) {
+            switch($extension->getStatus()) {
+                case ExtensionContract::STATUS_ACTIVATED:
+                    return '<span class="label-basic label-basic--success">' . trans('antares/foundation::label.extensions.statuses.active') . '</span>';
+
+                case ExtensionContract::STATUS_INSTALLED:
+                    return '<span class="label-basic label-basic--danger">' . trans('antares/foundation::label.extensions.statuses.inactive') . '</span>';
+
+                case ExtensionContract::STATUS_AVAILABLE:
+                default:
+                    return '<span class="label-basic label-basic--info">' . trans('antares/foundation::label.extensions.statuses.available') . '</span>';
             }
         };
     }
 
     /**
-     * preparing description column
-     * 
-     * @return String
+     * Returns description column.
+     *
+     * @return Closure
      */
-    protected function getDescriptionRow()
-    {
-
-        return function ($row) {
-            return '<span class="dots dots-long" data-toggle="tooltip" data-placement="top" title="' . $row['description'] . '">' . $row['description'] . '</span>';
+    protected function getDescriptionColumn() : Closure {
+        return function(ExtensionContract $extension) {
+            return $extension->getPackage()->getDescription();
         };
     }
 
     /**
-     * get documenation column
-     * @return String
+     * Returns name column.
+     *
+     * @return Closure
      */
-    protected function getDocumenationColumn()
-    {
-        return function ($row) {
-            if ($row['url'] != '---') {
-                return app('html')->link($row['url'], $row['url'], ['target' => '_blank'])->get();
+    protected function getNameColumn() : Closure {
+        return function(ExtensionContract $package) {
+            $name   = $package->getFriendlyName();
+            $url    = $package->getPackage()->getHomepage();
+
+            if($url) {
+                return (string) HTML::link($url, $name, [
+                    'target' => '_blank',
+                ]);
             }
-            return $row['url'];
+
+            return $name;
         };
     }
 
     /**
-     * get name column
-     * @return String
+     * Returns version column.
+     *
+     * @return Closure
      */
-    protected function getNameColumn()
-    {
-        return function ($row) {
-            if ($row['started']) {
-                return app('html')->link(handles("antares::extensions/{$row['name']}/configure"), $row['full_name'])->get();
+    protected function getVersionColumn() : Closure {
+        return function(ExtensionContract $package) {
+            return $package->getPackage()->getPrettyVersion();
+        };
+    }
+
+    /**
+     * Returns version column.
+     *
+     * @return Closure
+     */
+    protected function getTypeColumn() : Closure {
+        return function(ExtensionContract $package) {
+            return $package->getFriendlyType();
+        };
+    }
+
+    /**
+     * Returns authors column.
+     *
+     * @return Closure
+     */
+    protected function getAuthorsColumn() : Closure {
+        return function(ExtensionContract $extension) {
+            $authors = array_map(function(array $author) {
+                if( array_key_exists('email', $author) ) {
+                    return (string) HTML::mailto($author['email'], $author['name']);
+                }
+
+                return $author['name'];
+
+            }, $extension->getPackage()->getAuthors());
+
+            $prefix = '';
+
+            if($extension->getVendorName() === 'antaresproject') {
+                $prefix = trans('antares/foundation::title.antares_team');
             }
-            return $row['full_name'];
+
+            return $prefix . ' - ' . implode(', ', $authors);
         };
     }
 

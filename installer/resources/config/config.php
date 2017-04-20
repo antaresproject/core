@@ -43,10 +43,33 @@ return [
         'tickets'
     ],
     'permissions'                => [
-        'member' => [
-            'show-dashboard',
-            'client-update'
-        ]
+        'roles' => [
+            'member' => [
+                'show-dashboard',
+                'client-update'
+            ],
+        ],
+        'components' => [
+            'core' => [
+                'manage-antares',
+                'manage-users',
+                'manage-roles',
+                'manage-acl',
+                'clients-list',
+                'client-create',
+                'client-update',
+                'client-delete',
+                'change-app-settings',
+                'show-dashboard',
+                'component-install',
+                'component-uninstall',
+                'component-activate',
+                'component-deactivate',
+                'component-configure',
+                'brand-update',
+                'brand-email',
+            ],
+        ],
     ],
-    'fake_users_count'           => 1
+    'fake_users_count' => 1,
 ];

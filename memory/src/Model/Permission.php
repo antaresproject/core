@@ -21,6 +21,7 @@
 
 namespace Antares\Memory\Model;
 
+use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Memory\Exception\PermissionNotSavedException;
 use Antares\Model\Permission as PermissionModel;
 use Antares\Support\Facades\Foundation;
@@ -49,7 +50,7 @@ class Permission extends Eloquent
     protected $morphClass = 'Permission';
 
     /**
-     * @var Antares\Model\Role 
+     * @var \Antares\Model\Role
      */
     protected $role;
 
@@ -129,38 +130,30 @@ class Permission extends Eloquent
     }
 
     /**
-     * @param type $model
-     * @return type
+     * @param $model
+     * @return array
      */
     protected function complete($model)
     {
         return [
-            'path'        => $model->path,
-            'source-path' => $model->path,
-            'name'        => $model->name,
-            'full_name'   => $model->full_name,
-            'description' => $model->description,
-            'author'      => $model->author,
-            'url'         => $model->url,
-            'version'     => $model->version,
-            'config'      => ($model->handles) ? ['handles' => $model->handles] : [],
-            'autoload'    => ($model->autoload) ? [$model->autoload] : [],
-            'provides'    => ($model->provides) ? explode(';', $model->provides) : []
+            'vendor'    => $model->vendor,
+            'name'      => $model->name,
+            'fullname'  => $model->vendor . '/' . $model->name,
         ];
     }
 
     /**
-     * @param type $name
-     * @return type
+     * @param $name
+     * @return bool
      */
     protected function isCoreComponent($name)
     {
-        return $name == 'acl_antares';
+        return $name === 'core';
     }
 
     /**
      * cache prefix getter
-     * 
+     *
      * @return String
      */
     protected function getCachePrefix()
@@ -173,58 +166,86 @@ class Permission extends Eloquent
      */
     public function getAll($brandId = null)
     {
-        $key     = $this->getCachePrefix() . $brandId;
-        $columns = ['id', 'brand_id', 'name', 'full_name', 'status', 'description', 'author', 'url', 'path', 'version', 'handles', 'provides', 'actions', 'permissions', 'options'];
+        $columns = ['id', 'vendor', 'name', 'status', 'actions', 'permissions', 'options'];
         $builder = (!is_null($brandId)) ? static::select($columns)->where('brand_id', '=', $brandId)->orWhere('brand_id') : static::select($columns);
         $models  = $builder->with(['attachedActions'])->get();
-        $return  = ['extensions' => ['active' => [], 'available' => [], 'modules' => []],];
+        $return  = ['extensions' => ['active' => [], 'available' => []],];
         $roles   = $this->role->pluck('name', 'id')->toArray();
-
 
         foreach ($models as $model) {
             $actions = $model->attachedActions->pluck('name', 'id')->toArray();
             $isCore  = $this->isCoreComponent($model->name);
 
             if (!$isCore) {
-                $configuration = $this->complete($model);
-                $reversed      = array_reverse(explode('/', $model->path));
-                $name          = implode('/', [$reversed[1], $reversed[0]]);
+                $configuration  = $this->complete($model);
+                $name           = $configuration['fullname'];
 
                 $return['extensions']['available'][$name] = $configuration;
-                if ($model->status) {
+
+                if ($model->status === ExtensionContract::STATUS_ACTIVATED) {
                     $return['extensions']['active'][$name] = $configuration;
                 }
-                if (starts_with($configuration['path'], 'base::src/modules')) {
-                    $return['extensions']['modules'][$name] = $configuration;
-                }
             }
-            $key          = ($isCore) ? $model->name : 'acl_antares/' . $model->name;
+            $key          = $isCore ? 'acl_antares' : 'acl_' . $this->getNormalizedName($configuration['fullname']);
             $return[$key] = [
                 'acl'     => $this->permissions($model->permissions),
                 'actions' => $actions,
                 'roles'   => $roles
             ];
         }
+
         ksort($return['extensions']['active']);
         ksort($return['extensions']['available']);
         return $return;
     }
 
     /**
+     * Returns normalized component name. It is used for backward compatibility.
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function getNormalizedName(string $name) : string {
+        $name = str_replace('antaresproject/component-', 'antares/', $name);
+
+        return str_replace('-', '_', $name);
+    }
+
+    /**
      * updates component permission settings
-     * @param String $name
-     * @param array | mixed $values
-     * @param boolean $isNew
+     *
+     * @param $name
+     * @param $values
+     * @param bool $isNew
+     * @param null $brandId
+     * @return bool
      */
     public function updatePermissions($name, $values, $isNew = false, $brandId = null)
     {
         try {
-
-            $model = $this->query()->where('name', '=', $name)->first();
-            if (is_null($name)) {
+            if ($name === null) {
                 return false;
             }
 
+            if( str_contains($name, '/') ) {
+                list($vendor, $name) = explode('/', $name);
+
+                $model = $this->query()
+                    ->where('vendor', '=', $vendor)
+                    ->where('name', '=', $name)
+                    ->first();
+            }
+            elseif( $name !== 'core' && ! str_contains($name, 'component-')) {
+                $name = 'component-' . str_replace('_', '-', $name);
+                $model = $this->query()->where('name', '=', $name)->first();
+            }
+            else {
+                $model = $this->query()->where('name', '=', $name)->first();
+            }
+
+            if ($model === null) {
+                return false;
+            }
 
             $actions = [];
             foreach ($values['actions'] as $actionName) {
@@ -248,12 +269,12 @@ class Permission extends Eloquent
 
                 foreach ($brands as $brand) {
                     $permissionModel = $this->permission()->getModel()
-                            ->where('brand_id', '=', $brand)
-                            ->where('action_id', '=', $actionId)
-                            ->where('component_id', '=', $model->id)
-                            ->where('role_id', '=', $roleId)
-                            ->get()
-                            ->first();
+                        ->where('brand_id', '=', $brand)
+                        ->where('action_id', '=', $actionId)
+                        ->where('component_id', '=', $model->id)
+                        ->where('role_id', '=', $roleId)
+                        ->get()
+                        ->first();
 
                     $exists = (is_null($permissionModel)) ? false : $permissionModel->exists;
                     if ($exists) {
