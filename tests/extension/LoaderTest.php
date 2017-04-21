@@ -9,39 +9,33 @@ use Antares\Extension\Loader;
 
 class ProviderRepositoryTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Teardown the test environment.
-     */
-    public function tearDown()
-    {
-        m::close();
-    }
 
-    public function testRegisterExtensionProviders() {
-        $service = 'Antares\Extension\TestCase\FooServiceProvider';
+    public function testRegisterExtensionProviders()
+    {
+        $service      = 'Antares\Extension\TestCase\FooServiceProvider';
         $manifestPath = '/var/www/laravel/bootstrap/cache';
 
-        $mock = m::mock($service);
-        $app = m::mock('\Antares\Foundation\Application');
+        $mock   = m::mock($service);
+        $app    = m::mock('\Antares\Foundation\Application');
         $events = m::mock('\Illuminate\Contracts\Events\Dispatcher');
-        $files = m::mock('\Illuminate\Filesystem\Filesystem');
+        $files  = m::mock('\Illuminate\Filesystem\Filesystem');
 
         $app->shouldReceive('getCachedExtensionServicesPath')->once()->andReturn("{$manifestPath}/extension.php")->getMock();
 
-        $extensionPath    = '/dummy/path';
-        $providersPath    = $extensionPath . '/providers.php';
+        $extensionPath = '/dummy/path';
+        $providersPath = $extensionPath . '/providers.php';
 
         $extension = m::mock(ExtensionContract::class)
-            ->shouldReceive('getPath')
-            ->once()
-            ->andReturn($extensionPath)
-            ->getMock();
+                ->shouldReceive('getPath')
+                ->once()
+                ->andReturn($extensionPath)
+                ->getMock();
 
         $files
-            ->shouldReceive('exists')
-            ->once()
-            ->with($providersPath)
-            ->andReturn(false);
+                ->shouldReceive('exists')
+                ->once()
+                ->with($providersPath)
+                ->andReturn(false);
 
         $stub = new Loader($app, $events, $files);
 
@@ -54,13 +48,13 @@ class ProviderRepositoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testServicesMethodWhenEager()
     {
-        $service = 'Antares\Extension\TestCase\FooServiceProvider';
+        $service      = 'Antares\Extension\TestCase\FooServiceProvider';
         $manifestPath = '/var/www/laravel/bootstrap/cache';
 
-        $mock = m::mock($service);
-        $app = m::mock('\Antares\Foundation\Application');
+        $mock   = m::mock($service);
+        $app    = m::mock('\Antares\Foundation\Application');
         $events = m::mock('\Illuminate\Contracts\Events\Dispatcher');
-        $files = m::mock('\Illuminate\Filesystem\Filesystem');
+        $files  = m::mock('\Illuminate\Filesystem\Filesystem');
 
         $schema = [
             'eager'    => true,
@@ -69,16 +63,16 @@ class ProviderRepositoryTest extends \PHPUnit_Framework_TestCase
         ];
 
         $app->shouldReceive('getCachedExtensionServicesPath')->once()->andReturn("{$manifestPath}/extension.php")
-            ->shouldReceive('resolveProvider')->once()
-            ->with($service)->andReturn($mock)
-            ->shouldReceive('register')->once()->with($mock)->andReturn($mock);
+                ->shouldReceive('resolveProvider')->once()
+                ->with($service)->andReturn($mock)
+                ->shouldReceive('register')->once()->with($mock)->andReturn($mock);
         $files->shouldReceive('exists')->once()
-            ->with("{$manifestPath}/extension.php")->andReturn(false)
-            ->shouldReceive('put')->once()
-            ->with("{$manifestPath}/extension.php", '<?php return '.var_export([$service => $schema], true).';')
-            ->andReturnNull();
+                ->with("{$manifestPath}/extension.php")->andReturn(false)
+                ->shouldReceive('put')->once()
+                ->with("{$manifestPath}/extension.php", '<?php return ' . var_export([$service => $schema], true) . ';')
+                ->andReturnNull();
 
-        $mock->shouldReceive('isDeferred')->once()->andReturn(! $schema['eager']);
+        $mock->shouldReceive('isDeferred')->once()->andReturn(!$schema['eager']);
 
         $stub = new Loader($app, $events, $files);
         $stub->loadManifest();
@@ -94,13 +88,13 @@ class ProviderRepositoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testServicesMethodWhenDeferred()
     {
-        $service = 'Antares\Extension\TestCase\FooServiceProvider';
+        $service      = 'Antares\Extension\TestCase\FooServiceProvider';
         $manifestPath = '/var/www/laravel/bootstrap/cache';
 
-        $mock = m::mock($service);
-        $app = m::mock('\Antares\Foundation\Application');
+        $mock   = m::mock($service);
+        $app    = m::mock('\Antares\Foundation\Application');
         $events = m::mock('\Illuminate\Contracts\Events\Dispatcher');
-        $files = m::mock('\Illuminate\Filesystem\Filesystem');
+        $files  = m::mock('\Illuminate\Filesystem\Filesystem');
 
         $schema = [
             'eager'    => false,
@@ -111,20 +105,20 @@ class ProviderRepositoryTest extends \PHPUnit_Framework_TestCase
         ];
 
         $app->shouldReceive('getCachedExtensionServicesPath')->once()->andReturn("{$manifestPath}/extension.php")
-            ->shouldReceive('resolveProvider')->once()
-            ->with($service)->andReturn($mock)
-            ->shouldReceive('addDeferredServices')->once()->andReturn([
-                'foo' => $service,
-            ]);
+                ->shouldReceive('resolveProvider')->once()
+                ->with($service)->andReturn($mock)
+                ->shouldReceive('addDeferredServices')->once()->andReturn([
+            'foo' => $service,
+        ]);
         $files->shouldReceive('exists')->once()
-            ->with("{$manifestPath}/extension.php")->andReturn(false)
-            ->shouldReceive('put')->once()
-            ->with("{$manifestPath}/extension.php", '<?php return '.var_export([$service => $schema], true).';')
-            ->andReturnNull();
+                ->with("{$manifestPath}/extension.php")->andReturn(false)
+                ->shouldReceive('put')->once()
+                ->with("{$manifestPath}/extension.php", '<?php return ' . var_export([$service => $schema], true) . ';')
+                ->andReturnNull();
 
-        $mock->shouldReceive('isDeferred')->once()->andReturn(! $schema['eager'])
-            ->shouldReceive('provides')->once()->andReturn(array_keys($schema['deferred']))
-            ->shouldReceive('when')->once()->andReturn($schema['when']);
+        $mock->shouldReceive('isDeferred')->once()->andReturn(!$schema['eager'])
+                ->shouldReceive('provides')->once()->andReturn(array_keys($schema['deferred']))
+                ->shouldReceive('when')->once()->andReturn($schema['when']);
 
         $stub = new Loader($app, $events, $files);
         $stub->loadManifest();
@@ -140,13 +134,13 @@ class ProviderRepositoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testServicesMethodWhenManifestExists()
     {
-        $service = 'Antares\Extension\TestCase\FooServiceProvider';
+        $service      = 'Antares\Extension\TestCase\FooServiceProvider';
         $manifestPath = '/var/www/laravel/bootstrap/cache';
 
-        $mock = m::mock($service);
-        $app = m::mock('\Antares\Foundation\Application');
-        $events = m::mock('\Illuminate\Contracts\Events\Dispatcher');
-        $files = m::mock('\Illuminate\Filesystem\Filesystem');
+        $mock         = m::mock($service);
+        $app          = m::mock('\Antares\Foundation\Application');
+        $events       = m::mock('\Illuminate\Contracts\Events\Dispatcher');
+        $files        = m::mock('\Illuminate\Filesystem\Filesystem');
         $manifestPath = '/var/www/laravel/bootstrap/cache';
 
         $schema = [
@@ -156,10 +150,10 @@ class ProviderRepositoryTest extends \PHPUnit_Framework_TestCase
         ];
 
         $app->shouldReceive('getCachedExtensionServicesPath')->once()->andReturn("{$manifestPath}/extension.php")
-            ->shouldReceive('register')->once()->with($service)->andReturnNull();
+                ->shouldReceive('register')->once()->with($service)->andReturnNull();
         $files->shouldReceive('exists')->once()->with("{$manifestPath}/extension.php")->andReturn(true)
-            ->shouldReceive('getRequire')->once()->with("{$manifestPath}/extension.php")
-            ->andReturn([$service => $schema]);
+                ->shouldReceive('getRequire')->once()->with("{$manifestPath}/extension.php")
+                ->andReturn([$service => $schema]);
 
         $stub = new Loader($app, $events, $files);
         $stub->loadManifest();
@@ -168,10 +162,12 @@ class ProviderRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($stub->shouldRecompile());
         $this->assertNull($stub->writeManifest());
     }
+
 }
 
 class FooServiceProvider extends ServiceProvider
 {
+
     public function register()
     {
         //
@@ -181,4 +177,5 @@ class FooServiceProvider extends ServiceProvider
     {
         return [];
     }
+
 }

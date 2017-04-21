@@ -21,7 +21,6 @@
 namespace Antares\Extension\Factories\TestCase;
 
 use Antares\Extension\Factories\SettingsFactory;
-
 use Illuminate\Filesystem\Filesystem;
 use Mockery as m;
 
@@ -33,25 +32,23 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
      */
     protected $filesystem;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
-        $this->filesystem    = m::mock(Filesystem::class);
-    }
-
-    public function tearDown() {
-        parent::tearDown();
-        m::close();
+        $this->filesystem = m::mock(Filesystem::class);
     }
 
     /**
      * @return SettingsFactory
      */
-    protected function getFactory() {
+    protected function getFactory()
+    {
         return new SettingsFactory($this->filesystem);
     }
 
-    public function testCreateFromDataMethodAsEmpty() {
+    public function testCreateFromDataMethodAsEmpty()
+    {
         $configData = [];
 
         $settings = $this->getFactory()->createFromData($configData);
@@ -61,7 +58,8 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([], $settings->getValidationPhrases());
     }
 
-    public function testCreateFromDataMethodWithConfig() {
+    public function testCreateFromDataMethodWithConfig()
+    {
         $data = [
             'a' => 'foo',
             'b' => 'bar',
@@ -86,7 +84,8 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($phrases, $settings->getValidationPhrases());
     }
 
-    public function testCreateFromConfig() {
+    public function testCreateFromConfig()
+    {
         $data = [
             'a' => 'foo',
             'b' => 'bar',
@@ -106,10 +105,10 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
         $configData     = compact('data', 'rules', 'phrases');
 
         $this->filesystem->shouldReceive('getRequire')
-            ->once()
-            ->with($dumpConfigPath)
-            ->andReturn($configData)
-            ->getMock();
+                ->once()
+                ->with($dumpConfigPath)
+                ->andReturn($configData)
+                ->getMock();
 
         $settings = $this->getFactory()->createFromConfig($dumpConfigPath);
 

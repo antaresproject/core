@@ -41,48 +41,47 @@ class ComposerTest extends ApplicationTestCase
      */
     protected $composerHandler;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
-        $this->dispatcher       = m::mock(Dispatcher::class);
-        $this->composerHandler  = m::mock(ComposerHandler::class);
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-        m::close();
+        $this->dispatcher      = m::mock(Dispatcher::class);
+        $this->composerHandler = m::mock(ComposerHandler::class);
     }
 
     /**
      * @return Composer
      */
-    protected function getProcessor() {
+    protected function getProcessor()
+    {
         return new Composer($this->composerHandler, $this->dispatcher);
     }
 
     /**
      * @return \Mockery\MockInterface
      */
-    protected function buildOperationHandlerMock() {
+    protected function buildOperationHandlerMock()
+    {
         return m::mock(OperationHandlerContract::class);
     }
 
-    public function testWithoutExtensions() {
+    public function testWithoutExtensions()
+    {
         $handler = $this->buildOperationHandlerMock()
-            ->shouldReceive('operationInfo')
-            ->once()
-            ->andReturnNull()
-            ->getMock();
+                ->shouldReceive('operationInfo')
+                ->once()
+                ->andReturnNull()
+                ->getMock();
 
         $this->getProcessor()->run($handler, []);
     }
 
-    public function testAsSuccess() {
+    public function testAsSuccess()
+    {
         $handler = $this->buildOperationHandlerMock()
-            ->shouldReceive('operationInfo')
-            ->andReturnNull()
-            ->getMock();
+                ->shouldReceive('operationInfo')
+                ->andReturnNull()
+                ->getMock();
 
         $extensions = [
             'antaresproject/component-aaa',
@@ -92,17 +91,17 @@ class ComposerTest extends ApplicationTestCase
         //$expectedCommand = 'composer require antaresproject/component-aaa antaresproject/component-bbb:1.2 --no-progress';
 
         $process = m::mock(Process::class)
-            ->shouldReceive('stop')
-            ->andReturnNull()
-            ->getMock()
-            ->shouldReceive('isSuccessful')
-            ->andReturn(true)
-            ->getMock();
+                ->shouldReceive('stop')
+                ->andReturnNull()
+                ->getMock()
+                ->shouldReceive('isSuccessful')
+                ->andReturn(true)
+                ->getMock();
 
         $this->composerHandler->shouldReceive('run')
-            ->withAnyArgs()
-            ->andReturn($process)
-            ->getMock();
+                ->withAnyArgs()
+                ->andReturn($process)
+                ->getMock();
 
         $this->dispatcher->shouldReceive('fire')->once()->andReturnNull()->getMock();
 

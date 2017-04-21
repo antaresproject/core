@@ -71,7 +71,8 @@ class ManagerTest extends TestCase
      */
     protected $providersPath = '';
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         $this->app['antares.installed'] = true;
@@ -82,80 +83,79 @@ class ManagerTest extends TestCase
         $this->settingsFactory      = m::mock(SettingsFactory::class);
     }
 
-    public function tearDown() {
-        parent::tearDown();
-        m::close();
-    }
-
     /**
      * @return Manager
      */
-    protected function getManagerInstance() {
+    protected function getManagerInstance()
+    {
         return new Manager($this->filesystemFinder, $this->extensionsRepository, $this->filesystem, $this->settingsFactory);
     }
 
-    public function testEmptyAvailableExtensions() {
+    public function testEmptyAvailableExtensions()
+    {
         $foundExtensions = new Extensions();
 
         $this->filesystemFinder
-            ->shouldReceive('findExtensions')
-            ->once()
-            ->andReturn($foundExtensions)
-            ->getMock();
+                ->shouldReceive('findExtensions')
+                ->once()
+                ->andReturn($foundExtensions)
+                ->getMock();
 
         $this->extensionsRepository
-            ->shouldReceive('all')
-            ->once()
-            ->andReturn([]);
+                ->shouldReceive('all')
+                ->once()
+                ->andReturn([]);
 
         $this->assertCount(0, $this->getManagerInstance()->getAvailableExtensions());
     }
 
-    public function testIfAvailableExtensionsAreExecutedOnce() {
+    public function testIfAvailableExtensionsAreExecutedOnce()
+    {
         $foundExtensions = new Extensions();
 
         $this->filesystemFinder
-            ->shouldReceive('findExtensions')
-            ->once()
-            ->andReturn($foundExtensions)
-            ->getMock();
+                ->shouldReceive('findExtensions')
+                ->once()
+                ->andReturn($foundExtensions)
+                ->getMock();
 
         $this->extensionsRepository
-            ->shouldReceive('all')
-            ->once()
-            ->andReturn([]);
+                ->shouldReceive('all')
+                ->once()
+                ->andReturn([]);
 
         $manager = $this->getManagerInstance();
         $manager->getAvailableExtensions();
         $manager->getAvailableExtensions();
     }
 
-    public function testAvailableExtensionsWithModels() {
+    public function testAvailableExtensionsWithModels()
+    {
         $package1 = m::mock(CompletePackageInterface::class)
-            ->shouldReceive('getName')
-            ->andReturn('antaresproject/component-example')
-            ->getMock();
+                ->shouldReceive('getName')
+                ->andReturn('antaresproject/component-example')
+                ->getMock();
 
         $package2 = m::mock(CompletePackageInterface::class)
-            ->shouldReceive('getName')
-            ->andReturn('antaresproject/component-testable')
-            ->getMock();
+                ->shouldReceive('getName')
+                ->andReturn('antaresproject/component-testable')
+                ->getMock();
 
-        $extensionWithModel     = new Extension($package1, '/path/to/component/example', '\\Antares\\Example');
-        $extensionWithoutModel  = new Extension($package2, '/path/to/component/testable', '\\Antares\\Testable');
+        $extensionWithModel    = new Extension($package1, '/path/to/component/example', '\\Antares\\Example');
+        $extensionWithoutModel = new Extension($package2, '/path/to/component/testable', '\\Antares\\Testable');
 
         $options = ['testable' => 'values'];
 
         $model = m::mock(ExtensionModel::class)
-            ->shouldReceive('getFullName')
-            ->andReturn('antaresproject/component-example')
-            ->shouldReceive('getStatus')
-            ->andReturn(2)
-            ->shouldReceive('getOptions')
-            ->andReturn($options)
-            ->shouldReceive('isRequired')
-            ->andReturn(false)
-            ->getMock();
+                ->shouldReceive('getFullName')
+                ->andReturn('antaresproject/component-example')
+                ->shouldReceive('getStatus')
+                ->andReturn(2)
+                ->shouldReceive('getOptions')
+                ->andReturn($options)
+                ->shouldReceive('isRequired')
+                ->andReturn(false)
+                ->getMock();
 
         $this->app->instance(ExtensionModel::class, $model);
 
@@ -167,21 +167,21 @@ class ManagerTest extends TestCase
         ]);
 
         $this->filesystemFinder
-            ->shouldReceive('findExtensions')
-            ->once()
-            ->andReturn($foundExtensions)
-            ->getMock();
+                ->shouldReceive('findExtensions')
+                ->once()
+                ->andReturn($foundExtensions)
+                ->getMock();
 
         $this->extensionsRepository
-            ->shouldReceive('all')
-            ->once()
-            ->andReturn($storedExtensions);
+                ->shouldReceive('all')
+                ->once()
+                ->andReturn($storedExtensions);
 
         $this->filesystem
-            ->shouldReceive('exists')
-            ->withAnyArgs()
-            ->andReturn(false)
-            ->getMock();
+                ->shouldReceive('exists')
+                ->withAnyArgs()
+                ->andReturn(false)
+                ->getMock();
 
         $availableExtensions = $this->getManagerInstance()->getAvailableExtensions();
 

@@ -21,10 +21,7 @@
 namespace Antares\Extension\TestCase;
 
 use Antares\Console\Kernel;
-use Antares\Extension\Contracts\Config\SettingsContract;
-use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
-use Composer\Package\CompletePackageInterface;
 use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
 use Mockery as m;
@@ -49,23 +46,20 @@ abstract class OperationSetupTestCase extends \PHPUnit_Framework_TestCase
 
     use ExtensionMockTrait;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
-        $this->container    = m::mock(Container::class);
-        $this->dispatcher   = m::mock(Dispatcher::class);
-        $this->kernel       = m::mock(Kernel::class);
-    }
-
-    public function tearDown() {
-        parent::tearDown();
-        m::close();
+        $this->container  = m::mock(Container::class);
+        $this->dispatcher = m::mock(Dispatcher::class);
+        $this->kernel     = m::mock(Kernel::class);
     }
 
     /**
      * @return \Mockery\MockInterface
      */
-    protected function buildOperationHandlerMock() {
+    protected function buildOperationHandlerMock()
+    {
         return m::mock(OperationHandlerContract::class);
     }
 
