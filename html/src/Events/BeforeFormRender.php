@@ -25,6 +25,7 @@ namespace Antares\Html\Events;
 use Antares\Contracts\Http\Middleware\ModuleNamespaceResolver;
 use Antares\Contracts\Html\Form\Field as FieldContract;
 use Antares\Contracts\Html\Form\Grid as GridContract;
+use Antares\Form\Controls\AbstractType;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Collection;
 use Antares\Support\Facades\Memory;
@@ -91,6 +92,9 @@ class BeforeFormRender
         foreach ($fieldsets as $fieldset) {
             $formName = is_null($formName) ? $fieldset->name : $formName;
             foreach ($fieldset->controls as $control) {
+                if($control instanceof AbstractType) {
+                    continue;
+                }
                 $controls[] = $this->attributes($control);
             }
         }
