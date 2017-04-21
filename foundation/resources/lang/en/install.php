@@ -97,15 +97,15 @@ return
                     'solution' => 'Change permissions to storage\license directory.',
                 ),
                 'writableTickets'        =>
-                    array(
-                        'name'     => 'Tickets directory',
-                        'solution' => 'Change permissions to storage\tickets directory.',
-                    ),
+                array(
+                    'name'     => 'Tickets directory',
+                    'solution' => 'Change permissions to storage\tickets directory.',
+                ),
                 'writableComposerVendor' =>
-                    array(
-                        'name'     => 'Composer vendor directory',
-                        'solution' => 'Change permissions to vendor directory.',
-                    ),
+                array(
+                    'name'     => 'Composer vendor directory',
+                    'solution' => 'Change permissions to vendor directory.',
+                ),
                 'apacheModules'          =>
                 array(
                     'name'     => 'Apache Modules',
@@ -145,4 +145,5 @@ return
                 'duplicate' => 'Unable to install when there already user registered.',
             ),
             'verify'           => 'Verify result',
+            'stopAndBack'      => 'Stop and back'
 );
