@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 /**
  * Part of the Antares Project package.
@@ -25,7 +25,6 @@ namespace Antares\Foundation\Http\Datatables;
 
 use Antares\Contracts\Authorization\Authorization;
 use Antares\Datatables\Adapter\GroupsFilterAdapter;
-use Antares\Datatables\Engines\CollectionEngine;
 use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Manager as ExtensionFactory;
 use Antares\Datatables\Services\DataTable;
@@ -37,7 +36,8 @@ use HTML;
 use URL;
 use Closure;
 
-class Extensions extends DataTable {
+class Extensions extends DataTable
+{
 
     /**
      * extension factory
@@ -59,7 +59,8 @@ class Extensions extends DataTable {
      * @param Factory $viewFactory
      * @param ExtensionFactory $extensions
      */
-    public function __construct(Datatables $datatables, Factory $viewFactory, ExtensionFactory $extensions) {
+    public function __construct(Datatables $datatables, Factory $viewFactory, ExtensionFactory $extensions)
+    {
         parent::__construct($datatables, $viewFactory);
 
         $this->extension = $extensions;
@@ -68,7 +69,8 @@ class Extensions extends DataTable {
     /**
      * @return Collection
      */
-    public function query() {
+    public function query()
+    {
         $collection = $this->extension->getAvailableExtensions();
 
         return $this->filterByType($collection);
@@ -77,7 +79,8 @@ class Extensions extends DataTable {
     /**
      * @return GroupsFilterAdapter
      */
-    protected function getGroupsFilterAdapter() : GroupsFilterAdapter {
+    protected function getGroupsFilterAdapter(): GroupsFilterAdapter
+    {
         $groupsFilterAdapter = app(GroupsFilterAdapter::class);
         $groupsFilterAdapter->setClassname(get_class($this))->setIndex($this->typeColumnIndex);
 
@@ -88,40 +91,46 @@ class Extensions extends DataTable {
      * @param \Antares\Extension\Collections\Extensions $query
      * @return \Antares\Extension\Collections\Extensions
      */
-    protected function filterByType(\Antares\Extension\Collections\Extensions $query) {
+    protected function filterByType(\Antares\Extension\Collections\Extensions $query)
+    {
         $value = $this->getGroupsFilterAdapter()->getSelected($this->typeColumnIndex);
-
-        if( request()->ajax() || $value === '') {
+        if (is_null($value)) {
+            return $query->filter(function(ExtensionContract $extension) use($value) {
+                        return $extension->getFriendlyType() === 'Additional';
+                    });
+        }
+        if (request()->ajax() || $value === '') {
             return $query;
         }
-
         return $query->filter(function(ExtensionContract $extension) use($value) {
-            return $extension->getFriendlyType() === $value;
-        });
+                    return $extension->getFriendlyType() === $value;
+                });
     }
 
     /**
      * {@inheritdoc}
      */
-    public function ajax() {
+    public function ajax()
+    {
         $acl = app('antares.acl')->make('antares');
 
         return $this->prepare()
-            ->addColumn('id', '')
-            ->addColumn('friendlyName', $this->getNameColumn())
-            ->addColumn('status', $this->getStatusColumn())
-            ->addColumn('description', $this->getDescriptionColumn())
-            ->addColumn('authors', $this->getAuthorsColumn())
-            ->addColumn('version', $this->getVersionColumn())
-            ->addColumn('type', $this->getTypeColumn())
-            ->addColumn('action', $this->getActionsColumn($acl))
-            ->make(true);
+                        ->addColumn('id', '')
+                        ->addColumn('friendlyName', $this->getNameColumn())
+                        ->addColumn('status', $this->getStatusColumn())
+                        ->addColumn('description', $this->getDescriptionColumn())
+                        ->addColumn('authors', $this->getAuthorsColumn())
+                        ->addColumn('version', $this->getVersionColumn())
+                        ->addColumn('type', $this->getTypeColumn())
+                        ->addColumn('action', $this->getActionsColumn($acl))
+                        ->make(true);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function html() {
+    public function html()
+    {
         publish(null, ['/foundation/public/js/extensions.js']);
 
         $options = [
@@ -129,37 +138,36 @@ class Extensions extends DataTable {
         ];
 
         return $this->setName('Extensions')
-            ->addColumn(['data' => 'friendlyName', 'name' => 'friendlyName', 'title' => trans('antares/foundation::label.extensions.header.name')])
-            ->addColumn(['data' => 'description', 'name' => 'description', 'title' => trans('antares/foundation::label.extensions.header.description')])
-            ->addColumn(['data' => 'authors', 'name' => 'authors', 'title' => trans('antares/foundation::label.extensions.header.authors'), 'orderable' => false])
-            ->addColumn(['data' => 'version', 'name' => 'version', 'title' => trans('antares/foundation::label.extensions.header.version')])
-            ->addColumn(['data' => 'status', 'name' => 'status', 'title' => trans('antares/foundation::label.extensions.header.status')])
-            ->addColumn(['data' => 'type', 'name' => 'type', 'title' => trans('antares/foundation::label.extensions.header.type')])
-            ->addAction(['name' => 'edit', 'title' => '', 'class' => 'dt-row-actions'])
-            ->setDeferedData()
-            ->addGroupSelect($this->getTypes(), $this->typeColumnIndex, Types::TYPE_ADDITIONAL, $options)
-        ->parameters([
-            'aoColumnDefs' => [
-                ['width' => '15%', 'targets' => 0],
-                ['width' => '40%', 'targets' => 1],
-                ['width' => '22%', 'targets' => 2],
-                ['width' => '7%', 'targets' => 3],
-                ['width' => '10%', 'targets' => 4],
-                ['width' => '10%', 'targets' => 5],
-                ['width' => '1%', 'targets' => 6],
-        ]]);
+                        ->addColumn(['data' => 'friendlyName', 'name' => 'friendlyName', 'title' => trans('antares/foundation::label.extensions.header.name')])
+                        ->addColumn(['data' => 'description', 'name' => 'description', 'title' => trans('antares/foundation::label.extensions.header.description')])
+                        ->addColumn(['data' => 'authors', 'name' => 'authors', 'title' => trans('antares/foundation::label.extensions.header.authors'), 'orderable' => false])
+                        ->addColumn(['data' => 'version', 'name' => 'version', 'title' => trans('antares/foundation::label.extensions.header.version')])
+                        ->addColumn(['data' => 'status', 'name' => 'status', 'title' => trans('antares/foundation::label.extensions.header.status')])
+                        ->addColumn(['data' => 'type', 'name' => 'type', 'title' => trans('antares/foundation::label.extensions.header.type')])
+                        ->addAction(['name' => 'edit', 'title' => '', 'class' => 'dt-row-actions'])
+                        ->addGroupSelect($this->getTypes(), $this->typeColumnIndex, Types::TYPE_ADDITIONAL, $options)
+                        ->parameters([
+                            'aoColumnDefs' => [
+                                ['width' => '15%', 'targets' => 0],
+                                ['width' => '40%', 'targets' => 1],
+                                ['width' => '22%', 'targets' => 2],
+                                ['width' => '7%', 'targets' => 3],
+                                ['width' => '10%', 'targets' => 4],
+                                ['width' => '10%', 'targets' => 5],
+                                ['width' => '1%', 'targets' => 6],
+                    ]])->ajax(handles('antares/foundation::/extensions'));
     }
 
     /**
      * @return array
      */
-    protected function getTypes() : array
+    protected function getTypes(): array
     {
         $types = [
             '' => trans('antares/foundation::messages.extension_type_all'),
         ];
 
-        foreach(Types::all() as $type) {
+        foreach (Types::all() as $type) {
             $types[$type] = $type;
         }
 
@@ -170,23 +178,24 @@ class Extensions extends DataTable {
      * @param Authorization $acl
      * @return Closure
      */
-    protected function getActionsColumn(Authorization $acl) : Closure {
+    protected function getActionsColumn(Authorization $acl): Closure
+    {
         return function(ExtensionContract $extension) use($acl) {
-            $buttons    = [];
-            $name       = $extension->getPackage()->getName();
+            $buttons = [];
+            $name    = $extension->getPackage()->getName();
 
             if ($extension->isRequired()) {
                 return HTML::create('div', '', ['class' => 'disabled'])->get();
             }
 
-            if ( $acl->can('component-configure') && $this->extension->hasSettingsForm($name) && $extension->getStatus() === ExtensionContract::STATUS_ACTIVATED) {
+            if ($acl->can('component-configure') && $this->extension->hasSettingsForm($name) && $extension->getStatus() === ExtensionContract::STATUS_ACTIVATED) {
                 $configureUrl = URL::route(area() . '.extensions.viewer.configuration.get', [
-                    'vendor'    => $extension->getVendorName(),
-                    'name'      => $extension->getPackageName(),
-                    'csrf'      => true,
+                            'vendor' => $extension->getVendorName(),
+                            'name'   => $extension->getPackageName(),
+                            'csrf'   => true,
                 ]);
 
-                $label  = trans('antares/foundation::label.extensions.actions.configure');
+                $label = trans('antares/foundation::label.extensions.actions.configure');
 
                 $params = [
                     'data-icon' => 'wrench',
@@ -202,16 +211,15 @@ class Extensions extends DataTable {
                 $buttons[] = $this->getButtonLink($extension, 'activate', 'plus');
             }
 
-            if( ! $extension->isRequired()) {
+            if (!$extension->isRequired()) {
                 if ($extension->getStatus() === ExtensionContract::STATUS_INSTALLED && $acl->can('component-uninstall')) {
                     $buttons[] = $this->getButtonLink($extension, 'uninstall', 'minus');
-                }
-                elseif($extension->getStatus() === ExtensionContract::STATUS_ACTIVATED && $acl->can('component-deactivate')) {
+                } elseif ($extension->getStatus() === ExtensionContract::STATUS_ACTIVATED && $acl->can('component-deactivate')) {
                     $buttons[] = $this->getButtonLink($extension, 'deactivate', 'minus');
                 }
             }
 
-            if ( ! count($buttons)) {
+            if (!count($buttons)) {
                 return '';
             }
 
@@ -230,23 +238,24 @@ class Extensions extends DataTable {
      * @param string $icon
      * @return string
      */
-    protected function getButtonLink(ExtensionContract $extension, string $action, string $icon) : string {
+    protected function getButtonLink(ExtensionContract $extension, string $action, string $icon): string
+    {
         $actionUrl = URL::route(area() . '.extensions.' . $action, [
-            'vendor'    => $extension->getVendorName(),
-            'name'      => $extension->getPackageName(),
-            'csrf'      => true,
+                    'vendor' => $extension->getVendorName(),
+                    'name'   => $extension->getPackageName(),
+                    'csrf'   => true,
         ]);
 
-        $name   = $extension->getFriendlyName();
-        $url    = URL::route(area() . '.extensions.progress.index');
-        $label  = trans('antares/foundation::label.extensions.actions.' . $action);
+        $name  = $extension->getFriendlyName();
+        $url   = URL::route(area() . '.extensions.progress.index');
+        $label = trans('antares/foundation::label.extensions.actions.' . $action);
 
         $params = [
-            'class'             => 'bindable component-prompt-modal',
-            'data-title'        => trans('antares/foundation::messages.extensions.modal_title.' . $action),
-            'data-icon'         => $icon,
-            'data-action-url'   => $actionUrl,
-            'data-description'  => trans('antares/foundation::messages.extensions.modal_content.' . $action, compact('name')),
+            'class'            => 'bindable component-prompt-modal',
+            'data-title'       => trans('antares/foundation::messages.extensions.modal_title.' . $action),
+            'data-icon'        => $icon,
+            'data-action-url'  => $actionUrl,
+            'data-description' => trans('antares/foundation::messages.extensions.modal_content.' . $action, compact('name')),
         ];
 
         return (string) HTML::link($url, $label, $params);
@@ -257,9 +266,10 @@ class Extensions extends DataTable {
      *
      * @return Closure
      */
-    protected function getStatusColumn() : Closure {
+    protected function getStatusColumn(): Closure
+    {
         return function(ExtensionContract $extension) {
-            switch($extension->getStatus()) {
+            switch ($extension->getStatus()) {
                 case ExtensionContract::STATUS_ACTIVATED:
                     return '<span class="label-basic label-basic--success">' . trans('antares/foundation::label.extensions.statuses.active') . '</span>';
 
@@ -278,7 +288,8 @@ class Extensions extends DataTable {
      *
      * @return Closure
      */
-    protected function getDescriptionColumn() : Closure {
+    protected function getDescriptionColumn(): Closure
+    {
         return function(ExtensionContract $extension) {
             return $extension->getPackage()->getDescription();
         };
@@ -289,14 +300,15 @@ class Extensions extends DataTable {
      *
      * @return Closure
      */
-    protected function getNameColumn() : Closure {
+    protected function getNameColumn(): Closure
+    {
         return function(ExtensionContract $package) {
-            $name   = $package->getFriendlyName();
-            $url    = $package->getPackage()->getHomepage();
+            $name = $package->getFriendlyName();
+            $url  = $package->getPackage()->getHomepage();
 
-            if($url) {
+            if ($url) {
                 return (string) HTML::link($url, $name, [
-                    'target' => '_blank',
+                            'target' => '_blank',
                 ]);
             }
 
@@ -309,7 +321,8 @@ class Extensions extends DataTable {
      *
      * @return Closure
      */
-    protected function getVersionColumn() : Closure {
+    protected function getVersionColumn(): Closure
+    {
         return function(ExtensionContract $package) {
             return $package->getPackage()->getPrettyVersion();
         };
@@ -320,7 +333,8 @@ class Extensions extends DataTable {
      *
      * @return Closure
      */
-    protected function getTypeColumn() : Closure {
+    protected function getTypeColumn(): Closure
+    {
         return function(ExtensionContract $package) {
             return $package->getFriendlyType();
         };
@@ -331,20 +345,20 @@ class Extensions extends DataTable {
      *
      * @return Closure
      */
-    protected function getAuthorsColumn() : Closure {
+    protected function getAuthorsColumn(): Closure
+    {
         return function(ExtensionContract $extension) {
             $authors = array_map(function(array $author) {
-                if( array_key_exists('email', $author) ) {
+                if (array_key_exists('email', $author)) {
                     return (string) HTML::mailto($author['email'], $author['name']);
                 }
 
                 return $author['name'];
-
             }, $extension->getPackage()->getAuthors());
 
             $prefix = '';
 
-            if($extension->getVendorName() === 'antaresproject') {
+            if ($extension->getVendorName() === 'antaresproject') {
                 $prefix = trans('antares/foundation::title.antares_team');
             }
 

@@ -148,8 +148,6 @@ class Users extends DataTable
                 ->addColumn('action', $this->getActionsColumn($canUpdateUser, $canDeleteUser, $canLoginAsUser))
                 ->make(true);
         return $return;
-//        vdump($return->original['input']);
-//        exit;
     }
 
     /**

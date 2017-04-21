@@ -22,8 +22,10 @@ namespace Antares\Datatables\Html;
 
 use Antares\Datatables\Contracts\DatatabledContract;
 use Antares\Datatables\Adapter\ColumnFilterAdapter;
+use Antares\Datatables\Adapter\GroupsFilterAdapter;
 use Yajra\Datatables\Html\Builder as BaseBuilder;
 use Antares\Datatables\Adapter\FilterAdapter;
+use Antares\Datatables\Adapter\OrderAdapter;
 use Illuminate\Contracts\Config\Repository;
 use Antares\Asset\JavaScriptExpression;
 use Antares\Asset\JavaScriptDecorator;
@@ -34,6 +36,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Events\Dispatcher;
 use Yajra\Datatables\Html\Column;
+use Antares\Support\Facades\Form;
 use Antares\Support\Expression;
 use Illuminate\Routing\Router;
 use Antares\Html\HtmlBuilder;
@@ -265,13 +268,19 @@ class Builder extends BaseBuilder
         $cols         = '';
         if ($sessionValue && !ajax()) {
             $columns = [];
-            foreach ($this->collection as $column) {
-                $value = '';
-                $regex = false;
-                if ($column->data == array_get($sessionValue, 'data') && $column->name == array_get($sessionValue, 'name')) {
-                    $value = array_get($sessionValue, 'search.value');
+            foreach ($this->collection as $columnIndex => $column) {
+
+
+                $value       = '';
+                $regex       = false;
+                $fromSession = array_get($sessionValue, $columnIndex, $sessionValue);
+
+                if ($column->data == array_get($fromSession, 'data') && $column->name == array_get($fromSession, 'name')) {
+
+                    $value = array_get($fromSession, 'search.value');
                     $regex = true;
                 }
+
 
                 $columns[] = [
                     'data'       => $column->data,
@@ -286,6 +295,7 @@ class Builder extends BaseBuilder
             }
             $cols = 'data.columns = ' . JavaScriptDecorator::decorate($columns) . ';';
         }
+
 
         $eventAfterSearch = (request()->has('search') && !request()->ajax()) ? '$(document).trigger( "datatables.searchLoaded", [ data ] );' : '';
         $ajax             = <<<EOD
@@ -866,13 +876,13 @@ EOD;
      */
     public function addGroupSelect($options, $columnIndex = 0, $defaultSelected = null, array $attributes = [])
     {
-        $orderAdapter = app(\Antares\Datatables\Adapter\OrderAdapter::class)->setClassname(get_class($this->datatable));
+        $orderAdapter = app(OrderAdapter::class)->setClassname(get_class($this->datatable));
         if (($order        = $orderAdapter->getSelected()) !== false) {
             $this->parameters([
                 'order' => [[$order['column'], $order['dir']]],
             ]);
         }
-        $groupsFilter = app(\Antares\Datatables\Adapter\GroupsFilterAdapter::class)->setClassname(get_class($this->datatable))->setIndex($columnIndex);
+        $groupsFilter = app(GroupsFilterAdapter::class)->setClassname(get_class($this->datatable))->setIndex($columnIndex);
         $data         = ($options instanceof Collection) ? $options->toArray() : $options;
 
 
@@ -886,7 +896,7 @@ EOD;
             'id'                     => $id
         ]);
 
-        $html = \Antares\Support\Facades\Form::select('category', $data, $value, $decorated);
+        $html = Form::select('category', $data, $value, $decorated);
         $groupsFilter->scripts(array_get($decorated, 'id'), $columnIndex);
         array_push($this->selects, $html);
         return $this;
@@ -901,7 +911,7 @@ EOD;
     public function parameters(array $attributes = [])
     {
         if (!is_null($defaultOrder = array_get($attributes, 'order'))) {
-            $orderAdapter = app(\Antares\Datatables\Adapter\OrderAdapter::class)->setClassname(get_class($this->datatable));
+            $orderAdapter = app(OrderAdapter::class)->setClassname(get_class($this->datatable));
             if (($order        = $orderAdapter->getSelected()) !== false) {
                 $attributes = array_merge($attributes, [
                     'order' => [[$order['column'], $order['dir']]],

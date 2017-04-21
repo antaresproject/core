@@ -140,10 +140,10 @@ class Installation implements InstallationContract
         ];
 
         return DB::transaction(function() use($tables) {
-            foreach($tables as $table) {
-                DB::delete('delete from ' . $table);
-            }
-        });
+                    foreach ($tables as $table) {
+                        DB::delete('delete from ' . $table);
+                    }
+                });
     }
 
     /**
@@ -193,10 +193,10 @@ class Installation implements InstallationContract
     protected function importDefaultComponent()
     {
         return Component::create([
-            'vendor'    => 'antaresproject',
-            'name'      => 'core',
-            'status'    => ExtensionContract::STATUS_ACTIVATED,
-            'required'  => true,
+                    'vendor'   => 'antaresproject',
+                    'name'     => 'core',
+                    'status'   => ExtensionContract::STATUS_ACTIVATED,
+                    'required' => true,
         ]);
     }
 
@@ -209,9 +209,9 @@ class Installation implements InstallationContract
     private function importAdminUserRole(User $user)
     {
         return UserRole::create([
-            'user_id'    => $user->id,
-            'role_id'    => Role::admin()->id,
-            'created_at' => Carbon::now()
+                    'user_id'    => $user->id,
+                    'role_id'    => Role::admin()->id,
+                    'created_at' => Carbon::now()
         ]);
     }
 
@@ -236,10 +236,10 @@ class Installation implements InstallationContract
             $roleId = $model->id;
 
             $result = array_filter(array_map(function($action) use($permissions) {
-                if (in_array($action->name, $permissions)) {
-                    return $action;
-                }
-            }, $actions));
+                        if (in_array($action->name, $permissions)) {
+                            return $action;
+                        }
+                    }, $actions));
 
             $brands = $this->getBrands();
             foreach ($result as $action) {
@@ -253,7 +253,7 @@ class Installation implements InstallationContract
                         'allowed'      => 1,
                     ]);
 
-                    if( ! $model->save() ) {
+                    if (!$model->save()) {
                         throw new Exception('Unable to set default user permissions');
                     }
                 }
@@ -320,10 +320,10 @@ class Installation implements InstallationContract
         $componentName  = $component->name;
         $defaultActions = (array) config('antares/installer::permissions.components.' . $componentName, []);
 
-        $actions  = array_map(function($value) use($componentId) {
+        $actions = array_map(function($value) use($componentId) {
             return Action::create([
-                'component_id' => $componentId,
-                'name'         => $value,
+                        'component_id' => $componentId,
+                        'name'         => $value,
             ]);
         }, $defaultActions);
 
@@ -397,13 +397,12 @@ class Installation implements InstallationContract
             $user->fill($fill);
 
             $this->app->make('events')->fire('antares.install: user', [$user, $fill]);
-
+            $role = Role::query()->where('name', 'member')->firstOrFail();
             if ($user->save()) {
                 $id       = $user->id;
-                $roleId   = random_int(2, 4);
                 $userRole = new UserRole([
                     'user_id'    => $id,
-                    'role_id'    => $roleId,
+                    'role_id'    => $role->id,
                     'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                     'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
@@ -427,9 +426,9 @@ class Installation implements InstallationContract
          * @var $progress Progress
          * @var $componentsRepository ComponentsRepository
          */
-        $componentsRepository   = app()->make(ComponentsRepository::class);
-        $progress               = app()->make(Progress::class);
-        $extensions             = array_keys($componentsRepository->getRequired());
+        $componentsRepository = app()->make(ComponentsRepository::class);
+        $progress             = app()->make(Progress::class);
+        $extensions           = array_keys($componentsRepository->getRequired());
 
         // Steps are the sum of extensions and composer command.
         $progress->setSteps(1 + count($extensions));
@@ -438,7 +437,7 @@ class Installation implements InstallationContract
         $components = $componentsRepository->getWithBranches($extensions);
         $extensions = [];
 
-        foreach($components as $component => $branch) {
+        foreach ($components as $component => $branch) {
             $extensions[] = $component . ':' . $branch;
         }
 
