@@ -225,19 +225,6 @@ class UserTest extends ApplicationTestCase
     }
 
     /**
-     * Test Antares\Model\User::scopeSearch() method.
-     *
-     * @test
-     */
-    public function testScopeSearchMethod()
-    {
-        $model   = new User();
-        $this->addMockConnection($model);
-        $keyword = 'foo*';
-        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Builder::class, $model->search($keyword));
-    }
-
-    /**
      * Test Antares\Model\User::getAuthIdentifier() method.
      *
      * @test

@@ -126,10 +126,8 @@ class BrandTest extends ApplicationTestCase
         $grammar->shouldReceive('compileInsertGetId')
                 ->andReturn('');
         $grammar->shouldReceive('compileSelect')->once()->andReturn('SELECT * FROM `tbl_widgets_params` WHERE brand_id=? and uid=? and resource=?');
-        $connection->shouldReceive('select')
-                ->once()
-                ->withAnyArgs()
-                ->andReturn(null);
+        $connection->shouldReceive('select')->once()->withAnyArgs()->andReturn(null)
+                ->shouldReceive('getName')->andReturn('mysql');
         $processor->shouldReceive('processInsertGetId')->andReturn(1);
         $processor->shouldReceive('processSelect')->once()->andReturn([]);
 
