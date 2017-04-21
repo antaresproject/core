@@ -1,13 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Antares\Extension\Collections;
 
 use Antares\Extension\Contracts\ExtensionContract;
 use Illuminate\Support\Collection;
 
-class Extensions extends Collection {
+class Extensions extends Collection
+{
 
     /**
      * Returns the first extension by the given name.
@@ -15,10 +16,11 @@ class Extensions extends Collection {
      * @param string $name
      * @return ExtensionContract|null
      */
-    public function findByName(string $name) {
+    public function findByName(string $name)
+    {
         return $this->first(function(ExtensionContract $extension) use($name) {
-            return $extension->getPackage()->getName() === $name;
-        });
+                    return $extension->getPackage()->getName() === $name;
+                });
     }
 
     /**
@@ -28,15 +30,14 @@ class Extensions extends Collection {
      * @param string $name
      * @return ExtensionContract|null
      */
-    public function findByVendorAndName(string $vendor, string $name) {
+    public function findByVendorAndName(string $vendor, string $name)
+    {
         $fullName = $vendor . '/' . $name;
 
         return $this->first(function(ExtensionContract $extension) use($fullName) {
-            return $extension->getPackage()->getName() === $fullName;
-        });
+                    return $extension->getPackage()->getName() === $fullName;
+                });
     }
-
-
 
     /**
      * Returns the first extension by the file path.
@@ -44,21 +45,23 @@ class Extensions extends Collection {
      * @param string $path
      * @return ExtensionContract|null
      */
-    public function findByPath(string $path) {
+    public function findByPath(string $path)
+    {
         return $this->first(function(ExtensionContract $extension) use($path) {
-            return $extension->getPath() === $path;
-        });
+                    return $extension->getPath() === $path;
+                });
     }
 
-	/**
-	 * Filter the collection by activated extensions.
-	 *
-	 * @return Extensions
-	 */
-    public function filterByActivated() : Extensions {
+    /**
+     * Filter the collection by activated extensions.
+     *
+     * @return Extensions
+     */
+    public function filterByActivated(): Extensions
+    {
         return $this->filter(function(ExtensionContract $extension) {
-    		return $extension->isActivated();
-		});
-	}
+                    return $extension->isActivated();
+                });
+    }
 
 }

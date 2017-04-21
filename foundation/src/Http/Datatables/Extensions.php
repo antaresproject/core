@@ -14,7 +14,6 @@ declare(strict_types = 1);
  *
  * @package    Antares Core
  * @version    0.9.0
- * @author     Original Orchestral https://github.com/orchestral
  * @author     Antares Team
  * @license    BSD License (3-clause)
  * @copyright  (c) 2017, Antares Project
@@ -32,9 +31,9 @@ use Antares\Extension\Model\Types;
 use Illuminate\Contracts\View\Factory;
 use Antares\Datatables\Datatables;
 use Antares\Support\Collection;
+use Closure;
 use HTML;
 use URL;
-use Closure;
 
 class Extensions extends DataTable
 {

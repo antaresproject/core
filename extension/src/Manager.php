@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Antares\Extension;
 
@@ -16,7 +16,8 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 
-class Manager {
+class Manager
+{
 
     /**
      * Filesystem finder instance.
@@ -50,13 +51,19 @@ class Manager {
     protected $availableExtensions;
 
     /**
+     * @var array
+     */
+    protected $routes = [];
+
+    /**
      * Manager constructor.
      * @param FilesystemFinder $filesystemFinder
      * @param ExtensionsRepository $extensionsRepository
      * @param Filesystem $filesystem
      * @param SettingsFactory $settingsFactory
      */
-    public function __construct(FilesystemFinder $filesystemFinder, ExtensionsRepository $extensionsRepository, Filesystem $filesystem, SettingsFactory $settingsFactory) {
+    public function __construct(FilesystemFinder $filesystemFinder, ExtensionsRepository $extensionsRepository, Filesystem $filesystem, SettingsFactory $settingsFactory)
+    {
         $this->filesystemFinder     = $filesystemFinder;
         $this->extensionsRepository = $extensionsRepository;
         $this->filesystem           = $filesystem;
@@ -70,29 +77,28 @@ class Manager {
      * @throws ExtensionException
      * @throws FileNotFoundException
      */
-    public function getAvailableExtensions() : Extensions {
-        if($this->availableExtensions instanceof Extensions) {
+    public function getAvailableExtensions(): Extensions
+    {
+        if ($this->availableExtensions instanceof Extensions) {
             return $this->availableExtensions;
         }
 
         $foundExtensions = $this->filesystemFinder->findExtensions();
 
-        $storedExtensions = app()->make('antares.installed')
-            ? $this->extensionsRepository->all()
-            : new Collection();
+        $storedExtensions = app()->make('antares.installed') ? $this->extensionsRepository->all() : new Collection();
 
-        foreach($foundExtensions as $foundExtension) {
+        foreach ($foundExtensions as $foundExtension) {
             $extension = $storedExtensions->first(function(ExtensionModel $extensionModel) use($foundExtension) {
                 return $extensionModel->getFullName() === $foundExtension->getPackage()->getName();
             });
 
             $configFile = $foundExtension->getPath() . '/resources/config/settings.php';
 
-            if($this->filesystem->exists($configFile)) {
-                $foundExtension->setSettings( $this->settingsFactory->createFromConfig($configFile) );
+            if ($this->filesystem->exists($configFile)) {
+                $foundExtension->setSettings($this->settingsFactory->createFromConfig($configFile));
             }
 
-            if($extension instanceof ExtensionModel) {
+            if ($extension instanceof ExtensionModel) {
                 $foundExtension->setStatus($extension->getStatus());
                 $foundExtension->setIsRequired($extension->isRequired());
                 $foundExtension->getSettings()->updateData($extension->getOptions());
@@ -110,10 +116,11 @@ class Manager {
      * @throws ExtensionException
      * @throws FileNotFoundException
      */
-    public function isInstalled(string $name) : bool {
-        $extension = $this->getAvailableExtensions()->findByName( $this->getNormalizedName($name) );
+    public function isInstalled(string $name): bool
+    {
+        $extension = $this->getAvailableExtensions()->findByName($this->getNormalizedName($name));
 
-        if($extension instanceof ExtensionContract) {
+        if ($extension instanceof ExtensionContract) {
             return $extension->isInstalled();
         }
 
@@ -128,31 +135,22 @@ class Manager {
      * @throws ExtensionException
      * @throws FileNotFoundException
      */
-    public function isActive(string $name) : bool {
-        $extension = $this->getAvailableExtensions()->findByName( $this->getNormalizedName($name) );
+    public function isActive(string $name): bool
+    {
+        $extension = $this->getAvailableExtensions()->findByName($this->getNormalizedName($name));
 
-        if($extension instanceof ExtensionContract) {
+        if ($extension instanceof ExtensionContract) {
             return $extension->isActivated();
         }
 
         return false;
     }
 
-    /**
-     * @var array
-     */
-    protected $routes = [];
-
-    public function route($name, $default = '/') {
+    public function route($name, $default = '/')
+    {
         $app = app();
-//		/* @var $dispatcher Dispatcher */
-//		$dispatcher = $app->make(Dispatcher::class);
-//
-//		if( ! $dispatcher->booted() ) {
-//            $dispatcher->bootstrap($app);
-//		}
 
-        if ( ! isset($this->routes[$name])) {
+        if (!isset($this->routes[$name])) {
             $key = "antares/extension::handles.{$name}";
 
             $this->routes[$name] = new RouteGenerator($app->make('config')->get($key, $default), $app->make('request'));
@@ -167,10 +165,11 @@ class Manager {
      * @throws ExtensionException
      * @throws FileNotFoundException
      */
-    public function getExtensionPathByName(string $name) : string {
-        $extension = $this->getAvailableExtensions()->findByName( $this->getNormalizedName($name) );
+    public function getExtensionPathByName(string $name): string
+    {
+        $extension = $this->getAvailableExtensions()->findByName($this->getNormalizedName($name));
 
-        if($extension instanceof ExtensionContract) {
+        if ($extension instanceof ExtensionContract) {
             return $extension->getPath();
         }
 
@@ -178,19 +177,20 @@ class Manager {
     }
 
     /**
-     * @param string $name
-     * @return string
-     * @throws ExtensionException
-     * @throws FileNotFoundException
+     * Gets active extension by path name
+     * 
+     * @param String $path
+     * @return String
      */
-    public function getActiveExtensionByPath(string $name) : string {
-        $extension = $this->getAvailableExtensions()->filterByActivated()->findByName( $this->getNormalizedName($name) );
-
-        if($extension instanceof ExtensionContract) {
-            return $extension->getPath();
+    public function getActiveExtensionByPath(string $path)
+    {
+        $activated = $this->getAvailableExtensions()->filterByActivated();
+        foreach ($activated as $extension) {
+            if (starts_with($path, $extension->getPath())) {
+                return $extension;
+            }
         }
-
-        return '';
+        return false;
     }
 
     /**
@@ -200,7 +200,8 @@ class Manager {
      * @throws ExtensionException
      * @throws FileNotFoundException
      */
-    public function getExtensionByVendorAndName(string $vendor, string $name) {
+    public function getExtensionByVendorAndName(string $vendor, string $name)
+    {
         return $this->getAvailableExtensions()->findByVendorAndName($vendor, $name);
     }
 
@@ -210,10 +211,11 @@ class Manager {
      * @throws ExtensionException
      * @throws FileNotFoundException
      */
-    public function getSettings(string $name) {
-        $extension = $this->getAvailableExtensions()->findByName( $this->getNormalizedName($name) );
+    public function getSettings(string $name)
+    {
+        $extension = $this->getAvailableExtensions()->findByName($this->getNormalizedName($name));
 
-        if($extension instanceof ExtensionContract) {
+        if ($extension instanceof ExtensionContract) {
             return $extension->getSettings();
         }
 
@@ -226,11 +228,12 @@ class Manager {
      * @param string $name
      * @return bool
      */
-    public function hasSettingsForm(string $name) : bool {
-        $extension = $this->getAvailableExtensions()->findByName( $this->getNormalizedName($name) );
+    public function hasSettingsForm(string $name): bool
+    {
+        $extension = $this->getAvailableExtensions()->findByName($this->getNormalizedName($name));
 
-        if($extension instanceof ExtensionContract) {
-            if($extension->getSettings()->getCustomUrl()) {
+        if ($extension instanceof ExtensionContract) {
+            if ($extension->getSettings()->getCustomUrl()) {
                 return true;
             }
 
@@ -243,7 +246,8 @@ class Manager {
     /**
      * @param \Closure|null $callback
      */
-    public function after(\Closure $callback = null) {
+    public function after(\Closure $callback = null)
+    {
         app()->make(Dispatcher::class)->after($callback);
     }
 
@@ -251,10 +255,11 @@ class Manager {
      * @param string $name
      * @return string
      */
-    protected function getNormalizedName(string $name) : string {
+    protected function getNormalizedName(string $name): string
+    {
         $name = str_replace('_', '-', $name);
 
-        if( ! Str::contains($name, '/') ) {
+        if (!Str::contains($name, '/')) {
             $name = 'antaresproject/component-' . $name;
         }
 
@@ -271,7 +276,7 @@ class Manager {
     {
         $route = Route::getCurrentRoute();
 
-        if($route instanceof \Illuminate\Routing\Route) {
+        if ($route instanceof \Illuminate\Routing\Route) {
             $action = $route->getActionName();
 
             if ($action === 'Closure') {
@@ -280,7 +285,6 @@ class Manager {
 
             preg_match("/.+?(?=\\\)(.*)\Http/", $action, $matches);
             return empty($matches) ? false : strtolower(trim($matches[1], '\\'));
-
         }
 
         return false;
