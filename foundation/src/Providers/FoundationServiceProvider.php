@@ -21,13 +21,7 @@
 
 namespace Antares\Foundation\Providers;
 
-use Antares\Extension\Events\Activated;
-use Antares\Extension\Events\ComposerFailed;
-use Antares\Extension\Events\Deactivated;
-use Antares\Extension\Events\Installed;
-use Antares\Extension\Events\Uninstalled;
 use Antares\Foundation\Listeners\AfterExtensionOperation;
-use Antares\Foundation\Listeners\StopInstallation;
 use Antares\Support\Providers\Traits\AliasesProviderTrait;
 use Antares\Widgets\Http\Middleware\WidgetsMiddleware;
 use Antares\Support\Providers\ServiceProvider;
@@ -57,25 +51,25 @@ class FoundationServiceProvider extends ServiceProvider
      * @var array
      */
     protected $aliases = [
-        'app'                      => 'Antares\Foundation\Application',
-        'config'                   => 'Antares\Config\Repository',
-        'auth.driver'              => ['Antares\Auth\Guard', 'Antares\Contracts\Auth\Guard'],
-        'antares.platform.acl'     => ['Antares\Authorization\Authorization', 'Antares\Contracts\Authorization\Authorization'],
-        'antares.platform.memory'  => ['Antares\Memory\Provider', 'Antares\Contracts\Memory\Provider'],
-        'antares.acl'              => ['Antares\Authorization\Factory', 'Antares\Contracts\Authorization\Factory'],
-        'antares.app'              => ['Antares\Foundation\Foundation', 'Antares\Contracts\Foundation\Foundation'],
-        'antares.asset'            => 'Antares\Asset\Factory',
-        'antares.decorator'        => 'Antares\View\Decorator',
-        'antares.form'             => ['Antares\Html\Form\Factory', 'Antares\Contracts\Html\Form\Factory'],
-        'antares.mail'             => 'Antares\Notifier\Mailer',
-        'antares.memory'           => 'Antares\Memory\MemoryManager',
-        'antares.messages'         => ['Antares\Messages\MessageBag', 'Antares\Contracts\Messages\MessageBag'],
-        'antares.notifier'         => 'Antares\Notifier\NotifierManager',
-        'antares.publisher'        => 'Antares\Foundation\Publisher\PublisherManager',
-        'antares.resources'        => 'Antares\Resources\Factory',
-        'antares.meta'             => 'Antares\Foundation\Meta',
-        'antares.theme'            => 'Antares\View\Theme\ThemeManager',
-        'antares.widget'           => 'Antares\Widget\WidgetManager'
+        'app'                     => 'Antares\Foundation\Application',
+        'config'                  => 'Antares\Config\Repository',
+        'auth.driver'             => ['Antares\Auth\Guard', 'Antares\Contracts\Auth\Guard'],
+        'antares.platform.acl'    => ['Antares\Authorization\Authorization', 'Antares\Contracts\Authorization\Authorization'],
+        'antares.platform.memory' => ['Antares\Memory\Provider', 'Antares\Contracts\Memory\Provider'],
+        'antares.acl'             => ['Antares\Authorization\Factory', 'Antares\Contracts\Authorization\Factory'],
+        'antares.app'             => ['Antares\Foundation\Foundation', 'Antares\Contracts\Foundation\Foundation'],
+        'antares.asset'           => 'Antares\Asset\Factory',
+        'antares.decorator'       => 'Antares\View\Decorator',
+        'antares.form'            => ['Antares\Html\Form\Factory', 'Antares\Contracts\Html\Form\Factory'],
+        'antares.mail'            => 'Antares\Notifier\Mailer',
+        'antares.memory'          => 'Antares\Memory\MemoryManager',
+        'antares.messages'        => ['Antares\Messages\MessageBag', 'Antares\Contracts\Messages\MessageBag'],
+        'antares.notifier'        => 'Antares\Notifier\NotifierManager',
+        'antares.publisher'       => 'Antares\Foundation\Publisher\PublisherManager',
+        'antares.resources'       => 'Antares\Resources\Factory',
+        'antares.meta'            => 'Antares\Foundation\Meta',
+        'antares.theme'           => 'Antares\View\Theme\ThemeManager',
+        'antares.widget'          => 'Antares\Widget\WidgetManager'
     ];
 
     /**

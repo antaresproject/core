@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Antares\Installation;
 
@@ -10,7 +10,8 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use \Antares\Installation\Repository\Installation as InstallationRepository;
 use File;
 
-class Progress implements ProgressContract {
+class Progress implements ProgressContract
+{
 
     /**
      * Installation repository.
@@ -53,22 +54,24 @@ class Progress implements ProgressContract {
      * @param InstallQueueWorker $installQueueWorker
      * @throws \InvalidArgumentException
      */
-    public function __construct(InstallationRepository $installation, InstallQueueWorker $installQueueWorker) {
-        $this->installation         = $installation;
-        $this->installQueueWorker   = $installQueueWorker;
-        $this->filePath             = storage_path($this->filePathName);
+    public function __construct(InstallationRepository $installation, InstallQueueWorker $installQueueWorker)
+    {
+        $this->installation       = $installation;
+        $this->installQueueWorker = $installQueueWorker;
+        $this->filePath           = storage_path($this->filePathName);
 
         $this->pid = $this->installation->getPid();
 
-        if($this->pid) {
-            $this->installQueueWorker->setPid( (int) $this->pid);
+        if ($this->pid) {
+            $this->installQueueWorker->setPid((int) $this->pid);
         }
     }
 
     /**
      * @param int $steps
      */
-    public function setSteps(int $steps) {
+    public function setSteps(int $steps)
+    {
         $this->installation->forgetStepsInfo();
         $this->installation->setSteps($steps);
     }
@@ -78,21 +81,23 @@ class Progress implements ProgressContract {
      *
      * @return string
      */
-    public function getFilePath() : string {
+    public function getFilePath(): string
+    {
         return $this->filePath;
     }
 
     /**
      * Starts the progress state.
      */
-    public function start() {
+    public function start()
+    {
         $this->startQueueWorker();
 
-        if($this->pid) {
-            $this->installation->setPid( (int) $this->pid);
+        if ($this->pid) {
+            $this->installation->setPid((int) $this->pid);
         }
 
-        if( ! $this->installation->progressing() ) {
+        if (!$this->installation->progressing()) {
             File::put($this->filePath, '');
 
             $this->installation->setStarted(true);
@@ -103,24 +108,26 @@ class Progress implements ProgressContract {
         $this->installation->save();
     }
 
-    protected function startQueueWorker() {
+    protected function startQueueWorker()
+    {
         try {
             $this->pid = $this->installQueueWorker->run()->getPid();
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setFailed($e->getMessage());
         }
     }
 
-    protected function runQueue() {
+    protected function runQueue()
+    {
         // Do not delete.
     }
 
     /**
      * Stops the progress state.
      */
-    public function stop() {
-        if( $this->isRunning() ) {
+    public function stop()
+    {
+        if ($this->isRunning()) {
             $this->reset();
         }
     }
@@ -128,11 +135,12 @@ class Progress implements ProgressContract {
     /**
      * Resets the progress state.
      */
-    public function reset() {
+    public function reset()
+    {
         $this->installation->forget();
         $this->installation->save();
 
-        if($this->pid) {
+        if ($this->pid) {
             $this->installQueueWorker->stop();
         }
 
@@ -144,7 +152,8 @@ class Progress implements ProgressContract {
      *
      * @return string
      */
-    public function getOutput() : string {
+    public function getOutput(): string
+    {
         try {
             $content = File::get($this->filePath);
 
@@ -152,8 +161,7 @@ class Progress implements ProgressContract {
             $content = preg_replace("/[\r\n]+/", "\n", $content);
 
             return $content;
-        }
-        catch(FileNotFoundException $e) {
+        } catch (FileNotFoundException $e) {
             return '';
         }
     }
@@ -163,22 +171,25 @@ class Progress implements ProgressContract {
      *
      * @return int
      */
-    public function getStepsCount() : int {
+    public function getStepsCount(): int
+    {
         return $this->installation->getSteps();
     }
 
     /**
      * @return int
      */
-    public function getCompletedSteps() : int {
+    public function getCompletedSteps(): int
+    {
         return $this->installation->getCompletedSteps();
     }
 
     /**
      * Increments completed steps.
      */
-    public function advanceStep() {
-        if($this->installation->started()) {
+    public function advanceStep()
+    {
+        if ($this->installation->started()) {
             $completed = $this->getCompletedSteps();
 
             $this->installation->setCompletedSteps(++$completed);
@@ -191,11 +202,12 @@ class Progress implements ProgressContract {
      *
      * @return int
      */
-    public function getPercentageProgress() : int {
-        $steps      = $this->getStepsCount();
-        $completed  = $this->getCompletedSteps();
+    public function getPercentageProgress(): int
+    {
+        $steps     = $this->getStepsCount();
+        $completed = $this->getCompletedSteps();
 
-        if($steps === 0) {
+        if ($steps === 0) {
             return 0;
         }
 
@@ -209,7 +221,8 @@ class Progress implements ProgressContract {
      *
      * @return bool
      */
-    public function isFinished() : bool {
+    public function isFinished(): bool
+    {
         return $this->installation->finished();
     }
 
@@ -218,7 +231,8 @@ class Progress implements ProgressContract {
      *
      * @return bool
      */
-    public function isRunning() : bool {
+    public function isRunning(): bool
+    {
         return $this->installation->progressing();
     }
 
@@ -227,7 +241,8 @@ class Progress implements ProgressContract {
      *
      * @param string $message
      */
-    public function setFailed(string $message) {
+    public function setFailed(string $message)
+    {
         $this->installation->setFailed(true);
         $this->installation->setFailedMessage($message);
         $this->installation->save();
@@ -236,14 +251,16 @@ class Progress implements ProgressContract {
     /**
      * @return bool
      */
-    public function isFailed() : bool {
+    public function isFailed(): bool
+    {
         return $this->installation->failed();
     }
 
     /**
      * @return string
      */
-    public function getFailedMessage() : string {
+    public function getFailedMessage(): string
+    {
         return (string) $this->installation->getFailedMessage();
     }
 
@@ -252,7 +269,8 @@ class Progress implements ProgressContract {
      *
      * @param string $message
      */
-    public function setSuccessMessage(string $message) {
+    public function setSuccessMessage(string $message)
+    {
         $this->installation->setSuccessMessage($message);
         $this->installation->save();
     }
@@ -260,7 +278,8 @@ class Progress implements ProgressContract {
     /**
      * @return string
      */
-    public function getSuccessMessage() : string {
+    public function getSuccessMessage(): string
+    {
         return (string) $this->installation->getSuccessMessage();
     }
 

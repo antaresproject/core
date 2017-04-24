@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Memory;
 
 use Antares\Support\Traits\DataContainerTrait;

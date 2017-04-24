@@ -136,9 +136,9 @@ class Permission extends Eloquent
     protected function complete($model)
     {
         return [
-            'vendor'    => $model->vendor,
-            'name'      => $model->name,
-            'fullname'  => $model->vendor . '/' . $model->name,
+            'vendor'   => $model->vendor,
+            'name'     => $model->name,
+            'fullname' => $model->vendor . '/' . $model->name,
         ];
     }
 
@@ -177,8 +177,8 @@ class Permission extends Eloquent
             $isCore  = $this->isCoreComponent($model->name);
 
             if (!$isCore) {
-                $configuration  = $this->complete($model);
-                $name           = $configuration['fullname'];
+                $configuration = $this->complete($model);
+                $name          = $configuration['fullname'];
 
                 $return['extensions']['available'][$name] = $configuration;
 
@@ -205,7 +205,8 @@ class Permission extends Eloquent
      * @param string $name
      * @return string
      */
-    protected function getNormalizedName(string $name) : string {
+    protected function getNormalizedName(string $name): string
+    {
         $name = str_replace('antaresproject/component-', 'antares/', $name);
 
         return str_replace('-', '_', $name);
@@ -227,19 +228,17 @@ class Permission extends Eloquent
                 return false;
             }
 
-            if( str_contains($name, '/') ) {
+            if (str_contains($name, '/')) {
                 list($vendor, $name) = explode('/', $name);
 
                 $model = $this->query()
-                    ->where('vendor', '=', $vendor)
-                    ->where('name', '=', $name)
-                    ->first();
-            }
-            elseif( $name !== 'core' && ! str_contains($name, 'component-')) {
-                $name = 'component-' . str_replace('_', '-', $name);
+                        ->where('vendor', '=', $vendor)
+                        ->where('name', '=', $name)
+                        ->first();
+            } elseif ($name !== 'core' && !str_contains($name, 'component-')) {
+                $name  = 'component-' . str_replace('_', '-', $name);
                 $model = $this->query()->where('name', '=', $name)->first();
-            }
-            else {
+            } else {
                 $model = $this->query()->where('name', '=', $name)->first();
             }
 
@@ -269,12 +268,12 @@ class Permission extends Eloquent
 
                 foreach ($brands as $brand) {
                     $permissionModel = $this->permission()->getModel()
-                        ->where('brand_id', '=', $brand)
-                        ->where('action_id', '=', $actionId)
-                        ->where('component_id', '=', $model->id)
-                        ->where('role_id', '=', $roleId)
-                        ->get()
-                        ->first();
+                            ->where('brand_id', '=', $brand)
+                            ->where('action_id', '=', $actionId)
+                            ->where('component_id', '=', $model->id)
+                            ->where('role_id', '=', $roleId)
+                            ->get()
+                            ->first();
 
                     $exists = (is_null($permissionModel)) ? false : $permissionModel->exists;
                     if ($exists) {

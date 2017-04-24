@@ -21,9 +21,9 @@
 
 namespace Antares\Installation;
 
-use PDOException;
-use Symfony\Component\Process\Process;
 use Antares\Contracts\Installation\Requirement as RequirementContract;
+use Symfony\Component\Process\Process;
+use PDOException;
 
 class Requirement implements RequirementContract
 {
@@ -71,10 +71,7 @@ class Requirement implements RequirementContract
             'mysqlDumpCommand'       => $this->checkMysqlDumpCommand(),
             'writableStorage'        => $this->checkWritableStorage(),
             'writableAsset'          => $this->checkWritableAsset(),
-            'writableTickets'        => $this->checkWritableTickets(),
-            'writableLicense'        => $this->checkWritableLicense(),
             'writableLogs'           => $this->checkWritableLogs(),
-            'writableTemp'           => $this->checkWritableTemp(),
             'writablePublic'         => $this->checkWritablePublic(),
             'writablePublicPackages' => $this->checkWritablePublicPackages(),
             'writableComposerVendor' => $this->checkWritableComposerVendor(),
@@ -126,17 +123,6 @@ class Requirement implements RequirementContract
     }
 
     /**
-     * check temp directory is writable
-     *
-     * @return array
-     */
-    protected function checkWritableTemp()
-    {
-        $path = rtrim($this->app->make('path.storage'), '/') . '/temp';
-        return $this->isWritable($path);
-    }
-
-    /**
      * check logs directory is writable
      *
      * @return array
@@ -144,28 +130,6 @@ class Requirement implements RequirementContract
     protected function checkWritableLogs()
     {
         $path = rtrim($this->app->make('path.storage'), '/') . '/logs';
-        return $this->isWritable($path);
-    }
-
-    /**
-     * check license directory is writable
-     *
-     * @return array
-     */
-    protected function checkWritableLicense()
-    {
-        $path = rtrim($this->app->make('path.storage'), '/') . '/license';
-        return $this->isWritable($path);
-    }
-
-    /**
-     * check tickets directory is writable
-     *
-     * @return array
-     */
-    protected function checkWritableTickets()
-    {
-        $path = rtrim($this->app->make('path.storage'), '/') . '/tickets';
         return $this->isWritable($path);
     }
 
@@ -239,8 +203,8 @@ class Requirement implements RequirementContract
         $modules  = apache_get_modules();
         $required = config('antares/installer::validation.required_apache_modules');
 
-        $missing  = array_diff($required, $modules);
-        $schema   = ['is' => true, 'data' => ['modules' => $modules]];
+        $missing = array_diff($required, $modules);
+        $schema  = ['is' => true, 'data' => ['modules' => $modules]];
         if (!empty($missing)) {
             $schema['is']            = false;
             $schema['data']['error'] = sprintf('Some of apache modules are missing: %s. Required apache modules: %s. Please check server environment.', implode(', ', $missing), implode(', ', $required));

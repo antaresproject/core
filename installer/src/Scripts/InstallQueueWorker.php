@@ -47,7 +47,10 @@ class InstallQueueWorker
      */
     protected function setup()
     {
-        $pid       = null;
+        $pid = null;
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            return false;
+        }
         $processes = $this->runCommand('ps aux|grep php');
 
         foreach ($processes as $process) {
@@ -67,13 +70,14 @@ class InstallQueueWorker
      * @param string $command
      * @return array The command output
      */
-    protected function runCommand(string $command) : array {
+    protected function runCommand(string $command): array
+    {
         $processes = [];
 
-        if(PHP_SAPI === 'cli') {
+        if (PHP_SAPI === 'cli') {
             $firstArgument = Arr::get($_SERVER, 'argv.0', '');
 
-            if(strpos($firstArgument, 'phpunit') !== FALSE) {
+            if (strpos($firstArgument, 'phpunit') !== FALSE) {
                 return $processes;
             }
         }

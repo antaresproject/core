@@ -62,6 +62,7 @@ class Foundation extends RouteManager implements FoundationContract
             $this->bootApplication();
         }
 
+
         return $this;
     }
 

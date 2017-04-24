@@ -9,6 +9,9 @@
                 <div class="col-dt-6 col-6 col-mb-6">
                     <div class="input-field ">                
                         <input data-icheck="true" type="checkbox" {{ requirement['is'] == requirement['should'] ? 'checked="checked"':'' }}>
+                        {% if name=='version' %}
+                            {{ requirement['data']['version'] }}
+                        {% endif %}
                         {% if requirement['is'] == requirement['should'] and name not in ['phpExtensions','apacheModules','version'] %}  
                             {{ trans('antares/foundation::install.status.work')|raw }} 
                         {% endif %}
@@ -17,9 +20,6 @@
 
             </div>
             <div class="form-block  form-block-desc" >
-                <div class="col-dt-2 col-2 col-mb-2">
-                    <label class="form-block__name">&nbsp;</label>
-                </div>
                 <div class="col-dt-14 col-14 col-mb-14">
                     <div class="input-field__desc">
                         {% if not requirement['is'] == requirement['should'] %}                        
@@ -30,7 +30,7 @@
                         {% endif %}  
                         {% if requirement['is'] == requirement['should'] %}                                                                                 
                             {% if name=='version' %}
-                                {{ requirement['data']['version'] }}
+
                             {% elseif name == 'phpExtensions' %}                                                 
                                 <p>
                                     {{ trans('Following php extensions are installed') }}:
@@ -45,7 +45,6 @@
                                 </p>
                             {% endif %}
                         {% else %}
-
                             {% if requirement['explicit']==true %}
                                 {% if name=='version' %}
                                     {{ requirement['data']['error'] }}         

@@ -39,11 +39,10 @@ return [
         'debugbar',
         'framework/temp',
         'logs',
-        'temp',
-        'tickets'
+        'temp'
     ],
     'permissions'                => [
-        'roles' => [
+        'roles'      => [
             'member' => [
                 'show-dashboard',
                 'client-update'
@@ -71,5 +70,5 @@ return [
             ],
         ],
     ],
-    'fake_users_count' => 1,
+    'fake_users_count'           => 1,
 ];
