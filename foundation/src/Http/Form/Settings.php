@@ -64,19 +64,14 @@ class Settings extends FormBuilder implements Presenter
     {
         return $this->grid->fieldset(trans('antares/foundation::label.settings.application'), function (Fieldset $fieldset) {
                     $fieldset->legend('Application configuration');
-                    $fieldset->control('input:text', 'site_name')
-                            ->label(trans('antares/foundation::label.name'));
-
-                    $fieldset->control('textarea', 'site_description')
-                            ->label(trans('antares/foundation::label.description'))
-                            ->attributes(['rows' => 5]);
 
                     $fieldset->control('select', 'mode')
                             ->label(trans('antares/foundation::label.mode'))
                             ->options([
                                 'production'  => trans('antares/foundation::global.modes.production'),
                                 'development' => trans('antares/foundation::global.modes.development'),
-                    ]);
+                            ])->wrapper(['class' => 'w220']);
+
                     $fieldset->control('button', 'cancel')
                             ->field(function() {
                                 return app('html')->link(handles("antares::/"), trans('antares/foundation::label.cancel'), ['class' => 'btn btn--md btn--default mdl-button mdl-js-button']);

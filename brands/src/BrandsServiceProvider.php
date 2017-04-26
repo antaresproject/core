@@ -22,6 +22,7 @@ namespace Antares\Brands;
 
 use Antares\Foundation\Support\Providers\ModuleServiceProvider;
 use Antares\Brands\Contracts\BrandsRepositoryContract;
+use Antares\Brands\Http\Middleware\BrandsMiddleware;
 use Antares\Brands\Repositories\BrandsRepository;
 use Antares\Brands\Http\Handlers\BrandsPane;
 use Antares\Brands\BrandStyler;
@@ -111,6 +112,7 @@ class BrandsServiceProvider extends ModuleServiceProvider
     public function boot()
     {
         parent::boot();
+        $this->app->make(Router::class)->pushMiddlewareToGroup('web', BrandsMiddleware::class);
         $this->app->make('view')->composer(['antares/foundation::brands.email', 'antares/foundation::brands.edit'], BrandsPane::class);
     }
 

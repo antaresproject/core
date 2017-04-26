@@ -471,9 +471,10 @@ if (!function_exists('extensions')) {
             return $return;
         }
         if (!is_null($name)) {
-            return array_get($extensions, 'components/' . $name);
+            return array_get($extensions, 'antaresproject/component-' . $name);
         }
         foreach ($extensions as $name => $extension) {
+
             $return[str_replace('components', 'antares', $name)] = $extension;
         }
 

@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\Http\Handlers;
 
 use Antares\Foundation\Http\Composers\LeftPane;
@@ -35,15 +34,14 @@ class BrandsPane extends LeftPane
     public function compose($name = NULL, $options = array())
     {
         $menu = $this->widget->make('menu.brands.pane');
-        $id   = from_route('brands');
-
+        $id   = request()->segment(2) == 'branding' ? brand_id() : from_route('brands');
 
         $menu->add('brand-settings')
-                ->link(handles("antares::brands/{$id}/edit"))
+                ->link(handles("antares::branding"))
                 ->title(trans('antares/brands::messages.brand_settings'));
 
         $menu->add('brand-email')
-                ->link(handles("antares::brands/{$id}/email"))
+                ->link(handles("antares::branding/email"))
                 ->title(trans('antares/brands::messages.brand_settings_email'));
 
         $areas     = config('areas.areas');
@@ -52,7 +50,7 @@ class BrandsPane extends LeftPane
         foreach ($templates as $template) {
             $menu->add($template->area)
                     ->title(trans(array_get($areas, $template->area) . ' Area'))
-                    ->link(handles("antares::brands/{$id}/area/{$template->id}"));
+                    ->link(handles("antares::branding/area/{$template->id}"));
         }
 
         $this->widget->make('pane.left')->add('brands')->content(view('antares/foundation::components.placeholder_left')->with('menu', $menu));

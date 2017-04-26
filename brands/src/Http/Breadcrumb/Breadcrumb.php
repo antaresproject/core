@@ -27,13 +27,26 @@ class Breadcrumb extends Navigation
 {
 
     /**
+     * On init brands
+     */
+    public function onInit()
+    {
+        $this->breadcrumbs->register('branding', function($breadcrumbs) {
+            $breadcrumbs->push('Branding', handles('antares::branding'));
+        });
+        $this->shareOnView('branding');
+    }
+
+    /**
      * on brands list
      */
     public function onBrandsList()
     {
+        $this->onInit();
         $this->breadcrumbs->register('brands', function($breadcrumbs) {
-            $url = extension_active('multibrand') ? 'antares::multibrand/index' : 'antares::brands/' . from_route('brands') . '/edit';
-            $breadcrumbs->push('Branding', handles($url));
+            $breadcrumbs->parent('branding');
+            $url = extension_active('multibrand') ? 'antares::multibrand/index' : 'antares::branding';
+            $breadcrumbs->push('Brand settings', handles($url));
         });
 
         $this->shareOnView('brands');
@@ -49,12 +62,14 @@ class Breadcrumb extends Navigation
         $this->onBrandsList();
         $name = 'rand-' . $model->name;
         $this->breadcrumbs->register($name, function($breadcrumbs) use($model, $name) {
+            $breadcrumbs->parent('branding');
             $multibrandActive = extension_active('multibrand');
             $name             = trans('antares/brands::messages.brand_settings');
             if ($multibrandActive) {
                 $breadcrumbs->parent('brands');
                 $name = trans('antares/brands::messages.brand_edit', ['name' => $model->name]);
             }
+            set_meta('title', $name);
             $breadcrumbs->push($name);
         });
         $this->shareOnView($name);
@@ -70,12 +85,14 @@ class Breadcrumb extends Navigation
         $this->onBrandsList();
         $name = 'rand-' . $model->name;
         $this->breadcrumbs->register($name, function($breadcrumbs) use($model, $name) {
-            $breadcrumbs->parent('brands');
             $multibrandActive = extension_active('multibrand');
-            $name             = trans('antares/brands::messages.brand_settings_email');
+            $breadcrumbs->parent($multibrandActive ? 'brands' : 'branding');
+
+            $name = trans('antares/brands::messages.brand_settings_email');
             if ($multibrandActive) {
                 $name = trans('antares/brands::messages.brand_settings_multibrand_email', ['name' => $model->name]);
             }
+            set_meta('title', $name);
             $breadcrumbs->push($name);
         });
         $this->shareOnView($name);
@@ -90,9 +107,11 @@ class Breadcrumb extends Navigation
     {
         $this->onBrandsList();
         $this->breadcrumbs->register('brand-area', function($breadcrumbs) use($model) {
-            $name = array_get(config('areas.areas'), $model->templates->first()->area);
-            $breadcrumbs->parent('brands');
-            $breadcrumbs->push(trans('antares/brands::messages.brand_area_settings', ['name' => $name]));
+            $name  = array_get(config('areas.areas'), $model->templates->first()->area);
+            $breadcrumbs->parent(extension_active('multibrand') ? 'brands' : 'branding');
+            $title = trans('antares/brands::messages.brand_area_settings', ['name' => $name]);
+            set_meta('title', $title);
+            $breadcrumbs->push($title);
         });
         $this->shareOnView('brand-area');
     }

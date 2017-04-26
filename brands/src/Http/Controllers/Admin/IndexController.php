@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\Http\Controllers\Admin;
 
 use Antares\Foundation\Http\Controllers\AdminController;
@@ -67,8 +66,9 @@ class IndexController extends AdminController implements BrandUpdater
      * @param  int  $id
      * @return mixed
      */
-    public function edit($id)
+    public function edit($id = null)
     {
+        $id = is_null($id) ? brand_id() : $id;
         return $this->processor->edit($this, $id);
     }
 
@@ -77,7 +77,6 @@ class IndexController extends AdminController implements BrandUpdater
      */
     public function showBrandChanger(array $data)
     {
-        set_meta('title', trans('antares/brands::title.brands.update'));
         return view('antares/foundation::brands.edit', $data);
     }
 
@@ -86,7 +85,8 @@ class IndexController extends AdminController implements BrandUpdater
      */
     public function updateBrandFailedValidation($errors, $id)
     {
-        return $this->redirectWithErrors(handles("antares::brands/{$id}/edit"), $errors);
+        $url = extension_active('multibrand') ? "antares::brands/{$id}/edit" : "antares::branding";
+        return $this->redirectWithErrors(handles($url), $errors);
     }
 
     /**
@@ -95,7 +95,8 @@ class IndexController extends AdminController implements BrandUpdater
     public function updateBrandFailed(BrandModel $brand, array $errors)
     {
         $message = trans('antares/brands::response.update.db-failed', $errors);
-        return $this->redirectWithMessage(handles("antares::brands/{$brand->id}/edit"), $message, 'error');
+        $url     = extension_active('multibrand') ? "antares::brands/{$brand->id}/edit" : "antares::branding";
+        return $this->redirectWithMessage(handles($url), $message, 'error');
     }
 
     /**
@@ -104,7 +105,7 @@ class IndexController extends AdminController implements BrandUpdater
     public function brandUpdated(BrandModel $brand)
     {
         $message = trans('antares/brands::response.update.success');
-        $url     = extension_active('multibrand') ? "antares::multibrand/index" : "antares::brands/{$brand->id}/edit";
+        $url     = extension_active('multibrand') ? "antares::multibrand/index" : "antares::branding";
         return $this->redirectWithMessage(handles($url), $message);
     }
 
@@ -139,8 +140,12 @@ class IndexController extends AdminController implements BrandUpdater
      * @param mixed $templateId
      * @return \Illuminate\View\View
      */
-    public function area(Area $processor, $brandId, $templateId)
+    public function area(Area $processor, $brandId, $templateId = null)
     {
+        if (is_null($templateId) && request()->segment(2) == 'branding') {
+            $templateId = $brandId;
+            $brandId    = brand_id();
+        }
         return $processor->area($brandId, $templateId);
     }
 

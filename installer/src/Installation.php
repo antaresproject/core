@@ -173,11 +173,13 @@ class Installation implements InstallationContract
             ];
             $memory->put('site.name', $input['site_name']);
             $memory->put('site.theme', $theme);
+            $memory->put(config('antares/notifications::default.notifications_remove_after_days', 90));
             $memory->put('email', $this->app->make('config')->get('mail'));
             $memory->put('email.from', [
                 'name'    => $input['site_name'],
                 'address' => $input['email'],
             ]);
+            $memory->finish();
             $this->createFakeUsers($input['password']);
         } catch (Exception $ex) {
             DB::rollBack();

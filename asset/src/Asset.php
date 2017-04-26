@@ -129,9 +129,17 @@ class Asset
      */
     public function add($name, $source, $dependencies = [], $attributes = [], $replaces = [])
     {
-
         if (!is_null($from      = array_get($attributes, 'from')) && !is_null($extension = extensions($from))) {
-            $path     = app('antares.extension.finder')->resolveExtensionPath($extension['path']);
+            $extensions = app('antares.extension')->getAvailableExtensions();
+            $path       = null;
+            foreach ($extensions as $extension) {
+                if (str_contains($extension->getPackageName(), $from)) {
+                    $path = $extension->isActivated() ? $extension->getPath() : null;
+                    break;
+                }
+            }
+
+
             $realPath = $path . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . $source;
             if (file_exists($realPath)) {
                 $symlinker  = app(AssetSymlinker::class);

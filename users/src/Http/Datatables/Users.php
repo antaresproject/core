@@ -85,6 +85,8 @@ class Users extends DataTable
             if (!empty($all)) {
                 $query->whereIn('status', [0, 1]);
             }
+        } else {
+            $query->whereIn('status', [1]);
         }
 
 
@@ -98,10 +100,9 @@ class Users extends DataTable
     public function ajax()
     {
 
-        $acl            = app('antares.acl')->make('antares/control');
-        $canUpdateUser  = $acl->can('user-update');
-        $canDeleteUser  = $acl->can('user-delete');
-        $canLoginAsUser = $acl->can('login-as-user');
+        $acl           = app('antares.acl')->make('antares/control');
+        $canUpdateUser = $acl->can('user-update');
+        $canDeleteUser = $acl->can('user-delete');
 
         $return = $this->prepare()
                 ->filterColumn('firstname', function ($query, $keyword) {
@@ -145,7 +146,7 @@ class Users extends DataTable
                 ->editColumn('status', function ($model) {
                     return ((int) $model->status) ? '<span class="label-basic label-basic--success">ACTIVE</span>' : '<span class="label-basic label-basic--danger">Archived</span>';
                 })
-                ->addColumn('action', $this->getActionsColumn($canUpdateUser, $canDeleteUser, $canLoginAsUser))
+                ->addColumn('action', $this->getActionsColumn($canUpdateUser, $canDeleteUser))
                 ->make(true);
         return $return;
     }
@@ -225,9 +226,9 @@ class Users extends DataTable
      *
      * @return callable
      */
-    protected function getActionsColumn($canUpdateUser, $canDeleteUser, $canLoginAsUser)
+    protected function getActionsColumn($canUpdateUser, $canDeleteUser)
     {
-        return function ($row) use ($canUpdateUser, $canDeleteUser, $canLoginAsUser) {
+        return function ($row) use ($canUpdateUser, $canDeleteUser) {
             $html               = app('html');
             $this->tableActions = [];
             $user               = auth()->user();
@@ -243,11 +244,6 @@ class Users extends DataTable
                             'data-icon'        => 'delete',
                             'data-title'       => trans("Are you sure?"),
                             'data-description' => trans('Deleteing user') . ' ' . $row->fullname,
-                ]));
-            }
-            if (!is_null($user) && $user->id !== $row->id && $canLoginAsUser) {
-                $this->addTableAction('login_as', $row, $html->link(handles("login/with/{$row->id}"), trans('antares/control::label.login_as', ['fullname' => $row->fullname]), [
-                            'data-icon' => 'odnoklassniki',
                 ]));
             }
 

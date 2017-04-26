@@ -21,12 +21,11 @@
 
 namespace Antares\Auth;
 
-use Antares\Authorization\Policy;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Auth\AuthServiceProvider as ServiceProvider;
 use Antares\Contracts\Authorization\Factory as FactoryContract;
-use Illuminate\Routing\Router;
+use Illuminate\Auth\AuthServiceProvider as ServiceProvider;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Event;
+use Antares\Authorization\Policy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -60,6 +59,9 @@ class AuthServiceProvider extends ServiceProvider
         });
         $this->app->singleton('auth.driver', function (Application $app) {
             return $app->make('auth')->guard();
+        });
+        $this->app->singleton('multiuser', function (Application $app) {
+            return new Multiuser();
         });
     }
 

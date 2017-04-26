@@ -314,14 +314,10 @@ class FoundationServiceProvider extends ServiceProvider
         }
         $registry = app('antares.memory')->make('registry');
         $vars     = [
-            'site.name'        => [
-                'value'       => $registry->get('site.name'),
-                'description' => 'Platform name'
+            'brand.name' => [
+                'value'       => brand_name(),
+                'description' => 'Brand name'
             ],
-            'site.description' => [
-                'value'       => $registry->get('site.description'),
-                'description' => 'Platform description'
-            ]
         ];
         $emails   = $registry->get('email');
         if (!empty($emails)) {

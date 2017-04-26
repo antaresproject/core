@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\Http\Form;
 
 use Illuminate\Contracts\Container\Container;
@@ -159,11 +158,11 @@ EOD;
      */
     protected function colorsFieldset()
     {
+
         $colors       = $this->model->colors;
         StylerFacade::formAdapter($colors)->share();
         $this->colors = app('antares.memory')->make('registry')->get('brand.configuration.options.colors');
         $this->grid->fieldset('colors', function (Fieldset $fieldset) use($colors) {
-
             $fieldset->legend(trans('antares/brands::messages.legend.brand_colors'));
             $fieldset->attributes([
                 'name' => 'color-inputs'
@@ -269,7 +268,7 @@ EOD;
 
             $fieldset->control('input:text', 'colors[text][secondary][first]')
                     ->attributes(['class' => 'cp', 'maxlength' => 7, 'num' => 3])
-                    ->value(array_get($colors, 'secondary.first', '#FFFFFF'));
+                    ->value(array_get($colors, 'secondary.first', '#8a8f99'));
 
             $fieldset->control('input:text', 'colors[text][secondary][second]')
                     ->attributes(['class' => 'cp', 'maxlength' => 7, 'num' => 4])

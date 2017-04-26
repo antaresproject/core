@@ -109,11 +109,10 @@ class UserViewBreadcrumbMenu extends MenuHandler
             return;
         }
 
-        $acl            = app('antares.acl')->make('antares/control');
-        $canUpdateUser  = $acl->can('user-update');
-        $canDeleteUser  = $acl->can('user-delete');
-        $canLoginAsUser = $acl->can('login-as-user');
-        $user           = $this->getUser();
+        $acl           = app('antares.acl')->make('antares/control');
+        $canUpdateUser = $acl->can('user-update');
+        $canDeleteUser = $acl->can('user-delete');
+        $user          = $this->getUser();
 
 
 
@@ -135,14 +134,6 @@ class UserViewBreadcrumbMenu extends MenuHandler
                         'class'            => "triggerable confirm",
                         'data-title'       => trans("Are you sure?"),
                         'data-description' => trans('Deleteing user') . ' ' . $user->fullname]);
-        }
-
-        if (auth()->user()->id !== $uid && $canLoginAsUser) {
-            $this->handler
-                    ->add('user-login-as', '^:user-view')
-                    ->title(trans('antares/control::label.login_as', ['fullname' => $user->fullname]))
-                    ->link(handles("login/with/{$uid}"))
-                    ->icon('zmdi-odnoklassniki');
         }
     }
 

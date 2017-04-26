@@ -53,7 +53,7 @@ class BrandsMenu extends MenuHandler
         if (extension_active('multibrand')) {
             return handles('antares::multibrand/index');
         }
-        return handles('antares::brands/' . brand_id() . '/edit');
+        return handles('antares::branding');
     }
 
     /**

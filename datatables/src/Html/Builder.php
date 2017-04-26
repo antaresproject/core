@@ -297,7 +297,7 @@ class Builder extends BaseBuilder
         }
 
 
-        $eventAfterSearch = (request()->has('search') && !request()->ajax()) ? '$(document).trigger( "datatables.searchLoaded", [ data ] );' : '';
+        $eventAfterSearch = (request()->has('search') && !request()->ajax()) ? '$(document).trigger( "datatables.searchLoaded", [ dtInstance,data ] );' : '';
         $ajax             = <<<EOD
             function (data, callback, settings) {                        
                     if(data.draw===1){

@@ -90,7 +90,7 @@ class Form extends FormBuilder implements Presenter
                             ->attributes(['placeholder' => trans('antares/brands::label.brand.url')])
                             ->fieldClass('input-field--group input-field--pre')
                             ->before('<div class="input-field__pre"><span>' . (request()->secure() ? 'https://' : 'http://') . '</span></div>')
-                            ->value(!is_null($this->model->options) ? $this->model->options->url : '');
+                            ->value(!is_null($this->model->options) ? str_replace('http://', '', $this->model->options->url) : '');
 
                     $dateFormat = $fieldset->control('select', 'date_format')
                             ->wrapper(['class' => 'w220'])

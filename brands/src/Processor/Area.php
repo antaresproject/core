@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\Processor;
 
 use Antares\Brands\Repositories\BrandsRepository;
@@ -65,7 +64,6 @@ class Area
     public function area($brandId, $templateId)
     {
         app('antares.asset')->container('antares/foundation::application')->add('webpack_brand_settings', '/webpack/view_brand_settings.js', ['app_cache']);
-        //publish(null, ['/packages/core/js/brand-form.js', '/packages/core/js/brand-colors.js']);
         $model    = $this->repository->findByIdAndTemplate($brandId, $templateId);
         $this->breadcrumb->onArea($model);
         $template = $model->templates->first();
@@ -76,7 +74,7 @@ class Area
             if (!$template->save()) {
                 return redirect_with_message(url()->previous(), trans('antares/brands::messages.brand_template_has_not_been_updated'), 'error');
             }
-            $url = extension_active('multibrand') ? 'antares::multibrand/index' : "antares::brands/{$brandId}/edit";
+            $url = extension_active('multibrand') ? 'antares::multibrand/index' : "antares::branding";
             return redirect_with_message(handles($url), trans('antares/brands::messages.brand_template_has_been_updated'), 'success');
         }
         return view('antares/foundation::brands.edit', ['form' => $form]);

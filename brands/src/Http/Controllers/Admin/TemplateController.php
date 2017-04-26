@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\Http\Controllers\Admin;
 
 use Antares\Foundation\Http\Controllers\AdminController;
@@ -46,8 +45,9 @@ class TemplateController extends AdminController implements BrandTemplateing
      * @param mixed $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Email $processor, $id)
+    public function update(Email $processor, $id = null)
     {
+        $id = is_null($id) ? brand_id() : $id;
         return $processor->email($this, $id);
     }
 
@@ -60,7 +60,8 @@ class TemplateController extends AdminController implements BrandTemplateing
      */
     public function updateFailedValidation($errors, $id)
     {
-        return $this->redirectWithErrors(handles("antares::brands/{$id}/email"), $errors);
+        $url = extension_active('multibrand') ? "antares::brands/{$id}/email" : "antares::branding/email";
+        return $this->redirectWithErrors(handles($url), $errors);
     }
 
     /**
@@ -73,7 +74,8 @@ class TemplateController extends AdminController implements BrandTemplateing
     public function updateFailed(BrandModel $model, array $errors)
     {
         $message = trans('antares/brands::response.update.db-failed', $errors);
-        return $this->redirectWithMessage(handles("antares::brands/{$model->id}/email"), $message, 'error');
+        $url     = extension_active('multibrand') ? "antares::brands/{$model->id}/email" : "antares::branding/email";
+        return $this->redirectWithMessage(handles($url), $message, 'error');
     }
 
     /**
@@ -85,7 +87,7 @@ class TemplateController extends AdminController implements BrandTemplateing
     public function updated($model)
     {
         $message = trans('antares/brands::response.update.success');
-        $url     = extension_active('multibrand') ? "antares::multibrand/index" : "antares::brands/{$model->id}/email";
+        $url     = extension_active('multibrand') ? "antares::multibrand/index" : "antares::branding/email";
         return $this->redirectWithMessage(handles($url), $message);
     }
 

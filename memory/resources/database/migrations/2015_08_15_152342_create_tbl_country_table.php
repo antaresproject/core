@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
@@ -40,12 +38,12 @@ class CreateTblCountryTable extends Migration
             $table->string('name', 255);
         });
         Schema::table('tbl_country', function(Blueprint $table) {
-            DB::table('tbl_country')->insert([
-                ['code' => 'pl', 'name' => 'Poland'],
-                ['code' => 'us', 'name' => 'United States'],
-                ['code' => 'it', 'name' => 'Italy'],
-                ['code' => 'gb', 'name' => 'United Kingdom'],
-            ]);
+            $schemasPath         = __DIR__ . DIRECTORY_SEPARATOR . '../schemas';
+            $countriesSchemaPath = $schemasPath . DIRECTORY_SEPARATOR . 'countries.sql';
+            if (!file_exists($countriesSchemaPath)) {
+                throw new \Exception('Countries seed sql schema not exists.');
+            }
+            DB::unprepared(file_get_contents($countriesSchemaPath));
         });
     }
 

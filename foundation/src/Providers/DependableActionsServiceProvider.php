@@ -47,7 +47,7 @@ class DependableActionsServiceProvider extends ServiceProvider
     public function boot()
     {
         $events = $this->app->make('events');
-        $events->listen('datatables:*:after.action.edit', DatatableDependableActions::class);
+        $events->listen('datatables:*:before.action.edit', DatatableDependableActions::class);
         $events->listen('datatables:*:after.massactions.action.delete', DatatableMassActionsDependableActions::class);
         $events->listen('breadcrumb.before.render.*', BreadcrumbsMenuDependableActions::class);
     }

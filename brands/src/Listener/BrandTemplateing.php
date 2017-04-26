@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Brands\Listener;
 
 use Antares\Brands\Model\Brands as BrandModel;
@@ -30,7 +29,7 @@ interface BrandTemplateing
     /**
      * on email branding
      */
-    public function update(Email $processor, $id);
+    public function update(Email $processor, $id = null);
 
     /**
      * when validation dont give a shit

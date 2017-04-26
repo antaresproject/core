@@ -23,15 +23,15 @@ namespace Antares\Installation\Processor;
 
 use Antares\Contracts\Installation\Requirement;
 use Antares\Contracts\Installation\Installation;
-use Antares\Support\Facades\Config;
+use Illuminate\Support\Facades\File;
 use Symfony\Component\Finder\Finder;
+use Antares\Support\Facades\Config;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Cache\FileStore;
 use ReflectionException;
 use Antares\Model\User;
 use Exception;
-use Illuminate\Support\Facades\File;
 
 class Installer
 {
@@ -183,9 +183,9 @@ class Installer
      */
     public function store($listener, array $input)
     {
-        if( $this->installer->createAdmin($input) ) {
-            $this->installer->runComponentsInstallation();
 
+        if ($this->installer->createAdmin($input)) {
+            $this->installer->runComponentsInstallation();
             return $listener->storeSucceed();
         }
 

@@ -17,12 +17,13 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 use Illuminate\Routing\Router;
 
+$router->match(['GET', 'POST'], 'branding/email', 'TemplateController@update');
 $router->match(['GET', 'POST'], 'brands/{brands}/email', 'TemplateController@update');
 $router->get('brands/{brands}/edit', 'IndexController@edit');
+$router->get('branding', 'IndexController@edit');
+$router->match(['GET', 'POST'], 'branding/area/{templateId}', 'IndexController@area');
 $router->match(['GET', 'POST'], 'brands/{brands}/area/{templateId}', 'IndexController@area');
 $router->resource('brands', 'IndexController');
 

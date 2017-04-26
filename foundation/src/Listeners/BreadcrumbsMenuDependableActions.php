@@ -51,6 +51,7 @@ class BreadcrumbsMenuDependableActions extends AbstractDependableActions
     {
         $menu       = last($params);
         $this->menu = $menu;
+
         $attributes = $menu->getAttributes();
 
         if (is_null($entity     = array_get($attributes, 'entity')) or empty($dependable = $this->actions)) {
@@ -74,8 +75,10 @@ class BreadcrumbsMenuDependableActions extends AbstractDependableActions
      * @param array $attributes
      * @param array $actions
      */
-    protected function add($attributes, $actions)
+    protected function add(&$attributes, $actions)
     {
+        $index  = 0;
+        $childs = [];
         foreach ($actions as $name => $callback) {
             if (!$callback instanceof Closure) {
                 continue;
@@ -84,10 +87,12 @@ class BreadcrumbsMenuDependableActions extends AbstractDependableActions
             if (empty($called) or ! is_array($called)) {
                 continue;
             }
-            $fluent = $this->createMenuItem($name, $called);
-            array_set($attributes, 'childs.dependable-action', $fluent);
-            $this->menu->offsetSet('attributes', $attributes);
+            $fluent                                = $this->createMenuItem($name, $called);
+            $childs['dependable-action-' . $index] = $fluent;
+            ++$index;
         }
+        array_set($attributes, 'childs', array_merge($childs, $attributes['childs']));
+        $this->menu->offsetSet('attributes', $attributes);
     }
 
     /**

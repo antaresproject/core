@@ -24,7 +24,7 @@ return [
     'upper_menu'                          => 'Upper menu',
     'simple'                              => 'Simple',
     'material'                            => 'Material',
-    'brand_settings'                      => 'Branding',
+    'brand_settings'                      => 'Brand settings',
     'brand_edit'                          => 'Branding: :name',
     'brand_settings_email'                => 'Email branding',
     'brand_settings_multibrand_email'     => 'Email branding: :name',

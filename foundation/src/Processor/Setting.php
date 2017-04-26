@@ -68,10 +68,7 @@ class Setting extends Processor implements SystemUpdateCommand, SettingUpdateCom
         $memory = $this->memory;
 
         $eloquent = new Fluent([
-            'site_name'        => $memory->get('site.name', ''),
-            'site_description' => $memory->get('site.description', ''),
-            'site_registrable' => ($memory->get('site.registrable', false) ? 'yes' : 'no'),
-            'mode'             => $memory->get('site.mode', 'development')
+            'mode' => $memory->get('site.mode', 'development')
         ]);
 
         $form = $this->presenter->form($eloquent);
@@ -95,9 +92,6 @@ class Setting extends Processor implements SystemUpdateCommand, SettingUpdateCom
         }
         $memory = $this->memory;
         $memory->put('site.mode', $input['mode']);
-        $memory->put('site.name', $input['site_name']);
-        $memory->put('site.description', $input['site_description']);
-        $memory->put('site.registrable', ($input['site_registrable'] === 'yes'));
         $memory->finish();
         return $listener->settingHasUpdated();
     }
