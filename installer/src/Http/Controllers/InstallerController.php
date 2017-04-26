@@ -110,6 +110,31 @@ class InstallerController extends BaseController
     }
 
     /**
+     * Show components selection form
+     * GET (:antares)/install/components
+     *
+     * @return mixed
+     */
+    public function components(Progress $progress)
+    {
+        $progress->reset();
+        return $this->processor->components($this);
+    }
+
+    /**
+     * Show components selection form
+     * POST (:antares)/install/components/store
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function storeComponents(Request $request)
+    {
+        $selected = (array) $request->get('optional', []);
+        return $this->processor->storeComponents($this, $selected);
+    }
+
+    /**
      * End of installation.
      *
      * GET (:antares)/install/done
@@ -140,13 +165,6 @@ class InstallerController extends BaseController
      */
     public function prepareSucceed()
     {
-        /* @var $progress Progress */
-        $progress = app()->make(Progress::class);
-
-        if($progress->isFailed()) {
-            $progress->reset();
-        }
-
         return $this->redirect(handles('antares::install/create'));
     }
 
@@ -179,7 +197,7 @@ class InstallerController extends BaseController
      */
     public function storeSucceed()
     {
-        return redirect()->to(handles('antares::install/progress'));
+        return redirect()->to(handles('antares::install/components'));
     }
 
     /**
@@ -213,6 +231,17 @@ class InstallerController extends BaseController
     }
 
     /**
+     * Response for components selection page
+     *
+     * @param  array   $data
+     * @return mixed
+     */
+    public function componentsSucceed(array $data)
+    {
+        return view('antares/installer::components', $data);
+    }
+
+    /**
      * when installation is completed
      * 
      * @return View
@@ -237,6 +266,16 @@ class InstallerController extends BaseController
         $additionalMessage = $progress->getFailedMessage();
 
         return view('antares/installer::installation.failed', compact('additionalMessage'));
+    }
+
+    /**
+     * Returns the view about installation progress.
+     *
+     * @return RedirectResponse
+     */
+    public function showInstallProgress()
+    {
+        return redirect()->to(handles('antares::install/progress'));
     }
 
 }

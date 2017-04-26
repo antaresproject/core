@@ -26,6 +26,19 @@ use Antares\Users\Processor\Account\ProfileDashboard as Processor;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Foundation\Application;
 use Illuminate\View\View;
+use Antares\Model\Action;
+use Antares\Model\Permission;
+use Antares\Model\Role;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Antares\Brands\Model\Brands;
+use Antares\Model\Component;
+use Antares\Model\UserRole;
+use Faker\Factory as Faker;
+use Antares\Model\User;
+use Carbon\Carbon;
+use Exception;
 
 class DashboardController extends AdminController implements Listener
 {

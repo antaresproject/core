@@ -38,8 +38,7 @@ class CreateTblCountryTable extends Migration
             $table->string('name', 255);
         });
         Schema::table('tbl_country', function(Blueprint $table) {
-            $schemasPath         = __DIR__ . DIRECTORY_SEPARATOR . '../schemas';
-            $countriesSchemaPath = $schemasPath . DIRECTORY_SEPARATOR . 'countries.sql';
+            $countriesSchemaPath = __DIR__ . '/seeds/countries.sql';
             if (!file_exists($countriesSchemaPath)) {
                 throw new \Exception('Countries seed sql schema not exists.');
             }

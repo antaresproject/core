@@ -68,6 +68,16 @@ class Progress implements ProgressContract
     }
 
     /**
+     * @param array $components
+     */
+    public function setComponents(array $components)
+    {
+        // Steps are the sum of extensions and composer command.
+        $this->installation->setCustom('steps', 0 + count($components));
+        $this->installation->setCustom('components', $components);
+    }
+
+    /**
      * @param int $steps
      */
     public function setSteps(int $steps)
@@ -192,7 +202,7 @@ class Progress implements ProgressContract
         if ($this->installation->started()) {
             $completed = $this->getCompletedSteps();
 
-            $this->installation->setCompletedSteps(++$completed);
+            $this->installation->setCompletedSteps( ++$completed);
             $this->installation->save();
         }
     }

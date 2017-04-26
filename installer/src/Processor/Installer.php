@@ -21,13 +21,16 @@
 
 namespace Antares\Installation\Processor;
 
-use Antares\Contracts\Installation\Requirement;
+use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Contracts\Installation\Installation;
+use Antares\Contracts\Installation\Requirement;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\Finder\Finder;
 use Antares\Support\Facades\Config;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
+use Antares\Installation\Progress;
+use Antares\Support\Facades\Form;
 use Illuminate\Cache\FileStore;
 use ReflectionException;
 use Antares\Model\User;
@@ -185,7 +188,7 @@ class Installer
     {
 
         if ($this->installer->createAdmin($input)) {
-            $this->installer->runComponentsInstallation();
+            //$this->installer->runComponentsInstallation();
             return $listener->storeSucceed();
         }
 
@@ -240,6 +243,73 @@ class Installer
             Log::emergency($e);
             return false;
         }
+    }
+
+    /**
+     * @return ComponentsRepository
+     */
+    private function getComponentsRepository()
+    {
+        return app()->make(ComponentsRepository::class);
+    }
+
+    /**
+     * Shows components form
+     *
+     * @param object $listener
+     * @return mixed
+     */
+    public function components($listener)
+    {
+        $form = Form::of('components', function ($form) {
+                    $form->layout('antares/installer::partials._components_form');
+                    $attributes = [
+                        'url'    => handles("antares::install/components/store"),
+                        'method' => 'POST'
+                    ];
+                    $form->attributes($attributes);
+                    $form->name('Components');
+                    $form->fieldset(function ($fieldset) {
+                        $fieldset->legend('Available optional components');
+                        $optional   = array_keys($this->getComponentsRepository()->getOptional());
+                        $extensions = app('antares.extension')->getAvailableExtensions();
+                        foreach ($extensions as $extension) {
+                            $name = $extension->getVendorName() . '/' . $extension->getPackageName();
+                            if (in_array($name, $optional)) {
+                                $package = $extension->getPackage();
+                                $fieldset->control('input:checkbox', 'optional[]')
+                                        ->label($extension->getFriendlyName() . ' (' . $package->getVersion() . ')')
+                                        ->value($name)
+                                        ->help($package->getDescription() . ', ' . implode(', ', array_flatten($package->getAuthors())));
+                            }
+                        }
+                    });
+                });
+        return $listener->componentsSucceed(['form' => $form]);
+    }
+
+    /**
+     * launch components/modules installation.
+     *
+     * @param  object  $listener
+     * @param  array   $selected
+     *
+     * @return mixed
+     */
+    public function storeComponents($listener, array $selected)
+    {
+        try {
+            $required   = array_keys($this->getComponentsRepository()->getRequired());
+            $extensions = array_merge($required, $selected);
+            $progress   = app(Progress::class);
+            $progress->setComponents($extensions);
+            $progress->start();
+            $this->installer->runComponentsInstallation();
+        } catch (Exception $e) {
+            Log::emergency($e);
+            return $listener->doneFailed();
+        }
+        return $listener->showInstallProgress();
     }
 
 }

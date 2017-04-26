@@ -36,6 +36,7 @@ return
                 'done'        => 'Done',
                 'requirement' => 'Check Requirements',
                 'install'     => 'Install Antares',
+                'components'  => 'Select components'
             ),
             'auth'             =>
             array(

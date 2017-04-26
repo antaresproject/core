@@ -100,9 +100,8 @@ class InstallQueueWorker
             ignore_user_abort();
 
             try {
-                $process = new Process('nohup php ' . self::$command . ' &', $this->scriptPath, null, null, 1);
+                $process   = new Process('nohup php ' . self::$command . ' &', $this->scriptPath, null, null, 1);
                 $process->run();
-
                 $this->pid = $process->getPid();
             } catch (ProcessTimedOutException $e) {
                 // Do nothing.
