@@ -301,10 +301,7 @@ class Installer
         try {
             $required   = array_keys($this->getComponentsRepository()->getRequired());
             $extensions = array_merge($required, $selected);
-            $progress   = app(Progress::class);
-            $progress->setComponents($extensions);
-            $progress->start();
-            $this->installer->runComponentsInstallation();
+            $this->installer->runComponentsInstallation($extensions);
         } catch (Exception $e) {
             Log::emergency($e);
             return $listener->doneFailed();

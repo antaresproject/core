@@ -296,8 +296,7 @@ class Builder extends BaseBuilder
             $cols = 'data.columns = ' . JavaScriptDecorator::decorate($columns) . ';';
         }
 
-
-        $eventAfterSearch = (request()->has('search') && !request()->ajax()) ? '$(document).trigger( "datatables.searchLoaded", [ dtInstance,data ] );' : '';
+        $eventAfterSearch = (request()->has('search') && !request()->ajax()) ? '$(document).trigger( "datatables.searchLoaded", [ dtInstance,data,' . count(config('search.datatables')) . ' ] );' : '';
         $ajax             = <<<EOD
             function (data, callback, settings) {                        
                     if(data.draw===1){

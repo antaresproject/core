@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Antares\Extension\Processors;
 
@@ -13,7 +13,8 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
-class Acl {
+class Acl
+{
 
     /**
      * ACL migration instance.
@@ -26,7 +27,8 @@ class Acl {
      * Acl constructor.
      * @param Migration $migration
      */
-    public function __construct(Migration $migration) {
+    public function __construct(Migration $migration)
+    {
         $this->migration = $migration;
     }
 
@@ -37,14 +39,15 @@ class Acl {
      * @param ExtensionContract $extension
      * @param bool $reload
      */
-    public function import(OperationHandlerContract $handler, ExtensionContract $extension, bool $reload = false) {
+    public function import(OperationHandlerContract $handler, ExtensionContract $extension, bool $reload = false)
+    {
         $name = $extension->getPackage()->getName();
 
         try {
             $roleActionList = File::getRequire($extension->getPath() . '/acl.php');
 
-            if($roleActionList instanceof RoleActionList) {
-                if($reload) {
+            if ($roleActionList instanceof RoleActionList) {
+                if ($reload) {
                     $this->migration->down($name);
                     $handler->operationInfo(new Operation('ACL settings have been flushed for ' . $name . '.'));
                 }
@@ -53,13 +56,11 @@ class Acl {
                 $this->migration->up($name, $roleActionList);
                 $handler->operationSuccess(new Operation('The ACL settings have been successfully imported.'));
             }
-        }
-        catch(FileNotFoundException $e) {
+        } catch (FileNotFoundException $e) {
             $handler->operationInfo(new Operation('Skipping importing ACL settings for ' . $name . '.'));
             // No need to throw an exception because of ACL file can be optional. In that case the required file will be not found.
-        }
-        catch(\Exception $e) {
-            Log::error($e->getMessage(), $e->getTrace());
+        } catch (\Exception $e) {
+            Log::error($e);
             $handler->operationFailed(new Operation($e->getMessage()));
         }
     }

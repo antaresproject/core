@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Notifier\Seeder;
 
 use Antares\Notifications\Model\NotificationCategory;
@@ -147,7 +146,7 @@ class NotificationSeeder extends Seeder
      */
     private function resolveTypeId(array $params = [])
     {
-        $type  = array_get($params, 'type', 'administrators');
+        $type  = array_get($params, 'type', 'admin');
         $model = NotificationTypes::where('name', $type)->firstOrFail();
         return $model->id;
     }

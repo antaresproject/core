@@ -1,7 +1,7 @@
 {% extends "antares/foundation::layouts.installer.main" %}
 {% block left_panel_content %}
     {{ parent() }}
-    {% include 'antares/installer::partials._menu' with {'active': 3} %}
+    {% include 'antares/installer::partials._menu' with {'active': 4} %}
 {% endblock %}
 {% block content %}
     <div class="card card--chart-small card--primary-light">
@@ -50,29 +50,28 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.6.16/js/perfect-scrollbar.jquery.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.6.16/js/perfect-scrollbar.min.js"></script>
     <script type="text/javascript">
-        (function($) {
+        (function ($) {
             var
-                $progress = $('#progress'),
-                $console = $('#install-progress-console'),
-                url = $console.data('url'),
-                lastHash = '';
+                    $progress = $('#progress'),
+                    $console = $('#install-progress-console'),
+                    url = $console.data('url'),
+                    lastHash = '';
 
             $console.perfectScrollbar();
 
             (function refresh() {
-                $.get(url).then(function(response) {
-                    if( parseInt(response.progress) > parseInt($progress.text())) {
+                $.get(url).then(function (response) {
+                    if (parseInt(response.progress) > parseInt($progress.text())) {
                         $progress.text(response.progress);
                     }
 
-                    if(response.redirect) {
+                    if (response.redirect) {
                         window.location.replace(response.redirect);
-                    }
-                    else {
-                        var text = response.console.replace(/\r\n/g,"\n");
+                    } else {
+                        var text = response.console.replace(/\r\n/g, "\n");
 
-                        if(response.hash !== lastHash) {
-                            $console.html(text).scrollTop( $console.get(0).scrollHeight );
+                        if (response.hash !== lastHash) {
+                            $console.html(text).scrollTop($console.get(0).scrollHeight);
                             lastHash = response.hash;
                         }
 

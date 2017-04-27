@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Antares\Extension\Processors;
 
@@ -24,7 +24,8 @@ use Antares\Publisher\MigrateManager;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 
-class Installer extends AbstractOperation {
+class Installer extends AbstractOperation
+{
 
     /**
      * @var ComposerHandler
@@ -68,14 +69,7 @@ class Installer extends AbstractOperation {
      * @param ComponentsRepository $componentsRepository
      */
     public function __construct(
-        ComposerHandler $composerHandler,
-        ExtensionValidator $extensionValidator,
-        Container $container,
-        Dispatcher $dispatcher,
-        Kernel $kernel,
-        ExtensionsRepository $extensionsRepository,
-        SettingsFactory $settingsFactory,
-        ComponentsRepository $componentsRepository
+    ComposerHandler $composerHandler, ExtensionValidator $extensionValidator, Container $container, Dispatcher $dispatcher, Kernel $kernel, ExtensionsRepository $extensionsRepository, SettingsFactory $settingsFactory, ComponentsRepository $componentsRepository
     )
     {
         parent::__construct($container, $dispatcher, $kernel, $componentsRepository);
@@ -85,8 +79,8 @@ class Installer extends AbstractOperation {
         $this->extensionsRepository = $extensionsRepository;
         $this->settingsFactory      = $settingsFactory;
 
-        $this->migrateManager       = $container->make('antares.publisher.migrate');
-        $this->assetManager         = $container->make('antares.publisher.asset');
+        $this->migrateManager = $container->make('antares.publisher.migrate');
+        $this->assetManager   = $container->make('antares.publisher.asset');
     }
 
     /**
@@ -94,43 +88,44 @@ class Installer extends AbstractOperation {
      *
      * @param OperationHandlerContract $handler
      * @param ExtensionContract $extension
-	 * @param array $flags
+     * @param array $flags
      * @return mixed
      * @throws \Exception
      */
-    public function run(OperationHandlerContract $handler, ExtensionContract $extension, array $flags = []) {
+    public function run(OperationHandlerContract $handler, ExtensionContract $extension, array $flags = [])
+    {
         try {
             $name = $extension->getPackage()->getName();
 
             $handler->operationInfo(new Operation('Installing the [' . $name . '] extension.'));
-            
+
             $this->dispatcher->fire(new Installing($extension));
             $this->extensionValidator->validateAssetsPath($extension);
 
-            if(in_array('skip-composer', $flags, false) === false) {
-                $command = 'composer require ' . $name . ':' .  $this->componentsRepository->getTargetBranch($name);
+            if (in_array('skip-composer', $flags, false) === false) {
+                $command = 'composer require ' . $name . ':' . $this->componentsRepository->getTargetBranch($name);
 
                 $process = $this->composerHandler->run($command, function(Process $process, $type, $buffer) use($handler) {
-                    if(Str::contains($buffer, ['Error Output', 'Exception'])) {
+                    if (Str::contains($buffer, ['Error Output', 'Exception'])) {
                         throw new ExtensionException($process->getErrorOutput());
                     }
 
                     $handler->operationInfo(new Operation($buffer));
                 });
 
-                if( ! $process->isSuccessful() ) {
+                if (!$process->isSuccessful()) {
                     throw new ExtensionException($process->getErrorOutput());
                 }
             }
 
             $this->migrateManager->extension($name);
-            $this->assetManager->extension( str_replace('/', '_', $name));
+            $this->assetManager->extension(str_replace('/', '_', $name));
             $this->importSettings($handler, $extension);
 
             $this->extensionsRepository->save($extension, [
-                'status'    => ExtensionContract::STATUS_INSTALLED,
-                'options'   => $extension->getSettings()->getData(),
-                'required'  => $this->componentsRepository->isRequired($name),
+                'status'   => ExtensionContract::STATUS_INSTALLED,
+                'options'  => $extension->getSettings()->getData(),
+                'required' => $this->componentsRepository->isRequired($name),
             ]);
 
             $this->dispatcher->fire(new Installed($extension));
@@ -138,8 +133,8 @@ class Installer extends AbstractOperation {
             $operation = new Operation('The package [' . $name . '] has been successfully installed.');
 
             return $handler->operationSuccess($operation);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error($e);
             $this->dispatcher->fire(new Failed($extension, $e));
 
             return $handler->operationFailed(new Operation($e->getMessage()));
@@ -152,14 +147,15 @@ class Installer extends AbstractOperation {
      * @param OperationHandlerContract $handler
      * @param ExtensionContract $extension
      */
-    private function importSettings(OperationHandlerContract $handler, ExtensionContract $extension) {
+    private function importSettings(OperationHandlerContract $handler, ExtensionContract $extension)
+    {
         try {
             $settings = $this->settingsFactory->createFromConfig($extension->getPath() . '/resources/config/settings.php');
 
             $extension->setSettings($settings);
             $handler->operationInfo(new Operation('Importing settings.'));
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error($e);
             // No need to throw an exception because of the settings file can be optional. In that case the required file will be not found.
         }
     }

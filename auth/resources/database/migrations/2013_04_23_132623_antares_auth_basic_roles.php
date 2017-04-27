@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
@@ -39,14 +37,14 @@ class AntaresAuthBasicRoles extends Migration
             DB::table('tbl_roles')->insert([
                 'name'       => 'super-administrator',
                 'full_name'  => 'Super Administrator',
-                'area'       => 'administrators',
+                'area'       => 'admin',
                 'created_at' => $datetime,
                 'updated_at' => $datetime,
             ]);
             DB::table('tbl_roles')->insert([
                 'parent_id'  => DB::getPdo()->lastInsertId(),
                 'name'       => 'administrator',
-                'area'       => 'administrators',
+                'area'       => 'admin',
                 'full_name'  => 'Administrator',
                 'created_at' => $datetime,
                 'updated_at' => $datetime,

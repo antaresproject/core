@@ -24,6 +24,40 @@ use Illuminate\Support\Debug\Dumper;
 use Antares\Messages\SwalMessanger;
 use Antares\Html\Form\Field;
 
+if (!function_exists('users')) {
+
+    /**
+     * Gets list of user by role names
+     */
+    function users($roles = null)
+    {
+        $builder = app('antares.user')->newQuery();
+        if (is_null($roles)) {
+            return $builder->get();
+        }
+        return $builder->role((is_string($roles) ? (array) $roles : $roles))->get();
+    }
+
+}
+
+if (!function_exists('defaults')) {
+
+    /**
+     * Gets default value when attribute is not set
+     */
+    function defaults($object = null, $key = null, $default = '---')
+    {
+        if (is_null($object) or empty($object)) {
+            return $default;
+        }
+        if (is_array($object)) {
+            return array_get($object, $key, $default);
+        }
+
+        return (!isset($object->{$key}) or is_null($object->{$key})) ? $default : $object->{$key};
+    }
+
+}
 if (!function_exists('ajax')) {
 
     /**

@@ -9,6 +9,8 @@ use Antares\Installation\Scripts\InstallQueueWorker;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use \Antares\Installation\Repository\Installation as InstallationRepository;
 use File;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class Progress implements ProgressContract
 {
@@ -122,7 +124,8 @@ class Progress implements ProgressContract
     {
         try {
             $this->pid = $this->installQueueWorker->run()->getPid();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            Log::error($e);
             $this->setFailed($e->getMessage());
         }
     }
@@ -202,7 +205,7 @@ class Progress implements ProgressContract
         if ($this->installation->started()) {
             $completed = $this->getCompletedSteps();
 
-            $this->installation->setCompletedSteps( ++$completed);
+            $this->installation->setCompletedSteps(++$completed);
             $this->installation->save();
         }
     }

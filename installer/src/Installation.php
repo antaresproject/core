@@ -21,20 +21,24 @@
 
 namespace Antares\Installation;
 
-use Antares\Contracts\Installation\Installation as InstallationContract;
-use Antares\Extension\Contracts\ExtensionContract;
-use Antares\Extension\Jobs\BulkExtensionsBackgroundJob;
-use Antares\Extension\Repositories\ComponentsRepository;
-use Antares\Model\Action;
-use Antares\Model\Permission;
-use Antares\Model\Role;
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
 use Antares\Brands\Model\Brands;
+use Antares\Contracts\Installation\Installation as InstallationContract;
+use Antares\Extension\Repositories\ComponentsRepository;
+use Antares\Extension\Jobs\BulkExtensionsBackgroundJob;
+use Antares\Extension\Contracts\ExtensionContract;
+use Illuminate\Contracts\Container\Container;
+use Antares\Extension\Processors\Activator;
+use Antares\Extension\Processors\Installer;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Antares\Model\Permission;
+use InvalidArgumentException;
 use Antares\Model\Component;
 use Antares\Model\UserRole;
 use Faker\Factory as Faker;
+use Antares\Model\Action;
+use Antares\Model\Role;
 use Antares\Model\User;
 use Carbon\Carbon;
 use Exception;
@@ -266,7 +270,7 @@ class Installation implements InstallationContract
     /**
      * Brands getter
      * 
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     protected function getBrands()
     {
@@ -309,14 +313,14 @@ class Installation implements InstallationContract
      * imports default actions
      * @param Component $component
      * @return array
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private function importDefaultComponentActions(Component $component)
     {
         $componentId = $component->id;
 
         if (!$componentId) {
-            throw new \InvalidArgumentException('Invalid component id');
+            throw new InvalidArgumentException('Invalid component id');
         }
 
         $componentName  = $component->name;
@@ -337,7 +341,7 @@ class Installation implements InstallationContract
      *
      * @param  array  $input
      *
-     * @return \Antares\Model\User
+     * @return User
      */
     protected function createUser(array $input)
     {
@@ -422,15 +426,13 @@ class Installation implements InstallationContract
      *
      * @return void
      */
-    public function runComponentsInstallation()
+    public function runComponentsInstallation(array $extensions = [])
     {
-        /**
-         * @var $progress Progress
-         * @var $componentsRepository ComponentsRepository
-         */
-        $componentsRepository = app()->make(ComponentsRepository::class);
-        $progress             = app()->make(Progress::class);
-        $extensions           = array_keys($componentsRepository->getRequired());
+
+        $componentsRepository = app(ComponentsRepository::class);
+        $progress             = app(Progress::class);
+        $extensions           = empty($extensions) ? array_keys($componentsRepository->getRequired()) : $extensions;
+
 
         // Steps are the sum of extensions and composer command.
         $progress->setSteps(1 + count($extensions));
@@ -444,8 +446,8 @@ class Installation implements InstallationContract
         }
 
         $operationClasses = [
-            \Antares\Extension\Processors\Installer::class,
-            \Antares\Extension\Processors\Activator::class,
+            Installer::class,
+            Activator::class,
         ];
 
         $installJob = new BulkExtensionsBackgroundJob($extensions, $operationClasses, $progress->getFilePath());
