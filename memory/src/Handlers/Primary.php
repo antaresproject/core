@@ -108,7 +108,7 @@ class Primary extends DefaultHandler
                 'value' => $value,
             ]);
         } else {
-            $model        = $this->resolver()->firstOrCreate(['name' => $key]);
+            //$model        = $this->resolver()->firstOrCreate(['name' => $key]);
             $model->value = $value;
             $model->save();
         }

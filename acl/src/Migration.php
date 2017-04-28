@@ -22,8 +22,9 @@ namespace Antares\Acl;
 
 use Illuminate\Container\Container;
 
-class Migration {
-    
+class Migration
+{
+
     /**
      * Container instance.
      *
@@ -35,7 +36,8 @@ class Migration {
      * Migration constructor.
      * @param Container $container
      */
-    public function __construct(Container $container) {
+    public function __construct(Container $container)
+    {
         $this->container = $container;
     }
 
@@ -45,7 +47,8 @@ class Migration {
      * @param string $name
      * @return \Antares\Authorization\Authorization
      */
-    protected function getComponentAcl(string $name) {
+    protected function getComponentAcl(string $name)
+    {
         return $this->container->make('antares.acl')->make($name);
     }
 
@@ -55,7 +58,8 @@ class Migration {
      * @param string $name
      * @return string
      */
-    protected function getNormalizedName(string $name) : string {
+    protected function getNormalizedName(string $name): string
+    {
         $name = str_replace('antaresproject/component-', 'antares/', $name);
 
         return str_replace('-', '_', $name);
@@ -66,10 +70,11 @@ class Migration {
      *
      * @return \Antares\Memory\Provider
      */
-    protected function getMemoryProvider() {
+    protected function getMemoryProvider()
+    {
         return $this->container->make('antares.memory')->make('component');
     }
-    
+
     /**
      * Set up permissions to the component ACL.
      *
@@ -78,23 +83,23 @@ class Migration {
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    public function up(string $componentFullName, RoleActionList $roleActionList) {
-        $componentFullName  = $this->getNormalizedName($componentFullName);
+    public function up(string $componentFullName, RoleActionList $roleActionList)
+    {
 
-        $memory     = $this->getMemoryProvider();
-        $acl        = $this->getComponentAcl($componentFullName);
-        $roles      = $roleActionList->getRoles();
-        $actions    = $roleActionList->getActions();
+        $componentFullName = $this->getNormalizedName($componentFullName);
 
+        $memory  = $this->getMemoryProvider();
+        $acl     = $this->getComponentAcl($componentFullName);
+        $roles   = $roleActionList->getRoles();
+        $actions = $roleActionList->getActions();
         $acl->attach($memory);
         $acl->roles()->attach($roles);
         $acl->actions()->attach(self::getFlatActions($actions));
 
-        foreach($roles as $role) {
+        foreach ($roles as $role) {
             $roleActions = self::getFlatActions($roleActionList->getActionsByRole($role));
             $acl->allow($role, $roleActions);
         }
-
         $memory->finish();
     }
 
@@ -104,9 +109,10 @@ class Migration {
      * @param string $componentFullName
      * @throws \RuntimeException
      */
-    public function down(string $componentFullName) {
-        $componentFullName  = $this->getNormalizedName($componentFullName);
-        $memory             = $this->getMemoryProvider();
+    public function down(string $componentFullName)
+    {
+        $componentFullName = $this->getNormalizedName($componentFullName);
+        $memory            = $this->getMemoryProvider();
 
         $memory->forget('acl_' . $componentFullName);
         $memory->finish();
@@ -118,12 +124,13 @@ class Migration {
      * @param array $actions
      * @return array
      */
-    protected static function getFlatActions(array $actions) {
+    protected static function getFlatActions(array $actions)
+    {
         $actions = array_map(function(Action $action) {
             return $action->getAction();
         }, $actions);
 
         return array_unique($actions);
     }
-    
+
 }

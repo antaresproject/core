@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Authorization;
 
 use Antares\Acl\MultisessionAcl;
@@ -92,7 +91,6 @@ class Authorization implements AuthorizationContract
         $name = $this->name;
         $data = ['acl' => [], 'actions' => [], 'roles' => []];
         $data = array_merge($data, $this->memory->get("acl_{$name}", []));
-
         if (empty($data['roles'])) {
             $roles         = $this->memory->get('acl_antares.roles');
             $data['roles'] = $roles == null ? [] : $roles;

@@ -44,6 +44,7 @@ class Acl
         $name = $extension->getPackage()->getName();
 
         try {
+
             $roleActionList = File::getRequire($extension->getPath() . '/acl.php');
 
             if ($roleActionList instanceof RoleActionList) {

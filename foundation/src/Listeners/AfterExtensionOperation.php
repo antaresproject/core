@@ -94,7 +94,7 @@ class AfterExtensionOperation
         $name = $event->extension->getFriendlyName();
 
         $this->progress->setFailed('An error occurs while doing operation of the [' . $name . '] package.');
-
+        Log::error($event->exception);
         Log::critical($event->exception->getMessage());
     }
 

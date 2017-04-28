@@ -235,6 +235,7 @@ class ComponentHandler extends DefaultHandler implements HandlerContract
     {
         $brandId = $this->getDefaultBrandId();
         $changed = $this->verify($items, $brandId);
+
         Memory::make('component.default')->put('terminate', (int) $changed);
         if ($changed) {
             $this->keyMap = [];

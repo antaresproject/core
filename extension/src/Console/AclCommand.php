@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Antares\Extension\Console;
 
@@ -13,64 +13,65 @@ use Illuminate\Console\Command;
 use Antares\Extension\Manager;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
-class AclCommand extends Command implements OperationHandlerContract {
+class AclCommand extends Command implements OperationHandlerContract
+{
 
-	/**
-	 * The console command name.
-	 *
-	 * @var string
-	 */
-	protected $signature = 'extension:acl:reload {extension? : Extension full name}';
+    /**
+     * The console command name.
+     *
+     * @var string
+     */
+    protected $signature = 'extension:acl:reload {extension? : Extension full name}';
 
-	/**
-	 * The console command description.
-	 *
-	 * @var string
-	 */
-	protected $description = 'Refresh extensions ACL.';
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Refresh extensions ACL.';
 
     /**
      * ACL Processor.
      *
      * @var Acl
      */
-	protected $acl;
+    protected $acl;
 
     /**
      * AclCommand constructor.
      * @param Acl $acl
      */
-    public function __construct(Acl $acl) {
+    public function __construct(Acl $acl)
+    {
         parent::__construct();
 
         $this->acl = $acl;
     }
 
     /**
-	 * Execute the console command.
-	 *
-	 * @param Manager $manager
+     * Execute the console command.
+     *
+     * @param Manager $manager
      * @throws ExtensionException
      * @throws FileNotFoundException
-	 */
-	public function handle(Manager $manager) {
-	    $extensionName = $this->argument('extension');
+     */
+    public function handle(Manager $manager)
+    {
 
-	    if($extensionName) {
+        $extensionName = $this->argument('extension');
+        if ($extensionName) {
             $extension = $manager->getAvailableExtensions()->findByName($extensionName);
-
-            if($extension instanceof ExtensionContract) {
+            if ($extension instanceof ExtensionContract) {
                 $this->acl->import($this, $extension, true);
             }
-        }
-        else {
+        } else {
             $extensions = $manager->getAvailableExtensions()->filterByActivated();
 
-            foreach($extensions as $extension) {
+            foreach ($extensions as $extension) {
                 $this->acl->import($this, $extension, true);
             }
         }
-	}
+    }
 
     /**
      * @param Operation $operation
