@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Html\Form;
 
 use Antares\Contracts\Html\Form\Field as FieldContract;
@@ -226,25 +225,13 @@ class BootstrapThreePresenter implements Template
             $scripts = $field->attributes['scripts'];
         }
         if ($scripts) {
-            $id          = isset($field->attributes['id']) ? $field->attributes['id'] : $field->get('name');
-            $container   = $this->asset->container('antares/foundation::scripts');
-            $scriptsPath = app('config')->get('antares/html::form.ckeditor', []);
-            foreach ($scriptsPath as $script) {
-                $container->add(key($script), current($script));
-            }
-            $init = <<<EOD
-            require.config({
-    packages: [{
-            name: "ckeditor",
-            location: "/packages/ckeditor",
-            main: "ckeditor"
-        }]
-});
-require(["jquery", "ckeditor"], function ($) {
-    CKEDITOR.replace('$id',{
-    width:'100%'
-});
-});
+            $id        = isset($field->attributes['id']) ? $field->attributes['id'] : $field->get('name');
+            $container = $this->asset->container('antares/foundation::scripts');
+            app('antares.asset')->container('antares/foundation::application')->add('ckeditor-js', '/packages/ckeditor/ckeditor.js', ['webpack_forms_basic']);
+            $init      = <<<EOD
+            CKEDITOR.replace('$id',{
+                width:'100%'
+            });
 EOD;
             $container->inlineScript('ckeditor', $init);
         }

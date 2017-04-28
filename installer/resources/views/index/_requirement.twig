@@ -8,12 +8,9 @@
                 </div>
                 <div class="col-dt-6 col-6 col-mb-6">
                     <div class="input-field ">                
-                        <input data-icheck="true" type="checkbox" {{ requirement['is'] == requirement['should'] ? 'checked="checked"':'' }}>
+                        <i class="zmdi zmdi-hc-2x zmdi-check" ></i>
                         {% if name=='version' %}
                             {{ requirement['data']['version'] }}
-                        {% endif %}
-                        {% if requirement['is'] == requirement['should'] and name not in ['phpExtensions','apacheModules','version'] %}  
-                            {{ trans('antares/foundation::install.status.work')|raw }} 
                         {% endif %}
                     </div> 
                 </div>               
