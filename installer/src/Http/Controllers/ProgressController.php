@@ -103,7 +103,6 @@ class ProgressController extends BaseController
 
         return response()->json([
             'progress' => $percentageProgress,
-            'hash'     => bcrypt($content),
             'console'  => $console,
         ]);
     }
