@@ -23,6 +23,7 @@ use Antares\Publisher\AssetManager;
 use Antares\Publisher\MigrateManager;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
+use Illuminate\Support\Facades\Log;
 
 class Installer extends AbstractOperation
 {
@@ -134,7 +135,7 @@ class Installer extends AbstractOperation
 
             return $handler->operationSuccess($operation);
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error($e);
+            Log::error($e);
             $this->dispatcher->fire(new Failed($extension, $e));
 
             return $handler->operationFailed(new Operation($e->getMessage()));
@@ -149,14 +150,11 @@ class Installer extends AbstractOperation
      */
     private function importSettings(OperationHandlerContract $handler, ExtensionContract $extension)
     {
-        try {
+        $settingsPath = $extension->getPath() . '/resources/config/settings.php';
+        if (file_exists($settingsPath)) {
             $settings = $this->settingsFactory->createFromConfig($extension->getPath() . '/resources/config/settings.php');
-
             $extension->setSettings($settings);
             $handler->operationInfo(new Operation('Importing settings.'));
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error($e);
-            // No need to throw an exception because of the settings file can be optional. In that case the required file will be not found.
         }
     }
 

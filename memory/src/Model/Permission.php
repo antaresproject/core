@@ -227,21 +227,15 @@ class Permission extends Eloquent
             if ($name === null) {
                 return false;
             }
-
+            $where = [];
             if (str_contains($name, '/')) {
                 list($vendor, $name) = explode('/', $name);
-
-                $model = $this->query()
-                        ->where('vendor', '=', $vendor)
-                        ->where('name', '=', $name)
-                        ->first();
+                array_push($where, ['vendor' => $vendor]);
             } elseif ($name !== 'core' && !str_contains($name, 'component-')) {
-                $name  = 'component-' . str_replace('_', '-', $name);
-                $model = $this->query()->where('name', '=', $name)->first();
-            } else {
-                $model = $this->query()->where('name', '=', $name)->first();
+                $name = 'component-' . $name;
             }
-
+            $where[] = ['name' => $name];
+            $model   = $this->query()->where($where)->first();
             if ($model === null) {
                 return false;
             }
@@ -296,6 +290,8 @@ class Permission extends Eloquent
             Cache::forget($this->getCachePrefix());
             return true;
         } catch (Exception $e) {
+            vdump($e);
+            exit;
             Log::emergency($e);
             return false;
         }
