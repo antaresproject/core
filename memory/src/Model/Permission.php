@@ -230,12 +230,18 @@ class Permission extends Eloquent
             $where = [];
             if (str_contains($name, '/')) {
                 list($vendor, $name) = explode('/', $name);
-                array_push($where, ['vendor' => $vendor]);
+
+                $model = $this->query()
+                        ->where('vendor', '=', $vendor)
+                        ->where('name', '=', $name)
+                        ->first();
             } elseif ($name !== 'core' && !str_contains($name, 'component-')) {
-                $name = 'component-' . $name;
+                $name  = 'component-' . $name;
+                $model = $this->query()->where('name', '=', $name)->first();
+            } else {
+                $model = $this->query()->where('name', '=', $name)->first();
             }
-            $where[] = ['name' => $name];
-            $model   = $this->query()->where($where)->first();
+
             if ($model === null) {
                 return false;
             }
