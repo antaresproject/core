@@ -41,11 +41,17 @@ class Acl
      */
     public function import(OperationHandlerContract $handler, ExtensionContract $extension, bool $reload = false)
     {
-        $name = $extension->getPackage()->getName();
+        $name       = $extension->getPackage()->getName();
+        $filePath   = $extension->getPath() . '/acl.php';
+
+        if( ! File::exists($filePath) ) {
+            $handler->operationInfo(new Operation('Skipping importing ACL settings for ' . $name . '.'));
+
+            return;
+        }
 
         try {
-
-            $roleActionList = File::getRequire($extension->getPath() . '/acl.php');
+            $roleActionList = File::getRequire($filePath);
 
             if ($roleActionList instanceof RoleActionList) {
                 if ($reload) {
@@ -57,9 +63,9 @@ class Acl
                 $this->migration->up($name, $roleActionList);
                 $handler->operationSuccess(new Operation('The ACL settings have been successfully imported.'));
             }
-        } catch (FileNotFoundException $e) {
-            $handler->operationInfo(new Operation('Skipping importing ACL settings for ' . $name . '.'));
-            // No need to throw an exception because of ACL file can be optional. In that case the required file will be not found.
+            else {
+                $handler->operationFailed(new Operation('Skipping importing ACL settings for ' . $name . ' due to invalid returned object from the file.'));
+            }
         } catch (\Exception $e) {
             Log::error($e);
             $handler->operationFailed(new Operation($e->getMessage()));

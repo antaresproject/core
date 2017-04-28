@@ -65,11 +65,12 @@ class ProgressController extends Controller {
      */
     public function index(ExtensionProgress $progress) {
         $previewUrl     = route(area() . '.extensions.progress.preview');
+        $stopUrl        = route(area() . '.extensions.progress.stop');
         $consoleTheme   = $this->theme->asArray();
 
         $progress->start();
 
-        return view('antares/foundation::extensions.progress', compact('previewUrl', 'consoleTheme'));
+        return view('antares/foundation::extensions.progress', compact('previewUrl', 'stopUrl', 'consoleTheme'));
     }
 
     /**
@@ -93,10 +94,21 @@ class ProgressController extends Controller {
 
         return response()->json([
             'console'   => $console,
-            'hash'      => bcrypt($content),
             'redirect'  => $finished
                 ? route(area() . '.extensions.index')
                 : false,
+        ]);
+    }
+
+    /**
+     * @param ExtensionProgress $progress
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function stop(ExtensionProgress $progress) {
+        $progress->stop();
+
+        return response()->json([
+            'success' => true,
         ]);
     }
 

@@ -55,9 +55,15 @@
                     $progress = $('#progress'),
                     $console = $('#install-progress-console'),
                     url = $console.data('url'),
-                    lastHash = '';
+                    isOnBottom = false;
 
             $console.perfectScrollbar();
+
+            $console.on('scroll', function() {
+                var $this = $(this);
+
+                isOnBottom = ($this.scrollTop() + $this.innerHeight() >= $this[0].scrollHeight);
+            });
 
             (function refresh() {
                 $.get(url).then(function (response) {
@@ -70,9 +76,10 @@
                     } else {
                         var text = response.console.replace(/\r\n/g, "\n");
 
-                        if (response.hash !== lastHash) {
-                            $console.html(text).scrollTop($console.get(0).scrollHeight);
-                            lastHash = response.hash;
+                        $console.html(text);
+
+                        if (isOnBottom) {
+                            $console.scrollTop($console.get(0).scrollHeight);
                         }
 
                         setTimeout(refresh, 2000);

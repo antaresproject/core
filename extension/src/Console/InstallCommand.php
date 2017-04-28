@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Antares\Extension\Console;
 
 use Antares\Extension\Contracts\ExtensionContract;
+use Antares\Extension\Model\Operation;
 use Illuminate\Console\ConfirmableTrait;
 use Antares\Extension\Processors\Installer;
 
@@ -17,7 +18,7 @@ class InstallCommand extends ExtensionCommand {
 	 *
 	 * @var string
 	 */
-	protected $signature = 'extension:install {name} {--skip-composer}';
+	protected $signature = 'extension:install {name} {--skip-composer} {--active}';
 
 	/**
 	 * The console command description.
@@ -54,5 +55,19 @@ class InstallCommand extends ExtensionCommand {
 			$this->error("Unable to find extension [{$name}].");
 		}
 	}
+
+    /**
+     * @param Operation $operation
+     * @return void
+     */
+    public function operationSuccess(Operation $operation) {
+        parent::operationSuccess($operation);
+
+        $name = $this->argument('name');
+
+        if($this->option('active')) {
+            $this->call('extension:active', compact('name'));
+        }
+    }
 
 }

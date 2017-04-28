@@ -31,6 +31,7 @@ Foundation::namespaced('Antares\Foundation\Http\Controllers', function (Router $
 
     $router->get('extensions/progress', 'Extension\ProgressController@index')->name('extensions.progress.index');
     $router->get('extensions/progress/preview', 'Extension\ProgressController@preview')->name('extensions.progress.preview');
+    $router->get('extensions/progress/stop', 'Extension\ProgressController@stop')->name('extensions.progress.stop');
 
     $router->get('extensions/{vendor}/{name}/configuration', 'Extension\ViewerController@getConfiguration')->name('extensions.viewer.configuration.get');
     $router->post('extensions/{id}/configuration', 'Extension\ViewerController@storeConfiguration')->name('extensions.viewer.configuration.update');
