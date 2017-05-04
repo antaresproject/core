@@ -65,7 +65,7 @@ class EmailNotification extends AbstractNotificationTemplate implements Sendable
     {
         $title = array_get($this->getModel(), 'contents.0.title');
         $twig  = new Twig_Environment(new Twig_Loader_String());
-        return $twig->render($title, $this->predefinedVariables);
+        return $twig->render($title, (array) $this->predefinedVariables);
     }
 
     /**
@@ -75,11 +75,12 @@ class EmailNotification extends AbstractNotificationTemplate implements Sendable
      */
     public function render($view = null)
     {
+
         $model         = $this->getModel();
-        $view          = app(VariablesAdapter::class)->setVariables($this->predefinedVariables)->get(array_get($model, 'contents.0.content', array_get($model, 'content.0.content')));
+        $view          = app(VariablesAdapter::class)->setVariables((array) $this->predefinedVariables)->get(array_get($model, 'contents.0.content', array_get($model, 'content.0.content')));
         $brandTemplate = BrandOptions::query()->where('brand_id', brand_id())->first();
-        $header        = $brandTemplate->header;
-        return str_replace('</head>', '<style>' . $brandTemplate->styles . '</style></head>', $header) . $view . $brandTemplate->footer;
+        $header        = str_replace('</head>', '<style>' . $brandTemplate->styles . '</style></head>', $brandTemplate->header);
+        return preg_replace("/<body[^>]*>(.*?)<\/body>/is", '<body>' . $view . '</body>', $header . $brandTemplate->footer);
     }
 
     /**
@@ -87,10 +88,12 @@ class EmailNotification extends AbstractNotificationTemplate implements Sendable
      */
     public function handle()
     {
+
         try {
             if (empty($this->recipients) && !is_null($recipients = array_get($this->predefinedVariables, 'recipients'))) {
                 $this->recipients = $recipients;
             }
+
             $result = parent::handle();
             $code   = $result->getResultCode();
 

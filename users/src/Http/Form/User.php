@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Form;
 
 use Illuminate\Contracts\Container\Container;
@@ -75,21 +74,21 @@ class User extends FormBuilder implements Presenter
                     $fieldset->legend(trans('antares/users::messages.fieldsets.user_details'));
                     $fieldset->control('input:text', 'email')
                             ->label(trans('antares/foundation::label.users.email'))
-                            ->wrapper(['class' => 'w400']);
+                            ->wrapper(['class' => 'w250']);
 
                     $fieldset->control('input:text', 'firstname')
                             ->label(trans('antares/foundation::label.users.firstname'))
-                            ->wrapper(['class' => 'w400']);
+                            ->wrapper(['class' => 'w250']);
 
                     $fieldset->control('input:text', 'lastname')
                             ->label(trans('antares/foundation::label.users.lastname'))
-                            ->wrapper(['class' => 'w400']);
+                            ->wrapper(['class' => 'w250']);
 
 
 
                     $fieldset->control('input:password', 'password')
                             ->label(trans('antares/foundation::label.users.password'))
-                            ->wrapper(['class' => 'w400']);
+                            ->wrapper(['class' => 'w300']);
 
                     $fieldset->control('button', 'cancel')
                             ->field(function() {

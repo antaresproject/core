@@ -325,6 +325,7 @@ abstract class AbstractNotificationTemplate extends Job implements NotificationC
             return [];
         }
         $return = [];
+
         foreach ($variables as $extension => $config) {
             $name = ucfirst($extension == 'foundation' ? $extension : $extensions[$extension]['name']);
             $vars = $config['variables'];

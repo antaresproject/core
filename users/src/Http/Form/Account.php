@@ -49,23 +49,28 @@ class Account extends Grid
 
             $fieldset->control('input:text', 'email')
                     ->label(trans('antares/foundation::label.users.email'))
-                    ->attributes(['class' => 'mdl-textfield__input']);
+                    ->attributes(['class' => 'mdl-textfield__input'])
+                    ->wrapper(['class' => 'w250']);
 
             $fieldset->control('input:text', 'firstname')
                     ->label(trans('antares/foundation::label.users.firstname'))
-                    ->attributes(['class' => 'mdl-textfield__input']);
+                    ->attributes(['class' => 'mdl-textfield__input'])
+                    ->wrapper(['class' => 'w270']);
 
             $fieldset->control('input:text', 'lastname')
                     ->label(trans('antares/foundation::label.users.lastname'))
-                    ->attributes(['class' => 'mdl-textfield__input']);
+                    ->attributes(['class' => 'mdl-textfield__input'])
+                    ->wrapper(['class' => 'w270']);
 
             $fieldset->control('input:password', 'password')
                     ->label(trans('antares/foundation::label.users.password'))
-                    ->attributes(['class' => 'mdl-textfield__input']);
+                    ->attributes(['class' => 'mdl-textfield__input'])
+                    ->wrapper(['class' => 'w300']);
 
             $fieldset->control('input:password', 'password_confirmation')
                     ->label(trans('antares/foundation::label.users.password_retype'))
-                    ->attributes(['class' => 'mdl-textfield__input']);
+                    ->attributes(['class' => 'mdl-textfield__input'])
+                    ->wrapper(['class' => 'w300']);
 
 
             $control = $fieldset->control('button', 'button')

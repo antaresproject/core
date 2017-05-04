@@ -136,6 +136,7 @@ class Mailer
             $this->code    = $mailer->send($view, $data, $callback);
             $this->message = ($this->code) > 0 ? trans('antares/foundation::messages.notifier_mail_has_been_sent') : trans('antares/foundation::messages.notifier_mail_has_not_been_sent');
         } catch (Exception $ex) {
+            \Illuminate\Support\Facades\Log::error($ex);
             $this->code    = $ex->getCode();
             $this->message = $ex->getMessage();
         }

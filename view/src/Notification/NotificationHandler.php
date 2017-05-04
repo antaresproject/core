@@ -38,6 +38,7 @@ class NotificationHandler
     {
         $type     = $instance->getType();
         $notifier = $this->getNotifierAdapter($type);
+
         if (!$notifier) {
             return false;
         }
@@ -46,7 +47,7 @@ class NotificationHandler
         $title      = $instance->getTitle();
         $recipients = $instance->getRecipients();
         return $notifier->send($view, [], function($m) use($title, $recipients) {
-                    $m->to($recipients);
+                    $m->to($recipients->pluck('email')->toArray());
                     $m->subject($title);
                 });
     }

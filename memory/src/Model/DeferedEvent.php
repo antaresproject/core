@@ -19,10 +19,8 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Memory\Model;
 
-use Illuminate\Database\Eloquent\Builder;
 use Antares\Model\Eloquent;
 
 class DeferedEvent extends Eloquent

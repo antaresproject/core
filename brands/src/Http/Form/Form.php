@@ -77,7 +77,8 @@ class Form extends FormBuilder implements Presenter
 
                     $fieldset->control('input:text', 'name')
                             ->label(trans('antares/brands::label.brand.name'))
-                            ->attributes(['placeholder' => trans('antares/brands::label.brand.name')]);
+                            ->attributes(['placeholder' => trans('antares/brands::label.brand.name')])
+                            ->wrapper(['class' => 'w250']);
 
                     $maintenance = $fieldset->control('switch', 'maintenance_mode')
                             ->label(trans('antares/brands::label.brand.maintenance_mode'))
@@ -90,10 +91,11 @@ class Form extends FormBuilder implements Presenter
                             ->attributes(['placeholder' => trans('antares/brands::label.brand.url')])
                             ->fieldClass('input-field--group input-field--pre')
                             ->before('<div class="input-field__pre"><span>' . (request()->secure() ? 'https://' : 'http://') . '</span></div>')
-                            ->value(!is_null($this->model->options) ? str_replace('http://', '', $this->model->options->url) : '');
+                            ->value(!is_null($this->model->options) ? str_replace('http://', '', $this->model->options->url) : '')
+                            ->wrapper(['class' => 'w300']);
 
                     $dateFormat = $fieldset->control('select', 'date_format')
-                            ->wrapper(['class' => 'w220'])
+                            ->wrapper(['class' => 'w180'])
                             ->label(trans('antares/brands::label.brand.date_format'))
                             ->options(function() {
                         return app(DateFormat::class)->query()->get()->pluck('format', 'id');
@@ -126,7 +128,7 @@ class Form extends FormBuilder implements Presenter
                     $langs = app(Languages::class)->query()->get()->pluck('name', 'code');
                     $fieldset->control('select', 'default_language')
                             ->label(trans('antares/brands::label.brand.default_language'))
-                            ->attributes(['data-flag-select', 'data-selectAR' => true, 'class' => 'w300'])
+                            ->attributes(['data-flag-select', 'data-selectAR' => true, 'class' => 'w200'])
                             ->fieldClass('input-field--icon')
                             ->prepend('<span class = "input-field__icon"><span class = "flag-icon"></span></span>')
                             ->options($langs)
