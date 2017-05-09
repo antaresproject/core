@@ -32,17 +32,41 @@ class CreateTblCountryTable extends Migration
     public function up()
     {
         $this->down();
+
+        /**
+         * Countries and regions from repository: https://github.com/marsminds/countries-regions-cities
+         */
+
         Schema::create('tbl_country', function(Blueprint $table) {
             $table->increments('id')->unsigned();
-            $table->string('code', 2);
+            $table->char('code', 2);
             $table->string('name', 255);
+
+            $table->unique('code');
         });
+
+        Schema::create('tbl_regions', function(Blueprint $table) {
+            $table->increments('id')->unsigned();
+            $table->integer('country_id', 2)->unsigned()->nullable();
+            $table->string('name', 255);
+
+            $table->index('country_id');
+        });
+
         Schema::table('tbl_country', function(Blueprint $table) {
             $countriesSchemaPath = __DIR__ . '/seeds/countries.sql';
             if (!file_exists($countriesSchemaPath)) {
                 throw new \Exception('Countries seed sql schema not exists.');
             }
             DB::unprepared(file_get_contents($countriesSchemaPath));
+        });
+
+        Schema::table('tbl_regions', function(Blueprint $table) {
+            $regionsSchemaPath = __DIR__ . '/seeds/regions.sql';
+            if (!file_exists($regionsSchemaPath)) {
+                throw new \Exception('Regions seed sql schema not exists.');
+            }
+            DB::unprepared(file_get_contents($regionsSchemaPath));
         });
     }
 
@@ -54,6 +78,7 @@ class CreateTblCountryTable extends Migration
     public function down()
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Schema::dropIfExists('tbl_regions');
         Schema::dropIfExists('tbl_country');
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }

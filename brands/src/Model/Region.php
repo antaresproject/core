@@ -22,18 +22,18 @@
 namespace Antares\Brands\Model;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class Country
+ * Class Region
  * @package Antares\Brands\Model
  *
  * @property int $id
- * @property string $code
+ * @property int $country_id
  * @property string $name
- * @property-read \Illuminate\Database\Eloquent\Collection|Region[] $regions
+ * @property-read Country $country
  */
-class Country extends Eloquent
+class Region extends Eloquent
 {
 
     /**
@@ -41,14 +41,14 @@ class Country extends Eloquent
      *
      * @var string
      */
-    protected $table = 'tbl_country';
+    protected $table = 'tbl_regions';
 
     /**
      * fillable attributes
      *
      * @var array 
      */
-    protected $fillable = ['code', 'name'];
+    protected $fillable = ['country_id', 'name'];
 
     /**
      * {@inheritdoc}
@@ -56,18 +56,17 @@ class Country extends Eloquent
     public $timestamps = false;
 
     /**
-     * @return HasMany
+     * {@inheritdoc}
      */
-    public function regions() : HasMany {
-        return $this->hasMany(Region::class);
-    }
+    protected $casts = [
+        'country_id' => 'integer',
+    ];
 
     /**
-     * @param $value
-     * @return string
+     * @return BelongsTo
      */
-    public function getCodeAttribute($value) {
-        return strtolower($value);
+    public function country() : BelongsTo {
+        return $this->belongsTo(Country::class);
     }
 
 }
