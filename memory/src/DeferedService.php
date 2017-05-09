@@ -19,11 +19,9 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Memory;
 
 use Antares\Memory\Model\DeferedEvent;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\DB;
 

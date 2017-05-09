@@ -106,7 +106,6 @@ class Application extends BaseApplication implements ApplicationContract
         // finished. This is useful when ordering the boot-up processes we run.
         $this->fireAppCallbacks($this->bootingCallbacks);
 
-
         array_walk($this->serviceProviders, function ($p) {
             $this->bootProvider($p);
         });
@@ -114,7 +113,6 @@ class Application extends BaseApplication implements ApplicationContract
         $this->booted = true;
 
         $this->fireAppCallbacks($this->bootedCallbacks);
-        Event::fire('antares.after.load-service-providers');
     }
 
     /**

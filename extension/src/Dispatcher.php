@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Antares\Extension;
 
@@ -13,7 +13,8 @@ use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use Closure;
 use Exception;
 
-class Dispatcher {
+class Dispatcher
+{
 
     /**
      * Container instance.
@@ -23,8 +24,8 @@ class Dispatcher {
     protected $container;
 
     /**
-	 * Event dispatcher instance.
-	 *
+     * Event dispatcher instance.
+     *
      * @var EventDispatcher
      */
     protected $eventDispatcher;
@@ -44,8 +45,8 @@ class Dispatcher {
     protected $booted = false;
 
     /**
-	 * List of extensions.
-	 *
+     * List of extensions.
+     *
      * @var ExtensionContract[]
      */
     protected $extensions = [];
@@ -56,10 +57,11 @@ class Dispatcher {
      * @param EventDispatcher $eventDispatcher
      * @param Loader $loader
      */
-    public function __construct(Container $container, EventDispatcher $eventDispatcher, Loader $loader) {
-        $this->container        = $container;
-        $this->eventDispatcher  = $eventDispatcher;
-        $this->loader           = $loader;
+    public function __construct(Container $container, EventDispatcher $eventDispatcher, Loader $loader)
+    {
+        $this->container       = $container;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->loader          = $loader;
     }
 
     /**
@@ -67,7 +69,8 @@ class Dispatcher {
      *
      * @return bool
      */
-    public function booted() : bool {
+    public function booted(): bool
+    {
         return $this->booted;
     }
 
@@ -77,10 +80,12 @@ class Dispatcher {
      * @param Extensions $extensions
      * @throws Exception
      */
-    public function registerCollection(Extensions $extensions) {
+    public function registerCollection(Extensions $extensions)
+    {
         foreach ($extensions as $extension) {
             $this->register($extension);
         }
+        $this->eventDispatcher->fire('antares.after.load-service-providers');
     }
 
     /**
@@ -89,7 +94,8 @@ class Dispatcher {
      * @param  ExtensionContract $extension
      * @throws Exception
      */
-    public function register(ExtensionContract $extension) {
+    public function register(ExtensionContract $extension)
+    {
         $this->extensions[] = $extension;
 
         $this->loader->registerExtensionProviders($extension);
@@ -100,7 +106,8 @@ class Dispatcher {
      *
      * @throws Exception
      */
-    public function boot() {
+    public function boot()
+    {
         foreach ($this->extensions as $extension) {
             try {
                 $this->eventDispatcher->dispatch(new Booted($extension));
@@ -112,8 +119,7 @@ class Dispatcher {
 
                 $this->eventDispatcher->dispatch('extension.booted', [$name, []]);
                 $this->eventDispatcher->dispatch('extension.booted: {$name}', [[]]);
-            }
-            catch(Exception $e) {
+            } catch (Exception $e) {
                 throw $e;
             }
         }
@@ -130,7 +136,8 @@ class Dispatcher {
      *
      * @param Closure|null $callback
      */
-    public function after(Closure $callback = null) {
+    public function after(Closure $callback = null)
+    {
         if ($callback && $this->booted()) {
             $this->container->call($callback);
         }

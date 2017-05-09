@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\src\Http\Handlers;
 
 use Antares\Foundation\Support\MenuHandler;
