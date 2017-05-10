@@ -227,7 +227,7 @@ class Permission extends Eloquent
             if ($name === null) {
                 return false;
             }
-            $where = [];
+
             if (str_contains($name, '/')) {
                 list($vendor, $name) = explode('/', $name);
 
@@ -236,7 +236,7 @@ class Permission extends Eloquent
                         ->where('name', '=', $name)
                         ->first();
             } elseif ($name !== 'core' && !str_contains($name, 'component-')) {
-                $name  = 'component-' . $name;
+                $name  = 'component-' . str_replace('_', '-', $name);
                 $model = $this->query()->where('name', '=', $name)->first();
             } else {
                 $model = $this->query()->where('name', '=', $name)->first();

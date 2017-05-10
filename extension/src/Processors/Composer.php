@@ -56,9 +56,9 @@ class Composer {
             $handler->operationInfo(new Operation('Running composer command.'));
 
             $process = $this->composerHandler->run($command, function(Process $process, $type, $buffer) use($handler) {
-                if(Str::contains($buffer, ['Error Output', 'Exception'])) {
-                    throw new ExtensionException($process->getErrorOutput());
-                }
+//                if(Str::contains($buffer, ['Error Output', 'Exception'])) {
+//                    throw new ExtensionException($process->getErrorOutput());
+//                }
 
                 $handler->operationInfo(new Operation($buffer));
             });
