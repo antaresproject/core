@@ -21,25 +21,10 @@
 
 namespace Antares\Form\Controls;
 
-use Antares\Form\Decorators\AbstractDecorator;
-use Antares\Form\Decorators\HiddenDecorator;
-
-class HiddenType extends AbstractType
+class RadioType extends MultiCheckboxType
 {
 
-    /** @var string */
-    protected $type = 'hidden';
-
-	/**
-	 * @return string
-	 */
-    public function render()
-    {
-        if (!$this->decorator instanceof AbstractDecorator) {
-            $this->setDecorator((new HiddenDecorator()));
-        }
-
-        return parent::render();
-    }
+	/** @var string */
+	protected $type = 'radio';
 
 }

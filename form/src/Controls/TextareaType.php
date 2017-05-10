@@ -30,11 +30,9 @@ class TextareaType extends AbstractType
      * @param int $rows
      * @return AbstractType
      */
-    public function setRows(int $rows) : AbstractType
+    public function setRows(int $rows): AbstractType
     {
         return $this->setAttribute('rows', $rows);
     }
-    
-    
     
 }

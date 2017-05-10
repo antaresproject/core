@@ -35,8 +35,8 @@ class VerticalDecorator extends AbstractDecorator
 	 */
 	public function render(AbstractType $control)
 	{
-		$this->inputWrapper['class'] = 'child-align-top col-16 mb2';
-		$this->labelWrapper['class'] = 'form-block col-dt-16 col-16 col-mb-16';
+		$this->labelWrapper['class'] = 'child-align-top col-16 mb2';
+		$this->inputWrapper['class'] = 'form-block col-dt-16 col-16 col-mb-16';
 
 		return parent::render($control);
 	}

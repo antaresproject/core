@@ -73,6 +73,14 @@ class SelectType extends AbstractType
         return $multiple ? $this->setAttribute('multiple', 'multiple')
             : $this->removeAttribute('multiple');
     }
+
+	/**
+	 * @return bool
+	 */
+    public function isMultiple(): bool
+    {
+        return $this->hasAttribute('multiple') && $this->getAttribute('multiple');
+    }
     
     /**
      * @param $array

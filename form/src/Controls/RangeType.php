@@ -21,7 +21,7 @@
 
 namespace Antares\Form\Controls;
 
-class RangeType extends NumberType
+class RangeType extends AbstractType
 {
     
     /** @var string */

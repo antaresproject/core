@@ -47,9 +47,6 @@ abstract class AbstractType implements Attributable
     /** @var string|array */
     protected $value;
 
-    /** @var bool */
-    protected $hasLabel = false;
-
     /** @var AbstractLabel */
     protected $label;
 
@@ -148,7 +145,7 @@ abstract class AbstractType implements Attributable
      */
     public function hasLabel(): bool
     {
-        return $this->hasLabel;
+        return $this->label instanceof AbstractLabel;
     }
 
     /**
@@ -167,6 +164,14 @@ abstract class AbstractType implements Attributable
     {
         $this->decorator = $decorator instanceof AbstractDecorator ? $decorator : app()->make($decorator);
         return $this;
+    }
+
+	/**
+	 * @return AbstractDecorator
+	 */
+    public function getDecorator(): AbstractDecorator
+    {
+        return $this->decorator;
     }
 
     /**
@@ -294,8 +299,7 @@ abstract class AbstractType implements Attributable
     public function __toString(): string
     {
         try {
-            return $this->decorator instanceof AbstractType
-                ? $this->decorator->decorate($this) : $this->render();
+            return $this->render();
         } catch (\Throwable $e) {
             return $e->getMessage();
         }
