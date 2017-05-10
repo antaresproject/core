@@ -43,6 +43,7 @@ class CreateTblCountryTable extends Migration
             $table->string('name', 255);
 
             $table->unique('code');
+            $table->unique('name');
         });
 
         Schema::create('tbl_regions', function(Blueprint $table) {
