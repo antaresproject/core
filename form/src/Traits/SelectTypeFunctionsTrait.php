@@ -36,7 +36,7 @@ trait SelectTypeFunctionsTrait
      * @param bool $select2
      * @return $this
      */
-    public function useSelect2(bool $select2)
+    public function useSelect2(bool $select2): self
     {
         if (!$this instanceof Attributable) {
             return $this;
@@ -54,17 +54,18 @@ trait SelectTypeFunctionsTrait
      * @param bool $search
      * @return $this|bool
      */
-    public function setSearch(bool $search)
+    public function setSearch(bool $search): self
     {
         if (!$this instanceof Attributable) {
             return $this;
         }
+
         $searchOption = 'data-selectAR--search';
-        if ($search) {
-            $this->setAttribute($searchOption, true);
-        } else {
-            $this->removeAttribute($searchOption);
-        }
+	    $search ? $this->setAttribute($searchOption, true) : $this->removeAttribute($searchOption);
+
+	    if ($this->hasAttribute('data-selectAR')) {
+	    	$this->removeAttribute('data-selectAR');
+	    }
         
         return $this;
     }

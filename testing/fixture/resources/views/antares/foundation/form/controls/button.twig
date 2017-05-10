@@ -1,0 +1,6 @@
+<button type='{{ control.getButtonType() }}'
+        name='{{ control.getName() }}'
+        value='{{ control.getValue() }}' {{ control.getAttributes()|stringify }}
+>
+    {{ control.getValue() }}
+</button>

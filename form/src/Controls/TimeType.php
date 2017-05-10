@@ -27,6 +27,9 @@ use Antares\Form\Controls\Elements\Option;
 class TimeType extends TextType
 {
 
+	/**
+	 * @return string
+	 */
     public function render()
     {
         $this->addAttribute('data-timepicker', true);

@@ -63,7 +63,6 @@ class LanguageType extends SelectType
         $this->prependHtml .= sprintf('<span class="input-field__icon"><span class="flag-icon flag-icon-us"></span></span>');
         $this->appendHtml  = '</div>';
 
-
         return parent::render();
     }
 

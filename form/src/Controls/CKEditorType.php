@@ -21,23 +21,19 @@
 
 namespace Antares\Form\Controls;
 
-use Antares\Form\Decorators\AbstractDecorator;
-use Antares\Form\Decorators\HiddenDecorator;
-
-class HiddenType extends AbstractType
+class CKEditorType extends AbstractType
 {
-
+    
     /** @var string */
-    protected $type = 'hidden';
+    protected $type = 'textarea';
 
 	/**
 	 * @return string
 	 */
     public function render()
     {
-        if (!$this->decorator instanceof AbstractDecorator) {
-            $this->setDecorator((new HiddenDecorator()));
-        }
+        $this->addAttribute('scripts', 'false');
+        $this->addClass('richtext');
 
         return parent::render();
     }

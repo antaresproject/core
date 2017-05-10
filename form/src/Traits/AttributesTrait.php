@@ -105,25 +105,31 @@ trait AttributesTrait
 
     /**
      * @param $name
+     * @return $this
      */
-    public function removeAttribute($name)
+    public function removeAttribute($name): self
     {
         if($this->hasAttribute($name)) {
             unset($this->attributes[$name]);
         }
+
+        return $this;
     }
 
     /**
      * @param $name
      * @param $value
+     * @return $this
      */
-    public function addAttribute($name, $value)
+    public function addAttribute($name, $value): self
     {
         if ($this->hasAttribute($name)) {
             $this->attributes[$name] .= ' ' . $value;
         } else {
             $this->attributes[$name] = $value;
         }
+
+        return $this;
     }
 
 }

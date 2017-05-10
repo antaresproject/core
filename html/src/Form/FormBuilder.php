@@ -24,6 +24,7 @@ namespace Antares\Html\Form;
 use Antares\Contracts\Html\Adapter\FieldPermissionAdapter as FieldPermissionContract;
 use Antares\Contracts\Html\Form\Builder as BuilderContract;
 use Antares\Contracts\Html\Grid as GridContract;
+use Antares\Form\Controls\AbstractType;
 use Antares\Html\Adapter\CustomfieldAdapter;
 use Antares\Html\Builder as BaseBuilder;
 use Illuminate\Database\Eloquent\Model;
@@ -149,7 +150,6 @@ class FormBuilder extends BaseBuilder implements BuilderContract
         ];
         $controlCounter = 0;
 
-
         /** we need to know how many fields does the form has * */
         $fieldsets->each(function($fieldset) use(&$controlCounter) {
             $controlCounter += count($fieldset->controls);
@@ -174,10 +174,13 @@ class FormBuilder extends BaseBuilder implements BuilderContract
         }
         $scripts = false;
         foreach ($buttons as $button) {
-            if (array_get($button->attributes, 'type') !== 'submit' or array_get($button->attributes, 'disable_client_submit', false) == true) {
+            if (array_get($button instanceof AbstractType ? $button->getAttributes() : $button->attributes, 'type')
+	            !== 'submit' or array_get($button instanceof AbstractType ? $button->getAttributes()
+		            : $button->attributes, 'disable_client_submit', false) == true
+            ) {
                 continue;
             }
-            $atttibutes = $button->attributes;
+            $atttibutes = $button instanceof AbstractType ? $button->getAttributes() : $button->attributes;
             if (isset($atttibutes['disable_client_submit'])) {
                 unset($atttibutes['disable_client_submit']);
             }
@@ -185,7 +188,7 @@ class FormBuilder extends BaseBuilder implements BuilderContract
 
 
             $atttibutes['data-title'] = trans('antares/foundation::messages.are_you_sure');
-            $button->attributes       = $atttibutes;
+            $button->attributes       = $button instanceof AbstractType ? $button->getAttributes() : $button->attributes;
             $scripts                  = true;
         }
         if ($scripts) {
