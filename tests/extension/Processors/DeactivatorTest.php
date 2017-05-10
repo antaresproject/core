@@ -119,6 +119,8 @@ class DeactivatorTest extends OperationSetupTestCase
             ->andReturn('/src/component/foo/bar')
             ->getMock();
 
+        $this->app['log']  = m::mock(\Psr\Log\LoggerInterface::class)->shouldReceive('error')->once()->withAnyArgs()->getMock();
+
         $this->dispatcher->shouldReceive('fire')->twice()->andReturnNull()->getMock();
         $this->aclMigration->shouldReceive('down')->once()->with($name)->andThrow(\Exception::class)->getMock();
 
@@ -145,6 +147,8 @@ class DeactivatorTest extends OperationSetupTestCase
             ->shouldReceive('getPath')
             ->andReturn('/src/component/foo/bar')
             ->getMock();
+
+        $this->app['log']  = m::mock(\Psr\Log\LoggerInterface::class)->shouldReceive('error')->once()->withAnyArgs()->getMock();
 
         $this->dispatcher->shouldReceive('fire')->once()->andReturnNull()->getMock();
         $this->aclMigration->shouldReceive('down')->never()->getMock();

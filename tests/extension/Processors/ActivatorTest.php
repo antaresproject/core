@@ -25,6 +25,7 @@ use Antares\Extension\Processors\Acl;
 use Antares\Extension\Processors\Activator;
 use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Extension\Repositories\ExtensionsRepository;
+use Antares\Memory\Model\DeferedEvent;
 use Mockery as m;
 
 class ActivatorTest extends OperationSetupTestCase
@@ -72,6 +73,18 @@ class ActivatorTest extends OperationSetupTestCase
             ->andReturnNull()
             ->getMock();
 
+        $queryBuilder = m::mock(\Illuminate\Database\Eloquent\Builder::class)
+            ->shouldReceive('firstOrCreate')
+            ->with(m::type('array'))
+            ->once()
+            ->andReturnNull()
+            ->getMock();
+
+        $deferedEvent = m::mock('overload:' . DeferedEvent::class);
+        $deferedEvent->shouldReceive('query')->once()->andReturn($queryBuilder)->getMock();
+
+        $this->app->instance(DeferedEvent::class, $deferedEvent);
+
         $name = 'foo/bar';
         $extension = $this->buildExtensionMock($name)
             ->shouldReceive('getPath')
@@ -105,6 +118,8 @@ class ActivatorTest extends OperationSetupTestCase
             ->shouldReceive('getPath')
             ->andReturn('/src/component/foo/bar')
             ->getMock();
+
+        $this->app['log']  = m::mock(\Psr\Log\LoggerInterface::class)->shouldReceive('error')->once()->withAnyArgs()->getMock();
 
         $this->dispatcher->shouldReceive('fire')->twice()->andReturnNull()->getMock();
         $this->aclMigration->shouldReceive('import')->once()->with($handler, $extension)->andThrow(\Exception::class)->getMock();

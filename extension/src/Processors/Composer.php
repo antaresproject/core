@@ -13,6 +13,7 @@ use Antares\Extension\Model\Operation;
 use Antares\Extension\Composer\Handler as ComposerHandler;
 use Symfony\Component\Process\Process;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class Composer {
 
@@ -72,6 +73,7 @@ class Composer {
             return $handler->operationInfo(new Operation('Composer command has been finished.'));
         }
         catch(\Exception $e) {
+            Log::error($e);
             $this->dispatcher->fire(new ComposerFailed($command, $e));
 
             return $handler->operationFailed(new Operation($e->getMessage()));

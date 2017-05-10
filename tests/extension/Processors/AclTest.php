@@ -78,10 +78,10 @@ class AclTest extends ApplicationTestCase
                 ->getMock();
 
         $file = m::mock(Filesystem::class)
-                ->shouldReceive('getRequire')
-                ->withAnyArgs()
+                ->shouldReceive('exists')
+                ->with(m::type('string'))
                 ->once()
-                ->andThrow(FileNotFoundException::class)
+                ->andReturn(false)
                 ->getMock();
 
         $this->app->instance('files', $file);
@@ -98,11 +98,16 @@ class AclTest extends ApplicationTestCase
                 ->getMock();
 
         $handler = $this->buildOperationHandlerMock()
-                ->shouldReceive('operationInfo')
-                ->never()
+                ->shouldReceive('operationFailed')
+                ->once()
                 ->getMock();
 
         $file = m::mock(Filesystem::class)
+                ->shouldReceive('exists')
+                ->with(m::type('string'))
+                ->once()
+                ->andReturn(true)
+                ->getMock()
                 ->shouldReceive('getRequire')
                 ->withAnyArgs()
                 ->once()
@@ -129,11 +134,18 @@ class AclTest extends ApplicationTestCase
                 ->getMock();
 
         $file = m::mock(Filesystem::class)
+                ->shouldReceive('exists')
+                ->with(m::type('string'))
+                ->once()
+                ->andReturn(true)
+                ->getMock()
                 ->shouldReceive('getRequire')
                 ->withAnyArgs()
                 ->once()
                 ->andThrow(\Exception::class)
                 ->getMock();
+
+        $this->app['log']  = m::mock(\Psr\Log\LoggerInterface::class)->shouldReceive('error')->once()->withAnyArgs()->getMock();
 
         $this->app->instance('files', $file);
 
@@ -160,6 +172,11 @@ class AclTest extends ApplicationTestCase
         $roleActionList = m::mock(RoleActionList::class);
 
         $file = m::mock(Filesystem::class)
+                ->shouldReceive('exists')
+                ->with(m::type('string'))
+                ->once()
+                ->andReturn(true)
+                ->getMock()
                 ->shouldReceive('getRequire')
                 ->withAnyArgs()
                 ->once()
@@ -198,6 +215,11 @@ class AclTest extends ApplicationTestCase
         $roleActionList = m::mock(RoleActionList::class);
 
         $file = m::mock(Filesystem::class)
+                ->shouldReceive('exists')
+                ->with(m::type('string'))
+                ->once()
+                ->andReturn(true)
+                ->getMock()
                 ->shouldReceive('getRequire')
                 ->withAnyArgs()
                 ->once()

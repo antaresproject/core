@@ -17,6 +17,7 @@ use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
 use Antares\Console\Kernel;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class Activator extends AbstractOperation
 {
@@ -79,6 +80,7 @@ class Activator extends AbstractOperation
 
             return $handler->operationSuccess($operation);
         } catch (Exception $e) {
+            Log::error($e);
             $this->dispatcher->fire(new Failed($extension, $e));
 
             return $handler->operationFailed(new Operation($e->getMessage()));

@@ -21,7 +21,7 @@ use Antares\Publisher\AssetManager;
 use Antares\Publisher\MigrateManager;
 use Symfony\Component\Process\Process;
 use Illuminate\Support\Str;
-use Artisan;
+use Illuminate\Support\Facades\Log;
 
 class Uninstaller extends AbstractOperation {
 
@@ -123,6 +123,7 @@ class Uninstaller extends AbstractOperation {
             return $handler->operationSuccess($operation);
         }
         catch(\Exception $e) {
+            Log::error($e);
             $this->dispatcher->fire(new Failed($extension, $e));
 
             return $handler->operationFailed(new Operation($e->getMessage()));

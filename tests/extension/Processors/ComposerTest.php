@@ -73,6 +73,8 @@ class ComposerTest extends ApplicationTestCase
                 ->andReturnNull()
                 ->getMock();
 
+        $this->app['log']  = m::mock(\Psr\Log\LoggerInterface::class)->shouldReceive('error')->once()->withAnyArgs()->getMock();
+
         $this->getProcessor()->run($handler, []);
     }
 

@@ -24,9 +24,10 @@ use Antares\Console\Kernel;
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
 use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
+use Antares\Testing\ApplicationTestCase;
 use Mockery as m;
 
-abstract class OperationSetupTestCase extends \PHPUnit_Framework_TestCase
+abstract class OperationSetupTestCase extends ApplicationTestCase
 {
 
     /**

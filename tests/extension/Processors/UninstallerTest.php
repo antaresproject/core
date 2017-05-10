@@ -198,6 +198,8 @@ class UninstallerTest extends OperationSetupTestCase
             ->andReturnNull()
             ->getMock();
 
+        $this->app['log']  = m::mock(\Psr\Log\LoggerInterface::class)->shouldReceive('error')->once()->withAnyArgs()->getMock();
+
         $this->dispatcher->shouldReceive('fire')->twice()->andReturnNull()->getMock();
         $this->migrateManager->shouldReceive('uninstall')->once()->with($name)->andThrow(\Exception::class)->getMock();
 
@@ -253,6 +255,8 @@ class UninstallerTest extends OperationSetupTestCase
             'options'   => []
         ])->andReturnNull()->getMock();
 
+        $this->app['log']  = m::mock(\Psr\Log\LoggerInterface::class)->shouldReceive('error')->once()->withAnyArgs()->getMock();
+
         $processor->run($handler, $extension, ['purge']);
     }
 
@@ -282,6 +286,8 @@ class UninstallerTest extends OperationSetupTestCase
             ->shouldReceive('setSettings')
             ->andReturnNull()
             ->getMock();
+
+        $this->app['log']  = m::mock(\Psr\Log\LoggerInterface::class)->shouldReceive('error')->once()->withAnyArgs()->getMock();
 
         $this->dispatcher->shouldReceive('fire')->once()->andReturnNull()->getMock();
         $this->migrateManager->shouldReceive('uninstall')->never()->getMock();
