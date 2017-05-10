@@ -38,7 +38,7 @@ class CreateTblCountryTable extends Migration
          */
 
         Schema::create('tbl_country', function(Blueprint $table) {
-            $table->increments('id')->unsigned();
+            $table->increments('id');
             $table->char('code', 2);
             $table->string('name', 255);
 
@@ -47,8 +47,8 @@ class CreateTblCountryTable extends Migration
         });
 
         Schema::create('tbl_regions', function(Blueprint $table) {
-            $table->increments('id')->unsigned();
-            $table->integer('country_id', 2)->unsigned()->nullable();
+            $table->increments('id');
+            $table->integer('country_id')->unsigned()->nullable();
             $table->string('name', 255);
 
             $table->index('country_id');
