@@ -21,5 +21,54 @@
     "require-dev": {
         "davejamesmiller/laravel-breadcrumbs": "dev-master",
         "linfo/linfo": "dev-master"        
+    },
+    "autoload": {
+        "files": [
+            "src/components/html/src/Support/helpers.php",
+            "src/foundation/src/helpers.php",
+            "src/components/kernel/src/Routing/helpers.php",
+            "src/components/messages/src/helpers.php"
+        ],
+        "psr-4": {
+            "Antares\\Foundation\\": "src/foundation/src",
+            "Antares\\Widget\\": "src/components/widget/src",
+            "Antares\\View\\": "src/components/view/src",
+            "Antares\\Testing\\": "src/utils/testing/src",
+            "Antares\\Testbench\\": "src/utils/testbench/src",
+            "Antares\\Support\\Providers\\": "src/components/support/src/Providers",
+            "Antares\\Support\\Facades\\": "src/components/support/src/Facades",
+            "Antares\\Support\\": "src/components/support/src/Support",
+            "Antares\\Publisher\\": "src/components/publisher/src",
+            "Antares\\Notifier\\": "src/components/notifier/src",
+            "Antares\\Model\\": "src/components/model/src",
+            "Antares\\Messages\\": "src/components/messages/src",
+            "Antares\\Memory\\": "src/components/memory/src",
+            "Antares\\Installation\\": "src/components/installer/src",
+            "Antares\\Html\\": "src/components/html/src",
+            "Antares\\Extension\\": "src/components/extension/src",
+            "Antares\\Contracts\\": "src/components/contracts",
+            "Antares\\Authorization\\": "src/components/auth/src/Authorization",
+            "Antares\\Security\\": "src/utils/security/src",
+            "Antares\\Auth\\": "src/components/auth/src/Auth",
+            "Antares\\Asset\\": "src/utils/asset/src",
+            "Antares\\Console\\": "src/components/console/src",
+            "Antares\\Exception\\": "src/components/exception",                
+            "Antares\\Area\\": "src/components/area/src",
+            "Antares\\GeoIP\\": "src/utils/geoip/src",
+            "Antares\\Users\\": "src/components/users/src",
+            "Antares\\Brands\\": "src/components/brands/src",
+            "Antares\\UI\\UIComponents\\": "src/ui/components/src",
+            "Antares\\Datatables\\": "src/utils/datatables/src",
+            "Antares\\Breadcrumb\\": "src/utils/breadcrumb/src",
+            "Antares\\Customfield\\": "src/utils/customfield/src",
+            "Antares\\Date\\": "src/utils/date/src",
+            "Antares\\Translation\\": "src/utils/translation/src",                
+            "Antares\\Widget\\": "src/components/widget/src",
+            "Antares\\Acl\\": "src/components/acl/src",
+            "Antares\\Registry\\": "src/utils/registry/src",
+            "Antares\\Twig\\": "src/utils/twig",
+            "Antares\\Url\\": "src/utils/url/src",
+            "Antares\\": "src/components/kernel/src"             
+        }
     }
 }

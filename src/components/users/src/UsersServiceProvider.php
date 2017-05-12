@@ -21,7 +21,7 @@
 namespace Antares\Users;
 
 use Antares\Foundation\Support\Providers\ModuleServiceProvider;
-use Antares\Users\Http\Handler\UsersActivityPlaceholder;
+use Antares\Users\Http\Handlers\UsersActivityPlaceholder;
 use Antares\Users\Http\Handlers\UserViewBreadcrumbMenu;
 use Antares\Users\Http\Handlers\UsersBreadcrumbMenu;
 use Antares\Contracts\Auth\Command\ThrottlesLogins;
