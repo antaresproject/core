@@ -1,0 +1,24 @@
+{% extends 'antares/ui-components::templates.layouts.template' %}
+{% block content %}
+    <div class="card card--info card--padding24">
+        {% if titlable %}
+            <div class="card__header">
+                <div class="card__header-left">
+                    <span>
+                        {{ title }}
+                    </span>
+                    {{ event('ui-components:render.header-left.'~name)|raw }}
+                </div>        
+                <div class="card__header-right">
+                    {{ event('ui-components:render.header-right.'~name)|raw }}
+                </div>
+            </div>
+        {% endif %}
+        <div class="card__content widget-content-{{widgetId}}">
+            {{ content|raw }}
+            <script type="text/javascript">
+                {{ script|raw }}
+            </script>
+        </div>
+    </div>
+{% endblock %}

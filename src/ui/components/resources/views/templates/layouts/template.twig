@@ -1,0 +1,45 @@
+{% if isAjaxRequest() %}
+    <div class="widget-ajax-response">
+    {% endif %}    
+    {{ event('ui-components:render.before.template.'~template)|raw }}
+    {% block content %}
+    {% endblock %} 
+    {{ event('ui-components:render.after.template.'~template)|raw }}
+    {% if isAjaxRequest() %} 
+    </div>
+{% endif %}    
+{% if enlargeable and not isAjaxRequest() %}
+    <div class="is-hidden">
+        <div class="card card--{{ name|str_snake }} card--enlarged {{ modal.width?'w'~modal.width~'p':'w800' }} {{ modal.height?'h'~modal.height~'p':'h600' }} {{ card_class ? card_class : ''  }}"  data-width="{{ modal.width }}"  data-height="{{ modal.height}}"  data-widget-name="card--{{ name|str_snake }}"  data-preview-url="{{ handles('antares::ui-components/show/'~id) }}"  data-id="{{id}}">
+            <div class="card__header">
+                <div class="card__header-left">
+                    <span>{{ name }}</span>
+                </div>
+                <div class="card__header-right">
+
+                    {% if actions|length>0 %}
+                        <div class="ddown">
+                            <div class="ddown__init ddown__init--clean btn-more mdl-js-button mdl-js-ripple-effect"><i class="zmdi zmdi-more-vert"></i></div>
+                            <div class="ddown__content">
+                                <div class="ddown__arrow"></div>
+                                <ul class="ddown__menu">
+                                    {% for action in actions %}
+                                        <li>
+                                            <a class="mdl-js-button {{ action.class }}" href="{{ action.url }}" title="{{ action.title }}" {{ action.attributes|stringify }}>
+                                                {% if action.icon|length>0 %}
+                                                    <i class="zmdi zmdi-{{ action.icon }}"></i>
+                                                {% endif %}
+                                                <span>{{ action.title|raw }}</span>
+                                            </a>
+                                        </li>
+                                    {% endfor %}                                                
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card__content {{ card_content_class ? card_content_class : ''  }}" data-scrollable></div>
+        </div>
+    </div>
+{% endif %}    
