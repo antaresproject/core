@@ -18,7 +18,7 @@
  * @link       http://antaresproject.io
  */
 
-namespace Antares\Users\Http\Handler;
+namespace Antares\Users\Http\Handlers;
 
 use Antares\Users\Processor\Activity\UsersActivity;
 

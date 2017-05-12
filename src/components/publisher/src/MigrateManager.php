@@ -316,10 +316,10 @@ class MigrateManager implements Publisher
      */
     public function foundation()
     {
-        $this->package('core/memory');
-        $this->package('core/auth');
-        $this->package('core/form');
-        $this->package('core/ui/components');
+        $this->package('core/src/components/memory');
+        $this->package('core/src/components/auth');
+        $this->package('core/src/utils/form');
+        $this->package('core/src/ui/components');
     }
 
 }

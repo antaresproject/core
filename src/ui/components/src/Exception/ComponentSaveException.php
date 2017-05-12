@@ -20,7 +20,7 @@
 
 namespace Antares\UI\UIComponents\Exception;
 
-use Antares\Widgets\Exception\ExceptionInterface;
+use Antares\UI\UIComponents\Exception\ExceptionInterface;
 use RuntimeException;
 
 class ComponentSaveException extends RuntimeException implements ExceptionInterface
