@@ -1,0 +1,15 @@
+{% if control.useHiddenElement() %}
+    <input type='hidden' name='{{ control.getName() }}' value='{{ control.getUncheckedValue() }}'/>
+{% endif %}
+
+{% for option in control.getValueOptions() %}
+    {% if option is instanceof('Antares\\Form\\Controls\\Elements\\OptGroup') %}
+        <legend>{{ option.label }}</legend>
+
+        {% for opt in option.options %}
+            {% include 'antares/foundation::form.controls.elements.multicheckbox' with {"option": opt, "control": control} only %}
+        {% endfor %}
+    {% else %}
+        {% include 'antares/foundation::form.controls.elements.multicheckbox' with {"option": option, "control": control} only %}
+    {% endif %}
+{% endfor %}

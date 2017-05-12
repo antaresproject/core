@@ -1,0 +1,25 @@
+{
+    "name": "antaresproject/core",
+    "description": "Antares Core",
+    "authors": [
+        {
+            "name": "Antares Team",
+            "email": "contact@antaresproject.io"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "yajra/laravel-datatables-oracle": "6.15.2",
+        "aarondfrancis/urlcrypt": "0.2.*",        
+        "torann/geoip": "0.2.*@dev",
+        "tijsverkoyen/css-to-inline-styles": "~2.2",
+        "twig/twig": "~1.15|~2.0",
+        "laravolt/avatar": "^1.0@dev",
+        "thomaswelton/laravel-gravatar": "~1.0",
+        "symfony/filesystem": ">=2.4"
+    },
+    "require-dev": {
+        "davejamesmiller/laravel-breadcrumbs": "dev-master",
+        "linfo/linfo": "dev-master"        
+    }
+}

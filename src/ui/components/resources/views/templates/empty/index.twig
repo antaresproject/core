@@ -1,0 +1,13 @@
+{% extends 'antares/ui-components::templates.layouts.template' %}
+{% block content %}
+    {% if content|length<=0 %}
+        <div class="zero-data zero-data-widget">
+            <div class="zero-data__indicator"></div>
+            <div class="zero-data__txt">
+                {{ trans('antares/ui-components::global.zero_data_message') }}
+            </div>
+        </div>
+    {% else %}
+        {{ content|raw }}
+    {% endif %}
+{% endblock %}

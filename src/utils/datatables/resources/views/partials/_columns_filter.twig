@@ -1,0 +1,15 @@
+<div class="ddown ddown--columns columns-filter" data-url="{{ handles('datatables/columns-filter') }}" data-key="{{ key }}">
+    <div class="ddown__init btn--dropdown btn btn--dt-columns btn--capitalize btn--md btn--primary mdl-js-button mdl-js-ripple-effect">Columns</div>
+    <div class="ddown__content">
+        <div class="ddown__arrow"></div>
+        <ul class="ddown__menu" data-scrollable>
+            {% for column in columns %}                               
+                {% if column.title|length>0 %}
+                    <li class="{{ column.visible==false?'col-is-hidden':'col-is-visible' }}" >
+                        <a class="mdl-js-button mdl-js-ripple-effect" href="#"><span>{{ column.title|raw }}</span></a>
+                    </li>                
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+</div>

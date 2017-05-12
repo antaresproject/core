@@ -1,0 +1,27 @@
+{% if dataProvider is not empty %}    
+    <div class="ddown ddown--left ddown--left mr-24"  id="{{ id }}">
+        <div class="ddown__init btn--dropdown btn btn--md btn--default mdl-js-button mdl-js-ripple-effect">
+            {{ trans(selected)|raw }}
+        </div>
+        <ul class="ddown__menu">
+            {% if default %}
+                <li>
+                    <a class="mdl-js-button mdl-js-ripple-effect" href="{{ handles(emptyUrl)|raw }}">
+                        <i class="zmdi zmdi-format-list-bulleted"></i>
+                        <span>{{ trans(default)|raw }}</span>
+                    </a>
+                </li>
+            {% endif %}
+            {% for item in dataProvider %}                
+                {% if item.name != selected %}
+                    <li>
+                        <a class="mdl-js-button mdl-js-ripple-effect" href="{{ item.url|raw }}">
+                            <i class="zmdi zmdi-format-list-bulleted"></i>
+                            <span>{{ item.name|raw }}</span>
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}                    
+        </ul>
+    </div>        
+{% endif %}

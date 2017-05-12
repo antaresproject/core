@@ -1,0 +1,7 @@
+{% if disabled==false  %}
+    {% if tabbable %}
+        {% include "antares/ui-components::admin.partials._tabbable" %}    
+    {% else %}
+        {% include "antares/ui-components::admin.partials._base" %}    
+    {%endif %}
+{% endif %}

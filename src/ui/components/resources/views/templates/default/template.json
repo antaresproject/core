@@ -1,0 +1,9 @@
+{
+    "package": "default",
+    "name": "Default Widget Template",
+    "description": "This is default widget template",
+    "author": "Łukasz Cirut",
+    "url": "https://modulesgarden.com/docs",
+    "type": [],
+    "autoload": []
+}

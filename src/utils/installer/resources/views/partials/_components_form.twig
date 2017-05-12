@@ -1,0 +1,13 @@
+{% extends 'antares/foundation::layouts.antares.partials.form.horizontal' %}
+{% block buttons %}
+    <div class="app-content__footer">
+        <div class="btn-group">
+            <a href="{{ handles('antares/foundation::install/create') }}" class="btn btn--md btn--default mdl-button mdl-js-button mdl-js-ripple-effect" >
+                <i class="pl8 zmdi zmdi-long-arrow-left"></i> {{ trans('Back') }}
+            </a>
+            <button type="submit" class="btn btn--md btn--primary mdl-button mdl-js-button mdl-js-ripple-effect">
+                {{ trans('Next') }} <i class="pl8 zmdi zmdi-long-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+{% endblock %}
