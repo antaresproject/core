@@ -67,17 +67,20 @@ class Requirement implements RequirementContract
     public function check()
     {
         $this->checklist = [
-            'databaseConnection'     => $this->checkDatabaseConnection(),
-            'mysqlDumpCommand'       => $this->checkMysqlDumpCommand(),
-            'writableStorage'        => $this->checkWritableStorage(),
-            'writableAsset'          => $this->checkWritableAsset(),
-            'writableLogs'           => $this->checkWritableLogs(),
-            'writablePublic'         => $this->checkWritablePublic(),
-            'writablePublicPackages' => $this->checkWritablePublicPackages(),
-            'writableComposerVendor' => $this->checkWritableComposerVendor(),
-            'version'                => $this->getPhpVersion(),
-            'phpExtensions'          => $this->getRegisteredPhpExtensions(),
-            'apacheModules'          => $this->checkInstalledApacheModules()
+            'databaseConnection'        => $this->checkDatabaseConnection(),
+            'mysqlDumpCommand'          => $this->checkMysqlDumpCommand(),
+            'writableStorage'           => $this->checkWritableStorage(),
+            'writableAsset'             => $this->checkWritableAsset(),
+            'writableLogs'              => $this->checkWritableLogs(),
+            'writablePublic'            => $this->checkWritablePublic(),
+            'writablePublicPackages'    => $this->checkWritablePublicPackages(),
+            'writableComposerVendor'    => $this->checkWritableComposerVendor(),
+            'writableComposerJsonFile'  => $this->checkWritableComposerJsonFile(),
+            'writableComposerLockFile'  => $this->checkWritableComposerLockFile(),
+            'writableBootstrapCache'    => $this->checkWritableBootstrapCache(),
+            'version'                   => $this->getPhpVersion(),
+            'phpExtensions'             => $this->getRegisteredPhpExtensions(),
+            'apacheModules'             => $this->checkInstalledApacheModules()
         ];
 
 
@@ -108,6 +111,39 @@ class Requirement implements RequirementContract
     protected function checkWritableComposerVendor()
     {
         $path = base_path('vendor');
+        return $this->isWritable($path);
+    }
+
+    /**
+     * check if composer.json file is writable
+     *
+     * @return array
+     */
+    protected function checkWritableComposerJsonFile()
+    {
+        $path = base_path('composer.json');
+        return $this->isWritable($path);
+    }
+
+    /**
+     * check if composer.lock file is writable
+     *
+     * @return array
+     */
+    protected function checkWritableComposerLockFile()
+    {
+        $path = base_path('composer.lock');
+        return $this->isWritable($path);
+    }
+
+    /**
+     * check if bootstrap/cache directory is writable
+     *
+     * @return array
+     */
+    protected function checkWritableBootstrapCache()
+    {
+        $path = base_path('bootstrap/cache');
         return $this->isWritable($path);
     }
 

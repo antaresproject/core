@@ -102,11 +102,26 @@ return
                     'name'     => 'Tickets directory',
                     'solution' => 'Change permissions to storage\tickets directory.',
                 ),
+                'writableBootstrapCache'        =>
+                    array(
+                        'name'     => 'Boostrap cache directory',
+                        'solution' => 'Change permissions to bootstrap\cache directory.',
+                    ),
                 'writableComposerVendor' =>
                 array(
                     'name'     => 'Composer vendor directory',
                     'solution' => 'Change permissions to vendor directory.',
                 ),
+                'writableComposerJsonFile' =>
+                    array(
+                        'name'     => 'composer.json file',
+                        'solution' => 'Change permissions to composer.json file.',
+                    ),
+                'writableComposerLockFile' =>
+                    array(
+                        'name'     => 'composer.lock file',
+                        'solution' => 'Change permissions to composer.lock file.',
+                    ),
                 'apacheModules'          =>
                 array(
                     'name'     => 'Apache Modules',
