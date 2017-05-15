@@ -85,7 +85,7 @@ class Manager
 
         $foundExtensions = $this->filesystemFinder->findExtensions();
 
-        $storedExtensions = app()->make('antares.installed') ? $this->extensionsRepository->all() : new Collection();
+        $storedExtensions = app('antares.installed') ? $this->extensionsRepository->all() : new Collection();
 
         foreach ($foundExtensions as $foundExtension) {
             $extension = $storedExtensions->first(function(ExtensionModel $extensionModel) use($foundExtension) {

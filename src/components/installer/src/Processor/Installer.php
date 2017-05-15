@@ -11,7 +11,7 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Antares Core
- * @version    0.9.0
+ * @version    0.9.2
  * @author     Original Orchestral https://github.com/orchestral
  * @author     Antares Team
  * @license    BSD License (3-clause)
@@ -29,7 +29,6 @@ use Symfony\Component\Finder\Finder;
 use Antares\Support\Facades\Config;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
-use Antares\Installation\Progress;
 use Antares\Support\Facades\Form;
 use Illuminate\Cache\FileStore;
 use ReflectionException;
@@ -270,6 +269,7 @@ class Installer
                     $form->attributes($attributes);
                     $form->name('Components');
                     $form->fieldset(function ($fieldset) {
+
                         $fieldset->legend('Available optional components');
                         $optional   = array_keys($this->getComponentsRepository()->getOptional());
                         $extensions = app('antares.extension')->getAvailableExtensions();

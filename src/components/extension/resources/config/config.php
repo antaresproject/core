@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'reserved'  => [
+    'reserved' => [
         'resources',
         'antares/asset',
         'antares/auth',
@@ -22,9 +22,9 @@ return [
         'antares/view',
         'antares/widget',
     ],
-    'paths'     => [
-        'src/components/*',
-		'src/modules/*',
+    'paths'    => [
+        'src/core/src/modules/*',
+        'src/modules/*',
     ],
     'composer' => [
         'parameters' => [
