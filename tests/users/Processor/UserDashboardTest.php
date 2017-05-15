@@ -36,7 +36,7 @@ class UserDashboardTest extends ApplicationTestCase
     public function testShowMethod()
     {
         $listener = m::mock('\Antares\Contracts\Foundation\Listener\Account\ProfileDashboard');
-        $widget   = m::mock('\Antares\Widget\WidgetManager');
+        $widget   = m::mock(\Antares\UI\WidgetManager::class);
 
         $stub = new ProfileDashboard($widget);
 

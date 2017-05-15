@@ -10,8 +10,8 @@
  * This source file is subject to the 3-clause BSD License that is
  * bundled with this package in the LICENSE file.
  *
- * @package    Antares Core
- * @version    0.9.0
+ * @package    UI
+ * @version    0.9.2
  * @author     Original Orchestral https://github.com/orchestral
  * @author     Antares Team
  * @license    BSD License (3-clause)
@@ -19,19 +19,18 @@
  * @link       http://antaresproject.io
  */
 
+namespace Antares\UI\TemplateBase;
 
-namespace Antares\Widget\Handlers;
+use Antares\Support\Str;
+use Antares\UI\Handler;
 
-use Antares\Widget\Handler;
-use Illuminate\Support\Facades\Event;
-
-class Menu extends Handler
+class Pane extends Handler
 {
 
     /**
      * {@inheritdoc}
      */
-    protected $type = 'menu';
+    protected $type = 'pane';
 
     /**
      * {@inheritdoc}
@@ -39,9 +38,9 @@ class Menu extends Handler
     protected $config = [
         'defaults' => [
             'attributes' => [],
-            'icon'       => '',
-            'link'       => '#',
             'title'      => '',
+            'content'    => '',
+            'html'       => '',
         ],
     ];
 
@@ -50,10 +49,11 @@ class Menu extends Handler
      */
     public function add($id, $location = '#', $callback = null)
     {
-        Event::fire('antares.ready: menu.before.' . $id, $this);
-        $return = $this->addItem($id, $location, $callback);
-        Event::fire('antares.ready: menu.after.' . $id, $this);
-        return $return;
+        if (is_string($location) && Str::startsWith($location, '^:')) {
+            $location = '#';
+        }
+
+        return $this->addItem($id, $location, $callback);
     }
 
 }

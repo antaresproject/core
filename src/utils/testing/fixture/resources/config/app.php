@@ -159,7 +159,7 @@ return [
         Antares\Foundation\Providers\SupportServiceProvider::class,
         Antares\Translation\TranslationServiceProvider::class,
         Antares\View\ViewServiceProvider::class,
-        Antares\Widget\WidgetServiceProvider::class,
+        Antares\UI\UIServiceProvider::class,
         Antares\Foundation\Providers\ConsoleSupportServiceProvider::class,
         Antares\Foundation\Providers\FoundationServiceProvider::class,
         Antares\Foundation\Providers\RouteServiceProvider::class,

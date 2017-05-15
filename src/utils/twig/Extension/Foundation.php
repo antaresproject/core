@@ -20,17 +20,17 @@
 
 namespace Antares\Twig\Extension;
 
-use Antares\Acl\MultisessionAcl;
-use Antares\Widget\WidgetManager;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Fluent as FluentSupport;
 use Antares\Asset\JavaScriptDecorator;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Event;
+use Antares\Acl\MultisessionAcl;
+use Antares\UI\WidgetManager;
 use Illuminate\View\Factory;
-use Twig_Extension;
+use Illuminate\Support\Str;
 use Twig_Function_Method;
-use Twig_SimpleFilter;
 use Twig_SimpleFunction;
+use Twig_SimpleFilter;
+use Twig_Extension;
 use Exception;
 
 /**

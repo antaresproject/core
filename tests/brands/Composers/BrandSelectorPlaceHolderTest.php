@@ -22,7 +22,7 @@ namespace Antares\Brands\TestCase;
 
 use Antares\Brands\Composers\BrandPlaceHolder;
 use Antares\Testing\ApplicationTestCase;
-use Antares\Widget\WidgetManager;
+use Antares\UI\WidgetManager;
 use Antares\Support\Fluent;
 use Mockery as m;
 

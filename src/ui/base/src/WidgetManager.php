@@ -10,8 +10,8 @@
  * This source file is subject to the 3-clause BSD License that is
  * bundled with this package in the LICENSE file.
  *
- * @package    Antares Core
- * @version    0.9.0
+ * @package    UI
+ * @version    0.9.2
  * @author     Original Orchestral https://github.com/orchestral
  * @author     Antares Team
  * @license    BSD License (3-clause)
@@ -19,14 +19,13 @@
  * @link       http://antaresproject.io
  */
 
+namespace Antares\UI;
 
-namespace Antares\Widget;
-
-use Closure;
+use Antares\UI\TemplateBase\Placeholder;
+use Antares\UI\TemplateBase\Menu;
+use Antares\UI\TemplateBase\Pane;
 use Antares\Support\Manager;
-use Antares\Widget\Handlers\Menu;
-use Antares\Widget\Handlers\Pane;
-use Antares\Widget\Handlers\Placeholder;
+use Closure;
 
 class WidgetManager extends Manager
 {
@@ -41,7 +40,7 @@ class WidgetManager extends Manager
      *
      * @param  string  $name
      *
-     * @return \Antares\Widget\Handlers\Menu
+     * @return \Antares\UI\TemplateBase\Menu
      */
     protected function createMenuDriver($name)
     {
@@ -55,7 +54,7 @@ class WidgetManager extends Manager
      *
      * @param  string  $name
      *
-     * @return \Antares\Widget\Handlers\Pane
+     * @return \Antares\UI\TemplateBase\Pane
      */
     protected function createPaneDriver($name)
     {
@@ -68,7 +67,7 @@ class WidgetManager extends Manager
      *
      * @param  string  $name
      *
-     * @return \Antares\Widget\Handlers\Placeholder
+     * @return \Antares\UI\TemplateBase\Placeholder
      */
     protected function createPlaceholderDriver($name)
     {
@@ -104,7 +103,7 @@ class WidgetManager extends Manager
      * @param  string  $name
      * @param  \Closure|null  $callback
      *
-     * @return \Antares\Widget\Handler
+     * @return \Antares\UI\TemplateBase
      */
     public function of($name, Closure $callback = null)
     {

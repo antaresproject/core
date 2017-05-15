@@ -20,6 +20,7 @@
 
 namespace Antares\UI\UIComponents\Model;
 
+use Antares\UI\UIComponents\Model\Components;
 use Illuminate\Database\Eloquent\Model;
 
 class ComponentTypes extends Model
@@ -53,7 +54,7 @@ class ComponentTypes extends Model
      */
     public function widgets()
     {
-        return $this->hasMany('Antares\Widgets\Model\Widgets', 'id', 'type_id');
+        return $this->hasMany(Components::class, 'id', 'type_id');
     }
 
     /**

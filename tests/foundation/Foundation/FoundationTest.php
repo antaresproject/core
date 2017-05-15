@@ -70,52 +70,14 @@ class FoundationTest extends ApplicationTestCase
      */
     private function getUnInstallableContainerSetup()
     {
-        $app      = $this->app;
-        $request  = m::mock('\Illuminate\Http\Request');
-        $acl      = $app['antares.acl'];
-        $config   = $app['config'];
-        $event    = $app['events'];
-        $mailer   = $app['antares.mail'];
-        $memory   = $app['antares.memory'];
-        $notifier = $app['antares.notifier'];
-        $widget   = $app['antares.widget'];
+        $app     = $this->app;
+        $request = m::mock('\Illuminate\Http\Request');
+        $widget  = $app['antares.widget'];
 
         $app['env']               = 'production';
         $app['request']           = $request;
         $app['antares.installed'] = false;
-
-//        $app['antares.acl'] = $acl                = m::mock('\Antares\Contracts\Authorization\Authorization');
-//        $app['antares.extension'] = m::mock('\Antares\Contracts\Extension\Factory');
-//        $app['antares.mail']      = m::mock('\Antares\Notifier\Mailer')->makePartial();
-//        $app['antares.memory']    = m::mock('\Antares\Memory\MemoryManager', [$app]);
-//        $app['antares.notifier']  = m::mock('\Antares\Notifier\NotifierManager', [$app]);
-//        $app['antares.widget']    = m::mock('\Antares\Widget\Handlers\Menu');
-//        $app['config']            = m::mock('\Illuminate\Contracts\Config\Repository');
-//        $app['events']            = m::mock('\Illuminate\Contracts\Events\Dispatcher');
-//        $app['translator']        = m::mock('\Illuminate\Translation\Translator')->makePartial();
-//        $app['url']               = m::mock('\Illuminate\Routing\UrlGenerator')->makePartial();
-//        $memoryProvider = m::mock('\Antares\Contracts\Memory\Provider');
-//
-//        $memoryProvider->shouldReceive('get')->once()->with('site.name')->andReturnNull()
-//                ->shouldReceive('put')->once()->with('site.name', 'Antares')->andReturnNull();
-//
-//        $acl->shouldReceive('make')->once()->andReturn($acl);
-//        $mailer->shouldReceive('attach')->once()->with($memoryProvider)->andReturnNull();
-//        $memory->shouldReceive('make')->once()->andReturn($memoryProvider)
-//                ->shouldReceive('make')->once()->with('runtime.antares')->andReturn($memoryProvider);
-//        $notifier->shouldReceive('setDefaultDriver')->once()->with('antares')->andReturnNull();
-//
-//        $widget = m::mock('\Antares\Widget\Handlers\Menu');
-//        $widget->shouldReceive('make')->once()->with('menu.antares')->andReturn($widget)
-//                ->shouldReceive('make')->once()->with('menu.app')->andReturn($widget)
-//                ->shouldReceive('add->title->link')->once()->with('http://localhost/admin/install')->andReturn($widget);
-//
-//        $request->shouldReceive('root')->andReturn('http://localhost')
-//                ->shouldReceive('secure')->andReturn(false)
-//                ->shouldReceive('query')->andReturn(false);
-//        $config->shouldReceive('get')->once()->with('antares/foundation::handles', '/')->andReturn('admin');
-//        $event->shouldReceive('fire')->once()->with('antares.started', [$memoryProvider])->andReturnNull();
-        $app['antares.widget'] = $widget;
+        $app['antares.widget']    = $widget;
         return $app;
     }
 
@@ -131,7 +93,7 @@ class FoundationTest extends ApplicationTestCase
         $stub = new Foundation($app);
         $stub->boot();
         $this->assertTrue($app['antares.installed']);
-        $this->assertInstanceOf(\Antares\Widget\Handlers\Menu::class, $stub->menu());
+        $this->assertInstanceOf(\Antares\UI\TemplateBase\Menu::class, $stub->menu());
         $this->assertInstanceOf(\Antares\Authorization\Authorization::class, $stub->acl());
         $this->assertNotEquals($app['antares.memory'], $stub->memory());
         $this->assertEquals($stub, $stub->boot());

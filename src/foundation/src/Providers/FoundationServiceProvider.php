@@ -69,7 +69,7 @@ class FoundationServiceProvider extends ServiceProvider
         'antares.resources'       => 'Antares\Resources\Factory',
         'antares.meta'            => 'Antares\Foundation\Meta',
         'antares.theme'           => 'Antares\View\Theme\ThemeManager',
-        'antares.widget'          => 'Antares\Widget\WidgetManager'
+        'antares.widget'          => 'Antares\UI\WidgetManager'
     ];
 
     /**

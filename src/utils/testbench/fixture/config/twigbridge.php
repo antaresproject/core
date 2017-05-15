@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
-
-
 /**
  * This file is part of the TwigBridge package.
  *
@@ -118,8 +116,8 @@ return [
             'Antares\Twig\Extension\Laravel\Handles',
             'Antares\Twig\Extension\Laravel\Form',
             'Antares\Twig\Extension\Laravel\Html',
-            'Antares\Widgets\Extension\Widget',
-            'Antares\Widgets\Extension\WidgetResolver',
+            'Antares\UI\UIComponents\Twig\Component',
+            'Antares\UI\UIComponents\Twig\Resolver',
             /**
              * custom extensions
              */
