@@ -37,7 +37,7 @@ class LeftPaneTest extends ApplicationTestCase
         $router->shouldReceive('current')->withNoArgs()->andReturnSelf()
                 ->shouldReceive('parameters')->withNoArgs()->andReturn([]);
 
-        $widgetManager = $this->app->make(\Antares\Widget\WidgetManager::class);
+        $widgetManager = $this->app->make(\Antares\UI\WidgetManager::class);
         $this->assertInstanceOf('\Antares\Foundation\Http\Composers\LeftPane', new LeftPane($widgetManager, $router));
     }
 
@@ -53,7 +53,7 @@ class LeftPaneTest extends ApplicationTestCase
         $router->shouldReceive('current')->withNoArgs()->andReturnSelf()
                 ->shouldReceive('parameters')->withNoArgs()->andReturn([]);
 
-        $widgetManager = $this->app->make(\Antares\Widget\WidgetManager::class);
+        $widgetManager = $this->app->make(\Antares\UI\WidgetManager::class);
 
         $stub = new LeftPane($widgetManager, $router);
         $this->assertFalse($stub->compose('pane.foo'));

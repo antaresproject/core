@@ -10,20 +10,22 @@
  * This source file is subject to the 3-clause BSD License that is
  * bundled with this package in the LICENSE file.
  *
- * @package    Antares Core
- * @version    0.9.0
+ * @package    UI
+ * @version    0.9.2
  * @author     Original Orchestral https://github.com/orchestral
  * @author     Antares Team
  * @license    BSD License (3-clause)
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Widget;
+
+namespace Antares\UI;
 
 use Antares\Support\Providers\ServiceProvider;
 
-class WidgetServiceProvider extends ServiceProvider
+class UIServiceProvider extends ServiceProvider
 {
+
     /**
      * Indicates if loading of the provider is deferred.
      *
@@ -50,9 +52,8 @@ class WidgetServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $path = realpath(__DIR__.'/../resources');
-
-        $this->addConfigComponent('antares/widget', 'antares/widget', $path.'/config');
+        $path = realpath(__DIR__ . '/../resources');
+        $this->addConfigComponent('antares/widget', 'antares/widget', $path . '/config');
     }
 
     /**
@@ -64,4 +65,5 @@ class WidgetServiceProvider extends ServiceProvider
     {
         return ['antares.widget'];
     }
+
 }

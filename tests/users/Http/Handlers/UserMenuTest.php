@@ -65,7 +65,7 @@ class UserMenuHandlerTest extends ApplicationTestCase
     public function testCreatingMenuWithoutAuthorizedUser()
     {
         $app                                                  = new Container();
-        $app['antares.platform.menu']                         = $menu                                                 = m::mock('\Antares\Widget\Handlers\Menu');
+        $app['antares.platform.menu']                         = $menu                                                 = m::mock(\Antares\UI\TemplateBase\Menu::class);
         $app['Antares\Contracts\Authorization\Authorization'] = $acl                                                  = m::mock('\Antares\Contracts\Authorization\Authorization');
 
         $acl->shouldReceive('can')->with("clients-list")->once()->andReturn(false);

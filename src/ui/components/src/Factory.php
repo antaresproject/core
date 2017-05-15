@@ -44,7 +44,7 @@ class Factory
     /**
      * Response instance.
      *
-     * @var \Antares\Widgets\Response
+     * @var Response
      */
     protected $response;
 

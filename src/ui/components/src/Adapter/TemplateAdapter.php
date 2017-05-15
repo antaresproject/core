@@ -86,7 +86,7 @@ class TemplateAdapter implements TemplateContract
      * share widget variables to template
      * 
      * @param array $params
-     * @return \Antares\Widgets\Adapter\TemplateAdapter
+     * @return TemplateAdapter
      */
     public function share(array $params = array())
     {

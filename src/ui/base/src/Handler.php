@@ -10,8 +10,8 @@
  * This source file is subject to the 3-clause BSD License that is
  * bundled with this package in the LICENSE file.
  *
- * @package    Antares Core
- * @version    0.9.0
+ * @package    UI
+ * @version    0.9.2
  * @author     Original Orchestral https://github.com/orchestral
  * @author     Antares Team
  * @license    BSD License (3-clause)
@@ -19,8 +19,7 @@
  * @link       http://antaresproject.io
  */
 
-
-namespace Antares\Widget;
+namespace Antares\UI;
 
 use Closure;
 use Countable;
@@ -109,7 +108,7 @@ abstract class Handler implements Countable, IteratorAggregate
         }
 
 
-        $item = $this->nesty->add($id, $location ? : 'parent');
+        $item = $this->nesty->add($id, $location ?: 'parent');
         if ($callback instanceof Closure) {
             call_user_func($callback, $item);
         }

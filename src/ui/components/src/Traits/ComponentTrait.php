@@ -147,7 +147,7 @@ trait ComponentTrait
      * View setter
      * 
      * @param \Illuminate\View\View $view
-     * @return \Antares\Widgets\Adapter\AbstractWidget
+     * @return $this
      */
     public function setView($view)
     {

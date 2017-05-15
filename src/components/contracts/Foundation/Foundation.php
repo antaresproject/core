@@ -17,13 +17,15 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
- namespace Antares\Contracts\Foundation;
+
+namespace Antares\Contracts\Foundation;
 
 use Closure;
 use Antares\Contracts\Http\RouteManager;
 
 interface Foundation extends RouteManager
 {
+
     /**
      * Start the application.
      *
@@ -55,7 +57,7 @@ interface Foundation extends RouteManager
     /**
      * Get menu services.
      *
-     * @var \Antares\Widget\Handlers\Menu
+     * @var \Antares\UI\TemplateBase\Menu
      */
     public function menu();
 

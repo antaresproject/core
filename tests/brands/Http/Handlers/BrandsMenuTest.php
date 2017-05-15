@@ -97,7 +97,7 @@ class BrandsMenuTest extends TestCase
     public function testHandle()
     {
         $this->app['antares.platform.memory'] = m::mock('Antares\Memory\Provider');
-        $this->app['antares.platform.menu']   = $menu                                 = m::mock('\Antares\Widget\Handlers\Menu');
+        $this->app['antares.platform.menu']   = $menu                                 = m::mock(\Antares\UI\TemplateBase\Menu::class);
         $stub                                 = new BrandsMenu($this->app);
 
         $acl                      = m::mock('Antares\Authorization\Factory')

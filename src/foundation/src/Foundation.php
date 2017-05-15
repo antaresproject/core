@@ -89,7 +89,7 @@ class Foundation extends RouteManager implements FoundationContract
     /**
      * Get menu services.
      *
-     * @var \Antares\Widget\MenuWidgetHandler
+     * @var \Antares\UI\Menu
      */
     public function menu()
     {

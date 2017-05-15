@@ -22,8 +22,8 @@
 namespace Antares\Foundation\Http\Composers;
 
 use Illuminate\Container\Container;
-use Antares\Widget\WidgetManager;
 use Illuminate\Routing\Router;
+use Antares\UI\WidgetManager;
 use Illuminate\View\View;
 
 class LeftPane
@@ -43,7 +43,7 @@ class LeftPane
     /**
      * The widget manager implementation.
      * 
-     * @var \Antares\Widget\WidgetManager
+     * @var \Antares\UI\WidgetManager
      */
     protected $widget;
 

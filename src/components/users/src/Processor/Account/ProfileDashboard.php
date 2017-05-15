@@ -18,14 +18,13 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Processor\Account;
 
-use Antares\Widget\WidgetManager;
-use Antares\Foundation\Processor\Processor;
-use Antares\Breadcrumb\Facade as Breadcrumbs;
-use Antares\Contracts\Foundation\Command\Account\ProfileDashboard as Command;
 use Antares\Contracts\Foundation\Listener\Account\ProfileDashboard as Listener;
+use Antares\Contracts\Foundation\Command\Account\ProfileDashboard as Command;
+use Antares\Breadcrumb\Facade as Breadcrumbs;
+use Antares\Foundation\Processor\Processor;
+use Antares\UI\WidgetManager;
 
 class ProfileDashboard extends Processor implements Command
 {

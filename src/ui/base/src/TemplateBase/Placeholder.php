@@ -10,8 +10,8 @@
  * This source file is subject to the 3-clause BSD License that is
  * bundled with this package in the LICENSE file.
  *
- * @package    Antares Core
- * @version    0.9.0
+ * @package    UI
+ * @version    0.9.2
  * @author     Original Orchestral https://github.com/orchestral
  * @author     Antares Team
  * @license    BSD License (3-clause)
@@ -19,30 +19,29 @@
  * @link       http://antaresproject.io
  */
 
-
-namespace Antares\Widget\Handlers;
+namespace Antares\UI\TemplateBase;
 
 use Antares\Support\Str;
-use Antares\Widget\Handler;
+use Antares\UI\Handler;
+use Closure;
 
-class Pane extends Handler
+class Placeholder extends Handler
 {
 
     /**
      * {@inheritdoc}
      */
-    protected $type = 'pane';
+    protected $type = 'placeholder';
 
     /**
      * {@inheritdoc}
      */
     protected $config = [
         'defaults' => [
-            'attributes' => [],
-            'title'      => '',
-            'content'    => '',
-            'html'       => '',
+            'value'   => '',
+            'content' => '',
         ],
+        'content'  => '',
     ];
 
     /**
@@ -52,9 +51,18 @@ class Pane extends Handler
     {
         if (is_string($location) && Str::startsWith($location, '^:')) {
             $location = '#';
+        } elseif ($location instanceof Closure) {
+            $callback = $location;
+            $location = '#';
         }
 
-        return $this->addItem($id, $location, $callback);
+        $item = $this->nesty->add($id, $location ?: '#');
+
+        if ($callback instanceof Closure) {
+            $item->value = $callback;
+        }
+
+        return $item;
     }
 
 }

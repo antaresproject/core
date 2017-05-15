@@ -20,14 +20,14 @@
 
 namespace Antares\Widgets\Adapter\Tests;
 
-use Antares\Widgets\Adapter\AfterValidateAdapter as Stub;
+use Antares\UI\UIComponents\Adapter\AfterValidateAdapter as Stub;
 use Antares\Testing\TestCase;
 
 class AfterValidateAdapterTest extends TestCase
 {
 
     /**
-     * test Antares\Widgets\Adapter\AfterValidateAdapter::afterValidate
+     * test Antares\UI\UIComponents\Adapter\AfterValidateAdapter::afterValidate
      * 
      * @test
      */

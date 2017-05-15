@@ -53,7 +53,7 @@ abstract class MenuHandler
     /**
      * Menu instance.
      *
-     * @var \Antares\Widget\Handlers\Menu
+     * @var \Antares\UI\TemplateBase\Menu
      */
     protected $handler;
 
