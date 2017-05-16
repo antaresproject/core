@@ -26,6 +26,7 @@ use Illuminate\Database\Seeder as IlluminateSeeder;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Database\Migrations\Migrator;
 use Antares\Contracts\Publisher\Publisher;
+use Illuminate\Support\Str;
 use stdClass;
 
 class MigrateManager implements Publisher
@@ -285,6 +286,18 @@ class MigrateManager implements Publisher
     }
 
     /**
+     * Resolve a migration instance from a file.
+     *
+     * @param  string  $file
+     * @return object
+     */
+    public function resolveClassname($file)
+    {
+        $class = Str::studly(implode('_', array_slice(explode('_', $file), 5)));
+        return new $class;
+    }
+
+    /**
      * uninstalling component
      * @param type $name
      */
@@ -298,7 +311,7 @@ class MigrateManager implements Publisher
             }
             $files = $this->migrator->getMigrationFiles($path);
             foreach ($files as $file) {
-                $migration           = $this->migrator->resolve(str_replace('.php', '', $file));
+                $migration           = $this->resolveClassname(str_replace('.php', '', $file));
                 $migrator            = new stdClass();
                 $migrator->migration = $file;
                 $this->migrator->getRepository()->delete($migrator);
