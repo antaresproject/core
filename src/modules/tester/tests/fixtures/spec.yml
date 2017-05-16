@@ -1,0 +1,5 @@
+submodules:
+    test: 
+        name: Test Module
+        validator: Antares\Domains\Dns\Tester\RackspaceTester@test
+        form: Antares\Domains\Dns\Tester\Forms\TestForm

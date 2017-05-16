@@ -1,0 +1,51 @@
+<label>{{ trans('VARIABLES') }}</label>
+{% if variables is not empty %}
+    <ul class="mdl-list">
+        {% for extension, variables_container in variables %}
+            <li class="mdl-list__item col-8">
+                <div class="ddown-multi">
+                    <div id="{{ extension }}"
+                         class="ddown-multi__init btn--dropdown btn btn--md btn--default mdl-js-button mdl-js-ripple-effect">
+                        {{ extension }}
+                    </div>
+                    <ul class="ddown-multi__menu">
+                        {% for value in variables_container %}
+                            <li>
+                                <a class="insert-variable"
+                                   title="{{ extension|lower }}::{{ value['name'] }}"
+                                   data-target="group" href="#">
+                                    <span>{{ value['name'] }}</span>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <div class="alert alert--bg alert--glow alert--warning alert--lg alert--border">
+        <i class="zmdi zmdi-alert-triangle"></i>
+        <span>
+            {{ trans('No variables available for this template.') }}
+        </span>
+    </div>
+{% endif %}
+<label>{{ trans('INSTRUCTIONS') }}</label>
+{% if instructions is not empty %}
+    <ul class="mdl-list">
+        {% for name, instruction in instructions %}
+            <li class="mdl-list__item col-8">
+                <button type="button" data-toggle="tooltip" data-placement="top"
+                        title="{{ instruction.instruction }}"
+                        class="btn btn--s-small btn--primary mdl-button mdl-js-button mdl-js-ripple-effect insert-instruction">
+                    {{ name }}
+                </button>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <div class="alert alert-warning">
+        {{ trans('No instructions available for this template.') }}
+    </div>
+{% endif %}

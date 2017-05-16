@@ -1,0 +1,42 @@
+<div class="card-ctrls__right">
+    <div class="card-filter">        
+        {% for item in selected %}
+            {{ item|raw }}
+        {% endfor %}           
+    </div>
+    <div class = "ddown ddown-multi">
+        <div class = "ddown-multi__init btn--dropdown btn btn--md btn--default mdl-js-button mdl-js-ripple-effect mr-24">
+            Filter
+        </div>
+        <input type="hidden" name="route" value="{{ route }}" class="filter-group-route" />
+        <ul class="ddown-multi__menu">        
+            <li class="ddown-multi__label">
+                <span>Filter By</span>
+            </li>
+            {% for filter in filters %}                
+                <li class="has-submenu">                
+                    <a data-target="{{ filter.get('name') }}" href="#">
+                        <span>
+                            {{ filter.get('name') }}
+                        </span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+        {% for filter in filters %}
+            <div class="filter-container">
+                <input type="hidden" name="column" value="{{ filter.get('column') }}" class="filter-group-column" />            
+                <ul data-name="{{ filter.get('name') }}" class="ddown-multi__submenu">
+                    <li class="ddown-multi__label"><span>Filter By</span></li>        
+                    <li class="ddown-multi__return">
+                        <a href="#">
+                            <i class="zmdi zmdi-chevron-left"></i>
+                            <span>{{ filter.get('name') }}</span>
+                        </a>
+                    </li>
+                    {{ filter|raw }}                
+                </ul> 
+            </div>    
+        {% endfor %}    
+    </div>
+</div>

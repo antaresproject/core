@@ -1,0 +1,17 @@
+{% extends 'antares/foundation::layouts.antares.main' %}
+{% block sidebar_top_widgets %}
+
+{% endblock %}    
+{% block main_content %}
+    <section class="main-content">
+        {% include 'antares/foundation::components.messages'  %}                                    
+        {% block content %}
+        {% endblock %}         
+        {% if app('antares.ui-components.installed') %}            
+            <div class="grid-stack">
+                {{ component_forced('error_log_details_datatable_widget',{'x':0,'y':0,'width':9,'height':25,'titlable':false,'disabled':false})|raw }}
+                {{ component_forced('error_log_details_widget',{'x':9,'y':0,'width':3,'height':9,'disabled':false})|raw }}        
+            </div>                            
+        {% endif %}
+    </section>
+{% endblock %} 

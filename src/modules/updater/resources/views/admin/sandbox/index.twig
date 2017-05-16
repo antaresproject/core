@@ -1,0 +1,19 @@
+{% extends "antares/foundation::layouts.antares.index" %}
+{% block content %}    
+    <ul class="sandbox-queue hidden">        
+        <li desc="{{ trans('antares/updater::messages.sandbox.checking_requirements') }}" href="{{ handles('antares::updater/sandbox/requirements',{'csrf':true}) }}"></li>
+        <li desc="{{ trans('antares/updater::messages.sandbox.creates_database_instance') }}" href="{{ handles('antares::updater/sandbox/database',{'csrf':true,'version':actual}) }}"></li>
+        <li desc="{{ trans('antares/updater::messages.sandbox.migrating_system_files') }}" href="{{ handles('antares::updater/sandbox/migration',{'csrf':true,'version':actual}) }}"></li>        
+        <li desc="{{ trans('antares/updater::messages.sandbox.clearing') }}" href="{{ handles('antares::updater/sandbox/ending',{'csrf':true,'version':actual}) }}"></li>
+        <li desc="{{ trans('antares/updater::messages.sandbox.preparing_to_open') }}" href="{{ handles('antares::updater/sandbox/save',{'csrf':true,'sandbox':actual,'version':actual}) }}"></li>        
+        <li desc="{{ trans('antares/updater::messages.sandbox.opening_sandbox_mode') }}" href="{{ handles('antares::updater/sandbox/open',{'csrf':true,'version':actual}) }}"></li>
+    </ul>    
+    <a class="sandbox-rollback hidden" desc="{{ trans('antares/updater::messages.sandbox.rollback') }}" href="{{ handles('antares::updater/sandbox/rollback',{'csrf':true}) }}"></a>    
+    <div id="Sandbox-Modal" title="{{ trans('antares/updater::messages.sandbox.create_new_sandbox_instance') }}" style="display:none;" class="w800">
+        {{ trans('antares/updater::messages.sandbox.it_make_take_a_while') }}
+        <div class="update-container"></div>
+        <div class="create-sandbox-container"></div>
+    </div>    
+    {{ dataTable.scripts()|raw }}   
+    {{ dataTable.tableDeferred()|raw }}
+{% endblock %}

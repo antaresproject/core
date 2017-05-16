@@ -1,0 +1,12 @@
+<div class="analyzer-report">
+    <div id="header">
+        <h1>{{ trans('System Version') }}</h1>        
+    </div>
+    <div class="{{ messages is defined and messages is not empty ? 'col-primary':'' }}">
+        <div class="infoTable">
+            <h3>{{ trans('Current System Version') }}: {{ version }}</h3>
+        </div>
+    </div>
+    {% include 'antares/logger::admin.analyze.partials._validation' with {'messages': messages} %}  
+</div>    
+

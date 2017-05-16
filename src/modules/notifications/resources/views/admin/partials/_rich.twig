@@ -1,0 +1,97 @@
+<div class="form-block content-rich">
+    <div class="col-16 mb2">
+        {{ Form.label(control.name, control.label,{'class':'as-fs form-block__name'})|raw }}
+    </div>
+    <div class="col-16">
+        <div class="card card--tabs ">
+            <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+                <div class="mdl-tabs__tab-bar">
+                    <a href="#template-wysiwyg" class="mdl-tabs__tab is-active">{{ trans('Wysiwyg') }}</a>
+                    <a href="#template-html" class="mdl-tabs__tab">{{ trans('Html') }}</a>
+                </div>
+                <div class="mdl-tabs__panel is-active" id="template-wysiwyg">
+                    <div class="col-13 nopadding">
+                        {{ control.getField(row, control, [])|raw }}
+                        <div id="{{ control.id }}_error" class="error">
+                            {{ errors.first(control.name, format)|raw }}
+                        </div>
+                    </div>
+                    <div>
+                        <label>{{ trans('VARIABLES') }}</label>
+                        {% if variables is not empty %}
+                            <ul class="mdl-list">
+                                {% for extension, variables_container in variables %}
+                                    <li class="mdl-list__item col-8">
+                                        <div class="ddown">
+                                            <div id="{{ extension }}" class="ddown__init btn--dropdown btn btn--md btn--default mdl-js-button mdl-js-ripple-effect">{{ extension }}</div>
+                                            <div class="ddown__content">
+                                                <div class="ddown__arrow"></div>
+                                                <ul class="ddown__menu" data-scrollable>
+                                                    {% for value in variables_container %}
+                                                        <li>
+                                                            <a class="insert-variable"
+                                                               title="{{ extension|lower }}::{{ value['name'] }}"
+                                                               data-target="group" href="#">
+                                                                <span>{{ value.description|default(value.name) }}</span>
+                                                            </a>
+                                                        </li>
+                                                    {% endfor %}
+                                               </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <div class="alert alert--bg alert--glow alert--warning alert--lg alert--border">
+                                <i class="zmdi zmdi-alert-triangle"></i>
+                                <span>
+                                    {{ trans('No variables available for this template.') }}
+                                </span>
+                            </div>
+                        {% endif %}
+                        <label>{{ trans('INSTRUCTIONS') }}</label>
+                        {% if instructions is not empty %}
+                            <ul class="mdl-list">
+                                {% for name, instruction in instructions %}
+                                    <li class="mdl-list__item col-8">
+                                        <button type="button" data-toggle="tooltip" data-placement="top"
+                                                title="{{ instruction.instruction }}"
+                                                class="btn btn--s-small btn--primary mdl-button mdl-js-button mdl-js-ripple-effect insert-instruction">
+                                            {{ name }}
+                                        </button>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <div class="alert alert-warning">
+                                {{ trans('No instructions available for this template.') }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mdl-tabs__panel" id="template-html">
+                    <textarea id="template-source-code" rows="20" cols="140" style="width:80%;">
+                        {{ control.get('value')|raw }}
+                    </textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if fieldsets[0].has('content_sms') %}
+        {% set controlSms=fieldsets[0].field('content_sms') %}
+        <div class="col-16">
+            <div class="content-no-rich" style="display:none;">
+                <div class="form-group {{ errors.has(controlSms.name) ? ' has-error' : '' }}">
+                    {{ Form.label(controlSms.name, controlSms.label,{'class':'control-label col-sm-1'})|raw }}
+                    <div class="col-sm-5">
+                        {{ controlSms.getField(row, controlSms, [])|raw }}
+                        <div id="{{ controlSms.id }}_error" class="error">
+                            {{ errors.first(controlSms.name, format)|raw }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>

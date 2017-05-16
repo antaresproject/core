@@ -1,0 +1,16 @@
+{{ Form.open(form)|raw }}
+{% for fieldset in fieldsets %}
+    <fieldset name="inputs">                
+        {% for control in fieldset.controls() %}
+            <div class="form-block">
+                {{ control.getField(row, control, [])|raw }}
+            </div>
+        {% endfor %}
+    </fieldset>
+{% endfor %}
+{% if buttons|length>0 %}        
+    {% for button in buttons %}
+        {{ button.getField(row, button, [])|raw }}
+    {% endfor %}  
+{% endif %}
+{{ Form.close()|raw }}

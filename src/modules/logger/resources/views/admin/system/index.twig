@@ -1,0 +1,40 @@
+{% extends "antares/foundation::layouts.antares.index" %}
+{% block content %}      
+    <div class="card card--padding24">
+        <div class="card__header">
+            <div class="card__header-left">
+                <span>{{ trans('System Information') }}</span>
+            </div>
+            <div class="card__header-right">
+            </div>
+        </div>
+        <div class="card__content">
+            <div class="col-group">
+                <div class="col-3">
+                    <a href="{{ handles('antares::logger/analyze') }}" class="btn btn--s-extra-large btn--primary mdl-button mdl-js-button mdl-js-ripple-effect analyze-btn ajaxable" data-description="{{ trans('Tester will verify modules configuration. Operation can take a while...') }}" data-title="{{ trans('Do you want to attach tester report?') }}">
+                        {{ trans('Run System Analyzer') }}
+                    </a>            
+                </div>
+                <div class="col-3">
+                    <form action="{{ handles('antares::logger/generate',{'csrf':true}) }}" method="POST" class="form-report row show-grid hidden">
+                        <input type="hidden" value="{{ trans('System Analyzer Report')~" "~"now"|date("Y-m-d H:i:s") }}" name="name" />
+                        <input type="hidden" value="analyzer" name="type" />
+                        <input type="hidden" value="" name="src" />
+                        <button type="submit" class="btn btn--s-extra-large btn--blue mdl-button mdl-js-button mdl-js-ripple-effect report-btn ajaxable" data-description="{{ trans('Create Analyzer Report...') }}" data-title="{{ trans('Do you want to create analyzer report?') }}">
+                            {{ trans('antares/logger::messages.download_pdf') }}
+                        </button>
+                    </form>
+                </div>
+            </div>    
+            <div class="analyzer-container" style="margin-top: 10px;"></div>        
+            <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect analyzer-tabs hidden">
+                <div class="mdl-tabs__tab-bar nav-tabs">
+
+                </div>
+                <div class="tab-content">
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

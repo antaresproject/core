@@ -1,0 +1,58 @@
+<div class="analyzer-report">
+    <div id="header">
+        <h1>{{ trans('Components and Modules List') }}</h1>        
+    </div>
+    <div class="{{ messages is defined and messages is not empty ? 'col-primary':'' }}">
+        <div class="infoTable">
+            <h2>{{ trans('Components List') }}</h2>
+            <table class="table"> 
+                <tbody> 
+                    <tr> 
+                        <th>{{ trans('Name') }}</th> 
+                        <th>{{ trans('Description') }}</th> 
+                        <th>{{ trans('Author') }}</th>
+                        <th>{{ trans('Url') }}</th>
+                        <th>{{ trans('Version') }}</th>
+                        <th>{{ trans('Status') }}</th>
+                    </tr>
+                    {% for name, component in components %}
+                        <tr> 
+                            <td>{{ component['full_name'] }}</td> 
+                            <td>{{ component['description']|raw[:120] ~ '...' }}</td> 
+                            <td>{{ component['author'] }}</td> 
+                            <td>{{ component['url'] }}</td> 
+                            <td>{{ component['version'] }}</td> 
+                            <td>{{ inactive[name] is not defined ? 'active':'inactive' }}</td> 
+                        </tr> 
+                    {% endfor %}                
+                </tbody> 
+            </table>        
+        </div>  
+        <div class="infoTable">
+            <h2>{{ trans('Modules List') }}</h2>
+            <table class="table"> 
+                <tbody> 
+                    <tr> 
+                        <th>{{ trans('Name') }}</th> 
+                        <th>{{ trans('Description') }}</th> 
+                        <th>{{ trans('Author') }}</th>
+                        <th>{{ trans('Url') }}</th>
+                        <th>{{ trans('Version') }}</th>
+                        <th>{{ trans('Status') }}</th>
+                    </tr>
+                    {% for name, module in modules %}
+                        <tr> 
+                            <td>{{ module['full_name'] }}</td> 
+                            <td>{{ module['description']|raw[:120] ~ '...' }}</td> 
+                            <td>{{ module['author'] }}</td> 
+                            <td>{{ module['url'] }}</td> 
+                            <td>{{ module['version'] }}</td> 
+                            <td>{{ inactive[name] is not defined ? 'active':'inactive' }}</td> 
+                        </tr> 
+                    {% endfor %}                
+                </tbody> 
+            </table>        
+        </div> 
+        {% include 'antares/logger::admin.analyze.partials._validation' with {'messages': messages} %}  
+    </div>
+</div>

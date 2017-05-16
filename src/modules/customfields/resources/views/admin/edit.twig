@@ -1,0 +1,5 @@
+{% set ajax=app('request').ajax() %}
+{% extends ajax == false ? "antares/foundation::layouts.antares.index" : "antares/foundation::layouts.antares.clear" %}    
+{% block content %}
+    {{ form|raw }}  
+{% endblock %}

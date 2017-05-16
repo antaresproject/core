@@ -1,0 +1,19 @@
+{% extends "antares/foundation::layouts.antares.index" %}
+{% block content %}  
+    <div class="card card--info">
+        <div class="card__header">
+            <div class="card__header-left">
+                <span>{{ model.name }}</span>
+            </div>
+        </div>
+        <div class="card__content">  
+            {% if model.html is empty %}
+                <div class="alert alert-error">
+                    Report content is empty
+                </div>
+            {% else %}
+                {{ model.html|raw }}
+            {% endif %}
+        </div>
+    </div>   
+{% endblock %}

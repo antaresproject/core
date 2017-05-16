@@ -1,0 +1,20 @@
+{% if forms is not empty %}
+    {% for controller,actions in forms %}
+        <ul>
+            <li>{{ controller }}</li>
+            <ul>
+                {% for name,namedForms in actions %}                                        
+                    {% for formId,form in namedForms %}
+                        {% if form|length>0 %}
+                            <li>
+                                <a class="action-properties ajaxable" href="{{ handles('antares::control/properties/'~id~'/id/'~formId) }}">
+                                    {{ form|str_humanize }}: {{ name }}
+                                </a>    
+                            </li>                       
+                        {% endif %}
+                    {% endfor %}    
+                {% endfor %}    
+            </ul>
+        </ul>
+    {% endfor %}    
+{% endif %}    

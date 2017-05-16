@@ -1,0 +1,16 @@
+{% set menu=app('antares.widget').make('menu.translations.pane') %}
+<div class="menu-aside-container">    
+    <ul class="menu-aside">
+        {% for item in menu %}
+
+            <li {{ item.active ? 'class="is-active"' : '' }}>
+                <a href="{{ item.link }}" class="mdl-js-button mdl-js-ripple-effect"  data-upgraded=",MaterialButton,MaterialRipple">
+                    <span>{{ item.title }}</span>
+                    <span class="mdl-button__ripple-container">
+                        <span class="mdl-ripple"></span>
+                    </span>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
