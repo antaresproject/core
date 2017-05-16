@@ -69,7 +69,7 @@
         "laravolt/avatar": "^1.0@dev",
         "thomaswelton/laravel-gravatar": "~1.0",
         "symfony/filesystem": ">=2.4"
-    },
+    },    
     "require-dev": {
         "davejamesmiller/laravel-breadcrumbs": "dev-master",
         "linfo/linfo": "dev-master"        
