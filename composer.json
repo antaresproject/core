@@ -75,6 +75,9 @@
         "linfo/linfo": "dev-master"        
     },
     "autoload": {
+        "classmap": [
+            "src"
+        ],
         "files": [
             "src/components/html/src/Support/helpers.php",
             "src/foundation/src/helpers.php",
