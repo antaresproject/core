@@ -1,9 +1,0 @@
-<div class="type--label">
-    <div class="datarow__left ff-cw contains-id">
-        <span class="id">#{{ model.log_id }}</span>
-        <span>{{ model.raw|slice(0, 50) ~ '...'|raw }}</span>
-    </div>
-    <div class="datarow__right">
-        {{ priority_label(model.log.priority.name)|raw }}
-    </div>
-</div>
