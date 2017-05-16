@@ -9,7 +9,6 @@ use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
 use Antares\Extension\Model\Operation;
 use Antares\Acl\RoleActionList;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
@@ -45,7 +44,6 @@ class Acl
         $filePath = $extension->getPath() . '/acl.php';
         if (!File::exists($filePath)) {
             $handler->operationInfo(new Operation('Skipping importing ACL settings for ' . $name . '.'));
-
             return;
         }
 

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Antares\Extension\Model;
 
@@ -11,7 +11,8 @@ use Composer\Package\CompletePackageInterface;
 use Composer\Package\PackageInterface;
 use Illuminate\Support\Arr;
 
-class Extension implements ExtensionContract {
+class Extension implements ExtensionContract
+{
 
     /**
      * @var PackageInterface
@@ -59,11 +60,12 @@ class Extension implements ExtensionContract {
      * @param string $path
      * @param string $rootNamespace
      */
-    public function __construct(CompletePackageInterface $package, string $path, string $rootNamespace) {
-        $this->package          = $package;
-        $this->path             = $path;
-        $this->rootNamespace    = $rootNamespace;
-        $this->settings         = new Settings();
+    public function __construct(CompletePackageInterface $package, string $path, string $rootNamespace)
+    {
+        $this->package       = $package;
+        $this->path          = $path;
+        $this->rootNamespace = $rootNamespace;
+        $this->settings      = new Settings();
 
         list($this->vendorName, $this->packageName) = explode('/', $this->package->getName());
     }
@@ -73,7 +75,8 @@ class Extension implements ExtensionContract {
      *
      * @return CompletePackageInterface
      */
-    public function getPackage() : CompletePackageInterface {
+    public function getPackage(): CompletePackageInterface
+    {
         return $this->package;
     }
 
@@ -82,7 +85,8 @@ class Extension implements ExtensionContract {
      *
      * @return string
      */
-    public function getVendorName() : string {
+    public function getVendorName(): string
+    {
         return $this->vendorName;
     }
 
@@ -91,7 +95,8 @@ class Extension implements ExtensionContract {
      *
      * @return string
      */
-    public function getPackageName() : string {
+    public function getPackageName(): string
+    {
         return $this->packageName;
     }
 
@@ -100,7 +105,8 @@ class Extension implements ExtensionContract {
      *
      * @return string
      */
-    public function getNameWithVersion() : string {
+    public function getNameWithVersion(): string
+    {
         return $this->getPackage()->getName() . ':' . $this->getPackage()->getPrettyVersion();
     }
 
@@ -109,7 +115,8 @@ class Extension implements ExtensionContract {
      *
      * @return string
      */
-    public function getPath() : string {
+    public function getPath(): string
+    {
         return $this->path;
     }
 
@@ -118,7 +125,8 @@ class Extension implements ExtensionContract {
      *
      * @return string
      */
-    public function getRootNamespace() : string {
+    public function getRootNamespace(): string
+    {
         return $this->rootNamespace;
     }
 
@@ -127,7 +135,8 @@ class Extension implements ExtensionContract {
      *
      * @param int $status
      */
-    public function setStatus(int $status) {
+    public function setStatus(int $status)
+    {
         $this->status = $status;
     }
 
@@ -136,7 +145,8 @@ class Extension implements ExtensionContract {
      *
      * @return int
      */
-    public function getStatus() : int {
+    public function getStatus(): int
+    {
         return $this->status;
     }
 
@@ -145,7 +155,8 @@ class Extension implements ExtensionContract {
      *
      * @return bool
      */
-    public function isInstalled() : bool {
+    public function isInstalled(): bool
+    {
         return $this->status === ExtensionContract::STATUS_INSTALLED || $this->isActivated();
     }
 
@@ -154,7 +165,8 @@ class Extension implements ExtensionContract {
      *
      * @return bool
      */
-    public function isActivated() : bool {
+    public function isActivated(): bool
+    {
         return $this->status === ExtensionContract::STATUS_ACTIVATED;
     }
 
@@ -163,7 +175,8 @@ class Extension implements ExtensionContract {
      *
      * @param bool $state
      */
-    public function setIsRequired(bool $state) {
+    public function setIsRequired(bool $state)
+    {
         $this->isRequired = $state;
     }
 
@@ -172,7 +185,8 @@ class Extension implements ExtensionContract {
      *
      * @return bool
      */
-    public function isRequired():  bool {
+    public function isRequired(): bool
+    {
         return $this->isRequired;
     }
 
@@ -181,7 +195,8 @@ class Extension implements ExtensionContract {
      *
      * @param SettingsContract $settings
      */
-    public function setSettings(SettingsContract $settings) {
+    public function setSettings(SettingsContract $settings)
+    {
         $this->settings = $settings;
     }
 
@@ -190,7 +205,8 @@ class Extension implements ExtensionContract {
      *
      * @return SettingsContract
      */
-    public function getSettings() : SettingsContract {
+    public function getSettings(): SettingsContract
+    {
         return $this->settings;
     }
 
@@ -199,9 +215,10 @@ class Extension implements ExtensionContract {
      *
      * @return string
      */
-    public function getFriendlyName() : string {
-        $extra          = $this->getPackage()->getExtra();
-        $regularName    = str_replace('component-', '', $this->getPackageName());
+    public function getFriendlyName(): string
+    {
+        $extra       = $this->getPackage()->getExtra();
+        $regularName = str_replace(['component-', 'module-'], '', $this->getPackageName());
 
         return (string) Arr::get($extra, 'friendly-name', $regularName);
     }
@@ -211,7 +228,8 @@ class Extension implements ExtensionContract {
      *
      * @return string
      */
-    public function getFriendlyType() : string {
+    public function getFriendlyType(): string
+    {
         return Types::getTypeByExtension($this);
     }
 
@@ -220,20 +238,21 @@ class Extension implements ExtensionContract {
      *
      * @return array
      */
-    public function toArray() : array {
+    public function toArray(): array
+    {
         return [
-            'name'          => $this->package->getName(),
-            'vendorName'    => $this->getVendorName(),
-            'packageName'   => $this->getPackageName(),
-            'version'       => $this->package->getVersion(),
-            'required'      => $this->isRequired(),
-            'installed'     => $this->isInstalled(),
-            'activated'     => $this->isActivated(),
-            'path'          => $this->getPath(),
-            'namespace'     => $this->getRootNamespace(),
-            'friendlyName'  => $this->getFriendlyName(),
-            'type'          => $this->getFriendlyType(),
-            'status'        => $this->getStatus(),
+            'name'         => $this->package->getName(),
+            'vendorName'   => $this->getVendorName(),
+            'packageName'  => $this->getPackageName(),
+            'version'      => $this->package->getVersion(),
+            'required'     => $this->isRequired(),
+            'installed'    => $this->isInstalled(),
+            'activated'    => $this->isActivated(),
+            'path'         => $this->getPath(),
+            'namespace'    => $this->getRootNamespace(),
+            'friendlyName' => $this->getFriendlyName(),
+            'type'         => $this->getFriendlyType(),
+            'status'       => $this->getStatus(),
         ];
     }
 
@@ -243,7 +262,8 @@ class Extension implements ExtensionContract {
      * @param  int $options
      * @return string
      */
-    public function toJson($options = 0) : string {
+    public function toJson($options = 0): string
+    {
         return json_encode($this->toArray(), $options);
     }
 

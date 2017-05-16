@@ -64,8 +64,8 @@ class Finder implements FinderContract
         $base         = rtrim($config['path.base'], '/');
 
         $this->paths = [
-            "{$base}/src/components/*/src",
-            "{$base}/src/modules/*/*/src",
+            "{$base}/src/core/src/modules/*/src",
+            "{$base}/src/modules/*/src",
         ];
     }
 
@@ -95,6 +95,7 @@ class Finder implements FinderContract
         $components  = [];
         $factory     = app('antares.extension');
         $directories = [];
+
         foreach ($this->paths as $path) {
             try {
                 $directories = array_merge($directories, $this->files->directories($path));
@@ -103,8 +104,8 @@ class Finder implements FinderContract
             }
         }
         $inner = [];
-
         foreach ($directories as $index => $directory) {
+
             $classBasename = class_basename($directory);
             if ($classBasename !== 'Widgets' or ! $factory->getActiveExtensionByPath($directory)) {
                 unset($directories[$index]);
@@ -116,12 +117,9 @@ class Finder implements FinderContract
         }
 
         $directories = array_merge($directories, $inner);
-
         foreach ($directories as $directory) {
-
             $components = array_merge($components, $this->files->files($directory));
         }
-
         return $components;
     }
 

@@ -61,6 +61,7 @@ class AclCommand extends Command implements OperationHandlerContract
         $extensionName = $this->argument('extension');
         if ($extensionName) {
             $extension = $manager->getAvailableExtensions()->findByName($extensionName);
+
             if ($extension instanceof ExtensionContract) {
                 $this->acl->import($this, $extension, true);
             }

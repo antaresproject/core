@@ -186,6 +186,8 @@ class Permission extends Eloquent
                     $return['extensions']['active'][$name] = $configuration;
                 }
             }
+
+
             $key          = $isCore ? 'acl_antares' : 'acl_' . $this->getNormalizedName($configuration['fullname']);
             $return[$key] = [
                 'acl'     => $this->permissions($model->permissions),
@@ -207,7 +209,7 @@ class Permission extends Eloquent
      */
     protected function getNormalizedName(string $name): string
     {
-        $name = str_replace('antaresproject/component-', 'antares/', $name);
+        $name = str_replace(['antaresproject/component-', 'antaresproject/module-'], 'antares/', $name);
 
         return str_replace('-', '_', $name);
     }
@@ -227,17 +229,16 @@ class Permission extends Eloquent
             if ($name === null) {
                 return false;
             }
+            $model = null;
+
             if (str_contains($name, '/')) {
                 list($vendor, $name) = explode('/', $name);
-
-                $model = $this->query()
-                        ->where('vendor', '=', $vendor)
-                        ->where('name', '=', $name)
-                        ->first();
+                $model = $this->query()->where(['vendor' => $vendor, 'name' => $name])->first();
             } elseif ($name !== 'core' && !str_contains($name, 'component-')) {
-                $name  = 'component-' . $name;
-                $model = $this->query()->where('name', '=', $name)->first();
-            } else {
+                $name = 'component-' . $name;
+            }
+            $name = str_replace('module_', 'module-', $name);
+            if (is_null($model)) {
                 $model = $this->query()->where('name', '=', $name)->first();
             }
             if ($model === null) {
