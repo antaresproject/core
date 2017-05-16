@@ -1,0 +1,34 @@
+<div class="analyzer-report">
+    <div id="header">
+        <h1>{{ trans('System and Modules Files') }}</h1>        
+    </div>    
+    {% for name, directory in directories %}
+        <div class="infoTable">
+            <h2>
+                {% if name=='core' %}
+                    {{ trans('System Directories') }}
+                {% elseif name=='components' %}
+                    {{ trans('Component Directories') }}
+                {% else %}    
+                    {{ trans('Module Directories') }}
+                {% endif %}     
+            </h2>
+            <table class="table"> 
+                <tbody> 
+                    <tr>
+                        <th>{{ trans('Directory') }}</th> 
+                        <th>{{ trans('Files Count') }}</th>
+                        <th>{{ trans('Size') }}</th>                         
+                    </tr>
+                    {% for row in directory %}
+                        <tr> 
+                            <td>{{ row['directory'] }}</td> 
+                            <td>{{ row['files_count'] }}</td> 
+                            <td>{{ row['size'] }}</td> 
+                        </tr> 
+                    {% endfor %}                
+                </tbody> 
+            </table>        
+        </div>  
+    {% endfor %}        
+</div>

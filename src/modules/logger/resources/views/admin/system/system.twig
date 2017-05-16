@@ -1,0 +1,539 @@
+<div class="infoTable">
+    <h2>{{ lang['core'] }}</h2>
+    <table>
+        <tr>
+            <th>{{ trans('Hostname') }}</th>
+            <td>{{ info['HostName'] }}</td>
+        </tr>
+        {% for val in core %}                        
+            <tr>
+                <th>{{ val[0]|raw }}</th>
+                <td>{{ val[1]|raw }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+{% if settings['show']['ram'] is not empty %}
+    <div class="infoTable">
+        <h2>{{ lang['memory'] }}</h2>
+        <table>
+            <colgroup>
+                <col style="width: 12%;" />
+                <col style="width: 23%;" />
+                <col style="width: 23%;" />
+                <col style="width: 23%;" />
+                <col style="width: 23%;" />
+            </colgroup>
+            <tr>
+                <th>{{ lang['type'] }}</th>
+                <th>{{ lang['size'] }}</th>
+                <th>{{ lang['used'] }}</th>
+                <th>{{ lang['free'] }}</th>
+                <th>{{ lang['percent_used'] }}</th>
+            </tr>
+            <tr>
+                <td>{{ info['RAM']['type'] }}</td>
+                <td>{{ closure(byteConvert,info['RAM']['total'])|raw }}</td>
+                <td>{{ closure(byteConvert,(info['RAM']['total'] - info['RAM']['free']))|raw }}</td>
+                <td>{{ closure(byteConvert,info['RAM']['free'])|raw }}</td>
+                <td>{{ closure(generateBarChart,( ((info['RAM']['total'] - info['RAM']['free']) * 100) / info['RAM']['total'])|round )|raw }}</td>
+            </tr>
+            {% if have_swap and info['RAM']['swapTotal'] is not empty %}
+                <tr>
+                    <td {{ show_detailed_swap ? ' rowspan="2"' : ''  }}>
+                        Swap
+                    </td>
+                    <td>{{ closure(byteConvert,info['RAM']['swapTotal'])|raw }}</td>
+                    <td>{{ closure(byteConvert,info['RAM']['swapTotal'] - info['RAM']['swapFree'])|raw }}</td>
+                    <td>{{ closure(byteConvert,info['RAM']['swapFree'])|raw }}</td>
+
+                    <td>
+                        {% if info['RAM']['swapTotal']>0 %}
+                            {{ closure(generateBarChart,( ((info['RAM']['swapTotal'] - info['RAM']['swapFree']) * 100) / info['RAM']['swapTotal'])|round )|raw }}
+                        {% endif %}
+                    </td>
+                </tr>  
+                {% if show_detailed_swap %}
+                    <tr>
+                        <td colspan="4">
+                            <table class="mini center">
+                                <colgroup>
+                                    <col style="width: 25%;" />
+                                    <col style="width: 25%;" />
+                                    <col style="width: 25%;" />
+                                    <col style="width: 25%;" />
+                                </colgroup>
+                                <tr>
+                                    <th>{{ lang['device'] }}</th>
+                                    <th>{{ lang['type'] }}</th>
+                                    <th>{{ lang['size'] }}</th>
+                                    <th>{{ lang['used'] }}</th>
+                                </tr>
+                                {% for swap in info['RAM']['swapInfo'] %}
+                                    <tr>
+                                        <td> {{ swap['device'] }}</td>
+                                        <td>{{ swap['type']|capitalize}}</td>
+                                        <td>{{ closure(byteConvert,swap['size'])|raw }}</td>
+                                        <td>{{ closure(byteConvert,swap['used'])|raw }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                    </tr>
+                {% endif %}    
+            {% endif %}    
+        </table>
+    </div>
+{% endif %}
+{% if settings['show']['network'] is not empty %}
+    <div class="infoTable network_devices">
+        <h2>{{ lang['network_devices'] }}</h2>
+        <table>
+            <tr>
+                <th>{{ lang['device_name'] }}</th>
+                    {% if show_type %}
+                    <th>{{ lang['type'] }}</th>
+                    {% endif %}
+                    {% if show_speed %}
+                    <th>{{ lang['port_speed'] }}</th>
+                    {% endif %}                        
+                <th>{{ lang['amount_sent'] }}</th>
+                <th>{{ lang['amount_received'] }}</th>
+                <th>{{ lang['state'] }}</th>
+            </tr>
+            {% if info['Network Devices']|length>0 %}
+                {% for device,stats in info['Network Devices'] %}
+                    <tr>
+                        <td>{{ device }}</td>
+                        {% if show_type %}
+                            <td>{{ stats['type'] }}</td>
+                        {% endif %}
+                        {% if show_speed %}
+                            <td>{{ (stats['port_speed'] is defined and not stats['port_speed']==false) ? stats['port_speed']~'Mb/s':'' }}</td>
+                        {% endif %}
+                        <td>{{ closure(byteConvert,stats['sent']['bytes']) }}</td>
+                        <td>{{ closure(byteConvert,stats['recieved']['bytes']) }}</td>
+                        <td class="net_{{ stats['state'] }}">
+                            {{ stats['state']|capitalize }}
+                        </td>
+                    </tr>
+                {% endfor %}   
+            {% else %}    
+                <tr>
+                    <td colspan="5" class="none">
+                        {{ lang['none_found'] }}
+                    </td>
+                </tr>
+            {% endif %}                    
+        </table>
+    </div>
+{% endif %}
+{% if settings['show']['temps'] is not empty and info['Temps']|length>0 %}
+    <div class="infoTable">
+        <h2>{{ lang['temps_voltages'] }}</h2>
+        <table>
+            <tr>
+                <th>{{ lang['path'] }}</th>
+                <th>{{ lang['device'] }}</th>
+                <th>{{ lang['value'] }}</th>
+            </tr>
+            {% if settings['show']['temps'] is not empty and info['Temps']|length>0 %}
+                {% for stat in info['Temps'] %}
+                    <tr>
+                        <td>{{ stat['path'] }}</td>
+                        <td>{{ stat['name'] }}</td>
+                        <td>
+                            {% if stat.bar is defined and stat['bar'] is not empty and stat['unit'] == '%' %}
+                                <div class="bar_chart">
+                                    <div class="bar_inner" style="width: {{ stat['temp'] }}%;">
+                                        <div class="bar_text">
+                                            {{ (stat['temp'] > -1 ? stat['temp'] : '?') }}%										
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}    
+                                {{ stat['temp']~' '~stat['unit'] }}
+                            {% endif %}
+                        </td>
+                    </tr> 
+                {% endfor %}   
+            {% else %}
+                <tr>
+                    <td colspan="3" class="none">
+                        {{ stat['none_found'] }}
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>                
+{% endif %} 
+{% if settings['show']['battery'] is not empty and info['Battery']|length>0 %}
+    <div class="infoTable">
+        <h2>{{ lang['batteries'] }}</h2>
+        <table>
+            <tr>
+                <th>{{ lang['device'] }}</th>
+                <th>{{ lang['state'] }}</th>
+                <th>{{ lang['charge'] }} %</th>
+            </tr>
+            {% for bat in info['Battery'] %}
+                <tr>
+                    <td>{{ bat['device'] }}</td>
+                    <td>{{ bat['state'] }}</td>
+                    <td>{{ closure(generateBarChart,bat['percentage'],bat['percentage'] > -1 ? bat['percentage']~'%' : 'N/A') }}</td>
+                </tr>
+            {% endfor %}  
+        </table>
+    </div>
+{% endif %}                     
+{% if settings['show']['services'] is not empty and info['services']|length>0 %}
+    <div class="infoTable">
+        <h2>{{ lang['services'] }}</h2>
+        <table>
+            <tr>
+                <th>{{ lang['service'] }}' . $lang['service'] . '</th>
+                <th>{{ lang['state'] }}' . $lang['state'] . '</th>
+                <th>{{ lang['pid'] }}' . $lang['pid'] . '</th>
+                <th>Threads</th>
+                <th>{{ lang['memory_usage'] }}</th>
+            </tr>
+            {% for service,state in info['services'] %}
+                {% set state_parts = state['state']|split(' ') %}
+                <tr>
+                    <td>{{ service }}</td>
+                    <td>
+                        <span class="service_{{ state_parts[0]|lower }}">{{ state_parts[0] }}</span>
+                        {{ state_parts[1] is defined ? closure(fadedText,state_parts[1])~'</span>':'' }}
+                    </td>
+                    <td>{{ state['pid'] }}' . $state['pid'] . '</td>
+                    <td>, {{ state['threads'] ? state['threads'] : '?' }}, </td>
+                    <td>, {{ state['memory_usage'] ? closure(byteConvert,state['memory_usage']) : '?' }}, </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endif %}        
+{% if settings['show']['devices'] is not empty %}
+    <div class="infoTable">
+        <h2>{{ lang['hardware'] }}</h2>
+        <table>
+            <tr>
+                <th>{{ lang['type'] }}</th>
+                    {% if show_vendor %}
+                    <th>{{ lang['vendor'] }}</th>
+                    {% endif %}					 
+                <th>{{ lang['device'] }}</th>
+            </tr>
+            {% set num_devs            = info['Devices']|length %}
+            {% if num_devs>0 %}
+                {% for i in 0..num_devs %}
+                    <tr>
+                        <td class="center">
+                            {{ info['Devices'][i]['type'] }}
+                        </td>
+                        {% if show_vendor %}
+                            <td>
+                                {{ info['Devices'][i]['vendor'] ? info['Devices'][i]['vendor'] : 'Unknown'  }}
+                            </td>
+                        {% endif %}
+                        <td>
+                            {{ info['Devices'][i]['device'] }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3" class="none">
+                        {{ lang['none_found'] }}
+                    </td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+{% endif %}    
+{% if settings['show']['hd'] is not empty %}
+    {% if not info['contains']['drives_rw_stats'] is defined %}
+        {% set show_stats=true%}
+    {% else %}
+        {% set show_stats=info['contains']['drives_rw_stats']%}
+    {% endif %}                
+    {% set show_vendor=(info['contains']['drives_vendor'] is defined) ? (info['contains']['drives_vendor'] == false ? false : true) : true   %}
+    <div class="infoTable">
+        <h2>{{ lang['drives'] }}</h2>
+        <table>
+            <tr>
+                <th>{{ lang['path'] }}</th>
+                    {% if show_vendor %}
+                    <th>{{ lang['vendor'] }}</th>
+                    {% endif %}                                        
+                <th>{{ lang['name'] }}</th>
+                    {% if show_stats %}
+                    <th>{{ lang['reads'] }}</th>
+                    {% endif %}                                        
+                <th>{{ lang['writes'] }}</th>
+                <th>{{ lang['size'] }}</th>
+            </tr>
+            {% if info['HD']|length>0 %}
+                {% for drive in info['HD'] %}
+                    <tr>
+                        <td>{{ drive['device'] }}</td>
+                        {% if show_vendor %}
+                            <td>{{ drive['vendor'] ? drive['vendor'] : lang['unknown'] }}</td>                                                    
+                        {% endif %}                                        
+                        <td>{{ drive['name'] ? drive['name'] : lang['unknown'] }}</td>                                                    
+                        {% if show_stats %}
+                            <td>
+                                {{ not drive['reads']==false ? drive['reads']|number_format : lang['unknown'] }}
+                            </td>
+                        {% endif %}
+                        <td>
+                            {{  not drive['writes'] == false ? drive['writes']|number_format : lang['unknown'] }}                                                    
+                        </td>
+                        <td>
+                            {{  not drive['size'] ? closure(byteConvert,drive['size']) : lang['unknown'] }}                                                    
+                        </td>                                                    
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr><td colspan="6" class="none">{{ lang['none_found'] }}</td></tr>
+                {% endif %}    
+        </table>
+    </div>
+{% endif %}                        
+{% if settings['show']['sound'] is not empty and info['SoundCards']|length>0 %}
+    <div class="infoTable">
+        <h2>{{ lang['sound_cards'] }}</h2>
+        <table>
+            <tr>
+                <th>{{ lang['number'] }}</th>
+                <th>{{ lang['vendor'] }}</th>
+                <th>{{ lang['card'] }}</th>
+            </tr>
+            {% for card in info['SoundCards'] %}
+                <tr>
+                    <td>{{ (card['vendor']) is empty ? 'Unknown' : card['vendor'] }}</td>
+                    <td>{{ card['vendor'] }}</td>
+                    <td>{{ card['card'] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endif %}                            
+{% if settings['show']['mounts'] is not empty %}
+    <div class="infoTable filesystem_mounts">
+        <h2> {{lang['filesystem_mounts']}}</h2>
+        <table>
+            <tr>
+                {%if has_types %}
+                    <th>{{ lang['type'] }}</th>
+                    {% endif %}
+                    {%if has_devices %}
+                    <th>{{ lang['device'] }}</th>
+                    {% endif %}
+                <th>{{ lang['mount_point'] }}</th>
+                    {%if has_labels %}
+                    <th>{{ lang['label'] }}</th>
+                    {% endif %}
+                <th>{{ lang['filesystem'] }}</th>
+                    {%if settings['show']['mounts_options'] %}
+                    <th>{{ lang['mount_options'] }}</th>
+                    {% endif %}
+                <th>{{ lang['size'] }}</th>
+                <th>{{ lang['used'] }}</th>
+                <th>{{ lang['free'] }}</th>
+                <th style="width: 12%;">{{ lang['percent_used'] }}</th>
+            </tr>
+            {% if info['Mounts']|length>0 %}
+                {% for mount in mounts %}
+                    <tr>
+                        {% if has_types %}
+                            <td>{{ mount['devtype'] }}</td>
+                        {% endif %}
+                        {% if has_devices %}
+                            <td>{{ mount['device'] }}</td>
+                        {% endif %}
+                        <td>{{ mount['mount'] }}</td>
+                        {% if has_labels %}
+                            <td>{{ mount['label'] }}</td>
+                        {% endif %}
+                        <td>{{ mount['type'] }}</td>
+                        <td>
+                            {% if settings['show']['mounts_options'] %}                                   
+                                {% if mount['options'] is empty %}
+                                    <em>unknown</em>
+                                {% else %}
+                                    <ul>
+                                        <li>
+                                            {{ mount['options']|join('</li><li>')|raw }}
+                                        </li>
+                                    </ul>    
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                        <td>{{ closure(byteConvert,mount['size'])|raw }}</td>
+                        <td>
+                            {{ closure(byteConvert,mount['used'])|raw }}
+                            {% if not mount['used_percent'] == false %}
+                                <span class="perc">( {{ mount['used_percent'] }} %)</span>
+                            {% endif %}    
+                        </td>
+                        <td>
+                            {{ closure(byteConvert,mount['free']) }}
+                            {% if not mount['free_percent'] == false %}
+                                <span class="perc">( {{ mount['free_percent'] }} %)</span>
+                            {% endif %}    
+                        </td>
+                        <td>
+                            {{ closure(generateBarChart,mount['used_percent'],mount['used_percent'] ? mount['used_percent']~'%' : 'N/A')|raw }}
+                            {% if not mount['free_percent'] == false %}
+                                <span class="perc">( {{ mount['free_percent'] }} %)</span>
+                            {% endif %}    
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}                        
+                <tr><td colspan="{{ 6 + addcolumns }}" class="none">None found</td></tr>
+            {% endif %}
+            <tr class="alt">
+                <td>Totals: </td>
+                <td colspan="3"></td>
+                <td>{{ closure(byteConvert,total_size)|raw }}</td>
+                <td>{{ closure(byteConvert,total_used)|raw }}</td>
+                <td>{{ closure(byteConvert,total_free)|raw }}</td>                            
+                <td>{{ closure(generateBarChart,total_used_perc, total_used_perc~'%')|raw }}</td>                                                        
+            </tr>
+        </table>
+    </div>
+{% endif %}         
+{% if settings['show']['raid'] is not empty and info['Raid']|length>0  %}
+    <div class="infoTable drives">
+        <h2>{{ lang['raid_arrays'] }}</h2>
+        <table>
+            <colgroup>
+                <col style="width: 10%;" />
+                <col style="width: 30%;" />
+                <col style="width: 10%;" />
+                <col style="width: 10%;" />
+                <col style="width: 30%;" />
+                <col style="width: 10%;" />
+            </colgroup>
+            <tr>
+                <th>{{ lang['name'] }}</th>
+                <th>{{ lang['level'] }}</th>
+                <th>{{ lang['status'] }}</th>
+                <th>{{ lang['size'] }}</th>
+                <th>{{ lang['devices'] }}</th>
+                <th>{{ lang['active'] }}</th>
+            </tr>
+            {% if info['Raid']|length>0 %}
+                {% for raid in info['Raid'] %}
+                    {% set active = raid['count']|split('/') %}
+                    {% if raid['level']==0 %}
+                        {% set type = 'Stripe' %}
+                    {%elseif raid['level']==1 %}   
+                        {% set type = 'Mirror' %}
+                    {%elseif raid['level']==10 %}    
+                        {% set type = 'Mirrored Stripe' %}
+                    {%elseif raid['level']==5 or raid['level']==6 %}   
+                        {% set type = 'Distributed Parity Block-Level Striping' %}                            
+                    {% else %}    
+                        {% set type = false %}
+                    {% endif %}    
+                    <tr>
+                        <td>{{ raid['device'] }}</td>
+                        <td>
+                            {{ raid['level'] }}
+                            {{ type?'<span class="caption">('~type~')</span>':''}}                                    
+                        </td>
+                        <td>{{ raid['status']|capitalize }}</td>
+                        <td>{{ raid['size'] }}</td>
+                        <td>
+                            <table class="mini center margin_auto"><tr>
+                                    <th>{{ lang['device'] }}</th>
+                                    <th>{{ lang['state'] }}</th>
+                                </tr>
+                                {% for drive in raid['drives'] %}
+                                    <tr>
+                                        <td>{{ drive['drive'] }}</td>
+                                        <td class="raid_{{ drive['state'] }}">
+                                            {{ drive['state']|capitalize }}
+                                        </td>
+                                    </tr>
+                                {% endfor %} 
+                            </table></td>
+                        <td>{{ active[1]~'/'~active[0] }}</td>
+                    </tr>                    
+                {% endfor %}   
+            {% else %}             
+                <tr><td colspan="6" class="none">{{ lang['none_found'] }}</td></tr>
+                {% endif %}
+            {% endif %}         
+    </table>
+</div>
+{% if settings['show_errors'] is not empty and errorsNum>0  %}    
+    <div id="errorList" class="infoTable">
+        <h2>{{ lang['error_head'] }}</h2>
+        <table>
+            <tr>
+                <th>{{ lang['from_where'] }}</th>
+                <th>{{ lang['message'] }}</th>
+            </tr>
+            {% for error in errorsShow %}
+                <tr>
+                    <td>{{ error[0] }}</td>
+                    <td>{{ error[1] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endif %} 
+{% if info['extensions']|length>0 %}
+    {% for ext in info['extensions'] %}
+        {% if ext is iterable and ext|length>0 %}
+            {% set type=ext['extra_type'] is defined and ext['extra_vals'] is not empty ? ext['extra_type']:false %}
+            {% if type=='k->v' %}
+                <div class="col2_side">
+                    <div class="col2_side_left">
+                        {{ closure(createTable,ext) }}
+                    </div>
+                    <div class="col2_side_right">
+                        <div class="infoTable">
+                            <h2>{{ ext['extra_vals']['title'] }}</h2>
+                            <table>
+                                {% for v in ext['extra_vals']['values'] %}
+                                    <tr>
+                                        <th>{{ v[0] }}</th>
+                                        <td>{{ v[1] }}</td>
+                                    </tr>
+                                {% endfor %} 
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                {{ closure(createTable,ext) }}                
+            {% endif %}   
+        {% endif %}
+    {% endfor %} 
+{% endif %}    
+{% if  settings['timer'] is not empty %}
+    <div id="timerList" class="infoTable">
+        <h2>{{ lang['timer'] }}</h2>
+        <table>
+            <tr>
+                <th>{{ lang['area'] }}</th>
+                <th>{{ lang['time_taken'] }}</th>
+            </tr>
+            {% for result in timerResults %}
+                <tr>
+                    <td>{{ result['id'] }}</td>
+                    <td>{{ result['duration']|round(3) }} {{ lang['seconds'] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endif %}    
+{%  set asset = app('antares.asset').container('antares/foundation::scripts') %}
+{{ asset.styles()|raw }}
+{{ asset.scripts()|raw }}
+

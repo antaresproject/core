@@ -1,0 +1,54 @@
+{% set formbuilder=app('form') %}
+{% set htmlbuilder=app('html') %}
+{{ formbuilder.open(form|merge({'class':'form--hor'}))|raw }}
+{% if token is not null %}
+    {{ formbuilder.token()|raw }}
+{% endif %}    
+{% for hidden in hiddens %}
+    {{ hidden|raw }}
+{% endfor %}    
+{% if fieldsets|length>0 %} 
+    <div class="col-16 text-right">
+        <div class="form-block">
+            <label class="form-block__name">
+                {{ trans('Check/Uncheck All') }}
+            </label>
+            <div class="col-dt-14 col-13 col-mb-11">
+                <div class="input-field input-field--short">
+                    <input data-icheck="true" type="checkbox" class="test-checkboxes" />
+                </div>
+            </div>
+        </div>
+    </div>
+    {% for fieldset in fieldsets %}
+        <fieldset{{ htmlbuilder.attributes(fieldset.attributes) }}>
+            {% if (fieldset.name is not null) and (fieldset.name is not empty)  %}    
+                <legend>{{ fieldset.name }}</legend>
+            {% endif %}         
+            {% for control in fieldset.controls() %}                                    
+                <div class="col-16">
+                    {% include 'antares/foundation::layouts.antares.partials.form.vertical._'~control.type|replace({':': '_'}) with {control: control} %}
+                </div>                      
+            {% endfor %}  
+        </fieldset>        
+    {% endfor %}  
+    <div class="app-content__footer">
+        <div class="btn-group">
+            <button type="submit" class="btn btn--md btn--primary mdl-button mdl-js-button mdl-js-ripple-effect">
+                {{ submit|raw }}
+            </button>
+            <button type="button" class="btn btn--md btn--default mdl-button mdl-js-button mdl-js-ripple-effect cancel-request" disabled="disabled">
+                {{ trans("Cancel testing") }}
+            </button>
+        </div>
+    </div>
+{% else %}
+    <div class="alert alert--bg alert--glow alert--warning alert--lg alert--border">                            
+        <i class="zmdi zmdi-alert-triangle"></i>
+        <span>
+            <strong>{{ trans('Warning') }}!</strong> 
+            {{ trans('There are no modules with testing enabled.') }}
+        </span>
+    </div>
+{% endif %}    
+{{ formbuilder.close()|raw }}

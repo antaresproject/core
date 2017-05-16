@@ -1,0 +1,39 @@
+{% extends "antares/foundation::layouts.antares.index" %}
+{% block sidebar_preview %}
+    <aside class="sidebar sidebar--preview sidebar--white">
+        <div class="sidebar__header">
+            <div class="sidebar__header-left">
+                <span>{{ trans('antares/notifications::logs.sidebar_preview') }}</span>                            
+            </div>
+            <div class="sidebar__header-right">
+                <a href="#" class="btn-more mdl-js-button mdl-js-button mdl-js-ripple-effect btn-close">
+                    <i class="zmdi zmdi-close"></i>
+                </a>
+            </div>
+        </div>
+        <div class="sidebar__content" >
+            <div class="sidebar__list">                
+            </div>
+        </div>  
+    </aside>
+    <div class="hidden sidebar-loader">
+        <div class="notification-item sidebar__sgl flex-block flex-center" ><span class="flex-block__title item-title"><div class="spinner-xs"></div></span></div>
+    </div>
+{% endblock %}                                    
+{% block content %}    
+    {{ dataTable.scripts()|raw }}   
+    {{ dataTable.tableDeferred()|raw }}
+    <div class="hidden">
+        <div class="modal fade notification-log-preview-modal w60p"  data-url="{{ handles('antares::notifications/logs/preview') }}" data-error="{{ trans('antares/notifications::logs.preview_error') }}">
+            <div class="modal-dialog w100p" >
+                <div class="modal-content">
+                    <div class="modal-body h600">
+                        <div class="modal-container h600  flex-center" >
+                            <div class="spinner-xs"></div>
+                        </div>                    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

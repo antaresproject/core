@@ -1,0 +1,44 @@
+<section class="generals-form">
+    {% set formbuilder=app('form') %}
+    {% set htmlbuilder=app('html') %}
+    {{ formbuilder.open(form|merge({'class':'form--hor'}))|raw }}
+    {% if token %}
+        {{ formbuilder.token()|raw }}
+    {% endif %}
+    {% for hidden in hiddens %}
+        {{ hidden|raw }}
+    {% endfor %}
+    {% for fieldset in fieldsets %}
+        <div class="col-group">
+            <div class="col-dt-16 col-mb-16">
+                <fieldset {{ htmlbuilder.attributes(fieldset.attributes ?: [])|raw }}>
+                    {% if fieldset.name %}
+                        <legend>{{ fieldset.name }}</legend>
+                    {% endif %}
+                    <div class="col-group">
+                        {% for control in fieldset.controls() %}
+                            <div class="form-block">
+                                {% include 'antares/foundation::layouts.antares.partials.form.horizontal._'~control.type|replace({':': '_'}) with {control: control} %}
+                            </div>
+                            <div class="form-block">
+                                {% if control.inlineHelp|length>1 or control.help|length>1 %}
+                                    {% include 'antares/foundation::layouts.antares.partials.form.horizontal._description' %}             
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    {% endfor %}
+    {% if buttons is not empty %}
+        <div class="app-content__footer">
+            <div class="btn-group">
+                {% for button in buttons %}
+                    {{ button.getField(row, button, [])|raw }}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    {{ formbuilder.close()|raw }}
+</section>

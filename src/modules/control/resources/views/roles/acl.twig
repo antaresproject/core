@@ -1,0 +1,39 @@
+{% extends 'antares/foundation::layouts.antares.index' %}
+{% block content %}
+    {% include 'antares/control::partial._acl_template' %}
+    {{ app('form').open({'url':handles('antares::control/acl'), 'method':'POST','class':'resource-actions form--hor'})|raw }}                    
+    <section class="acl-container">
+        <div class="acl-container__hedaer">
+            <div class="ddown mr-24">
+                <div id="load-configuration" class="ddown__init btn--dropdown btn btn--md btn--default mdl-js-button mdl-js-ripple-effect">
+                    {{ trans('antares/control::messages.view.load_configuration') }}
+                    <div class="input-field">
+                        <select name="group" data-url="{{ handles('antares::control/acl') }}" data-flag-select--search  data-title="{{ trans('antares/control::messages.are_you_sure') }}" data-description="{{ trans('antares/control::messages.changing_group') }}">
+                            {% for group in groups %}          
+                                <option {{  id==group.id?'selected="selected"':'' }}value="{{ group.id }}" >{{ group.full_name|capitalize }}</option>
+                            {% endfor %}      
+                        </select>
+                    </div>        
+                </div>
+            </div>
+        </div>
+        <div class="acl-container__body">
+                <div id="acl" class="acl" data-url="{{ handles('antares::control/tree/'~id) }}">
+                    <ul>
+                        <tree-item {{ ':model="model" v-for="model in tree.children"' }}></tree-item>
+                    </ul>
+                </div>
+        </div>
+        <div class="app-content__footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn--md btn--primary mdl-button mdl-js-button mdl-js-ripple-effect" >
+                    {{ trans('antares/foundation::label.save_changes') }}
+                </button>
+                <a href="{{ handles('antares::control/roles') }}" class="btn btn--md btn--default mdl-button mdl-js-button" >
+                    {{ trans('antares/foundation::label.cancel') }}
+                </a>
+            </div>
+        </div>
+    </section>
+    {{ app('form').close()|raw }}
+{% endblock %}

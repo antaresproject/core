@@ -1,0 +1,20 @@
+{% if list is not empty %}         
+    {% set group=app('languages').getTranslationsGroup() %}                    
+    <select class="translations-component "  data-selectAR--mdl-short="true" >
+        {% for key,name in list %}
+            {% if name is iterable %}
+                <optgroup label="{{ name.label }}">
+                    {% for index,subname in name.extensions %}
+                        <option {{ group==index ? 'selected="selected"':'' }} value="{{ index|raw }}" data-url="{{ handles('antares::translations/index/'~id~'/'~index~'/'~language.code) }}" >
+                            {{ subname }}
+                        </option> 
+                    {% endfor %}    
+                </optgroup>    
+            {% else %}    
+                <option {{ group==key ? 'selected="selected"':'' }} value="{{ key|raw }}" data-url="{{ handles('antares::translations/index/'~id~'/'~key~'/'~language.code) }}" >
+                    {{ name }}
+                </option> 
+            {% endif %}
+        {% endfor %}
+    </select>
+{% endif %}

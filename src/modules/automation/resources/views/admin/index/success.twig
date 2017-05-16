@@ -1,0 +1,34 @@
+{% extends "antares/foundation::layouts.antares.index" %}
+{% block content %}    
+    <div class="card card--padding24">
+        <div class="card__header">
+            <div class="card__header-left">
+                <span>Automation job result</span>
+            </div>
+            <div class="card__header-right">
+            </div>
+        </div>
+        <div class="card__content">
+            <div class="alert alert--md alert--glow alert--success alert--sm alert--border mb20">
+                <i class="alert__icon zmdi zmdi-check-circle"></i>
+                <div>
+                    <strong>{{ trans("antares/automation::messages.job.success",{'name':params.title}) }}</strong>
+                    <br/>
+                    {{ params.description }}        
+                </div>
+            </div>
+            <div class="card card--padding24">
+                <div class="card__header">
+                    <div class="card__header-left">
+                        <span>{{ trans('Command result') }}</span>
+                    </div>
+                </div>
+                <div class="card__content">
+                    <pre>{{ message }}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

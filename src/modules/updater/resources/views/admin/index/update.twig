@@ -1,0 +1,131 @@
+{% extends "antares/foundation::layouts.antares.index" %}
+{% block content %}
+    <div class="card card--padding24">
+        <div class="card__content">
+            <div class="col-group">
+                <div class="col-16">
+                    {% if sandbox is not null %}
+                        <div class="col-8">
+                            <div class="card card--chart-small card--primary-light">
+                                <div class="card__header">
+                                    <div class="card__header-left">
+                                        <span>{{ trans('Sandbox mode') }}</span>
+                                    </div>
+                                </div>
+                                <div class="card__header-chart" >
+                                    <span class="card__indicator">{{ trans('Welcome at sandbox mode') }} [ build {{ sandbox }} ]  </span>
+                                </div>
+                                <div class="card__content">
+                                    {{ trans('Feel free with modify any instance configuration.') }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="col-8">
+                        <div class="card card--chart-small card--primary-light">
+                            <div class="card__header">
+                                <div class="card__header-left">
+                                    <span>{{ trans('Current Version') }}</span>
+                                </div>
+                            </div>
+                            <div class="card__header-chart" >
+                                <span class="card__indicator">{{ trans('Your current version:') }} {{ currentVersion }}</span>
+                            </div>
+                            <div class="card__content">
+                                {% if isNewer==true %}
+                                    {{ trans('We highly recommend upgrading...') }}
+                                {% else %}
+                                    {{ trans('Your system is actual.') }}    
+                                {% endif %}  
+                            </div>
+                        </div>
+                    </div>
+                    {% if moduleUpdates is not empty and sandbox is null %}   
+                        <div class="col-8">
+                            <div class="card  card--chart-small card--primary-light">
+                                <div class="card__header">
+                                    <div class="card__header-left">
+                                        <span>{{ trans('Modules update') }}</span>
+                                    </div>
+                                </div>
+                                <div class="card__header-chart" >
+                                    <span class="card__indicator">{{ trans('Modules update available') }}</span>
+                                </div>
+                                <div class="card__content">
+                                    <table class="mdl-data-table mdl-js-data-table" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th class="mdl-data-table__cell--non-numeric">{{ trans('Module Name') }}</th>
+                                                <th>{{ trans('Actual Version') }}</th>
+                                                <th>{{ trans('New Version') }}</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for item in moduleUpdates %}
+                                                <tr>
+                                                    <td  class="mdl-data-table__cell--non-numeric">{{ item.full_name }}</td>
+                                                    <td>{{ item.current_version }}</td>
+                                                    <td>{{ item.version }}</td>
+                                                    <td>
+                                                        <a href="{{ handles('antares::updater/module/update/'~item.name~'/'~item.version,{'csrf':true}) }}" class="btn btn--s-small btn--red mdl-button mdl-js-button mdl-js-ripple-effect ajaxable update-confirm" data-title="{{ trans('Are you sure?') }}" data-description="" >
+                                                            {{ trans('Update') }}
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>    
+                                    <div class="separator"></div>
+                                    <a href="#" class="btn btn--s-extra-large btn--red mdl-button mdl-js-button mdl-js-ripple-effect  ajaxable update-mass-confirm" data-title="{{ trans('Are you sure?') }}" data-description="" data-upgraded=",MaterialButton,MaterialRipple">
+                                        {{ trans('Update All') }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% if isNewer==true and sandbox is null %}
+                <div class="col-group">
+                    <div class="col-8">
+                        <div class="card  card--chart-small card--primary-light">
+                            <div class="card__header">
+                                <div class="card__header-left">
+                                    <span>{{ trans('Update available') }}</span>
+                                </div>
+                            </div>
+                            <div class="card__header-chart" >
+                                <span class="card__indicator">{{ trans('Version available:') }} {{ data.version }}</span>
+                            </div>
+                            <div class="card__content">
+                                {{ data.description|raw }}
+                                <div class="separator" ></div>                    
+                                <a title="{{ trans('Install') }}" version="{{data.version}}" class="btn btn--s-extra-large btn--red mdl-button mdl-js-button mdl-js-ripple-effect begin-update ajaxable"  data-title="{{ trans('Are you sure?') }}" data-description="" data-upgraded=",MaterialButton,MaterialRipple">
+                                    {{ trans('Install') }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <div class="card card--chart-small card--yellow">
+                            <div class="card__header">
+                                <div class="card__header-left">
+                                    <span>Change Log</span>
+                                </div>
+                            </div>
+                            <div class="card__header-chart" >
+                                <span class="card__indicator">{{ trans('Change Log in version') }} {{ data.version }}</span>
+                            </div>
+                            <div class="card__content">
+                                {{ data.changelog|raw }}   
+                            </div>                        
+                        </div>
+                    </div>
+                    {% include 'antares/updater::admin.index.partials._sandbox' %}
+                </div>
+            {% endif %}
+        </div>
+    </div>    
+
+{% endblock %}

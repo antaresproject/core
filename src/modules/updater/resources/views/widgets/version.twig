@@ -1,0 +1,76 @@
+<span class="card__title">{{ trans('Database version') }} {{ db_version }}</span>
+{% if isNewer==false %}
+    <span class="card__indicator card__indicator--down compare">
+        {{ app_version }} <span>{{ trans('System is actual.') }}</span>            
+    </span>
+{% else %}
+    <span class="card__indicator card__indicator--down compare">{{ available }} <span>{{ trans('An Update is available') }}</span></span>
+{% endif %}    
+
+<div class="single-row">
+    {{ description|raw }} 
+</div>
+<div class="single-row">
+    <h3>CHANGELOG</h3>
+</div>
+<ul class="datarow" data-scrollable >
+
+    {% for log in changeLog %}
+        <li class="datarow__sgl">
+            <div class="datarow__left">
+                <span class="datarow__status">{{ log|raw }}</span>
+            </div>         
+        </li>
+    {% endfor %}
+
+</ul>
+<div class="single-row">
+    {% if isNewer==true %}
+        {% if sandbox is defined %} 
+            <a href="{{ sandbox }}" class="btn-link btn--md btn--default mdl-button mdl-js-button mdl-js-ripple-effect ajaxable"  target="_blank">
+                {{ trans('SANDBOX') }}
+            </a>    
+        {% else %}
+            <a href="{{ updateUrl }}" class="btn btn--md btn--primary mdl-button mdl-js-button mdl-js-ripple-effect ajaxable update">
+                {{ trans('UPGRADE') }}
+            </a>
+        {% endif %}   
+        <a href="{{ sandboxUrl }}" class="btn btn--md btn--red mdl-button mdl-js-button mdl-js-ripple-effect ajaxable create-sandbox">
+            {{ trans('CREATE SANDBOX') }}
+        </a>    
+    {% endif %}
+</div>
+<ul class="datarow">
+    <!--SINGLE-->
+    <li class="datarow__sgl">
+        <div class="datarow__left">
+            <span class="datarow__status">{{ trans('Last update date') }}</span>
+        </div>
+        <div class="datarow__right">
+            <span class="datarow__data"><strong>{{ last_update_date }}</strong></span>
+        </div>
+    </li>
+</ul>
+<ul class="sandbox-queue hide">        
+    <li desc="{{ trans('checking requirements...') }}" href="{{ handles('antares::updater/sandbox/requirements',{'csrf':true}) }}"></li>
+    <li desc="{{ trans('create database instance...') }}" href="{{ handles('antares::updater/sandbox/database',{'csrf':true,'version':actual}) }}"></li>
+    <li desc="{{ trans('migrating system files...') }}" href="{{ handles('antares::updater/sandbox/migration',{'csrf':true,'version':actual}) }}"></li>        
+    <li desc="{{ trans('clearing...') }}" href="{{ handles('antares::updater/sandbox/ending',{'csrf':true,'version':actual}) }}"></li>
+    <li desc="{{ trans('preparing to open...') }}" href="{{ handles('antares::updater/sandbox/save',{'csrf':true,'sandbox':actual,'version':actual}) }}"></li>        
+    <li desc="{{ trans('opening sandbox mode...') }}" href="{{ handles('antares::updater/sandbox/open',{'csrf':true,'version':actual}) }}"></li>
+</ul>    
+<a class="sandbox-rollback hide" description="{{ trans('rollback...') }}" href="{{ handles('antares::updater/sandbox/rollback',{'csrf':true}) }}"></a>    
+<div  id="Create-Modal" title="{{ trans('create sandbox instance') }}..." style="display:none;">    
+    <div class="col-16">
+        {{ trans('it may take a while, please be patient') }}...
+        <div class="create-sandbox-container">
+        </div>
+    </div>
+</div>
+<div  id="Sandbox-Modal" title="{{ trans('create sandbox instance') }}..."  style="display:none;">    
+    <div class="col-16">
+        {{ trans('it may take a while, please be patient') }}...
+        <div class="create-sandbox-container">
+        </div>
+    </div>
+</div>

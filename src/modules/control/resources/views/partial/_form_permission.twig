@@ -1,0 +1,41 @@
+{{ app('form').open({'url':handles('antares::control/acl'), 'method':'POST','class':'resource-actions form--hor'})|raw }}                    
+{% set roleName=eloquent.name %}    
+<div id="accordion">
+    {% for module in modules %}          
+        {% if module['actions']|length>0 %}
+            <div role="tab" id="heading{{ loop.index0 }}">
+                <div class="card card--chart-small card--primary-light" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ loop.index0 }}" aria-expanded="true" aria-controls="collapse{{ loop.index0 }}">
+                    <div class="card__header">
+                        <div class="card__header--top">
+                            <span> {{ module['full_name'] }}</span>
+                        </div>                               
+                    </div>
+                    <div class="card__content" id="collapse{{ loop.index0 }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ loop.index0 }}"> 
+                        <div class="col-group">
+                            {% for key, action in module['actions'] %}                            
+                                <div class="col-5">
+                                    <div class="form-block rwd-change">
+                                        {{ app('form').checkbox("acl[" ~ id ~ "][" ~ key ~ "]", action, instances[module.namespace].check(roleName, action), {'id' : "acl-" ~ id ~ "-" ~ key,'data-icheck':'true'})|raw }}                                
+                                        <span class="form-span--helper">{{ action|str_humanize }}</span>                                
+                                    </div>
+                                    {% include 'antares/control::partial._resource_forms' with {'forms': module['forms'][action],'key':key,'id':id} %}                             
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>                            
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %} 
+</div>
+<div class="app-content__footer">
+    <div class="btn-group">
+        <button type="submit" class="btn btn--md btn--primary mdl-button mdl-js-button mdl-js-ripple-effect" >
+            {{ trans('antares/control::label.save_properties') }}
+        </button>
+        <a href="{{ handles('antares::control/roles') }}" class="btn btn--md btn--default mdl-button mdl-js-button" >
+            {{ trans('antares/foundation::label.cancel') }}
+        </a>
+    </div>
+</div>
+{{ app('form').close()|raw }}

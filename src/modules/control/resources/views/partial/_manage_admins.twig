@@ -1,0 +1,22 @@
+<div class="panel panel-default">
+    <div class="panel-heading">{{ trans('Manage Admins') }}</div>
+    <div class="panel-body">
+        <ul class="nav nav-pills nav-stacked">
+            <li role="presentation" >
+                <a href="{{ handles('antares::control/users') }}" title="{{ trans('Admin List') }}">
+                    <span class="glyphicon glyphicon-list" ></span> {{ trans('Admin List') }}
+                </a>                
+            </li>
+            <li role="presentation" >
+                <a href="{{ handles('antares::control/acl') }}" title="{{ trans('Manage Admin Groups') }}">
+                    <span class="glyphicon glyphicon-star" ></span> {{ trans('Manage Admin Groups') }}
+                </a> 
+            </li>
+            <li role="presentation" >
+                <a href="{{ handles('antares::control/users/create') }}" title="{{ trans('Add New User') }}">
+                   <span class="glyphicon glyphicon-plus" ></span> {{ trans('Add New User') }}
+                </a>                    
+            </li>
+        </ul>  
+    </div>
+</div>

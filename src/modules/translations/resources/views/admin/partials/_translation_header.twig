@@ -1,0 +1,13 @@
+<div class="form-block ff-rw mb0">                                
+    <div class="input-field input-field--icon">
+        <span class="input-field__icon"><span class="flag-icon"></span></span> 
+        <select class="form-control column-translation" rel="{{ handles('antares::translations/translation/'~id) }}"  default="{{ current.code }}" data-selectar="true"  data-flag-select>
+            <option value="{{ current.code }}" selected="selected" data-country="{{ current.code|lower=='en'?'us':current.code|lower }}">
+                {{ current.name }}
+            </option>
+            {% for language in languages %}
+                <option data-country="{{ language.code|lower=='en'?'us':language.code|lower }}" value="{{ language.code }}" >{{ language.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
