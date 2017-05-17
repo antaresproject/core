@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -16,7 +16,7 @@
  * @author         Mariusz Jucha <mariuszjucha@gmail.com>
  * @author         Marcin Domański <marcin@domanskim.pl>
  * @license        BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link           http://antaresproject.io
  */
 
