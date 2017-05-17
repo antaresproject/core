@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -15,7 +15,7 @@
  * @author     Original Orchestral https://github.com/orchestral
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
 
@@ -60,6 +60,7 @@ class ProgressController extends BaseController
      */
     public function index(Progress $progress)
     {
+        set_meta('title', 'Install Antares');
         $consoleTheme = $this->theme->asArray();
         $progress->start();
 
@@ -78,7 +79,7 @@ class ProgressController extends BaseController
 
         $percentageProgress = $progress->getPercentageProgress();
 
-        if($percentageProgress === 0) {
+        if ($percentageProgress === 0) {
             // Fake progress for composer installation.
             $percentageProgress = 7;
         }
@@ -87,8 +88,8 @@ class ProgressController extends BaseController
             $progress->reset();
 
             return response()->json([
-                'progress' => $percentageProgress,
-                'redirect' => handles('antares::install/failed'),
+                        'progress' => $percentageProgress,
+                        'redirect' => handles('antares::install/failed'),
             ]);
         }
 
@@ -96,14 +97,14 @@ class ProgressController extends BaseController
             $progress->reset();
 
             return response()->json([
-                'progress' => $percentageProgress,
-                'redirect' => handles('antares::install/completed'),
+                        'progress' => $percentageProgress,
+                        'redirect' => handles('antares::install/completed'),
             ]);
         }
 
         return response()->json([
-            'progress' => $percentageProgress,
-            'console'  => $console,
+                    'progress' => $percentageProgress,
+                    'console'  => $console,
         ]);
     }
 

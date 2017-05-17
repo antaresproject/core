@@ -1,4 +1,4 @@
-# Antares Project Core
+# Antares Core
 
 [![Laravel 5.4](https://img.shields.io/badge/Laravel-5.4-orange.svg)](http://laravel.com)
 [![Coverage Status](https://coveralls.io/repos/github/antaresproject/project/badge.svg?branch=master)](https://coveralls.io/github/antaresproject/project?branch=master)
@@ -11,16 +11,16 @@
 
 ## Documentation
 
-Antares Project Core documentation [antaresproject.io/docs/antares_concepts](http://antaresproject.io/docs/site/antares_concepts/core_&_files_structure/index.html).
+Antares Core documentation [antaresproject.io/docs/antares_concepts](http://antaresproject.io/docs/site/antares_concepts/core_&_files_structure/index.html).
 
-Full Antares Project documentation can be found at [antaresproject.io/docs](http://antaresproject.io/docs).
+Full Antares documentation can be found at [antaresproject.io/docs](http://antaresproject.io/docs).
 
 
 ## Changelog
 
-Antares Project Core changelog can be found in release notes [antaresproject.io/docs/site/getting_started/changelog/#core](http://antaresproject.io/docs/site/getting_started/changelog/index.html#core).
+Antares Core changelog can be found in release notes [antaresproject.io/docs/site/getting_started/changelog/#core](http://antaresproject.io/docs/site/getting_started/changelog/index.html#core).
 
-You can find full Antares Project changelog in Antares Project Documentation [antaresproject.io/docs/site/getting_started/changelog](http://antaresproject.io/docs/site/getting_started/changelog/index.html).
+You can find full Antares changelog in Antares Documentation [antaresproject.io/docs/site/getting_started/changelog](http://antaresproject.io/docs/site/getting_started/changelog/index.html).
 
 ## Issues
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -14,7 +14,7 @@
  * @version    0.9.0
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
 
@@ -81,9 +81,10 @@ class AssetPublisher
             return [];
         }
 
-        if($this->extension === null) {
+        if ($this->extension === null) {
             return [];
         }
+
 
         $path = app()->make('antares.extension')->getExtensionPathByName($this->extension);
 
@@ -133,6 +134,7 @@ class AssetPublisher
             } else {
                 $published = $file->getRelativePathname();
             }
+
             $container->add(str_slug($file->getBasename()), str_replace('\\', '/', $published), [], $before);
         }
         return $container;

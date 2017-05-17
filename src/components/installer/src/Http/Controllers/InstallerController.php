@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -15,7 +15,7 @@
  * @author     Original Orchestral https://github.com/orchestral
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
 
@@ -45,7 +45,7 @@ class InstallerController extends BaseController
     {
         $this->processor = $processor;
         set_meta('navigation::usernav', false);
-        set_meta('title', 'Installer');
+
 
         parent::__construct();
     }
@@ -69,6 +69,7 @@ class InstallerController extends BaseController
      */
     public function index()
     {
+        set_meta('title', 'Check Requirements');
         return $this->processor->index($this);
     }
 
@@ -93,6 +94,7 @@ class InstallerController extends BaseController
      */
     public function create()
     {
+        set_meta('title', 'Create Administrator');
         return $this->processor->create($this);
     }
 
@@ -117,6 +119,7 @@ class InstallerController extends BaseController
      */
     public function components(Progress $progress)
     {
+        set_meta('title', 'Select components');
         $progress->reset();
         return $this->processor->components($this);
     }
@@ -207,7 +210,6 @@ class InstallerController extends BaseController
      */
     public function doneSucceed()
     {
-        /* @var $progress Progress */
         $progress = app()->make(Progress::class);
         $progress->reset();
 
@@ -248,7 +250,7 @@ class InstallerController extends BaseController
      */
     public function completed()
     {
-        /* @var $progress Progress */
+        set_meta('title', 'Done');
         $progress = app()->make(Progress::class);
         $progress->reset();
 
