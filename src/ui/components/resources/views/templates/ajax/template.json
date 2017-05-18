@@ -1,0 +1,9 @@
+{
+    "package": "ajax",
+    "name": "Ajax Widget Template",
+    "description": "Ajax widget template",
+    "author": "Łukasz Cirut",
+    "url": "https://modulesgarden.com/docs",
+    "type": [],
+    "autoload": []
+}

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -14,10 +14,9 @@
  * @version    0.9.0
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
-
 
 namespace Antares\Foundation\Factories\TestCase;
 
@@ -47,7 +46,7 @@ class MenuFactoryTest extends TestCase
         $stub  = new MenuFactory($this->app);
         $stub->with('menu.top.foo');
         $menu  = $this->app['antares.widget']->of('menu.top.foo');
-        $this->assertInstanceOf('Antares\Widget\Handlers\Menu', $menu);
+        $this->assertInstanceOf(\Antares\UI\TemplateBase\Menu::class, $menu);
         $menu->add('foo', 'foo');
         $items = $menu->items();
         $this->assertInstanceOf('Antares\Support\Collection', $menu->items());

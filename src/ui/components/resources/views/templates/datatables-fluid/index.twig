@@ -1,0 +1,49 @@
+{% extends 'antares/ui-components::templates.layouts.template' %}
+{% block content %}
+    <div class="card {{ class }}" widget-name="{{ name|str_snake }}">
+        {% if titlable or enlargeable %}
+            <div class="card__header">
+                {% if titlable %}
+                    <div class="card__header-left">
+                        <span>{{ title }}</span>
+                    </div>
+                {% endif %}
+                {% if enlargeable or actions|length>0 or zoomable %}
+                    <div class="card__header-right">
+                        {% if enlargeable %}
+                            <i class="card-enlarge zmdi zmdi-window-maximize"></i>
+                        {%  endif %}
+                        {% if zoomable %}
+                            <i class="card-maximize zmdi zmdi-window-maximize"></i>
+                        {% endif %}
+                        {% if actions|length>0 %}
+                            <div class="ddown">
+                                <div class="ddown__init ddown__init--clean btn-more mdl-js-button mdl-js-ripple-effect"><i class="zmdi zmdi-more-vert"></i></div>
+                                <div class="ddown__content">
+                                    <div class="ddown__arrow"></div>
+                                    <ul class="ddown__menu">
+                                        {% for action in actions %}
+                                            <li>
+                                                <a class="mdl-js-button {{ action.class }}" href="{{ action.url }}" title="{{ action.title }}" {{ action.attributes|stringify }}>
+                                                    {% if action.icon|length>0 %}
+                                                        <i class="zmdi zmdi-{{ action.icon }}"></i>
+                                                    {% endif %}
+                                                    <span>{{ action.title|raw }}</span>
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}        
+        <div class="card__content no-padding">
+            <div class="widget-content">
+                {{ content|raw }}           
+            </div>
+        </div>
+    </div>  
+{% endblock %}

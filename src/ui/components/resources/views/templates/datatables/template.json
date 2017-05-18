@@ -1,0 +1,9 @@
+{
+    "package": "datatables",
+    "name": "Datatables Widget Template",
+    "description": "Datatables widget template",
+    "author": "Łukasz Cirut",
+    "url": "https://modulesgarden.com/docs",
+    "type": [],
+    "autoload": []
+}

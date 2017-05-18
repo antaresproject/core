@@ -1,0 +1,152 @@
+{% set formbuilder=app('form') %}
+{{ formbuilder.open({'url':handles('antares::install/create'), 'method':'POST','class':'form--hor'})|raw }}
+{% if token is not null %}
+    {{ formbuilder.token()|raw }}
+{% endif %}    
+{% for hidden in hiddens %}
+    {{ hidden|raw }}
+{% endfor %}
+<div class="col-group">
+    <div class="col-dt-16 col-mb-16">
+        <fieldset name="inputs">
+            <legend>
+                Administrator Account
+            </legend>
+            <div class="col-group">                
+                <div class="form-block" >
+                    <div class="col-dt-2 col-2 col-mb-2">
+                        {{ app('form').label('email', trans('antares/foundation::label.users.email'),{'class':'form-block__name'})|raw }}            
+                    </div>
+                    <div class="col-dt-6 col-6 col-mb-6">
+                        <div class="input-field ">                
+                            {{ app('form').input('email', 'email', '', {'class' : 'w470'})|raw }}                            
+                        </div>    
+                        <span id="{{ control.id }}_error" class="error col-13 col-mb-11 nopadding">
+                            {{ errors.first('email', ':message')|raw }}
+                        </span>
+                    </div>
+                </div>
+                <div class="form-block  form-block-desc" >
+                    <div class="col-dt-2 col-2 col-mb-2">
+                        <label class="form-block__name">&nbsp;</label>
+                    </div>
+                    <div class="col-dt-14 col-14 col-mb-14 ">
+                        <div class="input-field__desc">
+                            * E-mail address which will be used to first login.
+                        </div>
+                    </div>
+                </div>
+                <div class="form-block" >
+                    <div class="col-dt-2 col-2 col-mb-2">
+                        {{ app('form').label('password', trans('antares/foundation::label.users.password'),{'class':'form-block__name'})|raw }}
+                    </div>
+                    <div class="col-dt-6 col-6 col-mb-6">
+                        <div class="input-field ">                
+                            {{ app('form').input('password', 'password', '', {'required' : true,'class' : 'w470'})|raw }}
+                        </div>    
+                        <span id="{{ control.id }}_error" class="error col-13 col-mb-11 nopadding">
+                            {{ errors.first('password', ':message')|raw }}
+                        </span>
+                    </div>
+                </div>
+                <div class="form-block  form-block-desc" >
+                    <div class="col-dt-2 col-2 col-mb-2">
+                        <label class="form-block__name">&nbsp;</label>
+                    </div>
+                    <div class="col-dt-14 col-14 col-mb-14 ">
+                        <div class="input-field__desc">
+                            * Password should contain min. 8 characters 1 special and 1 uppercase and 1 numeric value
+                        </div>
+                    </div>
+                </div>
+                <div class="form-block" >
+                    <div class="col-dt-2 col-2 col-mb-2">
+                        {{ app('form').label('firstname', trans('antares/foundation::label.users.firstname'),{'class':'form-block__name'})|raw }}            
+                    </div>
+                    <div class="col-dt-6 col-6 col-mb-6">
+                        <div class="input-field ">                
+                            {{ app('form').input('text', 'firstname', 'John', {'required' : true,'class' : 'w470'})|raw }}                    
+                        </div>    
+                        <span id="{{ control.id }}_error" class="error col-13 col-mb-11 nopadding">
+                            {{ errors.first('firstname', ':message')|raw }}
+                        </span>
+                    </div>
+                </div>
+                <div class="form-block  form-block-desc" >
+                    <div class="col-dt-2 col-2 col-mb-2">
+                        <label class="form-block__name">&nbsp;</label>
+                    </div>
+                    <div class="col-dt-14 col-14 col-mb-14 ">
+                        <div class="input-field__desc">
+                            * Firstname field is optional
+                        </div>
+                    </div>
+                </div>
+                <div class="form-block" >
+                    <div class="col-dt-2 col-2 col-mb-2">
+                        {{ app('form').label('lastname', trans('antares/foundation::label.users.lastname'),{'class':'form-block__name'})|raw }}            
+                    </div>
+                    <div class="col-dt-6 col-6 col-mb-6">
+                        <div class="input-field ">                
+                            {{ app('form').input('text', 'lastname', 'Doe', {'required' : true,'class' : 'w470'})|raw }}                    
+                        </div>    
+                        <span id="{{ control.id }}_error" class="error col-13 col-mb-11 nopadding">
+                            {{ errors.first('lastname', ':message')|raw }}
+                        </span>
+                    </div>
+                </div>
+                <div class="form-block  form-block-desc" >
+                    <div class="col-dt-2 col-2 col-mb-2">
+                        <label class="form-block__name">&nbsp;</label>
+                    </div>
+                    <div class="col-dt-14 col-14 col-mb-14 ">
+                        <div class="input-field__desc">
+                            * Lastname field is optional
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset name="inputs">
+            <legend>{{ trans('antares/foundation::install.steps.application') }}</legend>
+            <div class="col-group">                
+                <div class="form-block" >
+                    <div class="col-dt-2 col-2 col-mb-2">
+                        {{ app('form').label('site_name', trans('antares/foundation::label.name'),{'class':'form-block__name'})|raw }}                
+                    </div>
+                    <div class="col-dt-6 col-6 col-mb-6">
+                        <div class="input-field ">                
+                            {{ app('form').input('text', 'site_name', siteName, {'required' : true,'class' : 'w470'})|raw }} 
+                        </div>    
+                        <span  class="error col-13 col-mb-11 nopadding">
+                            {{ errors.first('site_name', ':message')|raw }}
+                        </span>
+                    </div>                        
+                </div>
+                <div class="form-block  form-block-desc" >
+                    <div class="col-dt-2 col-2 col-mb-2">
+                        <label class="form-block__name">&nbsp;</label>
+                    </div>
+                    <div class="col-dt-14 col-14 col-mb-14 ">
+                        <div class="input-field__desc">
+                            * Name of application instance (eg.: Antares)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+<div class="app-content__footer">
+    <div class="btn-group">
+        <a href="{{ handles('antares/foundation::install') }}" class="btn btn--md btn--default mdl-button mdl-js-button mdl-js-ripple-effect" >
+            <i class="pl8 zmdi zmdi-long-arrow-left"></i> {{ trans('Back') }}
+        </a>
+        <button type="submit" class="btn btn--md btn--primary mdl-button mdl-js-button mdl-js-ripple-effect">
+            {{ trans('Next') }} <i class="pl8 zmdi zmdi-long-arrow-right"></i>
+        </button>
+    </div>
+</div>
+
+{{ formbuilder.close()|raw }}
+

@@ -1,0 +1,9 @@
+{
+    "package": "empty",
+    "name": "Empty Widget Template",
+    "description": "Empty widget template",
+    "author": "Łukasz Cirut",
+    "url": "https://modulesgarden.com/docs",
+    "type": [],
+    "autoload": []
+}
