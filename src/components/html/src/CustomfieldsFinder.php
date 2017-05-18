@@ -66,10 +66,10 @@ class CustomfieldsFinder
     protected function getCustomfields()
     {
         $extensions = extensions();
-
-        $return = [];
+        $return     = [];
         event('customfields.before.search', $return);
         foreach ($extensions as $name => $extension) {
+            $name   = 'antares/' . str_replace(['component-', 'module-'], '', $extension['name']);
             $config = config($name . '::customfields');
             if (empty($config)) {
                 continue;

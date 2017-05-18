@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Tester;
 
 use Antares\Tester\Adapter\ResponseAdapter;
@@ -97,18 +96,8 @@ class ConnectionTester extends ResponseAdapter implements Tester
 
         $message = new Message(new Swift_Message);
 
-        // If a global from address has been specified we will set it on every message
-        // instances so the developer does not have to repeat themselves every time
-        // they create a new message. We will just go ahead and push the address.
 
-        $config  = config('mail.from');
-        if (is_null($address = array_get($config, 'address'))) {
-            $address = user()->email;
-        }
-        if (is_null($name = array_get($config, 'name'))) {
-            $name = user()->fullname;
-        }
-        $message->from($address, $name);
+        $message->from($data['email_address'], $data['email_address']);
         $message->setBody(trans('antares/foundation::tester.smtp_connection_succeed'), 'text/html');
         $message->setTo(user()->email);
         $message->setSubject(trans('antares/foundation::tester.email_title'));
