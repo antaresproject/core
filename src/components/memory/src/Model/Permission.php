@@ -138,7 +138,7 @@ class Permission extends Eloquent
         return [
             'vendor'   => $model->vendor,
             'name'     => $model->name,
-            'fullname' => $model->vendor . '/' . $model->name,
+            'fullname' => $model->vendor . '/' . $model->name
         ];
     }
 
