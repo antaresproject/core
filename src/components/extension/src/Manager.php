@@ -48,7 +48,7 @@ class Manager
      *
      * @var Extensions|ExtensionContract[]|null
      */
-    protected $availableExtensions;
+    public $availableExtensions;
 
     /**
      * @var array
