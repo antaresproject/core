@@ -1,0 +1,66 @@
+{% if only_template is sameas(true) %}
+    <div class="widget-content">
+        {{ content|raw }}  
+    </div>
+{% else %}    
+    <div class="grid-stack-item"          
+         id="{{ id }}" 
+         fixed-width="{{ fixed_width }}" 
+         fixed-height="{{ fixed_height }}" 
+         data-gs-x="{{ x }}" 
+         data-gs-y="{{ y }}" 
+         {{ (x=="0" and y=="0")?'data-gs-auto-position="true"':''  }}
+         data-gs-width="{{ width }}" 
+         data-gs-height="{{ height }}"
+         data-gs-max-width="{{ max_width }}"
+         data-gs-max-height="{{ max_height }}"
+         data-gs-min-width="{{ min_width }}"
+         data-gs-min-height="{{ min_height }}" 
+         data-gs-no-resize="{{ resizable=="true"?false:true }}"
+         data-gs-no-move="{{ draggable=="true"?false:true }}"
+         ajaxable="{{ (ajaxable is same as(false)) ? '0':'1'  }}"
+         >     
+        <div class="grid-stack-item-content" >                        
+            <div class="widget-actions-area">
+                <input type="hidden" name="current" value="{{ id }}" />
+                <div class="card__edit-view">
+                    <div class="card__edit-overlay"></div>
+                    <span class="card__edit-message"></span>
+                    <div class="card__edit-icons">
+                        {% if(removable) %}
+                            <i rel="{{ id }}" class="zmdi zmdi-delete remove-button ddown__header mdl-js-button mdl-js-ripple-effect ajaxable widget-disable disable-with-modal" href="{{ handles('antares/ui-components::ui-components/destroyer/'~id~'/disable') }}" title="{{ trans('Disable') }}"></i>
+                        {% endif %}     
+                        {% if(editable) %}
+                            <div class="ddown ddown--left">
+                                <div class="ddown__init ddown__init--clean mdl-js-button mdl-js-button mdl-js-ripple-effect"><i class="zmdi zmdi-settings edit-button"></i></div>
+                                <ul class="ddown__menu">
+                                    <li>
+                                        <a class="mdl-js-button mdl-js-ripple-effect ajaxable widget-edit " title="{{ trans('Edit') }}" href="{{ handles('antares/ui-components::ui-components/updater/'~id~'/edit') }}">
+                                            <i class="zmdi zmdi-settings"></i>
+                                            {{ trans('Edit') }}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="mdl-js-button mdl-js-ripple-effect ajaxable widget-refresh" href="{{ handles('antares/ui-components::ui-components/'~id) }}" title="{{ trans('Refresh') }}">
+                                            <i class="zmdi zmdi-star"></i>
+                                            {{ trans('Refresh') }}
+                                        </a>
+                                    </li> 
+                                    {{ event('ui-components:render.widget-actions.'~name)|raw }}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>            
+            {{ event('ui-components:render.before.'~name)|raw }}
+            {{ content|raw }}           
+            {{ event('ui-components:render.after.'~name)|raw }}        
+        </div>   
+        {% if app('request').ajax() %}    
+            {% set asset = app('antares.asset').container('antares/foundation::scripts') %}
+            {{ asset.styles()|raw }}
+            {{ asset.scripts()|raw }}
+        {% endif %}
+    </div>
+{% endif %}

@@ -1,0 +1,9 @@
+{
+    "package": "comments",
+    "name": "Comments Widget Template",
+    "description": "Comments widget template",
+    "author": "Łukasz Cirut",
+    "url": "https://modulesgarden.com/docs",
+    "type": [],
+    "autoload": []
+}

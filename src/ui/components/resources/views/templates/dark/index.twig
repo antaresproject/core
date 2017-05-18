@@ -1,0 +1,17 @@
+{% extends 'antares/ui-components::templates.layouts.template' %}
+{% block content %}
+    <div class="card card--detail-info card--dark">
+        <div class="card__header">
+            <div class="card__header--top">
+                {{ event('ui-components:render.header-left.'~name)|raw }}
+                <div class="client-name">                    
+                    <span>{{ name }}</span>                    
+                </div>
+                {{ event('ui-components:render.header-right.'~name)|raw }}
+            </div>
+        </div>
+        <div class="card__content">
+            {{ content|raw }}
+        </div>
+    </div>
+{% endblock %}

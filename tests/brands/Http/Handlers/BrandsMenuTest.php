@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -14,7 +14,7 @@
  * @version    0.9.0
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
 
@@ -97,7 +97,7 @@ class BrandsMenuTest extends TestCase
     public function testHandle()
     {
         $this->app['antares.platform.memory'] = m::mock('Antares\Memory\Provider');
-        $this->app['antares.platform.menu']   = $menu                                 = m::mock('\Antares\Widget\Handlers\Menu');
+        $this->app['antares.platform.menu']   = $menu                                 = m::mock(\Antares\UI\TemplateBase\Menu::class);
         $stub                                 = new BrandsMenu($this->app);
 
         $acl                      = m::mock('Antares\Authorization\Factory')

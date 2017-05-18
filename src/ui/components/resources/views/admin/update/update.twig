@@ -1,0 +1,5 @@
+{% extends "antares/foundation::layouts.antares.clear" %}
+{% block content %}        
+    {{ app('antares.asset').container("antares/foundation::scripts").scripts()|raw }}
+    {{ form|raw }}
+{% endblock %}

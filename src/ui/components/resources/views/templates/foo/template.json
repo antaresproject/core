@@ -1,0 +1,9 @@
+{
+    "package": "foo",
+    "name": "Foo Template",
+    "description": "Foo Template Description",
+    "author": "Foo",
+    "url": "https://antares.com/docs",
+    "type": [],
+    "autoload": []
+}
