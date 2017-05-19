@@ -27,6 +27,7 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Database\Migrations\Migrator;
 use Antares\Contracts\Publisher\Publisher;
 use Illuminate\Support\Str;
+use SplFileInfo;
 use stdClass;
 
 class MigrateManager implements Publisher
@@ -293,7 +294,17 @@ class MigrateManager implements Publisher
      */
     public function resolveClassname($file)
     {
-        $class = Str::studly(implode('_', array_slice(explode('_', $file), 5)));
+
+        $splFile = new SplFileInfo($file);
+        $parts   = explode('_', $splFile->getFilename());
+        $strings = [];
+        foreach ($parts as $part) {
+            if (is_numeric($part)) {
+                continue;
+            }
+            array_push($strings, $part);
+        }
+        $class = Str::studly(implode('_', $strings));
         return new $class;
     }
 

@@ -40,18 +40,18 @@ class Component extends BaseEloquent
      * {@inheritdoc}
      */
     protected $casts = [
-        'id'        => 'integer',
-        'status'    => 'integer',
-        'required' 	=> 'boolean',
-        'options'   => 'array',
+        'id'       => 'integer',
+        'status'   => 'integer',
+        'required' => 'boolean',
+        'options'  => 'array',
     ];
 
     /**
      * {@inheritdoc}
      */
     protected $attributes = [
-        'status'    => ExtensionContract::STATUS_AVAILABLE,
-        'required' 	=> false,
+        'status'   => ExtensionContract::STATUS_AVAILABLE,
+        'required' => false,
     ];
 
     /**
@@ -62,56 +62,64 @@ class Component extends BaseEloquent
     /**
      * @return int
      */
-    public function getId() : int {
+    public function getId(): int
+    {
         return $this->id;
     }
 
     /**
      * @return string
      */
-    public function getVendor() : string {
+    public function getVendor(): string
+    {
         return $this->vendor;
     }
 
     /**
      * @return string
      */
-    public function getName() : string {
+    public function getName(): string
+    {
         return $this->name;
     }
 
     /**
      * @return string
      */
-    public function getFullName() : string {
+    public function getFullName(): string
+    {
         return $this->vendor . '/' . $this->name;
     }
 
     /**
      * @return int
      */
-    public function getStatus() : int {
+    public function getStatus(): int
+    {
         return $this->status;
     }
 
     /**
      * @return bool
      */
-    public function isRequired() : bool {
+    public function isRequired(): bool
+    {
         return $this->required;
     }
 
     /**
      * @return array
      */
-    public function getOptions() : array {
+    public function getOptions(): array
+    {
         return (array) $this->options;
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany|Action[]
      */
-    public function actions() {
+    public function actions()
+    {
         return $this->hasMany(Action::class, 'component_id');
     }
 
@@ -121,7 +129,8 @@ class Component extends BaseEloquent
      * @param Builder $query
      * @return Builder
      */
-    public function scopeWithActions(Builder $query) {
+    public function scopeWithActions(Builder $query)
+    {
         return $query->with(Action::class);
     }
 
@@ -130,8 +139,10 @@ class Component extends BaseEloquent
      * @param string $name
      * @return static|null
      */
-    public static function findByVendorAndName(string $vendor, string $name) {
-        return static::where('vendor', $vendor)->where('name', $name)->first();
+    public static function findByVendorAndName(string $vendor, string $name)
+    {
+
+        return static::where('vendor', $vendor)->whereIn('name', [$name, 'component-' . $name, 'module-' . $name])->first();
     }
 
     /**
@@ -141,17 +152,8 @@ class Component extends BaseEloquent
      */
     public static function findOneByName($name)
     {
-        $name = str_replace('_', '-', $name);
-
-        if($name === 'core') {
-            $name = 'antaresproject/core';
-        }
-        else if( ! Str::contains($name, '/') ) {
-            $name = 'antaresproject/component-' . $name;
-        }
-
-        list($vendor, $name) = explode('/', $name);
-
+        $name   = str_replace('_', '-', $name);
+        $vendor = 'antaresproject';
         return static::findByVendorAndName($vendor, $name);
     }
 

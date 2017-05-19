@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Support\Factories;
 
 use Illuminate\Contracts\Container\Container;
@@ -84,13 +83,8 @@ class MenuFactory implements Factory
     public function withHandlers($handlers)
     {
         $handlerList = is_string($handlers) ? [$handlers] : $handlers;
-        $extensions  = app('antares.memory')->get("extensions.active");
         foreach ($handlerList as $handler) {
             $reflectionClass = new ReflectionClass($handler);
-            $name            = trim(str_replace('modules', '', $this->resolveExtensionName($reflectionClass->getFileName())), '/');
-            if ($name !== false && !isset($extensions[$name])) {
-                continue;
-            }
             if (!$reflectionClass->isInstantiable()) {
                 throw new NotInstantiableException(sprintf('Class name %s is not instantiable', $handler));
             }

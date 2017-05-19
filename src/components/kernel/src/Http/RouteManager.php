@@ -115,7 +115,7 @@ abstract class RouteManager
 
         if (str_contains($path, '.') and ! is_api_request() and ! starts_with($path, 'http') && strpos($path, '.') < 20) {
             try {
-                return route(area() . '.' . $path, $options);
+                return route($path, $options);
             } catch (Exception $ex) {
                 return '';
             }
