@@ -68,7 +68,7 @@ class UserMenuHandlerTest extends ApplicationTestCase
         $app['antares.platform.menu']                         = $menu                                                 = m::mock(\Antares\UI\TemplateBase\Menu::class);
         $app['Antares\Contracts\Authorization\Authorization'] = $acl                                                  = m::mock('\Antares\Contracts\Authorization\Authorization');
 
-        $acl->shouldReceive('can')->with("clients-list")->once()->andReturn(false);
+        $acl->shouldReceive('can')->with("users-list")->once()->andReturn(false);
 
         $stub = new UserMenuHandler($app);
         $this->assertNull($stub->handle());

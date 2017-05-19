@@ -77,7 +77,7 @@ class UserViewBreadcrumbMenu extends MenuHandler
      */
     public function authorize(Authorization $acl)
     {
-        return $acl->can('clients-list');
+        return $acl->can('users-list');
     }
 
     /**
@@ -105,7 +105,7 @@ class UserViewBreadcrumbMenu extends MenuHandler
         }
 
         $this->createMenu();
-        if (!app('antares.acl')->make('antares')->can('client-create')) {
+        if (!app('antares.acl')->make('antares')->can('user-create')) {
             return;
         }
 

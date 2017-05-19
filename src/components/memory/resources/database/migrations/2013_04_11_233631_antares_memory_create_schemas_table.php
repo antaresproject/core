@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
-
-
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -27,7 +25,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class BillevoMemoryCreateSchemasTable extends Migration
+class AntaresMemoryCreateSchemasTable extends Migration
 {
 
     /**
@@ -125,6 +123,7 @@ class BillevoMemoryCreateSchemasTable extends Migration
             $table->increments('id')->unsigned();
             $table->integer('component_id')->unsigned();
             $table->string('name');
+            $table->string('description', 500)->nullable();
         });
         Schema::table('tbl_actions', function (Blueprint $table) {
             $table->foreign('component_id')

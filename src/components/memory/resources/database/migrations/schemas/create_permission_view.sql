@@ -1,3 +1,4 @@
+DROP VIEW IF EXISTS `permissions`;
 CREATE 
     ALGORITHM = UNDEFINED 
     DEFINER = `root`@`localhost` 

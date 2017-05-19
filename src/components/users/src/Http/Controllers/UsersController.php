@@ -56,10 +56,10 @@ class UsersController extends AdminController implements UserCreator, UserRemove
         $this->middleware('antares.auth');
         $this->middleware('antares.csrf', ['only' => 'delete']);
         $this->middleware('antares.forms:manage-users');
-        $this->middleware('antares.can:clients-list', ['only' => ['index'],]);
-        $this->middleware('antares.can:client-create', ['only' => ['create', 'store'],]);
-        $this->middleware('antares.can:client-update', ['only' => ['edit', 'update'],]);
-        $this->middleware('antares.can:client-delete', ['only' => ['delete', 'destroy'],]);
+        $this->middleware('antares.can:users-list', ['only' => ['index'],]);
+        $this->middleware('antares.can:user-create', ['only' => ['create', 'store'],]);
+        $this->middleware('antares.can:user-update', ['only' => ['edit', 'update'],]);
+        $this->middleware('antares.can:user-delete', ['only' => ['delete', 'destroy'],]);
     }
 
     /**

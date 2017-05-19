@@ -137,12 +137,10 @@ class Manager
      */
     public function isActive(string $name): bool
     {
-        $extension = $this->getAvailableExtensions()->findByName($this->getNormalizedName($name));
-
+        $extension = $this->getAvailableExtensions()->quessByName($name);
         if ($extension instanceof ExtensionContract) {
             return $extension->isActivated();
         }
-
         return false;
     }
 

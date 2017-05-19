@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
-
-
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -35,13 +33,12 @@ class AntaresAuthCreateUsersTable extends Migration
      */
     public function up()
     {
-
+        $this->down();
         Schema::create('tbl_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('email');
             $table->string('password');
             Event::fire('antares.install.schema: users', [$table]);
-            //$table->string('fullname', 100)->nullable();
             $table->string('firstname', 255);
             $table->string('lastname', 255);
             $table->integer('status')->nullable();
@@ -58,7 +55,9 @@ class AntaresAuthCreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::drop('tbl_users');
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Schema::dropIfExists('tbl_users');
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
 }

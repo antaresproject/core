@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Handlers;
 
 use Antares\Foundation\Support\MenuHandler;
@@ -61,7 +60,7 @@ class UserMenu extends MenuHandler
      */
     public function authorize(Authorization $acl)
     {
-        return $acl->can('clients-list');
+        return $acl->can('users-list');
     }
 
 }

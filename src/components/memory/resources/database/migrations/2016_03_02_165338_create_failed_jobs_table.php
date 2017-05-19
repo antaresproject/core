@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
-
-
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 

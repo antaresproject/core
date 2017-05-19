@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
-
-
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -50,6 +48,7 @@ class AntaresAuthCreatePasswordRemindersTable extends Migration
      */
     public function up()
     {
+        $this->down();
         Schema::create($this->table, function (Blueprint $table) {
             $table->string('email')->index();
             $table->string('token')->index();
@@ -64,7 +63,9 @@ class AntaresAuthCreatePasswordRemindersTable extends Migration
      */
     public function down()
     {
-        Schema::drop($this->table);
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Schema::dropIfExists($this->table);
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
 }

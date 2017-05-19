@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Handlers;
 
 use Antares\Foundation\Support\MenuHandler;
@@ -60,7 +59,7 @@ class UsersBreadcrumbMenu extends MenuHandler
      */
     public function authorize(Authorization $acl)
     {
-        return $acl->can('clients-list');
+        return $acl->can('users-list');
     }
 
     /**
@@ -73,7 +72,7 @@ class UsersBreadcrumbMenu extends MenuHandler
             return;
         }
         $this->createMenu();
-        if (!app('antares.acl')->make('antares')->can('client-create')) {
+        if (!app('antares.acl')->make('antares')->can('user-create')) {
             return;
         }
         $this->handler
