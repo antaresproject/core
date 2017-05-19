@@ -16,6 +16,20 @@ class Extensions extends Collection
      * @param string $name
      * @return ExtensionContract|null
      */
+    public function quessByName(string $name)
+    {
+        return $this->first(function(ExtensionContract $extension) use($name) {
+                    $package = $extension->getPackageName();
+                    return (str_contains($package, 'module-')) ? $package === 'module-' . $name : $package === 'component-' . $name;
+                });
+    }
+
+    /**
+     * Returns the first extension by the given name.
+     *
+     * @param string $name
+     * @return ExtensionContract|null
+     */
     public function findByName(string $name)
     {
         return $this->first(function(ExtensionContract $extension) use($name) {

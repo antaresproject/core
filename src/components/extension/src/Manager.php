@@ -167,7 +167,7 @@ class Manager
      */
     public function getExtensionPathByName(string $name): string
     {
-        $extension = $this->getAvailableExtensions()->findByName($this->getNormalizedName($name));
+        $extension = $this->getAvailableExtensions()->quessByName($name);
 
         if ($extension instanceof ExtensionContract) {
             return $extension->getPath();
@@ -257,8 +257,6 @@ class Manager
      */
     protected function getNormalizedName(string $name): string
     {
-        $name = str_replace('_', '-', $name);
-
         if (!Str::contains($name, '/')) {
             $name = 'antaresproject/component-' . $name;
         }

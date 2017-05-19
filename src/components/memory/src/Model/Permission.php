@@ -225,6 +225,7 @@ class Permission extends Eloquent
      */
     public function updatePermissions($name, $values, $isNew = false, $brandId = null)
     {
+
         try {
             if ($name === null) {
                 return false;
@@ -295,8 +296,6 @@ class Permission extends Eloquent
             Cache::forget($this->getCachePrefix());
             return true;
         } catch (Exception $e) {
-            vdump($e);
-            exit;
             Log::emergency($e);
             return false;
         }

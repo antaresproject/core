@@ -86,7 +86,8 @@ class AssetPublisher
         }
 
 
-        $path = app()->make('antares.extension')->getExtensionPathByName($this->extension);
+        $path = app('antares.extension')->getExtensionPathByName($this->extension);
+
 
         if (!$path) {
             return [];
@@ -151,8 +152,9 @@ class AssetPublisher
     {
         $this->extension = $extension;
 
-        $params  = is_string($options) ? config('antares/' . $extension . '::' . $options) : $options;
-        $files   = $this->getFiles($params);
+        $params = is_string($options) ? config('antares/' . $extension . '::' . $options) : $options;
+        $files  = $this->getFiles($params);
+
         if (empty($files) and $options = (array) $options) {
 
             foreach ($options as $option) {
