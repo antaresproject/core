@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\src\Http\Handlers;
 
 use Antares\Foundation\Support\MenuHandler;
@@ -50,7 +49,6 @@ class SecurityMenu extends MenuHandler
      */
     public function authorize(Authorization $acl)
     {
-
         $active = (extension_active('ban_management') or extension_active('two_factor_auth'));
 
         if (!$active) {

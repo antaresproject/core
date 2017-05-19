@@ -45,7 +45,7 @@ return [
         'roles'      => [
             'member' => [
                 'show-dashboard',
-                'client-update'
+                'user-update'
             ],
         ],
         'components' => [
@@ -54,10 +54,10 @@ return [
                 'manage-users',
                 'manage-roles',
                 'manage-acl',
-                'clients-list',
-                'client-create',
-                'client-update',
-                'client-delete',
+                'users-list',
+                'user-create',
+                'user-update',
+                'user-delete',
                 'change-app-settings',
                 'show-dashboard',
                 'component-install',

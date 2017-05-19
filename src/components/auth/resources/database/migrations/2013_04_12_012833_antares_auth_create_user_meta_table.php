@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
-
-
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -34,6 +32,7 @@ class AntaresAuthCreateUserMetaTable extends Migration
      */
     public function up()
     {
+        $this->down();
         Schema::create('tbl_user_meta', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
@@ -56,7 +55,9 @@ class AntaresAuthCreateUserMetaTable extends Migration
      */
     public function down()
     {
-        Schema::drop('tbl_user_meta');
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Schema::dropIfExists('tbl_user_meta');
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
 }

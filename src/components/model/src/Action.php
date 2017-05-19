@@ -49,7 +49,7 @@ class Action extends Eloquent
      *
      * @var array
      */
-    protected $fillable = ['component_id', 'name'];
+    protected $fillable = ['component_id', 'name', 'description'];
 
     /**
      * has one relation to extension model

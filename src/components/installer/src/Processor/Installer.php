@@ -275,14 +275,15 @@ class Installer
                         $extensions = app('antares.extension')->getAvailableExtensions();
                         foreach ($extensions as $extension) {
                             $name = $extension->getVendorName() . '/' . $extension->getPackageName();
-                            if (in_array($name, $optional)) {
-                                $package = $extension->getPackage();
-                                $fieldset->control('input:checkbox', 'optional[]')
-                                        ->label($extension->getFriendlyName() . ' (' . $package->getVersion() . ')')
-                                        ->value($name)
-                                        ->help($package->getDescription() . ', ' . implode(', ', array_flatten($package->getAuthors())))
-                                        ->checked(true);
+                            if (!in_array($name, $optional)) {
+                                continue;
                             }
+                            $package = $extension->getPackage();
+                            $fieldset->control('input:checkbox', 'optional[]')
+                                    ->label($extension->getFriendlyName() . ' (' . $package->getVersion() . ')')
+                                    ->value($name)
+                                    ->help($package->getDescription() . ', ' . implode(', ', array_flatten($package->getAuthors())))
+                                    ->checked(true);
                         }
                     });
                 });
