@@ -87,13 +87,13 @@ class StaffMenuHandler extends MenuHandler
      */
     public function getLinkAttribute($value)
     {
-        $control = app('antares.acl')->make('antares/control');
+        $control = app('antares.acl')->make('antares/acl');
 
         if ($control->can('roles-list')) {
-            return handles('antares::control/index/roles');
+            return handles('antares::acl/index/roles');
         }
         if ($control->can('admin-list')) {
-            return handles('antares::control/users/index');
+            return handles('antares::acl/users/index');
         }
 
         return '#';

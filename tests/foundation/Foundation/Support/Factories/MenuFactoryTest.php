@@ -65,7 +65,7 @@ class MenuFactoryTest extends TestCase
         } catch (\Exception $e) {
             $this->assertInstanceOf('ReflectionException', $e);
         }
-        $menuHandler = m::mock('Antares\Control\Http\Handlers\RoleMenuHandler');
+        $menuHandler = m::mock('Antares\Acl\Http\Handlers\RoleMenuHandler');
         $this->assertInstanceOf('\Antares\Foundation\Support\Factories\MenuFactory', $stub->withHandlers($menuHandler));
     }
 
@@ -75,7 +75,7 @@ class MenuFactoryTest extends TestCase
     public function testCompose()
     {
         $stub        = new MenuFactory($this->app);
-        $menuHandler = m::mock('Antares\Control\Http\Handlers\RoleMenuHandler');
+        $menuHandler = m::mock('Antares\Acl\Http\Handlers\RoleMenuHandler');
         $stub->with('menu.top.foo');
         $stub->withHandlers($menuHandler);
         $this->assertInstanceOf('\Antares\Foundation\Support\Factories\MenuFactory', $stub->compose('*'));
