@@ -98,8 +98,10 @@ class Migration
 
         foreach ($roles as $role) {
             $roleActions = self::getFlatActions($roleActionList->getActionsByRole($role));
-            $acl->allow($role, $roleActions);
+            $acl->allow($role, $roleActions, true, $roleActionList->getDescriptions(), $roleActionList->getCategories());
         }
+
+
         $memory->finish();
     }
 

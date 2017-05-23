@@ -181,6 +181,7 @@ class ComponentHandler extends DefaultHandler implements HandlerContract
      */
     protected function verify(array $items = [], $brandId = null)
     {
+
         $items   = $this->clear($items);
         $changed = [];
         foreach ($items as $key => $value) {

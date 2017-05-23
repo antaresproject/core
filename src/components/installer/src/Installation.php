@@ -29,6 +29,7 @@ use Antares\Extension\Contracts\ExtensionContract;
 use Illuminate\Contracts\Container\Container;
 use Antares\Extension\Processors\Activator;
 use Antares\Extension\Processors\Installer;
+use Antares\Model\ActionCategories;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -171,12 +172,7 @@ class Installation implements InstallationContract
             $this->importDefaultAdminPermissions($userRole, $actions);
             $this->importDefaultUsersPermissions($actions);
             $memory    = $this->app->make('antares.memory')->make('primary');
-            $theme     = [
-                'frontend' => 'client',
-                'backend'  => 'default',
-            ];
             $memory->put('site.name', $input['site_name']);
-            $memory->put('site.theme', $theme);
             $memory->put(config('antares/notifications::default.notifications_remove_after_days', 90));
             $memory->put('email', $this->app->make('config')->get('mail'));
             $memory->put('email.from', [
@@ -230,7 +226,6 @@ class Installation implements InstallationContract
     private function importDefaultUsersPermissions(array $actions)
     {
         $defaults = (array) config('antares/installer::permissions.roles', []);
-
         foreach ($defaults as $role => $permissions) {
             /* @var $model Role */
             $model = $this->app->make('antares.role')->newQuery()->where('name', $role)->first();
@@ -325,13 +320,28 @@ class Installation implements InstallationContract
 
         $componentName  = $component->name;
         $defaultActions = (array) config('antares/installer::permissions.components.' . $componentName, []);
-
-        $actions = array_map(function($value) use($componentId) {
-            return Action::create([
-                        'component_id' => $componentId,
-                        'name'         => $value,
-            ]);
-        }, $defaultActions);
+        $actions        = [];
+        foreach ($defaultActions as $index => $action) {
+            if (is_string($action)) {
+                array_push($actions, Action::create([
+                            'component_id' => $componentId,
+                            'name'         => $index,
+                            'description'  => $action,
+                ]));
+            } elseif (is_array($action)) {
+                $category = ActionCategories::query()->firstOrCreate([
+                    'name' => $index
+                ]);
+                foreach ($action as $index => $description) {
+                    array_push($actions, Action::create([
+                                'component_id' => $componentId,
+                                'category_id'  => $category->id,
+                                'name'         => $index,
+                                'description'  => $description,
+                    ]));
+                }
+            }
+        }
 
         return $actions;
     }

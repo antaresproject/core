@@ -187,7 +187,6 @@ class Installer
     {
 
         if ($this->installer->createAdmin($input)) {
-            //$this->installer->runComponentsInstallation();
             return $listener->storeSucceed();
         }
 

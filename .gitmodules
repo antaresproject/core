@@ -6,10 +6,10 @@
 	path = modules/automation
 	url = https://github.com/antaresproject/automation.git
         branch = 0.9.2.2
-[submodule "control"]
-	path = modules/control
-	url = https://github.com/antaresproject/control.git
-        branch = 0.9.2.2
+[submodule "acl"]
+	path = modules/acl
+	url = https://github.com/antaresproject/acl.git
+        branch = dev-master
 [submodule "customfields"]
 	path = modules/customfields
 	url = https://github.com/antaresproject/customfields.git
@@ -25,8 +25,4 @@
 [submodule "translations"]
 	path = modules/translations
 	url = https://github.com/antaresproject/translations.git
-        branch = 0.9.2.2
-[submodule "updater"]
-	path = modules/updater
-	url = https://github.com/antaresproject/updater.git
         branch = 0.9.2.2
