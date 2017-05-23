@@ -8,18 +8,18 @@
 {% endfor %}
 <div class="col-group">
     <div class="col-dt-16 col-mb-16">
-        <fieldset name="inputs">
+        <fieldset name="inputs" class="admin-account">
             <legend>
                 Administrator Account
             </legend>
             <div class="col-group">                
-                <div class="form-block" >
+                <div class="form-block ai-c" >
                     <div class="col-dt-2 col-2 col-mb-2">
                         {{ app('form').label('email', trans('antares/foundation::label.users.email'),{'class':'form-block__name'})|raw }}            
                     </div>
                     <div class="col-dt-6 col-6 col-mb-6">
                         <div class="input-field ">                
-                            {{ app('form').input('email', 'email', '', {'class' : 'w470'})|raw }}                            
+                            {{ app('form').input('email', 'email', '')|raw }}                            
                         </div>    
                         <span id="{{ control.id }}_error" class="error col-13 col-mb-11 nopadding">
                             {{ errors.first('email', ':message')|raw }}
@@ -36,13 +36,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-block" >
+                <div class="form-block ai-c" >
                     <div class="col-dt-2 col-2 col-mb-2">
                         {{ app('form').label('password', trans('antares/foundation::label.users.password'),{'class':'form-block__name'})|raw }}
                     </div>
                     <div class="col-dt-6 col-6 col-mb-6">
                         <div class="input-field ">                
-                            {{ app('form').input('password', 'password', '', {'required' : true,'class' : 'w470'})|raw }}
+                            {{ app('form').input('password', 'password', '', {'required' : true})|raw }}
                         </div>    
                         <span id="{{ control.id }}_error" class="error col-13 col-mb-11 nopadding">
                             {{ errors.first('password', ':message')|raw }}
@@ -59,13 +59,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-block" >
+                <div class="form-block ai-c" >
                     <div class="col-dt-2 col-2 col-mb-2">
                         {{ app('form').label('firstname', trans('antares/foundation::label.users.firstname'),{'class':'form-block__name'})|raw }}            
                     </div>
                     <div class="col-dt-6 col-6 col-mb-6">
                         <div class="input-field ">                
-                            {{ app('form').input('text', 'firstname', 'John', {'required' : true,'class' : 'w470'})|raw }}                    
+                            {{ app('form').input('text', 'firstname', 'John', {'required' : true})|raw }}                    
                         </div>    
                         <span id="{{ control.id }}_error" class="error col-13 col-mb-11 nopadding">
                             {{ errors.first('firstname', ':message')|raw }}
@@ -82,13 +82,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-block" >
+                <div class="form-block ai-c" >
                     <div class="col-dt-2 col-2 col-mb-2">
                         {{ app('form').label('lastname', trans('antares/foundation::label.users.lastname'),{'class':'form-block__name'})|raw }}            
                     </div>
                     <div class="col-dt-6 col-6 col-mb-6">
                         <div class="input-field ">                
-                            {{ app('form').input('text', 'lastname', 'Doe', {'required' : true,'class' : 'w470'})|raw }}                    
+                            {{ app('form').input('text', 'lastname', 'Doe', {'required' : true})|raw }}                    
                         </div>    
                         <span id="{{ control.id }}_error" class="error col-13 col-mb-11 nopadding">
                             {{ errors.first('lastname', ':message')|raw }}
@@ -107,16 +107,16 @@
                 </div>
             </div>
         </fieldset>
-        <fieldset name="inputs">
+        <fieldset name="inputs" class="apl-info">
             <legend>{{ trans('antares/foundation::install.steps.application') }}</legend>
             <div class="col-group">                
-                <div class="form-block" >
+                <div class="form-block ai-c" >
                     <div class="col-dt-2 col-2 col-mb-2">
                         {{ app('form').label('site_name', trans('antares/foundation::label.name'),{'class':'form-block__name'})|raw }}                
                     </div>
                     <div class="col-dt-6 col-6 col-mb-6">
                         <div class="input-field ">                
-                            {{ app('form').input('text', 'site_name', siteName, {'required' : true,'class' : 'w470'})|raw }} 
+                            {{ app('form').input('text', 'site_name', siteName, {'required' : true})|raw }} 
                         </div>    
                         <span  class="error col-13 col-mb-11 nopadding">
                             {{ errors.first('site_name', ':message')|raw }}

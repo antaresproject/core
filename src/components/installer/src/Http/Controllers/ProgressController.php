@@ -22,27 +22,11 @@
 namespace Antares\Installation\Http\Controllers;
 
 use Antares\Foundation\Http\Controllers\BaseController;
-use Antares\Installation\Progress;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
-use SensioLabs\AnsiConverter\Theme\SolarizedTheme;
+use Antares\Installation\Progress;
 
 class ProgressController extends BaseController
 {
-
-    /**
-     * @var SolarizedTheme
-     */
-    protected $theme;
-
-    /**
-     * ProgressController constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->theme = new SolarizedTheme();
-    }
 
     /**
      * Setup controller filters.
@@ -60,8 +44,14 @@ class ProgressController extends BaseController
      */
     public function index(Progress $progress)
     {
+        publish(null, [
+            '/packages/codemirror/lib/codemirror.js',
+            '/packages/codemirror/mode/javascript/javascript.js',
+            '/packages/core/js/installer.js',
+            '/packages/codemirror/lib/codemirror.css',
+            '/packages/codemirror/theme/ambiance.css'
+        ]);
         set_meta('title', 'Install Antares');
-        $consoleTheme = $this->theme->asArray();
         $progress->start();
 
         return view('antares/installer::progress', compact('consoleTheme'));
@@ -73,9 +63,9 @@ class ProgressController extends BaseController
      */
     public function preview(Progress $progress)
     {
-        $converter = new AnsiToHtmlConverter($this->theme);
-        $content   = $progress->getOutput();
-        $console   = $converter->convert($content);
+        $converter = new AnsiToHtmlConverter();
+        $console   = $progress->getOutput();
+
 
         $percentageProgress = $progress->getPercentageProgress();
 

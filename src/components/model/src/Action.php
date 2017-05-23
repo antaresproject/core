@@ -60,4 +60,14 @@ class Action extends Eloquent
         return $this->hasOne(Component::class, 'id', 'component_id');
     }
 
+    /**
+     * Relation to action category
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function category()
+    {
+        return $this->hasOne(ActionCategories::class, 'id', 'category_id');
+    }
+
 }

@@ -1,72 +1,122 @@
-<fieldset name="inputs">
+<fieldset name="inputs" class="system">
     <legend>{{ trans('antares/foundation::install.system.title') }}</legend>
     <div class="col-group">                
-        {% for name,requirement in checklist %}
-            <div class="form-block" >                
-                <div class="col-dt-2 col-2 col-mb-2">
-                    {{ Form.label(name, trans("antares/foundation::install.system."~name~".name"),{'class':'form-block__name'})|raw }}    
-                </div>
-                <div class="col-dt-6 col-6 col-mb-6">
-                    <div class="input-field ">                
-                        <i class="zmdi zmdi-hc-2x zmdi-check" ></i>
-                        {% if name=='version' %}
-                            {{ requirement['data']['version'] }}
-                        {% endif %}
-                    </div> 
-                </div>               
-
-            </div>
-            <div class="form-block  form-block-desc" >
-                <div class="col-dt-14 col-14 col-mb-14">
-                    <div class="input-field__desc">
-                        {% if not requirement['is'] == requirement['should'] %}                        
-                            <strong>
-                                {{ trans("antares/foundation::install.solution") }}:
-                            </strong>
-                            {{ trans("antares/foundation::install.system."~name~".solution") }}
-                        {% endif %}  
-                        {% if requirement['is'] == requirement['should'] %}                                                                                 
-                            {% if name=='version' %}
-
-                            {% elseif name == 'phpExtensions' %}                                                 
-                                <p>
-                                    {{ trans('Following php extensions are installed') }}:
-                                    <br/>
-                                    {{ requirement['data']['extensions']|join(', ')|raw }}   
-                                </p>
-                            {% elseif name=='apacheModules' %}
-                                <p>
-                                    {{ trans('Following apache modules are installed') }}:
-                                    <br/>
-                                    {{ requirement['data']['modules']|join(', ')|raw }}                                        
-                                </p>
-                            {% endif %}
-                        {% else %}
-                            {% if requirement['explicit']==true %}
-                                {% if name=='version' %}
-                                    {{ requirement['data']['error'] }}         
-                                {% elseif name == 'phpExtensions' %}                                                 
-                                    {{ requirement['data']['error'] }}         
-                                {% elseif name=='apacheModules' %}
-                                    {{ requirement['data']['error'] }}         
-                                {% else %}
-                                    {{ trans('antares/foundation::install.status.not') }}
-                                {% endif %}                            
-                            {% else %}
-                                {% if name=='version' %}
-                                    {{ requirement['data']['error'] }}         
-                                {% elseif name == 'phpExtensions' %}                                                 
-                                    {{ requirement['data']['error'] }}         
-                                {% elseif name=='apacheModules' %}
-                                    {{ requirement['data']['error'] }}         
-                                {% else %}
-                                    {{ trans('antares/foundation::install.status.not') }}
-                                {% endif %}
-                            {% endif %}
-                        {% endif %}
+        {% for name,requirement in checklist %}            
+            <div class="form-block form-box" >                
+                <div class="col-dt-3 col-3 col-mb-3">
+                    <div class="form-block">
+                        <div class="col-dt-12 col-11 col-mb-11">
+                            {{ Form.label(name, trans("antares/foundation::install.system."~name~".name"),{'class':'form-block__name'})|raw }}    
+                        </div>
+                        <div class="col-dt-4 col-2 col-mb-2">
+                            <div class="input-field ">
+                                <i class="zmdi zmdi-hc-2x {{ not requirement.is == requirement.should ? 'zmdi-close':'zmdi-check'  }} "></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>     
+                {% if not requirement['is'] == requirement['should'] %}                        
+                    <div class="col-dt-13 col-13 col-mb-13">
+                        <div class="form-block  form-block-desc">
+                            <div class="col-dt-16 col-16 col-mb-16">
+                                <div class="input-field__desc">
+                                    <p class="solution">
+                                        <span>
+                                            {{ trans("antares/foundation::install.solution") }}:
+                                        </span>
+                                        {{ trans("antares/foundation::install.system."~name~".solution",{'path':requirement.data.path})|raw }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                {% endif %}  
+                {% if requirement['is'] == requirement['should'] %}                                                                                 
+                    {% if name=='version' %}
+                        <div class="col-dt-13 col-13 col-mb-13">
+                            <div class="form-block  form-block-desc">
+                                <div class="col-dt-16 col-16 col-mb-16">
+                                    <div class="input-field__desc">
+                                        <span>{{ requirement.data.version }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% elseif name == 'phpExtensions' %}                                                 
+                        <div class="col-dt-13 col-13 col-mb-13">
+                            <div class="form-block  form-block-desc">
+                                <div class="col-dt-16 col-16 col-mb-16">
+                                    <div class="input-field__desc">
+                                        <p>
+                                            {{ trans('Following php extensions are installed') }}:
+                                            <br>
+                                            {{ requirement['data']['extensions']|join(', ')|raw }}   
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% elseif name=='apacheModules' %}
+                        <div class="col-dt-13 col-13 col-mb-13">
+                            <div class="form-block  form-block-desc">
+                                <div class="col-dt-16 col-16 col-mb-16">
+                                    <div class="input-field__desc">
+                                        <p>
+                                            {{ trans('Following apache modules are installed') }}:
+                                            <br>
+                                            {{ requirement['data']['modules']|join(', ')|raw }}                   
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    {% if requirement['explicit']==true %}
+                        {% if name=='version' %}
+                            <div class="col-dt-13 col-13 col-mb-13">
+                                <div class="form-block  form-block-desc">
+                                    <div class="col-dt-16 col-16 col-mb-16">
+                                        <div class="input-field__desc">
+                                            <p class="solution">
+                                                {{ requirement['data']['error'] }}    
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>  
+                        {% elseif name == 'phpExtensions' %}                                                 
+                            <div class="col-dt-13 col-13 col-mb-13">
+                                <div class="form-block  form-block-desc">
+                                    <div class="col-dt-16 col-16 col-mb-16">
+                                        <div class="input-field__desc">
+                                            <p class="solution">
+                                                {{ requirement['data']['error'] }}   
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>  
+                        {% elseif name=='apacheModules' %}
+                            <div class="col-dt-13 col-13 col-mb-13">
+                                <div class="form-block  form-block-desc">
+                                    <div class="col-dt-16 col-16 col-mb-16">
+                                        <div class="input-field__desc">
+                                            <p class="solution">
+                                                {{ requirement['data']['error'] }}   
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>     
+                        {% endif %}                            
+                    {% else %}
+
+                    {% endif %}
+                {% endif %}
+
+            </div>
+
         {% endfor %}
     </div>
 </fieldset>
