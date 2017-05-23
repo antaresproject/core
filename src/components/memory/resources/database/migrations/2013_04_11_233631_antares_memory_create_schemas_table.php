@@ -40,6 +40,7 @@ class AntaresMemoryCreateSchemasTable extends Migration
         $this->down();
         try {
             $this->createComponentsTbl();
+            $this->createActionCategoriesTbl();
             $this->createActionsTbl();
             $this->createRolesTbl();
             $this->createBrandsTbl();
@@ -68,6 +69,7 @@ class AntaresMemoryCreateSchemasTable extends Migration
         Schema::dropIfExists('tbl_permissions');
         Schema::dropIfExists('tbl_roles');
         Schema::dropIfExists('tbl_actions');
+        Schema::dropIfExists('tbl_action_categories');
         Schema::dropIfExists('tbl_components');
         Schema::dropIfExists('tbl_brands');
         Schema::dropIfExists('tbl_antares_options');
@@ -122,14 +124,25 @@ class AntaresMemoryCreateSchemasTable extends Migration
         Schema::create('tbl_actions', function (Blueprint $table) {
             $table->increments('id')->unsigned();
             $table->integer('component_id')->unsigned();
+            $table->integer('category_id')->unsigned()->nullable();
             $table->string('name');
             $table->string('description', 500)->nullable();
         });
         Schema::table('tbl_actions', function (Blueprint $table) {
-            $table->foreign('component_id')
-                    ->references('id')
-                    ->on('tbl_components')
-                    ->onDelete('cascade');
+            $table->foreign('component_id')->references('id')->on('tbl_components')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('tbl_action_categories')->onDelete('cascade');
+        });
+    }
+
+    /**
+     * ACTIONS TABLE
+     */
+    private function createActionCategoriesTbl()
+    {
+        Schema::create('tbl_action_categories', function (Blueprint $table) {
+            $table->increments('id')->unsigned();
+            $table->string('name');
+            $table->string('description', 1000)->nullable();
         });
     }
 

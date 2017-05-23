@@ -11,7 +11,7 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Antares Core
- * @version    0.9.0
+ * @version    0.9.2
  * @author     Antares Team
  * @license    BSD License (3-clause)
  * @copyright  (c) 2017, Antares
@@ -20,44 +20,38 @@
 
 namespace Antares\Model;
 
-/**
- * Class Action
- * @package Antares\Model
- * @property int $id
- * @property int $component_id
- * @property string $name
- */
-class Action extends Eloquent
+class ActionCategories extends Eloquent
 {
 
     /**
-     * name of table
+     * Name of table
+     * 
      * String
      */
-    public $table = 'tbl_actions';
+    public $table = 'tbl_action_categories';
 
     /**
-     * has model any timestamps
+     * Has model any timestamps
      *
      * @var boolean
      */
     public $timestamps = false;
 
     /**
-     * fillable array of attributes
+     * Fillable array of attributes
      *
      * @var array
      */
-    protected $fillable = ['component_id', 'category_id', 'name', 'description'];
+    protected $fillable = ['name'];
 
     /**
-     * has one relation to extension model
+     * Relation to actions
      *
-     * @return Component|\Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function extension()
+    public function actions()
     {
-        return $this->hasOne(Component::class, 'id', 'component_id');
+        return $this->hasMany(Action::class, 'category_id', 'id');
     }
 
 }

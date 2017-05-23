@@ -23,7 +23,8 @@ namespace Antares\Acl;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Str;
 
-class Action {
+class Action
+{
 
     /**
      * Route name.
@@ -40,21 +41,24 @@ class Action {
     protected $action;
 
     /**
-     * Action constructor.
-     * @param $routeName
-     * @param $action
+     * Construct
+     * 
+     * @param String $routeName
+     * @param String $action
      */
-    public function __construct($routeName, $action) {
-        $this->routeName    = $routeName;
-        $this->action       = $action;
+    public function __construct($routeName, $action)
+    {
+        $this->routeName = $routeName;
+        $this->action    = $action;
     }
-    
+
     /**
      * Returns the route name (without area).
      *
      * @return string
      */
-    public function getRouteName() {
+    public function getRouteName()
+    {
         return $this->routeName;
     }
 
@@ -63,7 +67,8 @@ class Action {
      *
      * @return string
      */
-    public function getAction() {
+    public function getAction()
+    {
         return $this->action;
     }
 
@@ -72,7 +77,8 @@ class Action {
      *
      * @return string
      */
-    public function getActionAsParameter() {
+    public function getActionAsParameter()
+    {
         return Str::slug($this->action);
     }
 
@@ -83,10 +89,11 @@ class Action {
      * @param string|null $area
      * @return bool
      */
-    public function isMatchToRoute(Route $route, string $area = null) {
+    public function isMatchToRoute(Route $route, string $area = null)
+    {
         $areaPart = $area ? $area . '.' : '';
 
         return Str::is($areaPart . $this->getRouteName(), $route->getName());
     }
-    
+
 }

@@ -18,24 +18,20 @@
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
-
-
 use Antares\Model\Role;
 use Illuminate\Database\Migrations\Migration;
 
-class AntaresFoundationSeedAcls extends Migration
-{
+class AntaresFoundationSeedAcls extends Migration {
 
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         $admin = Role::admin();
 
-        $acl    = app('antares.acl')->make('antares');
+        $acl = app('antares.acl')->make('antares');
         $memory = app('antares.memory')->make('component');
         $acl->attach($memory);
         $acl->roles()->attach([$admin->name]);
@@ -63,8 +59,7 @@ class AntaresFoundationSeedAcls extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down() {
         Foundation::memory()->forget('acl_antares/foundation');
     }
 

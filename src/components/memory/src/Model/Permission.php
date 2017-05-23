@@ -225,7 +225,6 @@ class Permission extends Eloquent
      */
     public function updatePermissions($name, $values, $isNew = false, $brandId = null)
     {
-
         try {
             if ($name === null) {
                 return false;
@@ -242,9 +241,11 @@ class Permission extends Eloquent
             if (is_null($model)) {
                 $model = $this->query()->where('name', '=', $name)->first();
             }
+
             if ($model === null) {
                 return false;
             }
+
 
             $actions = [];
             foreach ($values['actions'] as $actionName) {
@@ -252,12 +253,20 @@ class Permission extends Eloquent
                 if (is_null($action)) {
                     $action = $model->attachedActions()->getModel()->newInstance();
                 }
-                $action->fill(['component_id' => $model->id, 'name' => $actionName]);
+                $actionParams = ['component_id' => $model->id, 'name' => $actionName, 'description' => array_get($values, 'descriptions.' . $actionName)];
+                if (!is_null($category     = array_get($values, 'categories.' . $actionName))) {
+                    array_set($actionParams, 'category_id', \Antares\Model\ActionCategories::query()->firstOrCreate(['name' => $category])->id);
+                }
+
+                $action->fill($actionParams);
+
+
                 if (!$action->save()) {
                     throw new PermissionNotSavedException('Unable update module action configuration');
                 }
                 $actions[$action->id] = $action->name;
             }
+
             $brands = !is_null($brandId) ? [$brandId] : $this->brands()->getModel()->pluck('id')->toArray();
 
 

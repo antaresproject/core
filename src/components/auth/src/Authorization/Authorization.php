@@ -114,11 +114,11 @@ class Authorization implements AuthorizationContract
      *
      * @return $this
      */
-    public function allow($roles, $actions, $allow = true)
+    public function allow($roles, $actions, $allow = true, $descriptions = null, $categories = null)
     {
         $this->setAuthorization($roles, $actions, $allow);
 
-        return $this->save();
+        return $this->save($descriptions, $categories);
     }
 
     /**
@@ -215,14 +215,16 @@ class Authorization implements AuthorizationContract
      * 
      * @return \Antares\Authorization\Authorization
      */
-    public function save()
+    public function save($descriptions = null, $categories = null)
     {
         if ($this->attached()) {
             $name = $this->name;
             $this->memory->put("acl_{$name}", [
-                'acl'     => $this->acl,
-                'actions' => $this->actions->get(),
-                'roles'   => $this->roles->get(),
+                'acl'          => $this->acl,
+                'actions'      => $this->actions->get(),
+                'roles'        => $this->roles->get(),
+                'descriptions' => $descriptions,
+                'categories'   => $categories
             ]);
         }
         return $this;
