@@ -67,20 +67,20 @@ class Requirement implements RequirementContract
     public function check()
     {
         $this->checklist = [
-            'databaseConnection'        => $this->checkDatabaseConnection(),
-            'mysqlDumpCommand'          => $this->checkMysqlDumpCommand(),
-            'writableStorage'           => $this->checkWritableStorage(),
-            'writableAsset'             => $this->checkWritableAsset(),
-            'writableLogs'              => $this->checkWritableLogs(),
-            'writablePublic'            => $this->checkWritablePublic(),
-            'writablePublicPackages'    => $this->checkWritablePublicPackages(),
-            'writableComposerVendor'    => $this->checkWritableComposerVendor(),
-            'writableComposerJsonFile'  => $this->checkWritableComposerJsonFile(),
-            'writableComposerLockFile'  => $this->checkWritableComposerLockFile(),
-            'writableBootstrapCache'    => $this->checkWritableBootstrapCache(),
-            'version'                   => $this->getPhpVersion(),
-            'phpExtensions'             => $this->getRegisteredPhpExtensions(),
-            'apacheModules'             => $this->checkInstalledApacheModules()
+            'databaseConnection'       => $this->checkDatabaseConnection(),
+            'mysqlDumpCommand'         => $this->checkMysqlDumpCommand(),
+            'writableStorage'          => $this->checkWritableStorage(),
+            'writableAsset'            => $this->checkWritableAsset(),
+            'writableLogs'             => $this->checkWritableLogs(),
+            'writablePublic'           => $this->checkWritablePublic(),
+            'writablePublicPackages'   => $this->checkWritablePublicPackages(),
+            'writableComposerVendor'   => $this->checkWritableComposerVendor(),
+            'writableComposerJsonFile' => $this->checkWritableComposerJsonFile(),
+            'writableComposerLockFile' => $this->checkWritableComposerLockFile(),
+            'writableBootstrapCache'   => $this->checkWritableBootstrapCache(),
+            'version'                  => $this->getPhpVersion(),
+            'phpExtensions'            => $this->getRegisteredPhpExtensions(),
+            'apacheModules'            => $this->checkInstalledApacheModules()
         ];
 
 
@@ -181,7 +181,7 @@ class Requirement implements RequirementContract
         $schema = [
             'is'   => $this->checkPathIsWritable($path),
             'data' => [
-                'path' => $this->app->make('html')->create('code', 'storage', ['title' => $path]),
+                'path' => $path,
             ],
         ];
 
@@ -297,8 +297,8 @@ class Requirement implements RequirementContract
         $schema = [
             'is'   => $this->checkPathIsWritable($path),
             'data' => [
-                'path' => $this->app->make('html')->create('code', 'storage', ['title' => $path]),
-            ],
+                'path' => $path,
+            ]
         ];
 
         return array_merge($this->getChecklistSchema(), $schema);
@@ -315,7 +315,7 @@ class Requirement implements RequirementContract
         $schema = [
             'is'       => $this->checkPathIsWritable($path),
             'data'     => [
-                'path' => $this->app->make('html')->create('code', 'public/packages', ['title' => $path]),
+                'path' => $path,
             ],
             'explicit' => false,
         ];

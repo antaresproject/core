@@ -72,82 +72,79 @@ return
             ),
             'system'           =>
             array(
-                'writablePublicPackages' =>
+                'writablePublicPackages'   =>
                 array(
                     'name'     => 'Packages directory',
                     'solution' => 'Change permissions to public\packages directory.',
                 ),
-                'writablePublic'         =>
+                'writablePublic'           =>
                 array(
                     'name'     => 'Public directory',
                     'solution' => 'Change permissions to public directory.',
                 ),
-                'writableTemp'           =>
+                'writableTemp'             =>
                 array(
                     'name'     => 'Temp directory',
                     'solution' => 'Change permissions to storage\temp directory.',
                 ),
-                'writableLogs'           =>
+                'writableLogs'             =>
                 array(
                     'name'     => 'Logs directory',
-                    'solution' => 'Change permissions to storage\logs directory.',
+                    'solution' => 'Change permissions to 755 to :path directory.',
                 ),
-                'writableLicense'        =>
-                array(
-                    'name'     => 'License directory',
-                    'solution' => 'Change permissions to storage\license directory.',
-                ),
-                'writableTickets'        =>
+                'writableTickets'          =>
                 array(
                     'name'     => 'Tickets directory',
                     'solution' => 'Change permissions to storage\tickets directory.',
                 ),
-                'writableBootstrapCache'        =>
-                    array(
-                        'name'     => 'Boostrap cache directory',
-                        'solution' => 'Change permissions to bootstrap\cache directory.',
-                    ),
-                'writableComposerVendor' =>
+                'writableBootstrapCache'   =>
+                array(
+                    'name'     => 'Boostrap cache directory',
+                    'solution' => 'Change permissions to bootstrap\cache directory.',
+                ),
+                'writableComposerVendor'   =>
                 array(
                     'name'     => 'Composer vendor directory',
                     'solution' => 'Change permissions to vendor directory.',
                 ),
                 'writableComposerJsonFile' =>
-                    array(
-                        'name'     => 'composer.json file',
-                        'solution' => 'Change permissions to composer.json file.',
-                    ),
+                array(
+                    'name'     => 'composer.json file',
+                    'solution' => 'Change permissions to composer.json file.',
+                ),
                 'writableComposerLockFile' =>
-                    array(
-                        'name'     => 'composer.lock file',
-                        'solution' => 'Change permissions to composer.lock file.',
-                    ),
-                'apacheModules'          =>
+                array(
+                    'name'     => 'composer.lock file',
+                    'solution' => 'Change permissions to composer.lock file.',
+                ),
+                'apacheModules'            =>
                 array(
                     'name'     => 'Apache Modules',
                     'solution' => 'Install missing apache modules.',
                 ),
-                'phpExtensions'          =>
+                'phpExtensions'            =>
                 array(
                     'name'     => 'PHP Extensions',
                     'solution' => 'Install missing php extensions.',
                 ),
-                'version'                =>
+                'version'                  =>
                 array(
                     'name'     => 'PHP Version',
                     'solution' => 'Update your php version.',
                 ),
-                'title'                  => 'System Requirements',
-                'description'            => 'Please ensure the following requirement is profilled before installing Antares.',
-                'requirement'            => 'Requirement',
-                'status'                 => 'Status',
-                'writableStorage'        =>
+                'title'                    => 'System Requirements',
+                'description'              => 'Please ensure the following requirement is profilled before installing Antares.',
+                'requirement'              => 'Requirement',
+                'status'                   => 'Status',
+                'writableStorage'          =>
                 array(
-                    'name' => 'Storage directory',
+                    'name'     => 'Storage directory',
+                    'solution' => 'Change permissions to 755 to :path directory.',
                 ),
-                'writableAsset'          =>
+                'writableAsset'            =>
                 array(
-                    'name' => 'Assets directory',
+                    'name'     => 'Assets directory',
+                    'solution' => 'Change permissions to :path directory.',
                 ),
             ),
             'status'           =>
