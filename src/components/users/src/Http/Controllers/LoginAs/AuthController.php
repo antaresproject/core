@@ -52,7 +52,7 @@ class AuthController extends AdminController
     protected function setupMiddleware()
     {
         $this->middleware('antares.auth');
-        $this->middleware('antares.can:antares/control::login-as-user', ['only' => ['login']]);
+        $this->middleware('antares.can:antares/acl::login-as-user', ['only' => ['login']]);
     }
 
     /**
