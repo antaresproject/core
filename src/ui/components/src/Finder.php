@@ -107,7 +107,7 @@ class Finder implements FinderContract
         foreach ($directories as $index => $directory) {
 
             $classBasename = class_basename($directory);
-            if ($classBasename !== 'Widgets' or ! $factory->getActiveExtensionByPath($directory)) {
+            if (!in_array($classBasename, ['Widgets', 'UiComponents']) or ! $factory->getActiveExtensionByPath($directory)) {
                 unset($directories[$index]);
                 continue;
             }
