@@ -44,13 +44,16 @@ class ProgressController extends BaseController
      */
     public function index(Progress $progress)
     {
-        publish(null, [
-            '/packages/codemirror/lib/codemirror.js',
-            '/packages/codemirror/mode/javascript/javascript.js',
-            '/packages/core/js/installer.js',
-            '/packages/codemirror/lib/codemirror.css',
-            '/packages/codemirror/theme/ambiance.css'
-        ]);
+
+        app('antares.asset')->container('antares/foundation::scripts')
+                ->add('codemirror-js', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.26.0/codemirror.min.js')
+                ->add('codemirror-javascript-js', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.26.0/mode/javascript/javascript.min.js')
+                ->add('codemirror-css', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.26.0/codemirror.css')
+                ->add('ambiance-css', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.26.0/theme/ambiance.css')
+                ->add('installer-js', '/packages/core/js/installer.js');
+
+
+
         set_meta('title', 'Install Antares');
         $progress->start();
 
