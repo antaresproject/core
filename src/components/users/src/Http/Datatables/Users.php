@@ -100,7 +100,7 @@ class Users extends DataTable
     public function ajax()
     {
 
-        $acl           = app('antares.acl')->make('antares/control');
+        $acl           = app('antares.acl')->make('antares/acl');
         $canUpdateUser = $acl->can('user-update');
         $canDeleteUser = $acl->can('user-delete');
 

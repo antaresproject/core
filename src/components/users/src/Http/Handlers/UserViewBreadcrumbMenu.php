@@ -109,7 +109,7 @@ class UserViewBreadcrumbMenu extends MenuHandler
             return;
         }
 
-        $acl           = app('antares.acl')->make('antares/control');
+        $acl           = app('antares.acl')->make('antares/acl');
         $canUpdateUser = $acl->can('user-update');
         $canDeleteUser = $acl->can('user-delete');
         $user          = $this->getUser();

@@ -261,6 +261,20 @@ class Foundation extends Twig_Extension
             new Twig_SimpleFunction('component_color', function ($name) {
                         return component_color($name);
                     }),
+            new Twig_SimpleFunction('has_active_in_childs', function ($elements) {
+                        foreach ($elements as $element) {
+                            if (empty($element->childs)) {
+                                continue;
+                            }
+                            foreach ($element->childs as $child) {
+                                if ($child->isFirstChildActive() or $child->active) {
+                                    $element->active = true;
+                                    return true;
+                                }
+                            }
+                        }
+                        return false;
+                    }),
         ];
     }
 

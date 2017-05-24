@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Users\Http\Handlers;
 
 use Antares\Foundation\Http\Composers\LeftPane;
@@ -46,7 +45,7 @@ class AccountPlaceholder extends LeftPane
                 ->icon('zmdi-devices');
 
         $pane = app()->make('antares.widget')->make('pane.left');
-        $pane->add('control')->content(view('antares/control::partial._control_pane'));
+        $pane->add('control')->content(view('antares/acl::partial._control_pane'));
     }
 
 }
