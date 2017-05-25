@@ -241,7 +241,6 @@ class Permission extends Eloquent
             if (is_null($model)) {
                 $model = $this->query()->where('name', '=', $name)->first();
             }
-
             if ($model === null) {
                 return false;
             }
