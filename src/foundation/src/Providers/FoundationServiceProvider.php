@@ -26,6 +26,7 @@ use Antares\Foundation\Listeners\AfterExtensionOperation;
 use Antares\Support\Providers\Traits\AliasesProviderTrait;
 use Antares\Support\Providers\ServiceProvider;
 use Antares\Html\Middleware\FormMiddleware;
+use Monolog\Handler\RotatingFileHandler;
 use Antares\UiComponents\TemplateFinder;
 use Illuminate\Filesystem\Filesystem;
 use Antares\Foundation\Notification;
@@ -123,6 +124,27 @@ class FoundationServiceProvider extends ServiceProvider
         $this->app->bind('Antares\Contracts\Http\Middleware\ModuleNamespaceResolver', 'Antares\Foundation\Http\Resolver\ModuleNamespaceResolver');
 
         $this->app['antares.logger.installed'] = false;
+
+        $this->registerLogFilename();
+    }
+
+    /**
+     * Registers log filename
+     * 
+     * @return void
+     */
+    protected function registerLogFilename()
+    {
+        $handlers = $this->app->make('log')->getMonolog()->getHandlers();
+        foreach ($handlers as $handler) {
+            if (!$handler instanceof RotatingFileHandler) {
+                continue;
+            }
+            $filename = (php_sapi_name() === 'cli') ? 'laravel-cli' : 'laravel';
+            $handler->setFilenameFormat($filename . '-{date}.log', 'Y-m-d');
+        }
+
+        return;
     }
 
     /**

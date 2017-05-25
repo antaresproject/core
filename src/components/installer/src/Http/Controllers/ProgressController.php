@@ -45,7 +45,7 @@ class ProgressController extends BaseController
     public function index(Progress $progress)
     {
 
-        app('antares.asset')->container('antares/foundation::scripts')
+        app('antares.asset')->container('antares/installer')
                 ->add('codemirror-js', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.26.0/codemirror.min.js')
                 ->add('codemirror-javascript-js', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.26.0/mode/javascript/javascript.min.js')
                 ->add('codemirror-css', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.26.0/codemirror.css')
