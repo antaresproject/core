@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
-
-
 use Illuminate\Database\Migrations\Migration;
 use Antares\Translations\Models\Languages;
 use Illuminate\Database\Schema\Blueprint;
@@ -81,13 +79,13 @@ class CreateTblBrandOptionsTable extends Migration
     {
         $areas         = array_keys(config('areas.areas'));
         $default       = config('areas.default');
-        $configuration = require_once(__DIR__ . '/../../../../brands/resources/config/install.php');
+        $configuration = require_once(__DIR__ . '/../../../../../modules/brands/resources/config/install.php');
 
         $countryId    = Country::where('code', 'pl')->first()->id;
         $languageId   = Languages::where('code', 'en')->first()->id;
         $dateFormatId = DateFormat::first()->id;
         $brandId      = Brands::where('default', 1)->first()->id;
-        $email        = require_once(__DIR__ . '/../../../../brands/resources/config/config.php');
+        $email        = require_once(__DIR__ . '/../../../../../modules/brands/resources/config/config.php');
 
         $defaults = [
             'brand_id'       => $brandId,
