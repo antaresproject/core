@@ -44,6 +44,7 @@ class AreaServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
         $router = $this->app->make(Router::class);
         $router->bind('area', function($value) {
             return $this->app->make(AreaManagerContract::class)->getById($value);
