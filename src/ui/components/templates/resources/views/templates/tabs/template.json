@@ -1,0 +1,9 @@
+{
+    "package": "tabs",
+    "name": "Tabs Widget Template",
+    "description": "Tabs widget template",
+    "author": "Łukasz Cirut",
+    "url": "https://modulesgarden.com/docs",
+    "type": [],
+    "autoload": []
+}

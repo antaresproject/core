@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -14,7 +14,7 @@
  * @version    0.9.0
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
 
@@ -139,7 +139,7 @@ class RouteManagerTest extends ApplicationTestCase
     public function testHandlesMethodWithCsrfToken()
     {
         $this->app['session'] = $session              = m::mock(\Illuminate\Session\SessionManager::class);
-        $session->shouldReceive('getToken')->andReturn('StAGiQ');
+        $session->shouldReceive('token')->andReturn('StAGiQ');
         $stub                 = new StubRouteManager($this->app);
 
         $options = ['csrf' => true];
@@ -158,36 +158,6 @@ class RouteManagerTest extends ApplicationTestCase
 
         $this->assertTrue($stub->is('app::/'));
         $this->assertFalse($stub->is('info?foo=bar'));
-    }
-
-    /**
-     * Test Antares\Http\RouteManager::when() method.
-     *
-     * @test
-     */
-    public function testWhenMethod()
-    {
-
-
-        $stub = new StubRouteManager($this->app);
-
-        $this->assertNull($_SERVER['RouteManagerTest@callback']);
-
-        $stub->when('app::/', function () {
-            $_SERVER['RouteManagerTest@callback'] = 'app::/';
-        });
-
-        $this->app->boot();
-
-        $this->assertEquals('app::/', $_SERVER['RouteManagerTest@callback']);
-
-        $stub->when('app::foo', function () {
-            $_SERVER['RouteManagerTest@callback'] = 'app::foo';
-        });
-
-        $this->app->boot();
-
-        $this->assertNotEquals('app::foo', $_SERVER['RouteManagerTest@callback']);
     }
 
 }

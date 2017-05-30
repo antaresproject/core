@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -14,7 +14,7 @@
  * @version    0.9.0
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
 
@@ -77,7 +77,8 @@ class RoleTest extends ApplicationTestCase
                 ->andReturn($processor  = m::mock('Illuminate\Database\Query\Processors\Processor'));
 
         $grammar->shouldReceive('compileSelect')->once()->andReturn('SELECT * FROM `roles` WHERE name=? or name=?');
-        $connection->shouldReceive('select')->once()->with('SELECT * FROM `roles` WHERE name=? or name=?', array(0 => 'super-administrator', 1 => 'administrator',), true)->andReturn(null);
+        $connection->shouldReceive('select')->once()->with('SELECT * FROM `roles` WHERE name=? or name=?', array(0 => 'super-administrator', 1 => 'administrator',), true)->andReturn(null)
+                ->shouldReceive('getName')->andReturn('mysql');
         $processor->shouldReceive('processSelect')->once()->andReturn([new Role(['name' => 'admin'])]);
 
         $this->assertInstanceOf(Role::class, $model->admin());
@@ -90,8 +91,7 @@ class RoleTest extends ApplicationTestCase
      */
     public function testMemberMethod()
     {
-        $model = new Role();
-
+        $model      = new Role();
         $resolver   = m::mock('Illuminate\Database\ConnectionResolverInterface');
         $model->setConnectionResolver($resolver);
         $resolver->shouldReceive('connection')
@@ -104,7 +104,8 @@ class RoleTest extends ApplicationTestCase
                 ->andReturn($processor  = m::mock('Illuminate\Database\Query\Processors\Processor'));
 
         $grammar->shouldReceive('compileSelect')->once()->andReturn('SELECT * FROM `roles` WHERE id=?');
-        $connection->shouldReceive('select')->once()->with('SELECT * FROM `roles` WHERE id=?', [20], true)->andReturn(null);
+        $connection->shouldReceive('select')->once()->with('SELECT * FROM `roles` WHERE id=?', [20], true)->andReturn(null)
+                ->shouldReceive('getName')->andReturn('mysql');
         $processor->shouldReceive('processSelect')->once()->andReturn([]);
 
         $model->member();

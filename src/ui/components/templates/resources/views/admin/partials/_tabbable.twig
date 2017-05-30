@@ -1,0 +1,7 @@
+{{ event('widgets:render.before.'~name)|raw }}
+{{ content|raw }}                                
+{% if app('request').ajax() %}    
+    {% set asset = app('antares.asset').container('antares/foundation::scripts') %}
+    {{ asset.styles()|raw }}
+    {{ asset.scripts()|raw }}
+{% endif %}

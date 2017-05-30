@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -14,7 +14,7 @@
  * @version    0.9.0
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
 use Antares\Testbench\ApplicationTestCase;
@@ -47,15 +47,14 @@ class FileViewFinderTest extends ApplicationTestCase
     public function testFindNamedPathViewMethod()
     {
         $files = $this->files;
-        $files->shouldReceive('exists')->once()->with("/path/theme/views/foo/bar/hello.php")->andReturn(true)
+        $files->shouldReceive('exists')->once()->with("/path/vendor/foo/bar/views/hello.php")->andReturn(true)
                 ->shouldReceive('exists')->with("/path/vendor/foo/bar/views/hello.php")->andReturn(false)
                 ->shouldReceive('exists')->with("/path/app/views/packages/foo/bar/hello.php;")->andReturn(false);
 
         $stub = new FileViewFinder($files, ['/path/theme/views', '/path/app/views'], ['php']);
 
-
         $stub->addNamespace('foo/bar', '/path/vendor/foo/bar/views');
-        $this->assertEquals('/path/theme/views/foo/bar/hello.php', $stub->find("foo/bar::hello"));
+        $this->assertEquals('/path/vendor/foo/bar/views/hello.php', $stub->find("foo/bar::hello"));
     }
 
     /**

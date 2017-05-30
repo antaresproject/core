@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -14,7 +14,7 @@
  * @version    0.9.0
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
 
@@ -62,6 +62,7 @@ class ExtensionTest extends \PHPUnit_Framework_TestCase
     public function testFormMethod()
     {
         $this->markTestIncomplete('Component configuration is not completed yet.');
+
         $model       = new Fluent();
         $app         = $this->app;
         $app['html'] = m::mock('\Antares\Html\HtmlBuilder')->makePartial();
@@ -113,6 +114,8 @@ class ExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testTable()
     {
+        $this->markTestIncomplete('Component configuration table is not completed yet.');
+
         $form       = m::mock('\Antares\Contracts\Html\Form\Factory');
         $breadcrumb = m::mock('\Antares\Foundation\Http\Breadcrumb\Breadcrumb');
         $breadcrumb->shouldReceive('onComponentConfigure')->andReturnSelf()

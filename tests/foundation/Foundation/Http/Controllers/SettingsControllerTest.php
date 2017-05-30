@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -14,7 +14,7 @@
  * @version    0.9.0
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
 
@@ -50,6 +50,8 @@ class SettingsControllerTest extends ApplicationTestCase
     protected function bindDependencies()
     {
         $presenter = m::mock('\Antares\Foundation\Http\Presenters\Setting');
+        $presenter->shouldReceive('form')->andReturn($form      = m::mock(\Antares\Html\Form\FormBuilder::class));
+        $form->shouldReceive('isValid')->once()->withNoArgs()->andReturn(true);
         $validator = m::mock('\Antares\Foundation\Validation\Setting');
 
         App::instance('Antares\Foundation\Http\Presenters\Setting', $presenter);
@@ -86,7 +88,7 @@ class SettingsControllerTest extends ApplicationTestCase
     public function testPostIndexAction()
     {
         $input = [
-            'site_name'              => 'Antares Project',
+            'site_name'              => 'Antares',
             'site_description'       => '',
             'site_registrable'       => 'yes',
             'email_driver'           => 'smtp',
@@ -129,7 +131,7 @@ class SettingsControllerTest extends ApplicationTestCase
     public function testPostIndexActionGivenValidationError()
     {
         $input = [
-            'site_name'              => 'Antares Project',
+            'site_name'              => 'Antares',
             'site_description'       => '',
             'site_registrable'       => 'yes',
             'email_driver'           => 'smtp',
@@ -148,6 +150,14 @@ class SettingsControllerTest extends ApplicationTestCase
 
         list(, $validator) = $this->bindDependencies();
 
+        $presenter  = m::mock('\Antares\Foundation\Http\Presenters\Setting');
+        $presenter->shouldReceive('form')->andReturn($form       = m::mock(\Antares\Html\Form\FormBuilder::class));
+        $form->shouldReceive('isValid')->once()->withNoArgs()->andReturn(false)
+                ->shouldReceive('getMessageBag')->once()->withNoArgs()->andReturn($messageBag = m::mock(\Illuminate\Support\MessageBag::class));
+
+        $messageBag->shouldReceive('getMessageBag')->andReturn($viewErrorBag = m::mock(\Illuminate\Contracts\Support\MessageBag::class));
+        App::instance('Antares\Foundation\Http\Presenters\Setting', $presenter);
+
         $validator->shouldReceive('on')->once()->with('smtp')->andReturn($validator)
                 ->shouldReceive('with')->once()->with($input)->andReturn($validator)
                 ->shouldReceive('fails')->once()->andReturn(true)
@@ -156,6 +166,7 @@ class SettingsControllerTest extends ApplicationTestCase
 
         $this->call('POST', 'antares/settings/index', $input);
         $this->assertRedirectedTo('antares/settings/index');
+
         $this->assertSessionHasErrors();
     }
 

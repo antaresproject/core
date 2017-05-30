@@ -1,0 +1,4 @@
+<label>
+    <input type='checkbox' name='{{ control.getName() }}[]' value='{{ option.value }}' {% if option.selected %}checked{% endif %} {{ option.getAttributes()|stringify }}>
+    {{ option.name }}
+</label>

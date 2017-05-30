@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -14,7 +14,7 @@
  * @version    0.9.0
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
 
@@ -81,7 +81,7 @@ class UserTest extends ApplicationTestCase
     }
 
     /**
-     * Test Antares\Model\User::is() method.
+     * Test Antares\Model\User::hasRoles() method.
      *
      * @test
      */
@@ -90,18 +90,18 @@ class UserTest extends ApplicationTestCase
         $model        = User::query()->where(['id' => 1])->first();
         $memberRoleId = \Antares\Model\Role::query()->where('name', 'member')->first()->id;
         $model->detachRole($memberRoleId);
-        $this->assertTrue($model->is('super-administrator'));
-        $this->assertFalse($model->is('member'));
+        $this->assertTrue($model->hasRoles('super-administrator'));
+        $this->assertFalse($model->hasRoles('member'));
 
         $model->attachRole($memberRoleId);
 
 
-        $this->assertTrue($model->is(['super-administrator', 'member']));
-        $this->assertFalse($model->is(['admin', 'user']));
+        $this->assertTrue($model->hasRoles(['super-administrator', 'member']));
+        $this->assertFalse($model->hasRoles(['admin', 'user']));
     }
 
     /**
-     * Test Antares\Support\Auth::is() method when invalid roles is
+     * Test Antares\Support\Auth::hasRoles() method when invalid roles is
      * returned.
      *
      * @test
@@ -109,11 +109,11 @@ class UserTest extends ApplicationTestCase
     public function testIsMethodWhenInvalidRolesIsReturned()
     {
         $model = User::query()->where(['id' => 1])->first();
-        $this->assertFalse($model->is('admin'));
-        $this->assertFalse($model->is('user'));
+        $this->assertFalse($model->hasRoles('admin'));
+        $this->assertFalse($model->hasRoles('user'));
 
-        $this->assertFalse($model->is(['admin', 'editor']));
-        $this->assertFalse($model->is(['admin', 'user']));
+        $this->assertFalse($model->hasRoles(['admin', 'editor']));
+        $this->assertFalse($model->hasRoles(['admin', 'user']));
     }
 
     /**
@@ -216,25 +216,12 @@ class UserTest extends ApplicationTestCase
         $model = User::query()->where(['id' => 1])->first();
 
         $roles   = \Antares\Model\Role::query()->whereIn('name', ['member', 'administrator'])->get();
-        $roleIds = $roles->lists('id');
+        $roleIds = $roles->pluck('id');
         foreach ($roleIds as $roleId) {
             $model->attachRole($roleId);
         }
         $this->assertEquals(['super-administrator', 'administrator', 'member'], $model->getRoles()->toArray());
         $model->detachRole($roles->where('name', 'member')->first()->id);
-    }
-
-    /**
-     * Test Antares\Model\User::scopeSearch() method.
-     *
-     * @test
-     */
-    public function testScopeSearchMethod()
-    {
-        $model   = new User();
-        $this->addMockConnection($model);
-        $keyword = 'foo*';
-        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Builder::class, $model->search($keyword));
     }
 
     /**

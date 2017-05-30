@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -14,7 +14,7 @@
  * @version    0.9.0
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
 
@@ -49,9 +49,8 @@ class AssetManagerTest extends ApplicationTestCase
     public function testExtensionMethod()
     {
         $app                             = $this->app;
-        $app['files']                    = $files                           = m::mock('\Illuminate\Filesystem\Filesystem');
-        $app['antares.extension']        = $extension                       = m::mock('\Antares\Extension\Factory');
-        $app['antares.extension.finder'] = $finder                          = m::mock('\Antares\Extension\Finder');
+        $app['files']                    = $files           = m::mock('\Illuminate\Filesystem\Filesystem');
+        $app['antares.extension']        = $extension       = m::mock('\Antares\Extension\Manager');
 
         $publisher = m::mock('\Antares\Publisher\Publishing\AssetPublisher');
 
@@ -59,10 +58,10 @@ class AssetManagerTest extends ApplicationTestCase
                 ->shouldReceive('isDirectory')->once()->with('bar/public')->andReturn(true)
                 ->shouldReceive('isDirectory')->once()->with('foobar/public')->andReturn(false)
                 ->shouldReceive('isDirectory')->once()->with('foobar/resources/public')->andReturn(false);
-        $extension->shouldReceive('option')->once()->with('foo', 'path')->andReturn('bar')
-                ->shouldReceive('option')->once()->with('foobar', 'path')->andReturn('foobar');
-        $finder->shouldReceive('resolveExtensionPath')->once()->with('bar')->andReturn('bar')
-                ->shouldReceive('resolveExtensionPath')->once()->with('foobar')->andReturn('foobar');
+
+        $extension->shouldReceive('getExtensionPathByName')->once()->with('foo')->andReturn('bar')
+                ->shouldReceive('getExtensionPathByName')->once()->with('foobar')->andReturn('foobar');
+
         $publisher->shouldReceive('publish')->once()->with('foo', 'bar/public')->andReturn(true);
 
         $stub = new AssetManager($app, $publisher);
@@ -79,16 +78,15 @@ class AssetManagerTest extends ApplicationTestCase
     public function testExtensionMethodThrowsException()
     {
         $app                             = $this->app;
-        $app['files']                    = $files                           = m::mock('\Illuminate\Filesystem\Filesystem');
-        $app['antares.extension']        = $extension                       = m::mock('\Antares\Extension\Factory');
-        $app['antares.extension.finder'] = $finder                          = m::mock('\Antares\Extension\Finder');
+        $app['files']                    = $files           = m::mock('\Illuminate\Filesystem\Filesystem');
+        $app['antares.extension']        = $extension       = m::mock('\Antares\Extension\Manager');
 
         $publisher = m::mock('\Antares\Publisher\Publishing\AssetPublisher');
 
         $files->shouldReceive('isDirectory')->once()->with('bar/resources/public')->andReturn(false)
                 ->shouldReceive('isDirectory')->once()->with('bar/public')->andReturn(true);
-        $extension->shouldReceive('option')->once()->with('foo', 'path')->andReturn('bar');
-        $finder->shouldReceive('resolveExtensionPath')->once()->with("bar")->andReturn('bar');
+
+        $extension->shouldReceive('getExtensionPathByName')->once()->with('foo')->andReturn('bar');
         $publisher->shouldReceive('publish')->once()->with('foo', 'bar/public')->andThrow('\Exception');
 
         $stub = new AssetManager($app, $publisher);

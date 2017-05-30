@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -14,13 +14,14 @@
  * @version    0.9.0
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
 
 
 namespace Antares\Brands\TestCase;
 
+use Antares\Extension\ExtensionServiceProvider;
 use Mockery as m;
 use Antares\Testbench\TestCase;
 use Antares\Brands\Model\Brands as Model;
@@ -42,6 +43,14 @@ class BrandsTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+
+        $app           = $this->app;
+        $app['events'] = m::mock('\Illuminate\Contracts\Events\Dispatcher');
+        $app['files']  = m::mock('\Illuminate\Filesystem\Filesystem');
+
+        $extensionStub = new ExtensionServiceProvider($app);
+        $extensionStub->register();
+
         $model       = new Model();
         $this->addMockConnection($model);
         $this->model = $model;

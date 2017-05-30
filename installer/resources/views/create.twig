@@ -1,8 +1,0 @@
-{% extends "antares/foundation::layouts.installer.main" %}
-{% block left_panel_content %}        
-    {{ parent() }}
-    {% include 'antares/installer::partials._menu' with {'active': 3} %}    
-{% endblock %}
-{% block content %}           
-    {% include 'antares/installer::create._form' %}
-{% endblock %}   

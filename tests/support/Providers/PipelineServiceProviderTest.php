@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -14,7 +14,7 @@
  * @version    0.9.0
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
 
@@ -71,8 +71,8 @@ class PipelineServiceProviderTest extends \PHPUnit_Framework_TestCase
         $router->shouldReceive('before')->once()->with('BeforeFilter')->andReturnNull()
                 ->shouldReceive('after')->once()->with('AfterFilter')->andReturnNull()
                 ->shouldReceive('filter')->once()->with('foo', 'FooFilter')->andReturnNull()
-                ->shouldReceive('middleware')->once()->with('foobar', 'FoobarMiddleware')->andReturnNull()
-                ->shouldReceive('middleware')->once()->with('', "Antares\Form\Middleware\FormMiddleware")->andReturnNull();
+                ->shouldReceive('aliasMiddleware')->once()->with('foobar', 'FoobarMiddleware')->andReturnNull()
+                ->shouldReceive('aliasMiddleware')->once()->with('', "Antares\Form\Middleware\FormMiddleware")->andReturnNull();
 
         $kernel->shouldReceive('pushMiddleware')->once()->with('FooMiddleware')->andReturnNull();
 

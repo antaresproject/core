@@ -1,0 +1,43 @@
+[submodule "logger"]
+	path = modules/logger
+	url = https://github.com/antaresproject/logger.git
+        branch = 0.9.2.2
+[submodule "automation"]
+	path = modules/automation
+	url = https://github.com/antaresproject/automation.git
+        branch = 0.9.2.2
+[submodule "acl"]
+	path = modules/acl
+	url = https://github.com/antaresproject/acl.git
+        branch = dev-master
+[submodule "customfields"]
+	path = modules/customfields
+	url = https://github.com/antaresproject/customfields.git
+        branch = 0.9.2.2
+[submodule "notifications"]
+	path = modules/notifications
+	url = https://github.com/antaresproject/notifications.git
+        branch = 0.9.2.2
+[submodule "tester"]
+	path = modules/tester
+	url = https://github.com/antaresproject/tester.git
+        branch = 0.9.2.2
+[submodule "translations"]
+	path = modules/translations
+	url = https://github.com/antaresproject/translations.git
+        branch = 0.9.2.2
+
+[submodule "users"]
+	path = modules/users
+	url = https://github.com/antaresproject/users.git
+        branch = dev-master
+
+[submodule "branding"]
+	path = modules/brands
+	url = https://github.com/antaresproject/branding.git
+        branch = dev-master
+
+[submodule "installation"]
+	path = modules/installer
+	url = https://github.com/antaresproject/installation.git
+        branch = dev-master

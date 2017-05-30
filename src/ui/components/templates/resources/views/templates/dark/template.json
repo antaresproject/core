@@ -1,0 +1,9 @@
+{
+    "package": "dark",
+    "name": "Dark Widget Template",
+    "description": "Dark widget template",
+    "author": "Łukasz Cirut",
+    "url": "https://modulesgarden.com/docs",
+    "type": [],
+    "autoload": []
+}

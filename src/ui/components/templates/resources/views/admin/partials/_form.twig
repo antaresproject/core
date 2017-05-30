@@ -1,0 +1,32 @@
+{% set formbuilder=app('form') %}
+{% set htmlbuilder=app('html') %}
+{{ formbuilder.open(form)|raw }}
+{% if token is not null %} {{ formbuilder.token()|raw }} {% endif %}    
+{% for hidden in hiddens %} {{ hidden|raw }} {% endfor %}    
+{% for fieldset in fieldsets %}       
+    <fieldset>
+        {% for control in fieldset.controls() %}            
+            <div class="form-group">
+                <div class="col-dt-2 col-3 col-mb-5">
+                    {{ formbuilder.label(control.name, control.label)|raw }}     
+                </div>
+                <div class="col-dt-14 col-13 col-mb-11">
+                    <div class="input-field">
+                        {{ control.getField(row, control, [])|raw }}                
+                    </div>
+                </div>
+                {% if control.inlineHelp|length>1 %}                        
+                    <span class="help-inline clearfix">{{ control.inlineHelp|raw }}</span>
+                {% endif %}
+                {% if control.help|length>1 %}<p class="help-block">{{ control.help|raw }}</p>{% endif %}
+                <div id="{{ control.id }}_error">
+                    {{ errors.first(control.name, format)|raw }}
+                </div>     
+            </div>                   
+        {% endfor %}    
+    </fieldset>
+{% endfor %}  
+<a href="{{ handles('antares/ui-components::ui-components/'~id) }}" class="btn btn-default widget-refresh" title="{{ trans('Cancel') }}"> {{ trans('Cancel') }} </a>
+<button type="submit" class="btn btn-primary pull-right">{{ submit|raw }}</button>
+<div class="clearfix"></div>
+{{ formbuilder.close()|raw }}

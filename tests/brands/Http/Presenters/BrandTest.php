@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -14,7 +14,7 @@
  * @version    0.9.0
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
 
@@ -126,10 +126,8 @@ class BrandTest extends ApplicationTestCase
         $grammar->shouldReceive('compileInsertGetId')
                 ->andReturn('');
         $grammar->shouldReceive('compileSelect')->once()->andReturn('SELECT * FROM `tbl_widgets_params` WHERE brand_id=? and uid=? and resource=?');
-        $connection->shouldReceive('select')
-                ->once()
-                ->withAnyArgs()
-                ->andReturn(null);
+        $connection->shouldReceive('select')->once()->withAnyArgs()->andReturn(null)
+                ->shouldReceive('getName')->andReturn('mysql');
         $processor->shouldReceive('processInsertGetId')->andReturn(1);
         $processor->shouldReceive('processSelect')->once()->andReturn([]);
 

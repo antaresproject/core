@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -14,18 +14,34 @@
  * @version    0.9.0
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
 
 namespace Antares\Publisher\TestCase;
 
+use Antares\Extension\ExtensionServiceProvider;
 use Antares\Testbench\ApplicationTestCase;
 use Antares\Publisher\MigrateManager;
 use Mockery as m;
 
 class MigrateManagerTest extends ApplicationTestCase
 {
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $app           = $this->app;
+        $app['events'] = m::mock('\Illuminate\Contracts\Events\Dispatcher');
+        $app['files']  = m::mock('\Illuminate\Filesystem\Filesystem');
+
+        // Only for tests
+        $app['antares.installed'] = false;
+
+        $extensionStub = new ExtensionServiceProvider($app);
+        $extensionStub->register();
+    }
 
     /**
      * Test Antares\Publisher\MigrateManager::run() method.
@@ -73,9 +89,9 @@ class MigrateManagerTest extends ApplicationTestCase
                 ->shouldReceive('fill')->times(4)->andReturnSelf();
 
 
-        $finder->shouldReceive('resolveExtensionPath')->twice()->with('/foo/path/foo/bar')->andReturn('/foo/path/foo/bar')
-                ->shouldReceive('resolveExtensionPath')->twice()->with('/foo/app/foo/bar')->andReturn('/foo/app/foo/bar')
-                ->shouldReceive('resolveExtensionPath')->times(4)->with('/foo/path/laravel/framework')->andReturn('/foo/path/laravel/framework');
+        $finder->shouldReceive('getPathFromExtensionName')->twice()->with('/foo/path/foo/bar')->andReturn('/foo/path/foo/bar')
+                ->shouldReceive('getPathFromExtensionName')->twice()->with('/foo/app/foo/bar')->andReturn('/foo/app/foo/bar')
+                ->shouldReceive('getPathFromExtensionName')->times(4)->with('/foo/path/laravel/framework')->andReturn('/foo/path/laravel/framework');
 
 
 

@@ -1,0 +1,27 @@
+{% extends 'antares/ui-components::templates.layouts.template' %}
+{% block content %}
+    <div class="card {{ card_class ? card_class : 'card--logs card--padding24'  }}">
+        {% if titlable %}
+            <div class="card__header">
+                <div class="card__header-left">
+                    <span>
+                        {{ title }}
+                    </span>
+                    {{ event('ui-components:render.header-left.'~name)|raw }}
+                </div>        
+                <div class="card__header-right">
+                    {% if enlargeable %}
+                        <i class="card-enlarge zmdi zmdi-window-maximize"></i>
+                    {% endif %}    
+                    {% if zoomable %}
+                        <i class="card-maximize zmdi zmdi-window-maximize"></i>
+                    {% endif %}
+                    {{ event('ui-components:render.header-right.'~name)|raw }}
+                </div>
+            </div>
+        {% endif %}
+        <div class="card__content {{ card_content_class ? card_content_class : ''  }}" data-scrollable>
+            {{ content|raw }}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{
+    "package": "green",
+    "name": "Green Widget Template",
+    "description": "This is green widget template",
+    "author": "Łukasz Cirut",
+    "url": "https://modulesgarden.com/docs",
+    "type": [],
+    "autoload": []
+}

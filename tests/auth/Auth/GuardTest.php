@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of the Antares Project package.
+ * Part of the Antares package.
  *
  * NOTICE OF LICENSE
  *
@@ -14,7 +14,7 @@
  * @version    0.9.0
  * @author     Antares Team
  * @license    BSD License (3-clause)
- * @copyright  (c) 2017, Antares Project
+ * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
 
@@ -106,7 +106,8 @@ class GuardTest extends \PHPUnit_Framework_TestCase
 
 
         $events->shouldReceive('until')->once()
-                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'user']);
+                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'user'])
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
 
         $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
@@ -135,7 +136,8 @@ class GuardTest extends \PHPUnit_Framework_TestCase
         $user->shouldReceive('getAuthIdentifier')->once()->andReturn(1);
 
         $events->shouldReceive('until')->once()
-                ->with('antares.auth: roles', m::any())->andReturn(null);
+                ->with('antares.auth: roles', m::any())->andReturn(null)
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
 
         $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
@@ -148,7 +150,7 @@ class GuardTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Support\Auth::is() method returning valid roles.
+     * Test Antares\Support\Auth::hasRoles() method returning valid roles.
      *
      * @test
      */
@@ -164,7 +166,8 @@ class GuardTest extends \PHPUnit_Framework_TestCase
         $user->shouldReceive('getAuthIdentifier')->times(5)->andReturn(1);
 
         $events->shouldReceive('until')->once()
-                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'user']);
+                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'user'])
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
 
         $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
@@ -179,7 +182,7 @@ class GuardTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Antares\Support\Auth::is() method when invalid roles is
+     * Test Antares\Support\Auth::hasRoles() method when invalid roles is
      * returned.
      *
      * @test
@@ -196,6 +199,7 @@ class GuardTest extends \PHPUnit_Framework_TestCase
 
         $events->shouldReceive('until')
                 ->with('antares.auth: roles', m::any())->once()
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf()
                 ->andReturn('foo');
 
         $stub = new Guard('web', $this->provider, $this->session);
@@ -223,7 +227,8 @@ class GuardTest extends \PHPUnit_Framework_TestCase
         $user->roles = new \Illuminate\Support\Collection([['id' => 0, 'name' => 'admin'], ['id' => 1, 'name' => 'user'], ['id' => 2, 'name' => 'editor'],]);
         $user->shouldReceive('getAuthIdentifier')->times(3)->andReturn(1);
 
-        $events->shouldReceive('until')->once()->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor']);
+        $events->shouldReceive('until')->once()->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor'])
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
 
         $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
@@ -249,6 +254,7 @@ class GuardTest extends \PHPUnit_Framework_TestCase
 
         $events->shouldReceive('until')
                 ->with('antares.auth: roles', m::any())->twice()
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf()
                 ->andReturn('foo');
 
         $stub = new Guard('web', $this->provider, $this->session);
@@ -275,7 +281,8 @@ class GuardTest extends \PHPUnit_Framework_TestCase
         $user->shouldReceive('getAuthIdentifier')->times(4)->andReturn(1);
 
         $events->shouldReceive('until')->once()
-                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor']);
+                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor'])
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
 
         $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
@@ -301,9 +308,8 @@ class GuardTest extends \PHPUnit_Framework_TestCase
         $user->roles = new \Illuminate\Support\Collection();
         $user->shouldReceive('getAuthIdentifier')->times(5)->andReturn(1);
 
-        $events->shouldReceive('until')
-                ->with('antares.auth: roles', m::any())->times(5)
-                ->andReturn('foo');
+        $events->shouldReceive('until')->with('antares.auth: roles', m::any())->times(5)->andReturn('foo')
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
 
         $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
@@ -332,8 +338,8 @@ class GuardTest extends \PHPUnit_Framework_TestCase
         ]);
         $user->shouldReceive('getAuthIdentifier')->times(3)->andReturn(1);
 
-        $events->shouldReceive('until')->once()
-                ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor']);
+        $events->shouldReceive('until')->once()->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor'])
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
 
         $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
@@ -359,9 +365,8 @@ class GuardTest extends \PHPUnit_Framework_TestCase
         ]);
         $user->shouldReceive('getAuthIdentifier')->twice()->andReturn(1);
 
-        $events->shouldReceive('until')
-                ->with('antares.auth: roles', m::any())->once()
-                ->andReturn('foo');
+        $events->shouldReceive('until')->with('antares.auth: roles', m::any())->once()->andReturn('foo')
+                ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
 
         $stub = new Guard('web', $this->provider, $this->session);
         $stub->setDispatcher($events);
