@@ -28,7 +28,8 @@ use Mockery as m;
 class MigrateManagerTest extends ApplicationTestCase
 {
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         $app           = $this->app;
