@@ -34,8 +34,7 @@ class ComponentsMainMenu extends MenuHandler
     protected $menu = [
         'id'       => 'components',
         'position' => '>:system.system_informations',
-        'title'    => 'Components',
-        'link'     => 'antares/foundation::/extensions',
+        'link'     => 'antares/foundation::/modules',
         'icon'     => 'zmdi-apps',
     ];
 
@@ -47,6 +46,16 @@ class ComponentsMainMenu extends MenuHandler
     public function authorize(Authorization $acl)
     {
         return $acl->can('manage-antares');
+    }
+
+    /**
+     * Title attribute getter
+     * 
+     * @return bool
+     */
+    public function getTitleAttribute()
+    {
+        return trans('antares/foundation::title.modules_management');
     }
 
 }

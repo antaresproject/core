@@ -49,6 +49,7 @@ class AreaServiceProvider extends ServiceProvider
         $router->bind('area', function($value) {
             return $this->app->make(AreaManagerContract::class)->getById($value);
         });
+
         $router->pushMiddlewareToGroup('web', AreaMiddleware::class);
     }
 

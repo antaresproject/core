@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Antares\Extension\Config;
 
@@ -11,7 +11,8 @@ use Antares\Html\Form\Fieldset;
 use Antares\Html\Form\Grid as FormGrid;
 use Antares\Extension\Model\ExtensionModel;
 
-class SettingsFormBuilder {
+class SettingsFormBuilder
+{
 
     /**
      * @var FormFactory
@@ -22,7 +23,8 @@ class SettingsFormBuilder {
      * SettingsForm constructor.
      * @param FormFactory $formFactory
      */
-    public function __construct(FormFactory $formFactory) {
+    public function __construct(FormFactory $formFactory)
+    {
         $this->formFactory = $formFactory;
     }
 
@@ -34,27 +36,28 @@ class SettingsFormBuilder {
      * @param SettingsContract $settings
      * @return \Antares\Contracts\Html\Builder
      */
-    public function build(ExtensionModel $model, SettingsFormContract $settingsForm, SettingsContract $settings) {
+    public function build(ExtensionModel $model, SettingsFormContract $settingsForm, SettingsContract $settings)
+    {
         return $this->formFactory->make(function(FormGrid $form) use($model, $settingsForm, $settings) {
-            $url = route( area() . '.extensions.viewer.configuration.update', ['id' => $model->getId()]);
+                    $url = route(area() . '.modules.viewer.configuration.update', ['id' => $model->getId()]);
 
-            $form->simple($url, [], $model);
-            $form->name($model->getFullName() . ' Configuration');
-            $form->hidden('id');
-            $form->layout('antares/foundation::components.form');
+                    $form->simple($url, [], $model);
+                    $form->name($model->getFullName() . ' Configuration');
+                    $form->hidden('id');
+                    $form->layout('antares/foundation::components.form');
 
-            $form->fieldset('Configuration', function(Fieldset $fieldset) use($settingsForm, $settings) {
-                $settingsForm->build($fieldset, $settings);
+                    $form->fieldset('Configuration', function(Fieldset $fieldset) use($settingsForm, $settings) {
+                        $settingsForm->build($fieldset, $settings);
 
-                $fieldset->control('button', 'button')
-                    ->attributes(['type' => 'submit', 'class' => 'btn btn-primary'])
-                    ->value(trans('antares/foundation::label.save_changes'));
-            });
+                        $fieldset->control('button', 'button')
+                                ->attributes(['type' => 'submit', 'class' => 'btn btn-primary'])
+                                ->value(trans('antares/foundation::label.save_changes'));
+                    });
 
-            $form
-                ->rules($settings->getValidationRules())
-                ->phrases($settings->getValidationPhrases());
-        });
+                    $form
+                            ->rules($settings->getValidationRules())
+                            ->phrases($settings->getValidationPhrases());
+                });
     }
 
 }

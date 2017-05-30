@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Breadcrumb;
 
 use DaveJamesMiller\Breadcrumbs\Facade as Breadcrumbs;
@@ -54,12 +53,12 @@ class Breadcrumb
      */
     public function onComponentsList()
     {
-        if (!Breadcrumbs::exists('components')) {
-            Breadcrumbs::register('components', function($breadcrumbs) {
-                $breadcrumbs->push('Components', handles('antares::extensions'));
+        if (!Breadcrumbs::exists('modules')) {
+            Breadcrumbs::register('modules', function($breadcrumbs) {
+                $breadcrumbs->push('Modules', handles('antares::modules'));
             });
         }
-        view()->share('breadcrumbs', Breadcrumbs::render('components'));
+        view()->share('breadcrumbs', Breadcrumbs::render('modules'));
     }
 
     /**

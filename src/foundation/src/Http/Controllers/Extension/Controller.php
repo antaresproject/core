@@ -19,21 +19,21 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Controllers\Extension;
 
-use Illuminate\Support\Fluent;
 use Antares\Foundation\Http\Controllers\AdminController;
 use Antares\Contracts\Extension\Listener\Extension;
 
-abstract class Controller extends AdminController implements Extension {
+abstract class Controller extends AdminController implements Extension
+{
 
     /**
      * Abort request when extension requirement mismatched.
      *
      * @return mixed
      */
-    public function abortWhenRequirementMismatched() {
+    public function abortWhenRequirementMismatched()
+    {
         return $this->suspend(404);
     }
 
