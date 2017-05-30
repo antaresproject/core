@@ -343,7 +343,7 @@ class MigrateManager implements Publisher
         $this->package('core/src/components/memory');
         $this->package('core/src/components/auth');
         $this->package('core/src/utils/form');
-        $this->package('core/src/ui/components');
+        $this->package('core/src/ui/components/templates');
     }
 
 }
