@@ -44,4 +44,4 @@ Please follow [Contribution Guide](http://antaresproject.io/docs/site/getting_st
 
 This software is released under the BSD 3-Clause License.
 
-© 2017 INBS.Software , all rights reserved.
+© 2017 INBS.Software.

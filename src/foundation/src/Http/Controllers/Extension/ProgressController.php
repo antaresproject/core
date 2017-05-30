@@ -26,7 +26,8 @@ use Antares\Extension\Manager;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
 use SensioLabs\AnsiConverter\Theme\SolarizedTheme;
 
-class ProgressController extends Controller {
+class ProgressController extends Controller
+{
 
     /**
      * @var Manager
@@ -42,11 +43,12 @@ class ProgressController extends Controller {
      * ActionController constructor.
      * @param Manager $extensionManager
      */
-    public function __construct(Manager $extensionManager) {
+    public function __construct(Manager $extensionManager)
+    {
         parent::__construct();
 
         $this->extensionManager = $extensionManager;
-        $this->theme = new SolarizedTheme();
+        $this->theme            = new SolarizedTheme();
     }
 
     /**
@@ -54,7 +56,8 @@ class ProgressController extends Controller {
      *
      * @return void
      */
-    protected function setupMiddleware() {
+    protected function setupMiddleware()
+    {
         $this->middleware('antares.auth');
         $this->middleware('antares.manage');
         $this->middleware('antares.csrf');
@@ -63,10 +66,11 @@ class ProgressController extends Controller {
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index(ExtensionProgress $progress) {
-        $previewUrl     = route(area() . '.extensions.progress.preview');
-        $stopUrl        = route(area() . '.extensions.progress.stop');
-        $consoleTheme   = $this->theme->asArray();
+    public function index(ExtensionProgress $progress)
+    {
+        $previewUrl   = route(area() . '.modules.progress.preview');
+        $stopUrl      = route(area() . '.modules.progress.stop');
+        $consoleTheme = $this->theme->asArray();
 
         $progress->start();
 
@@ -77,26 +81,25 @@ class ProgressController extends Controller {
      * @param ExtensionProgress $progress
      * @return \Illuminate\Http\JsonResponse
      */
-    public function preview(ExtensionProgress $progress) {
-        $converter  = new AnsiToHtmlConverter($this->theme);
-        $content    = $progress->getOutput();
-        $console    = $converter->convert($content);
-        $finished   = $progress->isFinished();
+    public function preview(ExtensionProgress $progress)
+    {
+        $converter = new AnsiToHtmlConverter($this->theme);
+        $content   = $progress->getOutput();
+        $console   = $converter->convert($content);
+        $finished  = $progress->isFinished();
 
-        if($finished) {
+        if ($finished) {
             app('antares.messages')->add('success', $progress->getSuccessMessage());
             $progress->reset();
         }
 
-        if($progress->isFailed()) {
+        if ($progress->isFailed()) {
             app('antares.messages')->add('error', $progress->getFailedMessage());
         }
 
         return response()->json([
-            'console'   => $console,
-            'redirect'  => $finished
-                ? route(area() . '.extensions.index')
-                : false,
+                    'console'  => $console,
+                    'redirect' => $finished ? route(area() . '.modules.index') : false,
         ]);
     }
 
@@ -104,13 +107,13 @@ class ProgressController extends Controller {
      * @param ExtensionProgress $progress
      * @return \Illuminate\Http\JsonResponse
      */
-    public function stop(ExtensionProgress $progress) {
+    public function stop(ExtensionProgress $progress)
+    {
         $progress->stop();
 
         return response()->json([
-            'success' => true,
+                    'success' => true,
         ]);
     }
-
 
 }

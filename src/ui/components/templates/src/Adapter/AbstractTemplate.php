@@ -22,7 +22,6 @@ namespace Antares\UI\UIComponents\Adapter;
 
 use Antares\UI\UIComponents\Traits\ComponentTrait;
 use Antares\UI\UIComponents\Contracts\UiComponent;
-use Antares\UI\UIComponents\Model\Components;
 use Antares\UI\UIComponents\Service\Service;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Log;

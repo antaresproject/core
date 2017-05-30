@@ -34,7 +34,8 @@ class ViewerController extends Controller
      *
      * @param \Antares\Foundation\Processor\Extension\Viewer  $processor
      */
-    public function __construct(Processor $processor) {
+    public function __construct(Processor $processor)
+    {
         parent::__construct();
 
         $this->processor = $processor;
@@ -45,7 +46,8 @@ class ViewerController extends Controller
      *
      * @return void
      */
-    protected function setupMiddleware() {
+    protected function setupMiddleware()
+    {
         $this->middleware('antares.auth');
         $this->middleware('antares.manage');
     }
@@ -57,7 +59,8 @@ class ViewerController extends Controller
      *
      * @return mixed
      */
-    public function index() {
+    public function index()
+    {
         set_meta('title', trans('antares/foundation::title.components.list_breadcrumb'));
 
         return $this->processor->index();
@@ -68,7 +71,8 @@ class ViewerController extends Controller
      * @param string $name
      * @return Builder
      */
-    public function getConfiguration(string $vendor, string $name) {
+    public function getConfiguration(string $vendor, string $name)
+    {
         return $this->processor->showConfigurationForm($this, $vendor, $name);
     }
 
@@ -76,15 +80,17 @@ class ViewerController extends Controller
      * @param Builder $form
      * @return \Illuminate\Contracts\View\View
      */
-    public function showConfigurationForm(Builder $form) {
-        return view()->make('antares/foundation::extensions.configure', compact('form'));
+    public function showConfigurationForm(Builder $form)
+    {
+        return view('antares/foundation::extensions.configure', compact('form'));
     }
 
     /**
      * @param string $customUrl
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function redirectToCustomUrl(string $customUrl) {
+    public function redirectToCustomUrl(string $customUrl)
+    {
         return redirect()->to($customUrl);
     }
 
@@ -92,9 +98,10 @@ class ViewerController extends Controller
      * @param Request $request
      * @return mixed
      */
-    public function storeConfiguration(Request $request) {
-        $componentId    = $request->get('id');
-        $options        = array_except($request->all(), ['id']);
+    public function storeConfiguration(Request $request)
+    {
+        $componentId = $request->get('id');
+        $options     = array_except($request->all(), ['id']);
 
         return $this->processor->updateConfiguration($this, $componentId, $options);
     }
@@ -105,8 +112,9 @@ class ViewerController extends Controller
      * @param array $messages
      * @return mixed
      */
-    public function updateConfigurationValidationFailed(array $messages) {
-        if(request()->ajax()) {
+    public function updateConfigurationValidationFailed(array $messages)
+    {
+        if (request()->ajax()) {
             return response()->json($messages);
         }
 
@@ -120,9 +128,10 @@ class ViewerController extends Controller
      *
      * @return mixed
      */
-    public function updateConfigurationSuccess() {
-        $url        = route(area() . '.extensions.index');
-        $message    = trans('antares/foundation::response.extensions.configuration-success');
+    public function updateConfigurationSuccess()
+    {
+        $url     = route(area() . '.modules.index');
+        $message = trans('antares/foundation::response.extensions.configuration-success');
 
         return $this->redirectWithMessage($url, $message);
     }
@@ -133,9 +142,10 @@ class ViewerController extends Controller
      * @param array $errors
      * @return mixed
      */
-    public function updateConfigurationFailed(array $errors) {
-        $url        = URL::previous();
-        $message    = trans('antares/foundation::response.extensions.configuration-failed');
+    public function updateConfigurationFailed(array $errors)
+    {
+        $url     = URL::previous();
+        $message = trans('antares/foundation::response.extensions.configuration-failed');
 
         return $this->redirectWithMessage($url, $message, 'error');
     }

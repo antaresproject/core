@@ -18,23 +18,22 @@
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
-
 use Illuminate\Routing\Router;
 
 Foundation::namespaced('Antares\Foundation\Http\Controllers', function (Router $router) {
 
-    $router->match(['GET', 'POST'], 'extensions', 'Extension\ViewerController@index')->name('extensions.index');
-    $router->get('extensions/{vendor}/{name}/install', 'Extension\ActionController@install')->name('extensions.install');
-    $router->get('extensions/{vendor}/{name}/activate', 'Extension\ActionController@activate')->name('extensions.activate');
-    $router->get('extensions/{vendor}/{name}/deactivate', 'Extension\ActionController@deactivate')->name('extensions.deactivate');
-    $router->get('extensions/{vendor}/{name}/uninstall', 'Extension\ActionController@uninstall')->name('extensions.uninstall');
+    $router->match(['GET', 'POST'], 'modules', 'Extension\ViewerController@index')->name('modules.index');
+    $router->get('modules/{vendor}/{name}/install', 'Extension\ActionController@install')->name('modules.install');
+    $router->get('modules/{vendor}/{name}/activate', 'Extension\ActionController@activate')->name('modules.activate');
+    $router->get('modules/{vendor}/{name}/deactivate', 'Extension\ActionController@deactivate')->name('modules.deactivate');
+    $router->get('modules/{vendor}/{name}/uninstall', 'Extension\ActionController@uninstall')->name('modules.uninstall');
 
-    $router->get('extensions/progress', 'Extension\ProgressController@index')->name('extensions.progress.index');
-    $router->get('extensions/progress/preview', 'Extension\ProgressController@preview')->name('extensions.progress.preview');
-    $router->get('extensions/progress/stop', 'Extension\ProgressController@stop')->name('extensions.progress.stop');
+    $router->get('modules/progress', 'Extension\ProgressController@index')->name('modules.progress.index');
+    $router->get('modules/progress/preview', 'Extension\ProgressController@preview')->name('modules.progress.preview');
+    $router->get('modules/progress/stop', 'Extension\ProgressController@stop')->name('modules.progress.stop');
 
-    $router->get('extensions/{vendor}/{name}/configuration', 'Extension\ViewerController@getConfiguration')->name('extensions.viewer.configuration.get');
-    $router->post('extensions/{id}/configuration', 'Extension\ViewerController@storeConfiguration')->name('extensions.viewer.configuration.update');
+    $router->get('modules/{vendor}/{name}/configuration', 'Extension\ViewerController@getConfiguration')->name('modules.viewer.configuration.get');
+    $router->post('modules/{id}/configuration', 'Extension\ViewerController@storeConfiguration')->name('modules.viewer.configuration.update');
 
     $router->get('settings/index', 'SettingsController@edit');
     $router->post('settings/index', 'SettingsController@update');

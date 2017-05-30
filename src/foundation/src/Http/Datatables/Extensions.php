@@ -154,7 +154,7 @@ class Extensions extends DataTable
                                 ['width' => '10%', 'targets' => 4],
                                 ['width' => '10%', 'targets' => 5],
                                 ['width' => '1%', 'targets' => 6],
-                    ]])->ajax(handles('antares/foundation::/extensions'));
+                    ]])->ajax(handles('antares/foundation::/modules'));
     }
 
     /**
@@ -188,7 +188,7 @@ class Extensions extends DataTable
             }
 
             if ($acl->can('component-configure') && $this->extension->hasSettingsForm($name) && $extension->getStatus() === ExtensionContract::STATUS_ACTIVATED) {
-                $configureUrl = URL::route(area() . '.extensions.viewer.configuration.get', [
+                $configureUrl = URL::route(area() . '.modules.viewer.configuration.get', [
                             'vendor' => $extension->getVendorName(),
                             'name'   => $extension->getPackageName(),
                             'csrf'   => true,
@@ -239,14 +239,14 @@ class Extensions extends DataTable
      */
     protected function getButtonLink(ExtensionContract $extension, string $action, string $icon): string
     {
-        $actionUrl = URL::route(area() . '.extensions.' . $action, [
+        $actionUrl = URL::route(area() . '.modules.' . $action, [
                     'vendor' => $extension->getVendorName(),
                     'name'   => $extension->getPackageName(),
                     'csrf'   => true,
         ]);
 
         $name  = $extension->getFriendlyName();
-        $url   = URL::route(area() . '.extensions.progress.index');
+        $url   = URL::route(area() . '.modules.progress.index');
         $label = trans('antares/foundation::label.extensions.actions.' . $action);
 
         $params = [
