@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Antares\Extension\Processors;
 
@@ -15,7 +15,8 @@ use Symfony\Component\Process\Process;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 
-class Composer {
+class Composer
+{
 
     /**
      * @var ComposerHandler
@@ -32,9 +33,10 @@ class Composer {
      * @param ComposerHandler $composerHandler
      * @param Dispatcher $dispatcher
      */
-    public function __construct(ComposerHandler $composerHandler, Dispatcher $dispatcher) {
-        $this->composerHandler  = $composerHandler;
-        $this->dispatcher       = $dispatcher;
+    public function __construct(ComposerHandler $composerHandler, Dispatcher $dispatcher)
+    {
+        $this->composerHandler = $composerHandler;
+        $this->dispatcher      = $dispatcher;
     }
 
     /**
@@ -45,34 +47,44 @@ class Composer {
      * @return mixed
      * @throws \Exception
      */
-    public function run(OperationHandlerContract $handler, array $extensionsNames) {
-        if( count($extensionsNames) === 0) {
+    public function run(OperationHandlerContract $handler, array $extensionsNames)
+    {
+        if (count($extensionsNames) === 0) {
             return $handler->operationInfo(new Operation('No extensions to install. Skipping composer.'));
         }
+        $required = config('components.required');
+        $modules  = [];
+        foreach ($extensionsNames as $extension) {
+            foreach ($required as $name) {
+                if (starts_with($extension, $name)) {
+                    continue;
+                }
+                if (!in_array($extension, $modules)) {
+                    array_push($modules, $extension);
+                }
+            }
+        }
 
-        $names      = implode(' ', $extensionsNames);
-        $command    = 'composer require ' . $names . ' --no-progress';
+        $names   = implode(' ', $modules);
+        $command = 'composer require ' . $names . ' --no-progress';
 
         try {
             $handler->operationInfo(new Operation('Running composer command.'));
 
             $process = $this->composerHandler->run($command, function(Process $process, $type, $buffer) use($handler) {
-//                if(Str::contains($buffer, ['Error Output', 'Exception'])) {
-//                    throw new ExtensionException($process->getErrorOutput());
-//                }
+
 
                 $handler->operationInfo(new Operation($buffer));
             });
 
-            if( ! $process->isSuccessful() ) {
+            if (!$process->isSuccessful()) {
                 throw new ExtensionException($process->getErrorOutput());
             }
 
             $this->dispatcher->fire(new ComposerSuccess($command));
 
             return $handler->operationInfo(new Operation('Composer command has been finished.'));
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             Log::error($e);
             $this->dispatcher->fire(new ComposerFailed($command, $e));
 
