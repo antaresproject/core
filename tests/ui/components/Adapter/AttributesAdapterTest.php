@@ -20,9 +20,9 @@
 
 namespace Antares\Widgets\Adapter\Tests;
 
-use Antares\Widgets\Adapter\AttributesAdapter as Stub;
-use Antares\Widgets\Adapter\AttributesAdapter;
-use Antares\Widgets\WidgetsServiceProvider;
+use Antares\UI\UIComponents\UiComponentsServiceProvider as WidgetsServiceProvider;
+use Antares\UI\UIComponents\Adapter\AttributesAdapter as Stub;
+use Antares\UI\UIComponents\Adapter\AttributesAdapter;
 use Antares\Testing\TestCase;
 
 class AttributesAdapterTest extends TestCase

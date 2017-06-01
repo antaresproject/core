@@ -61,6 +61,8 @@ abstract class ApplicationTestCase extends TestCase
     {
         $app = new Application($this->getBasePath());
         $app->singleton('Illuminate\Foundation\Bootstrap\LoadConfiguration', 'Antares\Config\Bootstrap\LoadConfiguration');
+
+
         return $app;
     }
 

@@ -20,10 +20,10 @@
 
 namespace Antares\Widgets\Processor\Tests;
 
+use Antares\UI\UIComponents\Processor\DestroyProcessor as Stub;
 use Antares\Support\Traits\Testing\EloquentConnectionTrait;
-use Antares\Widgets\Processor\DestroyProcessor as Stub;
-use Antares\Widgets\WidgetsServiceProvider;
-use Antares\Widgets\Contracts\Destroyer;
+use Antares\UI\UIComponents\UiComponentsServiceProvider;
+use Antares\UI\UIComponents\Contracts\Destroyer;
 use Illuminate\Container\Container;
 use Antares\Testing\TestCase;
 use Mockery as m;
@@ -39,7 +39,7 @@ class DestroyProcessorTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $serviceProvider = new WidgetsServiceProvider($this->app);
+        $serviceProvider = new UiComponentsServiceProvider($this->app);
         $serviceProvider->register();
         $serviceProvider->bootExtensionComponents();
     }

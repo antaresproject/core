@@ -54,15 +54,20 @@ class Composer
         }
         $required = config('components.required');
         $modules  = [];
-        foreach ($extensionsNames as $extension) {
-            foreach ($required as $name) {
-                if (starts_with($extension, $name)) {
-                    continue;
-                }
-                if (!in_array($extension, $modules)) {
-                    array_push($modules, $extension);
+        if (!empty($required)) {
+            foreach ($extensionsNames as $extension) {
+
+                foreach ($required as $name) {
+                    if (starts_with($extension, $name)) {
+                        continue;
+                    }
+                    if (!in_array($extension, $modules)) {
+                        array_push($modules, $extension);
+                    }
                 }
             }
+        } else {
+            $modules = $extensionsNames;
         }
 
         $names   = implode(' ', $modules);

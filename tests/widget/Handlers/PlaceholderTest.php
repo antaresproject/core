@@ -21,10 +21,9 @@
 namespace Antares\Widget\Handlers\TestCase;
 
 use Antares\Testbench\ApplicationTestCase;
-use Antares\Widget\Handlers\Placeholder;
+use Antares\UI\TemplateBase\Placeholder;
 use Antares\Support\Collection;
 use Antares\Support\Fluent;
-use Mockery as m;
 
 class PlaceholderTest extends ApplicationTestCase
 {

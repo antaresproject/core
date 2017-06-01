@@ -21,7 +21,7 @@
 namespace Antares\Widgets\Model\Tests;
 
 use Antares\Support\Traits\Testing\EloquentConnectionTrait;
-use Antares\Widgets\Model\WidgetTypes as Stub;
+use Antares\UI\UIComponents\Model\ComponentTypes as Stub;
 use Antares\Testing\TestCase;
 
 class WidgetTypesTest extends TestCase

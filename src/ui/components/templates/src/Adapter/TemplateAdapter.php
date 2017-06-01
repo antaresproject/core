@@ -55,8 +55,9 @@ class TemplateAdapter implements TemplateContract
         $config = array_get(app('ui-components-templates'), $template);
         if (!is_null($config)) {
             $this->template = $config;
-            if (!file_exists($config['path'] . DIRECTORY_SEPARATOR . 'index.twig')) {
-                throw new TemplateIndexNotFoundException(sprintf('Index file not found in path: %s', $config['path']));
+            $path           = array_get($config, 'path', '');
+            if (!file_exists($path . DIRECTORY_SEPARATOR . 'index.twig')) {
+                throw new TemplateIndexNotFoundException(sprintf('Index file not found in path: %s', $path));
             }
         } else {
             $this->path = $template;

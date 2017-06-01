@@ -82,6 +82,9 @@ class BrandsMenuTest extends TestCase
                 ->shouldReceive('attach')
                 ->with($this->app['antares.platform.memory'])
                 ->andReturnSelf()
+                ->shouldReceive('make')
+                ->with('antares')
+                ->andReturnSelf()
                 ->getMock();
         $this->app['antares.acl']             = $acl;
         $app->shouldReceive('make')->once()->with('antares.platform.menu')->andReturn($menu);

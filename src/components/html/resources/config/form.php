@@ -75,7 +75,7 @@ return [
     'scripts'    => [
         'client-side' => [
             'resources' => [
-                'bootstrap-validator' => 'packages/core/js/validator.min.js'
+                'bootstrap-validator' => 'public/packages/core/js/validator.min.js'
             ],
             'position'  => 'antares/foundation::scripts'
         ],

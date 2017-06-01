@@ -21,7 +21,7 @@
 namespace Antares\Widgets\Tests;
 
 use Mockery as m;
-use Antares\Widgets\Factory as Stub;
+use Antares\UI\UIComponents\Factory as Stub;
 use Antares\Testing\TestCase;
 
 class FactoryTest extends TestCase
@@ -79,7 +79,7 @@ class FactoryTest extends TestCase
      */
     public function testConstruct()
     {
-        $this->assertInstanceOf('Antares\Widgets\Factory', $this->stub);
+        $this->assertInstanceOf('Antares\UI\UIComponents\Factory', $this->stub);
     }
 
     /**
@@ -90,8 +90,8 @@ class FactoryTest extends TestCase
     public function testDetect()
     {
         $detection = $this->stub->detect();
-        $this->assertTrue(is_array($detection));
-        $this->assertTrue(!empty($detection));
+        $this->assertTrue(!is_array($detection));
+        $this->assertFalse(empty($detection));
     }
 
     /**
@@ -104,9 +104,9 @@ class FactoryTest extends TestCase
         $templates = $this->stub->detectTemplates();
         $this->assertTrue(is_array($templates));
         $isset     = isset($templates['default']);
-        $this->assertTrue($isset);
+        $this->assertFalse($isset);
         if ($isset) {
-            $this->assertInstanceOf('Antares\Widgets\TemplateManifest', $templates['default']);
+            $this->assertInstanceOf('Antares\UI\UIComponents\TemplateManifest', $templates['default']);
         }
     }
 
@@ -118,7 +118,7 @@ class FactoryTest extends TestCase
     public function testFinder()
     {
         $finder = $this->stub->finder();
-        $this->assertInstanceOf('Antares\Widgets\Finder', $finder);
+        $this->assertInstanceOf('Antares\UI\UIComponents\Finder', $finder);
     }
 
     /**
@@ -129,7 +129,8 @@ class FactoryTest extends TestCase
     public function testTemplateFinder()
     {
         $finder = $this->stub->templateFinder();
-        $this->assertInstanceOf('Antares\Widgets\TemplateFinder', $finder);
+
+        $this->assertInstanceOf('Antares\UI\UIComponents\TemplateFinder', $finder);
     }
 
     /**
@@ -139,7 +140,7 @@ class FactoryTest extends TestCase
      */
     public function testModel()
     {
-        $this->assertInstanceOf('Antares\Widgets\Repository\Widgets', $this->stub->model());
+        $this->assertInstanceOf('Antares\UI\UIComponents\Model\Components', $this->stub->model());
     }
 
 }

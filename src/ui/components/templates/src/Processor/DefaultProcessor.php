@@ -140,7 +140,8 @@ class DefaultProcessor extends Processor
         $component = null;
         DB::transaction(function() use($id, &$component) {
             $resource = Input::get('from');
-            $model    = $this->repository->findOneById($id);
+
+            $model = $this->repository->findOneById($id);
             if (is_null($model)) {
                 throw new ComponentNotFoundException('Component not found');
             }

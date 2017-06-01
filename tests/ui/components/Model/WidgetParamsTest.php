@@ -21,10 +21,10 @@
 namespace Antares\Widgets\Model\Tests;
 
 use Antares\Support\Traits\Testing\EloquentConnectionTrait;
+use Antares\UI\UIComponents\Model\ComponentParams as Stub;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Query\Processors\Processor;
 use Illuminate\Database\Query\Grammars\Grammar;
-use Antares\Widgets\Model\WidgetParams as Stub;
 use Illuminate\Database\Connection;
 use Antares\Testing\TestCase;
 use Mockery as m;

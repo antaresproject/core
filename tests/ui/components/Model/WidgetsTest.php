@@ -22,13 +22,13 @@ namespace Antares\Widgets\Model\Tests;
 
 use Antares\Support\Traits\Testing\EloquentConnectionTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Antares\UI\UIComponents\Model\Components as Stub;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\Query\Processors\Processor;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Antares\UI\UIComponents\Model\ComponentParams;
+use Antares\UI\UIComponents\Model\ComponentTypes;
 use Illuminate\Database\Query\Grammars\Grammar;
-use Antares\Widgets\Model\Widgets as Stub;
-use Antares\Widgets\Model\WidgetParams;
-use Antares\Widgets\Model\WidgetTypes;
 use Illuminate\Database\Connection;
 use Antares\Testing\TestCase;
 use Mockery as m;
@@ -43,13 +43,13 @@ class WidgetsTest extends TestCase
      * 
      * @test
      */
-    public function testWidgetTypes()
+    public function testComponentTypes()
     {
         $model = new Stub();
         $this->addMockConnection($model);
         $stub  = $model->widgetTypes();
         $this->assertInstanceOf(BelongsTo::class, $stub);
-        $this->assertInstanceOf(WidgetTypes::class, $stub->getQuery()->getModel());
+        $this->assertInstanceOf(ComponentTypes::class, $stub->getQuery()->getModel());
     }
 
     /**
@@ -57,13 +57,13 @@ class WidgetsTest extends TestCase
      * 
      * @test
      */
-    public function testWidgetParams()
+    public function testComponentParams()
     {
         $model = new Stub();
         $this->addMockConnection($model);
         $stub  = $model->widgetParams();
         $this->assertInstanceOf(HasMany::class, $stub);
-        $this->assertInstanceOf(WidgetParams::class, $stub->getQuery()->getModel());
+        $this->assertInstanceOf(ComponentParams::class, $stub->getQuery()->getModel());
     }
 
     /**

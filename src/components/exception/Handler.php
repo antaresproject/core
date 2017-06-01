@@ -189,6 +189,10 @@ class Handler extends ExceptionHandler
             }
 
             $arguments['content'] = $view->render();
+            array_set($arguments, 'enable_error_reporting', false);
+            if (extension_active('logger')) {
+                $arguments['enable_error_reporting'] = config('antares/logger::enable_error_reporting', false);
+            }
             return response($factory->make($viewPath, $arguments), 500);
         } catch (Exception $e) {
             vdump($e);

@@ -18,16 +18,11 @@
  * @link       http://antaresproject.io
  */
 
-
-
-
-
-
 namespace Antares\Widgets\Tests\Fixtures\Widgets;
 
-use Antares\Widgets\Adapter\AbstractWidget;
+use Antares\UI\UIComponents\Adapter\TemplateAdapter;
 
-class WidgetTest extends AbstractWidget
+class WidgetTest extends TemplateAdapter
 {
 
     /**

@@ -20,7 +20,7 @@
 
 namespace Antares\Widgets\Http\Handlers\Tests;
 
-use Antares\Widgets\Http\Handlers\WidgetsSelector;
+use Antares\UI\UIComponents\Http\Handlers\ComponentsSelector as WidgetsSelector;
 use Antares\Testing\ApplicationTestCase;
 
 class WidgetsSelectorTest extends ApplicationTestCase
