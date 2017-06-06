@@ -25,6 +25,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
@@ -51,6 +52,7 @@ class Handler extends ExceptionHandler
      */
     protected $dontReport = [
         'Symfony\Component\HttpKernel\Exception\HttpException',
+        ValidationException::class,
     ];
 
     /**
@@ -77,6 +79,10 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
+        if ($e instanceof ValidationException) {
+            return parent::render($request, $e);
+        }
+
         try {
             $installed = app('antares.installed');
 

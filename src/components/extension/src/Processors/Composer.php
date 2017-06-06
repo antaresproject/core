@@ -53,26 +53,20 @@ class Composer
             return $handler->operationInfo(new Operation('No extensions to install. Skipping composer.'));
         }
         $required = config('components.required');
-        $modules  = [];
+
+        $modules = [];
         if (!empty($required)) {
             foreach ($extensionsNames as $extension) {
-
-                foreach ($required as $name) {
-                    if (starts_with($extension, $name)) {
-                        continue;
-                    }
-                    if (!in_array($extension, $modules)) {
-                        array_push($modules, $extension);
-                    }
+                list($requiredExtension, $version) = explode(':', $extension);
+                if (!in_array($requiredExtension, $required)) {
+                    array_push($modules, $extension);
                 }
             }
         } else {
             $modules = $extensionsNames;
         }
-
         $names   = implode(' ', $modules);
         $command = 'composer require ' . $names . ' --no-progress';
-
         try {
             $handler->operationInfo(new Operation('Running composer command.'));
 
