@@ -21,13 +21,13 @@
 namespace Antares\Widgets\Tests;
 
 use Antares\Foundation\Http\Presenters\Extension as Extension2;
+use Antares\UI\UIComponents\Adapter\AfterValidateAdapter;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Antares\Widgets\WidgetsServiceProvider as Stub;
-use Antares\Widgets\Adapter\AfterValidateAdapter;
+use Antares\UI\UIComponents\Contracts\AfterValidate;
 use Antares\Foundation\Validation\Extension;
-use Antares\Widgets\Contracts\AfterValidate;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
+use Antares\UI\UIServiceProvider as Stub;
 use Antares\Testing\ApplicationTestCase;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\App;
@@ -72,15 +72,15 @@ class WidgetsServiceProviderTest extends ApplicationTestCase
     }
 
     /**
-     * Test Antares\Widgets\WidgetsServiceProvider::bootExtensionComponents() method.
+     * Test UIServiceProvider::boot() method.
      *
      * @test
      */
-    public function testBootExtensionComponents()
+    public function testBoot()
     {
         $stub = new Stub($this->app);
         $stub->register();
-        $this->assertNull($stub->bootExtensionComponents());
+        $this->assertNull($stub->boot());
     }
 
 }

@@ -167,8 +167,8 @@ return [
         Antares\Users\UsersServiceProvider::class,
         Antares\Testbench\Providers\TwigServiceProvider::class,
         DaveJamesMiller\Breadcrumbs\ServiceProvider::class,
-        Dingo\Api\Provider\LaravelServiceProvider::class,
-        Antares\Api\ApiServiceProvider::class
+        //Dingo\Api\Provider\LaravelServiceProvider::class,
+        Antares\Modules\Api\ApiServiceProvider::class
     ],
     /*
       |--------------------------------------------------------------------------

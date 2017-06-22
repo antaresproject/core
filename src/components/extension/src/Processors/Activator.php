@@ -72,9 +72,14 @@ class Activator extends AbstractOperation
             $this->extensionsRepository->save($extension, [
                 'status' => ExtensionContract::STATUS_ACTIVATED,
             ]);
-            DeferedEvent::query()->firstOrCreate(['name' => 'after.activated.' . $name]);
 
-            $this->dispatcher->fire(new Activated($extension));
+            try {
+                //DeferedEvent::query()->firstOrCreate(['name' => 'after.activated.' . $name]);
+            } catch (Exception $ex) {
+                
+            }
+
+            app(\Antares\Installation\Listeners\IncrementProgress::class)->advanceProgress();
 
             $operation = new Operation('The package [' . $name . '] has been successfully activated.');
 

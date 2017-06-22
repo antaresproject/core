@@ -21,10 +21,10 @@
 namespace Antares\Widgets\Tests;
 
 use Antares\Widgets\Tests\Fixtures\Widgets\WidgetTest;
+use Antares\UI\UIComponents\Finder;
 use Illuminate\Support\Collection;
 use Antares\Testing\TestCase;
 use Antares\Memory\Provider;
-use Antares\Widgets\Finder;
 use Mockery as m;
 
 class FinderTest extends TestCase
@@ -139,7 +139,7 @@ class FinderTest extends TestCase
      */
     public function testResolveWidgetPath()
     {
-        $this->assertSame($this->app['path.base'] . '/src/antares/components/widgets', $this->stub->resolveWidgetPath('vendor::antares/components/widgets'));
+        $this->assertSame($this->app['path.base'] . '/src/antares/components/widgets', $this->stub->resolveUIComponentPath('vendor::antares/components/widgets'));
     }
 
 }

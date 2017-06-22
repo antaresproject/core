@@ -20,9 +20,9 @@
 
 namespace Antares\Widgets\Adapter\Tests;
 
-use Antares\Widgets\Adapter\TemplateAdapter as Stub;
-use Antares\Widgets\WidgetsServiceProvider;
-use Antares\Widgets\Memory\WidgetHandler;
+use Antares\UI\UIComponents\Adapter\TemplateAdapter as Stub;
+use Antares\UI\UIComponents\UiComponentsServiceProvider;
+//use Antares\Widgets\Memory\WidgetHandler;
 use Antares\Testing\TestCase;
 use Antares\Memory\Provider;
 use Mockery as m;
@@ -37,7 +37,7 @@ class TemplateAdapterTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $serviceProvider = new WidgetsServiceProvider($this->app);
+        $serviceProvider = new UiComponentsServiceProvider($this->app);
         $serviceProvider->register();
         $serviceProvider->bootExtensionComponents();
 
@@ -64,7 +64,7 @@ class TemplateAdapterTest extends TestCase
     public function testConstruct()
     {
         $stub = new Stub('foo');
-        $this->assertInstanceOf('Antares\Widgets\Contracts\TemplateAdapter', $stub);
+        $this->assertInstanceOf('Antares\UI\UIComponents\Contracts\TemplateAdapter', $stub);
     }
 
     /**

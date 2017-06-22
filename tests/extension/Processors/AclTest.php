@@ -24,15 +24,15 @@ use Antares\Acl\Migration;
 use Antares\Acl\RoleActionList;
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
 use Antares\Extension\Processors\Acl;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Mockery as m;
 use Antares\Testbench\ApplicationTestCase;
+use Composer\Package\CompletePackageInterface;
+use Antares\Extension\Contracts\Config\SettingsContract;
+use Antares\Extension\Contracts\ExtensionContract;
 
 class AclTest extends ApplicationTestCase
 {
-
-    use ExtensionMockTrait;
 
     /**
      * @var Mockery
@@ -44,6 +44,31 @@ class AclTest extends ApplicationTestCase
         parent::setUp();
 
         $this->aclMigration = m::mock(Migration::class);
+    }
+
+    /**
+     * @param $name
+     * @return \Mockery\MockInterface
+     */
+    protected function buildExtensionMock($name)
+    {
+        $package = m::mock(CompletePackageInterface::class)
+                ->shouldReceive('getName')
+                ->andReturn($name)
+                ->getMock();
+
+        $settings = m::mock(SettingsContract::class)
+                ->shouldReceive('getData')
+                ->andReturn([])
+                ->getMock();
+
+        return m::mock(ExtensionContract::class)
+                        ->shouldReceive('getPackage')
+                        ->andReturn($package)
+                        ->getMock()
+                        ->shouldReceive('getSettings')
+                        ->andReturn($settings)
+                        ->getMock();
     }
 
     /**
@@ -145,7 +170,7 @@ class AclTest extends ApplicationTestCase
                 ->andThrow(\Exception::class)
                 ->getMock();
 
-        $this->app['log']  = m::mock(\Psr\Log\LoggerInterface::class)->shouldReceive('error')->once()->withAnyArgs()->getMock();
+        $this->app['log'] = m::mock(\Psr\Log\LoggerInterface::class)->shouldReceive('error')->once()->withAnyArgs()->getMock();
 
         $this->app->instance('files', $file);
 

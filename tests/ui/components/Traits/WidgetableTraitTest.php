@@ -20,9 +20,9 @@
 
 namespace Antares\Widgets\Traits\Tests;
 
-use Antares\Widgets\Traits\WidgetableTrait as Stub;
+use Antares\UI\UIComponents\Traits\ComponentTrait as Stub;
+use Antares\UI\UIComponents\Model\Components;
 use Illuminate\Database\Eloquent\Model;
-use Antares\Widgets\Model\Widgets;
 use Antares\Testing\TestCase;
 use Illuminate\View\View;
 
@@ -95,7 +95,7 @@ class WidgetableTraitTest extends TestCase
     }
 
     /**
-     * test \Antares\Widgets\Traits\WidgetableTrait::getRules()
+     * test \Antares\UI\UIComponents\Traits\WidgetableTrait::getRules()
      * 
      * @test
      */
@@ -106,7 +106,7 @@ class WidgetableTraitTest extends TestCase
     }
 
     /**
-     * test \Antares\Widgets\Traits\WidgetableTrait::getDescription()
+     * test \Antares\UI\UIComponents\Traits\WidgetableTrait::getDescription()
      * 
      * @test
      */
@@ -117,18 +117,18 @@ class WidgetableTraitTest extends TestCase
     }
 
     /**
-     * test \Antares\Widgets\Traits\WidgetableTrait::getModel()
+     * test \Antares\UI\UIComponents\Traits\WidgetableTrait::getModel()
      * 
      * @test
      */
     public function testGetModel()
     {
-        $this->model = new Widgets();
+        $this->model = new Components();
         $this->assertInstanceOf('\ArrayAccess', $this->getModel());
     }
 
     /**
-     * test \Antares\Widgets\Traits\WidgetableTrait::getAttributes()
+     * test \Antares\UI\UIComponents\Traits\WidgetableTrait::getAttributes()
      * 
      * @test
      */
@@ -139,7 +139,7 @@ class WidgetableTraitTest extends TestCase
     }
 
     /**
-     * test \Antares\Widgets\Traits\WidgetableTrait::getParam()
+     * test \Antares\UI\UIComponents\Traits\WidgetableTrait::getParam()
      * 
      * @test
      */
@@ -151,7 +151,7 @@ class WidgetableTraitTest extends TestCase
     }
 
     /**
-     * test \Antares\Widgets\Traits\WidgetableTrait::getDefaults()
+     * test \Antares\UI\UIComponents\Traits\WidgetableTrait::getDefaults()
      * 
      * @test
      */
@@ -168,7 +168,7 @@ class WidgetableTraitTest extends TestCase
     }
 
     /**
-     * test \Antares\Widgets\Traits\WidgetableTrait::setView()
+     * test \Antares\UI\UIComponents\Traits\WidgetableTrait::setView()
      * 
      * @test
      */

@@ -57,16 +57,12 @@ class ThemeTest extends ApplicationTestCase
         $stub = new Theme($app, $events, $files);
 
         $finder->shouldReceive('getPaths')->times(3)->andReturn([$defaultPath])
-                ->shouldReceive('setPaths')->with([$defaultPath])->andReturnNull()
-                ->shouldReceive('setPaths')->with(["{$resourcePath}/foo", "{$themePath}/foo", $defaultPath])->andReturnNull()
-                ->shouldReceive('setPaths')->with(["/foo", "/foo", $defaultPath,])->andReturnNull()
-                ->shouldReceive('setPaths')->with(["/default", "/default", $defaultPath,])->andReturnNull()
-                ->shouldReceive('setPaths')->with(["{$resourcePath}/default", "{$themePath}/default", $defaultPath])->andReturnNull();
+                ->shouldReceive('setPaths')->withAnyArgs()->andReturnNull();
 
         $files->shouldReceive('isDirectory')->with("/default")->andReturn(true);
 
         $files
-                ->shouldReceive('isDirectory')->twice()->with("/foo")->andReturn(true)
+                ->shouldReceive('isDirectory')->twice()->withAnyArgs()->andReturn(true)
                 ->shouldReceive('exists')->with("/default/theme.json")->andReturn(true)
                 ->shouldReceive('get')->once()->with('/default/theme.json')
                 ->andReturn('{"autoload":["start.php"]}')
@@ -117,7 +113,7 @@ class ThemeTest extends ApplicationTestCase
         $stub = new Theme($app, $events, $files);
 
         $files->shouldReceive('exists')->once()->with("/default/theme.json")->andReturn(false)
-                ->shouldReceive('isDirectory')->twice()->with("/default")->andReturn(false);
+                ->shouldReceive('isDirectory')->twice()->withAnyArgs()->andReturn(false);
 
         $events->shouldReceive('fire')->once()->with('antares.theme.resolving', m::type('Array'))->andReturnNull()
                 ->shouldReceive('fire')->once()->with('antares.theme.set: default')->andReturnNull()

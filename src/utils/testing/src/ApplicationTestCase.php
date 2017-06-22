@@ -61,6 +61,8 @@ abstract class ApplicationTestCase extends TestCase
     {
         $app = new Application($this->getBasePath());
         $app->singleton('Illuminate\Foundation\Bootstrap\LoadConfiguration', 'Antares\Config\Bootstrap\LoadConfiguration');
+
+
         return $app;
     }
 
@@ -85,7 +87,7 @@ abstract class ApplicationTestCase extends TestCase
      */
     protected function resolveApplicationHttpKernel($app)
     {
-        $app->singleton('Illuminate\Contracts\Http\Kernel', 'App\Http\Kernel');
+        $app->singleton('Illuminate\Contracts\Http\Kernel', \Antares\Foundation\Http\Kernel::class);
     }
 
     /**

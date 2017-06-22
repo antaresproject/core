@@ -25,6 +25,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
@@ -51,6 +52,7 @@ class Handler extends ExceptionHandler
      */
     protected $dontReport = [
         'Symfony\Component\HttpKernel\Exception\HttpException',
+        ValidationException::class,
     ];
 
     /**
@@ -77,6 +79,12 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
+        throw $e;
+
+        if ($e instanceof ValidationException) {
+            return parent::render($request, $e);
+        }
+
         try {
             $installed = app('antares.installed');
 
@@ -189,6 +197,10 @@ class Handler extends ExceptionHandler
             }
 
             $arguments['content'] = $view->render();
+            array_set($arguments, 'enable_error_reporting', false);
+            if (extension_active('logger')) {
+                $arguments['enable_error_reporting'] = config('antares/logger::enable_error_reporting', false);
+            }
             return response($factory->make($viewPath, $arguments), 500);
         } catch (Exception $e) {
             vdump($e);

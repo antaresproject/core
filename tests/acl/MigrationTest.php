@@ -74,13 +74,13 @@ class MigrationTest extends \PHPUnit_Framework_TestCase
     public function testUpMethods()
     {
         $component = m::mock('\Antares\Contracts\Memory\Provider')
-            ->shouldReceive('finish')
-            ->once()
-            ->andReturnNull()
-            ->getMock();
+                ->shouldReceive('finish')
+                ->once()
+                ->andReturnNull()
+                ->getMock();
 
-        $roles     = m::mock('\Antares\Authorization\Fluent')->makePartial();
-        $actions   = m::mock('\Antares\Authorization\Fluent')->makePartial();
+        $roles   = m::mock('\Antares\Authorization\Fluent')->makePartial();
+        $actions = m::mock('\Antares\Authorization\Fluent')->makePartial();
 
         $memoryManager = m::mock('\Antares\Memory\MemoryManager')
                 ->shouldReceive('make')
@@ -102,7 +102,6 @@ class MigrationTest extends \PHPUnit_Framework_TestCase
                 ->andReturn($actions)
                 ->shouldReceive('allow')
                 ->times(2)
-                ->with(m::type('String'), m::type('Array'))
                 ->andReturnNull()
                 ->getMock();
 

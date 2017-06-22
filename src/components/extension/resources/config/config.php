@@ -23,8 +23,7 @@ return [
         'antares/widget',
     ],
     'paths'    => [
-        'src/core/src/modules/*',
-        'src/modules/*',
+        'src/modules/*/*/',
     ],
     'composer' => [
         'parameters' => [

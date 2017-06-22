@@ -73,7 +73,8 @@ class FilesystemFinder
 
         foreach ($this->configRepository->getPaths() as $path) {
             $composerPattern = $this->configRepository->getRootPath() . '/' . $path . '/composer.json';
-            $composerFiles   = $this->filesystem->glob($composerPattern);
+
+            $composerFiles = $this->filesystem->glob($composerPattern);
 
 
 

@@ -20,12 +20,12 @@
 
 namespace Antares\Widgets\Tests;
 
+use Antares\UI\UIComponents\UiComponentsServiceProvider;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Antares\Widgets\TemplateFinder as Stub;
-use Antares\Widgets\WidgetsServiceProvider;
+use Antares\UI\UIComponents\TemplateFinder as Stub;
 use Illuminate\Contracts\Config\Repository;
+use Antares\UI\UIComponents\TemplateFinder;
 use Antares\Testing\ApplicationTestCase;
-use Antares\Widgets\TemplateFinder;
 use Mockery as m;
 
 class TemplateFinderTest extends ApplicationTestCase
@@ -38,10 +38,10 @@ class TemplateFinderTest extends ApplicationTestCase
      */
     public function setUp()
     {
-        $this->addProvider(WidgetsServiceProvider::class);
+        $this->addProvider(UiComponentsServiceProvider::class);
         parent::setUp();
         $this->app['config'] = $config              = m::mock(Repository::class);
-        $config->shouldReceive('get')->with("antares/widgets::templates", [])->once()->andReturn([
+        $config->shouldReceive('get')->with("antares/ui-components::templates", [])->once()->andReturn([
             'public_path'      => 'widgets/templates',
             'preview_pattern'  => 'screenshot.png',
             'preview_default'  => 'img/screenshot.png',

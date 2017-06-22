@@ -49,8 +49,10 @@ trait DispatchableTrait
      */
     public function finish()
     {
-        foreach ($this->components as $name => $options) {
-            $this->dispatcher->finish($name, $options);
+        if (isset($this->components)) {
+            foreach ($this->components as $name => $options) {
+                $this->dispatcher->finish($name, $options);
+            }
         }
 
         $this->components = new Collection();

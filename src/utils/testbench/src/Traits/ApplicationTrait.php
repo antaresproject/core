@@ -106,6 +106,7 @@ trait ApplicationTrait
      */
     public function createApplication()
     {
+
         $app = $this->resolveApplication();
 
         $this->resolveApplicationExceptionHandler($app);
@@ -123,6 +124,10 @@ trait ApplicationTrait
         $this->getEnvironmentSetUp($app);
 
         $app->make('Illuminate\Foundation\Bootstrap\BootProviders')->bootstrap($app);
+        if ($app->bound('view')) {
+            $app->make('view')->addNamespace('antares/foundation', $this->getBasePath() . '/resources/views/antares/foundation');
+        }
+
 
         return $app;
     }
@@ -134,6 +139,7 @@ trait ApplicationTrait
      */
     protected function resolveApplication()
     {
+
         $app = new Application($this->getBasePath());
 
         $app->bind('Illuminate\Foundation\Bootstrap\LoadConfiguration', 'Antares\Testbench\Bootstrap\LoadConfiguration');

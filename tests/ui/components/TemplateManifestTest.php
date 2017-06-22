@@ -20,10 +20,10 @@
 
 namespace Antares\Widgets\Tests;
 
-use Antares\Widgets\TemplateManifest;
+use Antares\UI\UIComponents\TemplateManifest;
 use Illuminate\Filesystem\Filesystem;
-use Antares\Testing\TestCase;
 use Illuminate\Support\Fluent;
+use Antares\Testing\TestCase;
 use Mockery as m;
 
 class TemplateManifestTest extends TestCase

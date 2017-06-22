@@ -64,8 +64,7 @@ class Finder implements FinderContract
         $base         = rtrim($config['path.base'], '/');
 
         $this->paths = [
-            "{$base}/src/core/src/modules/*/src",
-            "{$base}/src/modules/*/src",
+            "{$base}/src/modules/*/*/src",
         ];
     }
 
