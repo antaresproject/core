@@ -24,6 +24,18 @@ use Illuminate\Support\Debug\Dumper;
 use Antares\Messages\SwalMessanger;
 use Antares\Html\Form\Field;
 
+if (!function_exists('modules_path')) {
+
+    /**
+     * Gets modules path
+     */
+    function modules_path($dir = null)
+    {
+        return base_path('src/modules/' . $dir);
+    }
+
+}
+
 if (!function_exists('users')) {
 
     /**
@@ -648,14 +660,18 @@ if (!function_exists('brand_logo')) {
             } elseif ($param == 'big') {
                 $logo = $registry->get('brand.configuration.template.logo');
                 return !is_null($logo) ? asset('img/logos/' . $logo) : $default;
+            } elseif ($param == 'white') {
+                $logo = config('antares/brands::logo.default_white');
+                return !is_null($logo) ? asset('img/logos/' . $logo) : $default;
             }
             return asset('img/logos/' . $param);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return asset($logoPath . 'logo_default_tear.png');
         }
     }
 
 }
+
 
 if (!function_exists('publish')) {
 

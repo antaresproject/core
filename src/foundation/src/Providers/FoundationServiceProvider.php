@@ -25,9 +25,9 @@ use Antares\UI\UIComponents\Http\Middleware\Middleware as UIComponentsMiddleware
 use Antares\Foundation\Listeners\AfterExtensionOperation;
 use Antares\Support\Providers\Traits\AliasesProviderTrait;
 use Antares\Support\Providers\ServiceProvider;
+use Antares\UI\UIComponents\TemplateFinder;
 use Antares\Html\Middleware\FormMiddleware;
 use Monolog\Handler\RotatingFileHandler;
-use Antares\UiComponents\TemplateFinder;
 use Illuminate\Filesystem\Filesystem;
 use Antares\Foundation\Notification;
 use Illuminate\Support\Facades\Log;

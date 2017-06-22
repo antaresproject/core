@@ -62,7 +62,7 @@ class TemplateFinder
     {
         $themes  = new Collection();
         $file    = $this->app->make('files');
-        $path    = rtrim(__DIR__ . '/../' . $this->config['indexes_path']);
+        $path    = rtrim(__DIR__ . '/../' . array_get($this->config, 'indexes_path', ''));
         $folders = $file->directories($path);
         foreach ($folders as $folder) {
             $templateDir = class_basename($folder);

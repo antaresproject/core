@@ -18,16 +18,16 @@
  * @link       http://antaresproject.io
  */
 
-namespace Antares\Widgets\Processor\Tests;
+namespace Antares\UI\UIComponents\Processor\Tests;
 
 use Antares\Support\Traits\Testing\EloquentConnectionTrait;
-use Antares\Widgets\Processor\DefaultProcessor as Stub;
-use Antares\Widgets\Exception\WidgetNotFoundException;
-use Antares\Widgets\Processor\DefaultProcessor;
-use Antares\Widgets\WidgetsServiceProvider;
-use Antares\Widgets\Memory\WidgetHandler;
-use Antares\Widgets\Contracts\GridStack;
-use Antares\Widgets\Model\WidgetParams;
+use Antares\UI\UIComponents\Processor\DefaultProcessor as Stub;
+use Antares\UI\UIComponents\Exception\WidgetNotFoundException;
+use Antares\UI\UIComponents\Processor\DefaultProcessor;
+use Antares\UI\UIComponents\UiComponentsServiceProvider;
+use Antares\UI\UIComponents\Memory\WidgetHandler;
+use Antares\UI\UIComponents\Contracts\GridStack;
+use Antares\UI\UIComponents\Model\ComponentParams;
 use Illuminate\Container\Container;
 use Illuminate\Http\JsonResponse;
 use Antares\Testing\TestCase;
@@ -45,7 +45,7 @@ class DefaultProcessorTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $serviceProvider = new WidgetsServiceProvider($this->app);
+        $serviceProvider = new UiComponentsServiceProvider($this->app);
         $serviceProvider->register();
         $serviceProvider->bootExtensionComponents();
         $return          = ['bar' => ['name' => 'foo', 'id' => 1]];
@@ -67,7 +67,7 @@ class DefaultProcessorTest extends TestCase
     }
 
     /**
-     * Test Antares\Widgets\Processor\DefaultProcessor::__construct() method.
+     * Test Antares\UI\UIComponents\Processor\DefaultProcessor::__construct() method.
      *
      * @test
      */
@@ -79,25 +79,7 @@ class DefaultProcessorTest extends TestCase
     }
 
     /**
-     * Test Antares\Widgets\Processor\DefaultProcessor::index() method.
-     *
-     * @test
-     */
-    public function testIndex()
-    {
-
-        $adapter = m::mock(GridStack::class);
-        $adapter->shouldReceive('scripts')->withNoArgs()->andReturnNull();
-
-
-        $stub  = new Stub($adapter, $this->app->make(Container::class));
-        $index = $stub->index();
-        $this->assertTrue(is_array($index));
-        $this->assertTrue(isset($index['data']));
-    }
-
-    /**
-     * Test Antares\Widgets\Processor\DefaultProcessor::show() method.
+     * Test Antares\UI\UIComponents\Processor\DefaultProcessor::show() method.
      *
      * @test
      */
@@ -116,9 +98,9 @@ class DefaultProcessorTest extends TestCase
      */
     public function testPositions()
     {
-        $adapter                        = m::mock(GridStack::class);
-        $stub                           = new Stub($adapter, $this->app->make(Container::class));
-        $data                           = [
+        $adapter                           = m::mock(GridStack::class);
+        $stub                              = new Stub($adapter, $this->app->make(Container::class));
+        $data                              = [
             'widgets' => [
                 'foo' => [
                     'attributes' => [
@@ -128,7 +110,7 @@ class DefaultProcessorTest extends TestCase
                 ]
             ]
         ];
-        $this->app[WidgetParams::class] = m::mock(WidgetParams::class);
+        $this->app[ComponentParams::class] = m::mock(ComponentParams::class);
         $this->assertInstanceOf(JsonResponse::class, $stub->positions($data));
     }
 

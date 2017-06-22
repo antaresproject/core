@@ -82,9 +82,7 @@ class Manager
         if ($this->availableExtensions instanceof Extensions) {
             return $this->availableExtensions;
         }
-
-        $foundExtensions = $this->filesystemFinder->findExtensions();
-
+        $foundExtensions  = $this->filesystemFinder->findExtensions();
         $storedExtensions = app('antares.installed') ? $this->extensionsRepository->all() : new Collection();
 
         foreach ($foundExtensions as $foundExtension) {

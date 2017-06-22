@@ -22,8 +22,7 @@ namespace Antares\Widget\TestCase;
 
 use Antares\Testbench\ApplicationTestCase;
 use Antares\Support\Fluent;
-use Antares\Widget\Handler;
-use Mockery as m;
+use Antares\UI\Handler;
 use Closure;
 
 class HandlerTest extends ApplicationTestCase

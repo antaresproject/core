@@ -26,6 +26,9 @@ use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
 use Antares\Testing\ApplicationTestCase;
 use Mockery as m;
+use Composer\Package\CompletePackageInterface;
+use Antares\Extension\Contracts\Config\SettingsContract;
+use Antares\Extension\Contracts\ExtensionContract;
 
 abstract class OperationSetupTestCase extends ApplicationTestCase
 {
@@ -45,8 +48,6 @@ abstract class OperationSetupTestCase extends ApplicationTestCase
      */
     protected $kernel;
 
-    use ExtensionMockTrait;
-
     public function setUp()
     {
         parent::setUp();
@@ -62,6 +63,31 @@ abstract class OperationSetupTestCase extends ApplicationTestCase
     protected function buildOperationHandlerMock()
     {
         return m::mock(OperationHandlerContract::class);
+    }
+
+    /**
+     * @param $name
+     * @return \Mockery\MockInterface
+     */
+    protected function buildExtensionMock($name)
+    {
+        $package = m::mock(CompletePackageInterface::class)
+                ->shouldReceive('getName')
+                ->andReturn($name)
+                ->getMock();
+
+        $settings = m::mock(SettingsContract::class)
+                ->shouldReceive('getData')
+                ->andReturn([])
+                ->getMock();
+
+        return m::mock(ExtensionContract::class)
+                        ->shouldReceive('getPackage')
+                        ->andReturn($package)
+                        ->getMock()
+                        ->shouldReceive('getSettings')
+                        ->andReturn($settings)
+                        ->getMock();
     }
 
 }

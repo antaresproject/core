@@ -34,9 +34,11 @@ class MigrateManagerTest extends ApplicationTestCase
 
         $app           = $this->app;
         $app['events'] = m::mock('\Illuminate\Contracts\Events\Dispatcher');
-        $app['files']  = m::mock('\Illuminate\Filesystem\Filesystem');
+        $files         = m::mock('\Illuminate\Filesystem\Filesystem');
+        $files->shouldReceive('isDirectory')->with("/foo/path/src/core/src/components/memory/resources/database/migrations/")->andReturn(false);
+        $app['files']  = $files;
 
-        // Only for tests
+// Only for tests
         $app['antares.installed'] = false;
 
         $extensionStub = new ExtensionServiceProvider($app);
@@ -56,9 +58,12 @@ class MigrateManagerTest extends ApplicationTestCase
 
 
         $migrator->shouldReceive('getRepository')->once()->andReturn($repository)
+                ->shouldReceive('getMigrationFiles')->once()->with("/foo/path/migrations")->andReturn([])
                 ->shouldReceive('run')->once()->with('/foo/path/migrations')->andReturn(null);
+
         $repository->shouldReceive('repositoryExists')->once()->andReturn(false)
-                ->shouldReceive('createRepository')->once()->andReturn(null);
+                ->shouldReceive('createRepository')->once()->andReturn(null)
+                ->shouldReceive('getRan')->once()->andReturn(null);
 
         $stub = new MigrateManager($this->app, $migrator, $seeder);
         $stub->run('/foo/path/migrations');
@@ -141,29 +146,16 @@ class MigrateManagerTest extends ApplicationTestCase
         $repository = m::mock('\Illuminate\Database\Migrations\DatabaseMigrationRepository');
 
         $files->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/memory/resources/database/migrations/')->andReturn(false)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/memory/database/migrations/')->andReturn(false)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/memory/migrations/')->andReturn(false)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/memory/resources/database/seeds/')->andReturn(false)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/memory/database/seeds/')->andReturn(false)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/memory/seeds/')->andReturn(false)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/auth/resources/database/migrations/')->andReturn(true)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/auth/database/migrations/')->andReturn(false)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/auth/migrations/')->andReturn(false)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/auth/resources/database/seeds/')->andReturn(true)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/auth/database/seeds/')->andReturn(false)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/auth/seeds/')->andReturn(false)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/form/resources/database/migrations/')->andReturn(false)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/form/database/migrations/')->andReturn(false)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/form/migrations/')->andReturn(false)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/form/resources/database/seeds/')->andReturn(true)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/form/database/seeds/')->andReturn(false)
-                ->shouldReceive('isDirectory')->once()->with('/foo/path/src/core/form/seeds/')->andReturn(false)
+                ->shouldReceive('isDirectory')->once()->withAnyArgs()->andReturn(false)
                 ->shouldReceive('allFiles')->times(2)->andReturn([]);
 
         $migrator->shouldReceive('getRepository')->once()->andReturn($repository)
-                ->shouldReceive('run')->once()->with('/foo/path/src/core/auth/resources/database/migrations/')->andReturn(null);
+                ->shouldReceive('run')->once()->with('/foo/path/src/core/auth/resources/database/migrations/')->andReturn(null)
+                ->shouldReceive('run')->once()->with("/foo/path/src/core/src/components/auth/resources/database/migrations/")->andReturn(null)
+                ->shouldReceive('getMigrationFiles')->once()->with("/foo/path/src/core/src/components/auth/resources/database/migrations/")->andReturn([]);
         $repository->shouldReceive('repositoryExists')->once()->andReturn(true)
-                ->shouldReceive('createRepository')->never()->andReturn(null);
+                ->shouldReceive('createRepository')->never()->andReturn(null)
+                ->shouldReceive('getRan')->once()->andReturn(null);
 
         $seeder = m::mock('\Illuminate\Database\Seeder');
 

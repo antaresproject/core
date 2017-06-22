@@ -68,7 +68,8 @@ class TemplateManifest
     {
         $path        = rtrim($path, '/');
         $this->files = $files;
-        if ($files->exists($manifest    = "{$path}/" . $config['manifest_pattern'])) {
+        if ($files->exists($manifest    = "{$path}/" . array_get($config, 'manifest_pattern', '')) && !is_dir($manifest)) {
+
             $jsonable = json_decode($files->get($manifest), true);
 
             if (is_null($jsonable)) {

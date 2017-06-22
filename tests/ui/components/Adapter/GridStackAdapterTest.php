@@ -20,9 +20,9 @@
 
 namespace Antares\Widgets\Adapter\Tests;
 
-use Antares\Widgets\Adapter\GridStackAdapter as Stub;
+use Antares\UI\UIComponents\Adapter\GridStackAdapter as Stub;
+use Antares\UI\UIComponents\Contracts\GridStack;
 use Illuminate\Contracts\Config\Repository;
-use Antares\Widgets\Contracts\GridStack;
 use Antares\Testing\TestCase;
 use Antares\Asset\Factory;
 use Mockery as m;

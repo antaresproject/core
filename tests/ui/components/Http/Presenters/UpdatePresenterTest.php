@@ -20,13 +20,13 @@
 
 namespace Antares\Widgets\Http\Presenters\Tests;
 
-use Antares\Widgets\Http\Presenters\UpdatePresenter as Stub;
+use Antares\UI\UIComponents\Http\Presenters\UpdatePresenter as Stub;
 use Antares\Widgets\Tests\Fixtures\Widgets\WidgetTest;
-use Antares\Widgets\Http\Presenters\UpdatePresenter;
-use Antares\Widgets\Contracts\AfterValidate;
-use Antares\Widgets\WidgetsServiceProvider;
+use Antares\UI\UIComponents\Http\Presenters\UpdatePresenter;
+use Antares\UI\UIComponents\Contracts\AfterValidate;
+use Antares\UI\UIComponents\UiComponentsServiceProvider;
 use Antares\Contracts\Html\Form\Factory;
-use Antares\Widgets\Repository\Widgets;
+use Antares\UI\UIComponents\Repository\Repository;
 use Illuminate\Support\Fluent;
 use Antares\Testing\TestCase;
 use Antares\Memory\Provider;
@@ -41,7 +41,7 @@ class UpdatePresenterTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $serviceProvider = new WidgetsServiceProvider($this->app);
+        $serviceProvider = new UiComponentsServiceProvider($this->app);
         $serviceProvider->register();
         $serviceProvider->bootExtensionComponents();
     }
@@ -61,7 +61,7 @@ class UpdatePresenterTest extends TestCase
     /**
      * test \Antares\Widgets\Http\Presenters\UpdatePresenter::form()
      * 
-     * @test
+     * @expectedException \Antares\UI\UIComponents\Exception\TemplateIndexNotFoundException
      */
     public function testForm()
     {
@@ -79,8 +79,8 @@ class UpdatePresenterTest extends TestCase
         $provider->shouldReceive('raw')->andReturn([]);
         $memory   = m::mock(\Antares\Widgets\Memory\WidgetHandler::class);
         $memory->shouldReceive('get')->with('foo.name')->andReturn(['testowanie']);
-        $memory->shouldReceive('make')->with('widgets')->andReturn($provider)
-                ->shouldReceive('make')->with('widgets-templates')->andReturn($provider);
+        $memory->shouldReceive('make')->with('ui-components')->andReturn($provider)
+                ->shouldReceive('make')->with('ui-components-templates')->andReturn($provider);
 
 
         $this->app['antares.memory'] = $memory;
@@ -94,7 +94,7 @@ class UpdatePresenterTest extends TestCase
 
         $instance = new Stub($factory, $afterValidateAdapter);
 
-        $model = m::mock(Widgets::class);
+        $model = m::mock(Repository::class);
         $model->shouldReceive('getAttribute')->andReturn(1);
         $this->assertTrue(is_object($instance->form('foo', $model, '/')));
     }

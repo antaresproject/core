@@ -40,15 +40,15 @@ class DeferedService
         }
 
         return DB::transaction(function() {
-                    $events = $this->getDeferedEvents();
-                    foreach ($events as $event) {
-                        if (!empty($event->value)) {
-                            continue;
-                        }
-                        $return       = Event::fire($event->name);
-                        $event->value = $return;
-                        $event->save();
-                    }
+//                    $events = $this->getDeferedEvents();
+//                    foreach ($events as $event) {
+//                        if (!empty($event->value)) {
+//                            continue;
+//                        }
+//                        $return       = Event::fire($event->name);
+//                        $event->value = $return;
+//                        $event->save();
+//                    }
                 });
     }
 

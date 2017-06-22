@@ -136,6 +136,7 @@ class AssetPublisher
                 $published = $file->getRelativePathname();
             }
 
+
             $container->add(str_slug($file->getBasename()), str_replace('\\', '/', $published), [], $before);
         }
         return $container;
@@ -155,6 +156,7 @@ class AssetPublisher
         $params = is_string($options) ? config('antares/' . $extension . '::' . $options) : $options;
         $files  = $this->getFiles($params);
 
+
         if (empty($files) and $options = (array) $options) {
 
             foreach ($options as $option) {
@@ -165,6 +167,7 @@ class AssetPublisher
                 $files[] = new SplFileInfo($realPath, str_replace(public_path(), '', $realPath), last(explode('/', $realPath)));
             }
         }
+
         return $this->publishAndPropagate($files, null, $before);
     }
 

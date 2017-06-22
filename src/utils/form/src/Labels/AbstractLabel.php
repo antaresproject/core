@@ -41,10 +41,10 @@ abstract class AbstractLabel implements Attributable
     protected $name;
 
     /** @var string */
-	protected $type;
+    protected $type;
 
     /** @var string */
-	protected $info;
+    protected $info;
 
     /** @var AbstractType */
     protected $control;
@@ -59,9 +59,9 @@ abstract class AbstractLabel implements Attributable
      */
     public function __construct(string $name, AbstractType $control = null, $info = '', array $attributes = [])
     {
-        $this->name = $name;
+        $this->name    = $name;
         $this->control = $control;
-        $this->info = $info;
+        $this->info    = $info;
         $this->setAttributes($attributes);
     }
 
@@ -92,7 +92,7 @@ abstract class AbstractLabel implements Attributable
     /**
      * @return bool
      */
-    public function hasControl(): bool 
+    public function hasControl(): bool
     {
         return $this->control instanceof AbstractType;
     }
@@ -105,42 +105,41 @@ abstract class AbstractLabel implements Attributable
         $this->control = $control;
     }
 
-	/**
-	 * @return string
-	 */
-	public function getName(): string
-	{
-		return $this->name;
-	}
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
 
-	/**
-	 * @param string $name
-	 */
-	public function setName(string $name)
-	{
-		$this->name = $name;
-	}
+    /**
+     * @param string $name
+     */
+    public function setName(string $name)
+    {
+        $this->name = $name;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getInfo(): string
-	{
-		return $this->info;
-	}
+    /**
+     * @return string
+     */
+    public function getInfo(): string
+    {
+        return $this->info;
+    }
 
-	/**
-	 * @param string $info
-	 */
-	public function setInfo(string $info)
-	{
-		$this->info = $info;
-	}
+    /**
+     * @param string $info
+     */
+    public function setInfo(string $info)
+    {
+        $this->info = $info;
+    }
 
     public function render()
     {
-        return view('antares/foundation::form.labels.' . $this->type,
-            ['label' => $this, 'control' => $this->control])->render();
+        return view('antares/foundation::form.labels.' . $this->type, ['label' => $this, 'control' => $this->control])->render();
     }
 
 }

@@ -21,8 +21,8 @@
 namespace Antares\Widget\TestCase;
 
 use Antares\Testbench\ApplicationTestCase;
-use Antares\Widget\WidgetManager;
 use Antares\Support\Collection;
+use Antares\UI\WidgetManager;
 use Antares\Support\Fluent;
 use Mockery as m;
 
@@ -39,7 +39,7 @@ class WidgetManagerTest extends ApplicationTestCase
 
         $stub = new WidgetManager($this->app);
 
-        $this->assertInstanceOf('\Antares\Widget\WidgetManager', $stub);
+        $this->assertInstanceOf('\Antares\UI\WidgetManager', $stub);
         $this->assertInstanceOf('\Antares\Support\Manager', $stub);
         $this->assertInstanceOf('\Illuminate\Support\Manager', $stub);
     }
@@ -87,7 +87,7 @@ class WidgetManagerTest extends ApplicationTestCase
 
         $stub = with(new WidgetManager($app))->make('menu.foo');
 
-        $this->assertInstanceOf('\Antares\Widget\Handlers\Menu', $stub);
+        $this->assertInstanceOf('\Antares\UI\TemplateBase\Menu', $stub);
 
         with(new WidgetManager($app))->make('menu.foo.bar');
     }
@@ -107,7 +107,7 @@ class WidgetManagerTest extends ApplicationTestCase
 
         $stub = with(new WidgetManager($app))->make('pane.foo');
 
-        $this->assertInstanceOf('\Antares\Widget\Handlers\Pane', $stub);
+        $this->assertInstanceOf('\Antares\UI\TemplateBase\Pane', $stub);
     }
 
     /**
@@ -125,7 +125,7 @@ class WidgetManagerTest extends ApplicationTestCase
 
         $stub = with(new WidgetManager($app))->make('placeholder.foo');
 
-        $this->assertInstanceOf('\Antares\Widget\Handlers\Placeholder', $stub);
+        $this->assertInstanceOf('\Antares\UI\TemplateBase\Placeholder', $stub);
     }
 
     /**
@@ -145,7 +145,7 @@ class WidgetManagerTest extends ApplicationTestCase
 
         $stub = with(new WidgetManager($app))->driver();
 
-        $this->assertInstanceOf('\Antares\Widget\Handlers\Placeholder', $stub);
+        $this->assertInstanceOf('\Antares\UI\TemplateBase\Placeholder', $stub);
     }
 
     /**
@@ -206,7 +206,7 @@ class WidgetManagerTest extends ApplicationTestCase
             $p->add('foobar')->value('Hello world');
         });
 
-        $this->assertInstanceOf('\Antares\Widget\Handlers\Placeholder', $stub1);
+        $this->assertInstanceOf('\Antares\UI\TemplateBase\Placeholder', $stub1);
 
         $this->assertEquals($expected, $stub1->items());
 
@@ -214,7 +214,7 @@ class WidgetManagerTest extends ApplicationTestCase
             $p->add('foobar')->value('Hello world');
         });
 
-        $this->assertInstanceOf('\Antares\Widget\Handlers\Placeholder', $stub2);
+        $this->assertInstanceOf('\Antares\UI\TemplateBase\Placeholder', $stub2);
         $this->assertEquals($expected, $stub2->items());
     }
 

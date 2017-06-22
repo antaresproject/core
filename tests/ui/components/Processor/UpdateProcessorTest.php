@@ -21,13 +21,13 @@
 namespace Antares\Widgets\Processor\Tests;
 
 use Antares\Support\Traits\Testing\EloquentConnectionTrait;
-use Antares\Widgets\Processor\UpdateProcessor as Stub;
+use Antares\UI\UIComponents\Processor\UpdateProcessor as Stub;
 use Antares\Widgets\Tests\Fixtures\Widgets\WidgetTest;
-use Antares\Widgets\Http\Presenters\UpdatePresenter;
-use Antares\Widgets\Processor\UpdateProcessor;
+use Antares\UI\UIComponents\Http\Presenters\UpdatePresenter;
+use Antares\UI\UIComponents\Processor\UpdateProcessor;
 use Antares\Contracts\Html\Form\Factory;
-use Antares\Widgets\Model\WidgetParams;
-use Antares\Widgets\Contracts\Updater;
+use Antares\UI\UIComponents\Model\ComponentParams;
+use Antares\UI\UIComponents\Contracts\Updater;
 use Antares\Memory\Provider;
 use Antares\Testing\TestCase;
 use Exception;
@@ -67,7 +67,7 @@ class UpdateProcessorTest extends TestCase
 
 
         $presenter   = m::mock(UpdatePresenter::class);
-        $presenter->shouldReceive('form')->with(NULL, m::type(WidgetParams::class), "antares::widgets/updater")->andReturn($formFactory = m::mock(Factory::class));
+        $presenter->shouldReceive('form')->with(NULL, m::type(ComponentParams::class), "antares::widgets/updater")->andReturn($formFactory = m::mock(Factory::class));
         $this->stub  = new Stub($presenter);
     }
 

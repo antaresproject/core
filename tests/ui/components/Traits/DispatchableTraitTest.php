@@ -20,7 +20,7 @@
 
 namespace Antares\Widgets\Traits\Tests;
 
-use Antares\Widgets\Traits\DispatchableTrait as Stub;
+use Antares\UI\UIComponents\Traits\DispatchableTrait as Stub;
 use Illuminate\Support\Collection;
 use Illuminate\Events\Dispatcher;
 use Antares\Testing\TestCase;
@@ -65,7 +65,7 @@ class DispatchableTraitTest extends TestCase
                 ->andReturnNull();
         $this->dispatcher = $dispatcher;
         $this->finish();
-        $this->assertInstanceOf(Collection::class, $this->widgets);
+        $this->assertInstanceOf(Collection::class, $this->components);
     }
 
 }

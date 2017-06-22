@@ -21,10 +21,9 @@
 namespace Antares\Widget\Handlers\TestCase;
 
 use Antares\Testbench\ApplicationTestCase;
-use Antares\Widget\Handlers\Pane;
+use Antares\UI\TemplateBase\Pane;
 use Antares\Support\Collection;
 use Antares\Support\Fluent;
-use Mockery as m;
 
 class PaneTest extends ApplicationTestCase
 {

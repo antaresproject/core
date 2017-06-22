@@ -21,7 +21,7 @@
 namespace Antares\Widget\Handlers\TestCase;
 
 use Antares\Testbench\ApplicationTestCase;
-use Antares\Widget\Handlers\Menu;
+use Antares\UI\TemplateBase\Menu;
 use Antares\Support\Collection;
 use Antares\Support\Fluent;
 use Mockery as m;
