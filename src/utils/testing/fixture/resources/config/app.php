@@ -166,9 +166,7 @@ return [
         Yajra\Datatables\DatatablesServiceProvider::class,
         Antares\Users\UsersServiceProvider::class,
         Antares\Testbench\Providers\TwigServiceProvider::class,
-        DaveJamesMiller\Breadcrumbs\ServiceProvider::class,
-        //Dingo\Api\Provider\LaravelServiceProvider::class,
-        Antares\Modules\Api\ApiServiceProvider::class
+        DaveJamesMiller\Breadcrumbs\ServiceProvider::class
     ],
     /*
       |--------------------------------------------------------------------------
