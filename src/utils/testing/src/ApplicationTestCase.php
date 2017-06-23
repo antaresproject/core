@@ -99,7 +99,7 @@ abstract class ApplicationTestCase extends TestCase
      */
     protected function resolveApplicationExceptionHandler($app)
     {
-        $app->singleton('Illuminate\Contracts\Debug\ExceptionHandler', 'App\Exceptions\Handler');
+        $app->singleton('Illuminate\Contracts\Debug\ExceptionHandler', 'Antares\Exception\Handler');
     }
 
 }
