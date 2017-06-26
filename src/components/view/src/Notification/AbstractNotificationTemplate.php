@@ -29,9 +29,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
+use Antares\Foundation\Jobs\Job;
 use Twig_Loader_String;
 use Twig_Environment;
-use App\Jobs\Job;
 use Exception;
 
 abstract class AbstractNotificationTemplate extends Job implements NotificationContract, ShouldQueue
