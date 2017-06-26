@@ -75,7 +75,7 @@ abstract class ApplicationTestCase extends TestCase
      */
     protected function resolveApplicationConsoleKernel($app)
     {
-        $app->singleton('Illuminate\Contracts\Console\Kernel', 'App\Console\Kernel');
+        $app->singleton('Illuminate\Contracts\Console\Kernel', \Antares\Foundation\Console\Kernel::class);
     }
 
     /**
