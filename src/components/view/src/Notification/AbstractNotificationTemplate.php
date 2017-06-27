@@ -22,6 +22,7 @@
 namespace Antares\View\Notification;
 
 use Antares\Foundation\Notification;
+use Antares\Notifications\Model\Attachment;
 use Antares\Support\Facades\Foundation;
 use Antares\Notifications\Adapter\VariablesAdapter;
 use Antares\View\Contracts\NotificationContract;
@@ -129,6 +130,13 @@ abstract class AbstractNotificationTemplate extends Job implements NotificationC
      * @var array 
      */
     protected $events = [];
+
+    /**
+     * Attachments to notifications.
+     *
+     * @var array
+     */
+    protected $attachments = [];
 
     /**
      * notification template type getter
@@ -268,6 +276,8 @@ abstract class AbstractNotificationTemplate extends Job implements NotificationC
     public function setPredefinedVariables(array $variables = null)
     {
         $this->predefinedVariables = $variables;
+        $this->setAttachments( (array) Arr::get($variables, 'attachments', []));
+
         return $this;
     }
 
@@ -436,6 +446,37 @@ abstract class AbstractNotificationTemplate extends Job implements NotificationC
     public function getPredefinedVariables()
     {
         return $this->predefinedVariables;
+    }
+
+    /**
+     * @return VariablesAdapter
+     */
+    protected function getVariablesAdapter() {
+        return app(VariablesAdapter::class);
+    }
+
+    /**
+     * Sets attachments to the notification.
+     *
+     * @param array $attachments (items of Attachment class)
+     */
+    public function setAttachments(array $attachments) {
+        $this->attachments = [];
+
+        foreach($attachments as $attachment) {
+            if($attachment instanceof Attachment) {
+                $this->attachments[] = $attachment;
+            }
+        }
+    }
+
+    /**
+     * Returns attachments.
+     *
+     * @return Attachment[]
+     */
+    public function getAttachments() : array {
+        return $this->attachments;
     }
 
 }

@@ -70,7 +70,7 @@ class NotificationSeeder extends Seeder
 
         foreach ($contents as $locale => $content) {
             if (!$this->validateLocale($locale)) {
-                Log::emergency(sprintf('Invalid locale provided in notification migration script %s in line %s', [__FILE__, __LINE__]));
+                Log::emergency(sprintf('Invalid locale provided in notification migration script %s in line %s', __FILE__, __LINE__));
                 continue;
             }
             $this->insertNotificationContent($notificationId, $locale, $content);
@@ -101,8 +101,9 @@ class NotificationSeeder extends Seeder
         return DB::table('tbl_notification_contents')->insert([
                     'notification_id' => $notificationId,
                     'lang_id'         => lang_id($locale),
-                    'title'           => array_get($content, 'title', null),
-                    'content'         => array_get($content, 'content', null),
+                    'title'           => array_get($content, 'title'),
+                    'subject'         => array_get($content, 'subject'),
+                    'content'         => array_get($content, 'content'),
         ]);
     }
 

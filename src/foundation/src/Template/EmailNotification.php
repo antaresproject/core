@@ -50,22 +50,20 @@ class EmailNotification extends AbstractNotificationTemplate implements Sendable
     ];
 
     /**
-     * notification category
-     *
-     * @var type 
-     */
-    protected $category = 'default';
-
-    /**
      * Gets title
      * 
      * @return String
      */
     public function getTitle()
     {
-        $title = array_get($this->getModel(), 'contents.0.title');
-        $twig  = new Twig_Environment(new Twig_Loader_String());
-        return $twig->render($title, (array) $this->predefinedVariables);
+        $title = array_get($this->getModel(), 'contents.0.subject');
+
+        if( empty($title) ) {
+            $title = array_get($this->getModel(), 'contents.0.title');
+        }
+
+        return $this->getVariablesAdapter()
+            ->setVariables((array) $this->predefinedVariables)->get($title);
     }
 
     /**
@@ -75,12 +73,15 @@ class EmailNotification extends AbstractNotificationTemplate implements Sendable
      */
     public function render($view = null)
     {
-
         $model         = $this->getModel();
         $view          = app(VariablesAdapter::class)->setVariables((array) $this->predefinedVariables)->get(array_get($model, 'contents.0.content', array_get($model, 'content.0.content')));
         $brandTemplate = BrandOptions::query()->where('brand_id', brand_id())->first();
         $header        = str_replace('</head>', '<style>' . $brandTemplate->styles . '</style></head>', $brandTemplate->header);
-        return preg_replace("/<body[^>]*>(.*?)<\/body>/is", '<body>' . $view . '</body>', $header . $brandTemplate->footer);
+
+        $view = str_replace('$', 'preventable_char_unescaped', $view);
+        $view = preg_replace("/<body[^>]*>(.*?)<\/body>/is", '<body>' . $view . '</body>', $header . $brandTemplate->footer);
+
+        return str_replace('preventable_char_unescaped', '$', $view);
     }
 
     /**

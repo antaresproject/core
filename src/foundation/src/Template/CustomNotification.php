@@ -50,20 +50,20 @@ class CustomNotification extends AbstractNotificationTemplate
     ];
 
     /**
-     * notification category
-     *
-     * @var type 
-     */
-    protected $category = 'default';
-
-    /**
      * Gets title
      * 
      * @return String
      */
     public function getTitle()
     {
-        return array_get($this->getModel(), 'contents.0.title');
+        $title = array_get($this->getModel(), 'contents.0.subject');
+
+        if( empty($title) ) {
+            $title = array_get($this->getModel(), 'contents.0.title');
+        }
+
+        return $this->getVariablesAdapter()
+            ->setVariables((array) $this->predefinedVariables)->get($title);
     }
 
     /**
@@ -74,6 +74,7 @@ class CustomNotification extends AbstractNotificationTemplate
     public function render($view = null)
     {
         $view = array_get($this->getModel(), 'contents.0.content');
+
         return app(VariablesAdapter::class)->fill($view);
     }
 
@@ -90,6 +91,7 @@ class CustomNotification extends AbstractNotificationTemplate
             'author_id'       => auth()->guest() ? null : user()->id,
             'variables'       => $this->predefinedVariables,
         ]);
+
         if ($stack->save()) {
             $params = $this->params();
             foreach ($params as $id) {

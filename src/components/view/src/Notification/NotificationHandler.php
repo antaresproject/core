@@ -21,7 +21,7 @@
 
 namespace Antares\View\Notification;
 
-use Antares\Notifier\Adapter\AbstractAdapter;
+use Illuminate\Mail\Message;
 use Illuminate\View\View;
 use Exception;
 use Log;
@@ -30,9 +30,10 @@ class NotificationHandler
 {
 
     /**
-     * handle notification event 
-     * 
-     * @param Notification $instance
+     * handle notification event
+     *
+     * @param AbstractNotificationTemplate $instance
+     * @return bool
      */
     public function handle(AbstractNotificationTemplate $instance)
     {
@@ -42,14 +43,20 @@ class NotificationHandler
         if (!$notifier) {
             return false;
         }
-        $render     = $instance->render();
-        $view       = $render instanceof View ? $render->render() : $render;
-        $title      = $instance->getTitle();
-        $recipients = $instance->getRecipients();
 
-        return $notifier->send($view, [], function($m) use($title, $recipients) {
+        $render         = $instance->render();
+        $view           = $render instanceof View ? $render->render() : $render;
+        $title          = $instance->getTitle();
+        $recipients     = $instance->getRecipients();
+        $attachments    = $instance->getAttachments();
+
+        return $notifier->send($view, [], function(Message $m) use($title, $recipients, $attachments) {
             $m->to($recipients);
             $m->subject($title);
+
+            foreach($attachments as $attachment) {
+                $m->attach($attachment->getPath(),$attachment->getComputedOptions());
+            }
         });
     }
 
@@ -57,10 +64,10 @@ class NotificationHandler
      * Gets notifier adapter by type.
      *
      * @param string $type
-     * @return AbstractAdapter
+     * @return mixed
      * @throws Exception;
      */
-    public function getNotifierAdapter(string $type) : AbstractAdapter
+    public function getNotifierAdapter(string $type)
     {
         try {
             $config = config("antares/notifier::{$type}");
