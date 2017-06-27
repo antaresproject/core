@@ -24,5 +24,5 @@ namespace Antares\Foundation\Template;
 
 interface SendableNotification
 {
-    
+
 }

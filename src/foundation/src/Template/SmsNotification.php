@@ -36,13 +36,6 @@ class SmsNotification extends AbstractNotificationTemplate implements SendableNo
     protected $type = 'sms';
 
     /**
-     * notification category
-     *
-     * @var type 
-     */
-    protected $category = 'default';
-
-    /**
      * Gets title
      * 
      * @return String
@@ -59,9 +52,10 @@ class SmsNotification extends AbstractNotificationTemplate implements SendableNo
      */
     public function render($view = null)
     {
-        $model = $this->getModel();
-        $view  = array_get($model, 'contents.0.content', array_get($model, 'content.0.content'));
-        return app(VariablesAdapter::class)->get($view);
+        $model      = $this->getModel();
+        $content    = array_get($model, 'contents.0.content', array_get($model, 'content.0.content'));
+
+        return app(VariablesAdapter::class)->get($content);
     }
 
     /**

@@ -21,6 +21,7 @@
 
 namespace Antares\View\Notification;
 
+use Antares\Foundation\Notification;
 use Antares\Support\Facades\Foundation;
 use Antares\Notifications\Adapter\VariablesAdapter;
 use Antares\View\Contracts\NotificationContract;
@@ -28,6 +29,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
@@ -200,7 +202,7 @@ abstract class AbstractNotificationTemplate extends Job implements NotificationC
     /**
      * notification recipients values getter
      * 
-     * @return mixed
+     * @return array
      */
     public function getRecipients()
     {
@@ -238,7 +240,7 @@ abstract class AbstractNotificationTemplate extends Job implements NotificationC
     /**
      * Notification recipients getter
      * 
-     * @return mixed
+     * @return array
      */
     public function recipients()
     {
@@ -320,7 +322,7 @@ abstract class AbstractNotificationTemplate extends Job implements NotificationC
      */
     public function getVariables()
     {
-        $variables  = app()->make('antares.notifications')->all();
+        $variables  = Notification::getInstance()->all();
         $extensions = app()->make('antares.memory')->make('component')->get('extensions.active');
 
         if (empty($variables)) {
@@ -330,12 +332,17 @@ abstract class AbstractNotificationTemplate extends Job implements NotificationC
 
         foreach ($variables as $extension => $config) {
             $name = ucfirst($extension === 'foundation' ? $extension : $extensions[$extension]['name']);
-            $vars = $config['variables'];
+            $vars = (array) Arr::get($config, 'variables', []);
+
             if (empty($vars)) {
                 continue;
             }
+
             foreach ($vars as $key => $variable) {
-                $return[$name][] = ['name' => $key, 'description' => isset($variable['description']) ? $variable['description'] : ''];
+                $return[$name][] = [
+                    'name'          => $key,
+                    'description'   => Arr::get($variable, 'description', '')
+                ];
             }
         }
         Event::fire('notifications:' . snake_case(class_basename($this)) . '.variables', [&$return]);

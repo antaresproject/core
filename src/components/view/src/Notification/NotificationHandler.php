@@ -21,8 +21,10 @@
 
 namespace Antares\View\Notification;
 
+use Antares\Notifier\Adapter\AbstractAdapter;
 use Illuminate\View\View;
 use Exception;
+use Log;
 
 class NotificationHandler
 {
@@ -52,13 +54,13 @@ class NotificationHandler
     }
 
     /**
-     * gets notifier adapter by type
-     * 
-     * @param String $type
-     * @return boolean
-     * @throws Exception
+     * Gets notifier adapter by type.
+     *
+     * @param string $type
+     * @return AbstractAdapter
+     * @throws Exception;
      */
-    public function getNotifierAdapter(string $type)
+    public function getNotifierAdapter(string $type) : AbstractAdapter
     {
         try {
             $config = config("antares/notifier::{$type}");
@@ -74,7 +76,9 @@ class NotificationHandler
 
             return app()->make("antares.notifier.{$type}");
         } catch (Exception $ex) {
-            return false;
+            Log::emergency($ex);
+
+            throw $ex;
         }
     }
 

@@ -107,14 +107,15 @@ class FoundationServiceProvider extends ServiceProvider
         $this->app->singleton('antares.ui-components', function ($app) {
             return new Factory($app, new Response());
         });
-        $this->app->singleton('antares.areas', function ($app) {
-            return $app->make(Areas::class);
+        $this->app->singleton('antares.areas', function () {
+            return $this->app->make(Areas::class);
         });
 
 
-        $this->app->singleton('antares.notifications', function ($app) {
+        $this->app->singleton('antares.notifications', function () {
             return Notification::getInstance();
         });
+
         /**
          * @todo refactoring -> get dependencies from configuration
          */
@@ -166,13 +167,13 @@ class FoundationServiceProvider extends ServiceProvider
      */
     protected function registerWidgetsFinder()
     {
-        $this->app->singleton('antares.ui-components.finder', function($app) {
+        $this->app->singleton('antares.ui-components.finder', function() {
             $config = [
-                'path.app'  => $app->make('path'),
-                'path.base' => $app->make('path.base'),
+                'path.app'  => $this->app->make('path'),
+                'path.base' => $this->app->make('path.base'),
             ];
 
-            return new Finder($app->make('files'), $config);
+            return new Finder($this->app->make('files'), $config);
         });
     }
 
