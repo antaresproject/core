@@ -7,7 +7,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/antaresproject/core.svg)](https://github.com/antaresproject/core/issues)
 [![GitHub forks](https://img.shields.io/github/forks/antaresproject/core.svg)](https://github.com/antaresproject/core/network)
 [![GitHub stars](https://img.shields.io/github/stars/antaresproject/core.svg)](https://github.com/antaresproject/core/stargazers)
-[![GitHub license](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://raw.githubusercontent.com/antaresproject/project/master/LICENSE)
+[![GitHub license](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://raw.githubusercontent.com/antaresproject/core/0.9.2/LICENSE)
 
 ## Documentation
 
@@ -20,17 +20,17 @@ Full Antares documentation can be found at [docs.antaresproject.io/php-framework
 
 Antares Core changelog can be found in release notes [docs.antaresproject.io/php-framework/getting-started/changelog/#core](http://www.docs.antaresproject.io/php-framework/getting-started/changelog/#core).
 
-You can find full Antares changelog in Antares Documentation [docs.antaresproject.io/php-framework/getting-started/changelog/#core](http://www.docs.antaresproject.io/php-framework/getting-started/changelog).
+You can find full Antares changelog in Antares Documentation [docs.antaresproject.io/php-framework/getting-started/changelog](http://www.docs.antaresproject.io/php-framework/getting-started/changelog).
 
 ## Issues
 
 The issue list of this repo is **exclusively** for bug reports and feature requests.
 
-Please follow [Issue Reporting Guide](http://www.docs.antaresproject.io/getting-started/issues-reporting-guide/) before opening an issue. Issues not following the guide will be closed without further investigation.
+Please follow [Issue Reporting Guide](http://www.docs.antaresproject.io/php-framework/getting-started/issues-reporting-guide/) before opening an issue. Issues not following the guide will be closed without further investigation.
 
 ## Contribution
 
-Please follow [Contribution Guide](http://www.docs.antaresproject.io/getting-started/contributing/) before making a pull request.
+Please follow [Contribution Guide](http://www.docs.antaresproject.io/php-framework/getting-started/contribution-guide/) before making a pull request.
 
 ## Community
 
