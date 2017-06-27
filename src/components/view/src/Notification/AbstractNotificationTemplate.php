@@ -25,8 +25,10 @@ use Antares\Support\Facades\Foundation;
 use Antares\Notifications\Adapter\VariablesAdapter;
 use Antares\View\Contracts\NotificationContract;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Twig_Loader_String;
@@ -115,7 +117,7 @@ abstract class AbstractNotificationTemplate extends Job implements NotificationC
     /**
      * Instance of notification model
      * 
-     * @var \Illuminate\Database\Eloquent\Model
+     * @var Model
      */
     protected $model;
 
@@ -202,31 +204,31 @@ abstract class AbstractNotificationTemplate extends Job implements NotificationC
      */
     public function getRecipients()
     {
-
         if (empty($this->recipients)) {
             return [];
         }
-        $recipients = ($this->recipients instanceof Collection) ? $this->recipients->toArray() : $this->recipients;
 
+        $recipients = ($this->recipients instanceof Collection) ? $this->recipients->toArray() : $this->recipients;
 
         if (!is_array($recipients)) {
             return $recipients;
         }
+
         $return = [];
 
         foreach ($recipients as $recipient) {
-            if ($recipient instanceof \Illuminate\Database\Eloquent\Model) {
-                if ($this->type == 'email' and ! isset($recipient->email)) {
+            if ($recipient instanceof Model) {
+                if ($this->type === 'email' && ! isset($recipient->email)) {
                     continue;
                 }
-                if ($this->type == 'email') {
-                    array_push($return, $recipient->email);
+                if ($this->type === 'email') {
+                    $return[] = $recipient->email;
                 }
-                if ($this->type == 'sms' and ! isset($recipient->phone)) {
+                if ($this->type === 'sms' && ! isset($recipient->phone)) {
                     continue;
                 }
-                if ($this->type == 'sms') {
-                    array_push($return, $recipient->phone);
+                if ($this->type === 'sms') {
+                    $return[] = $recipient->phone;
                 }
             }
         }
@@ -247,7 +249,7 @@ abstract class AbstractNotificationTemplate extends Job implements NotificationC
      * recipients
      * 
      * @param \Illuminate\Contracts\Support\Arrayable|array $recipients
-     * @return \Antares\View\Notification\Notification
+     * @return AbstractNotificationTemplate
      */
     public function setRecipients($recipients)
     {
@@ -259,9 +261,9 @@ abstract class AbstractNotificationTemplate extends Job implements NotificationC
      * predefined variables setter
      * 
      * @param array $variables
-     * @return \Antares\View\Notification\Notification
+     * @return AbstractNotificationTemplate
      */
-    public function setPredefinedVariables($variables = null)
+    public function setPredefinedVariables(array $variables = null)
     {
         $this->predefinedVariables = $variables;
         return $this;
@@ -288,7 +290,7 @@ abstract class AbstractNotificationTemplate extends Job implements NotificationC
             return $this->render();
         } catch (Exception $ex) {
             Log::emergency($ex);
-            return false;
+            return '';
         }
     }
 
@@ -327,7 +329,7 @@ abstract class AbstractNotificationTemplate extends Job implements NotificationC
         $return = [];
 
         foreach ($variables as $extension => $config) {
-            $name = ucfirst($extension == 'foundation' ? $extension : $extensions[$extension]['name']);
+            $name = ucfirst($extension === 'foundation' ? $extension : $extensions[$extension]['name']);
             $vars = $config['variables'];
             if (empty($vars)) {
                 continue;
@@ -390,7 +392,7 @@ abstract class AbstractNotificationTemplate extends Job implements NotificationC
     /**
      * Notification model setter
      * 
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param Model $model
      * @return \Antares\View\Notification\AbstractNotificationTemplate
      */
     public function setModel($model)

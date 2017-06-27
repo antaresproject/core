@@ -39,9 +39,10 @@ class Notification extends AbstractNotificationTemplate
      */
     public function getTemplatePaths()
     {
-        if (!isset($this->templatePaths)) {
+        if ($this->templatePaths === null) {
             return [];
         }
+
         return $this->templatePaths;
     }
 

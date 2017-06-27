@@ -21,8 +21,6 @@
 
 namespace Antares\View\Notification;
 
-use Antares\View\Notification\AbstractNotificationTemplate;
-use Antares\Support\Facades\Foundation;
 use Illuminate\View\View;
 use Exception;
 
@@ -46,10 +44,11 @@ class NotificationHandler
         $view       = $render instanceof View ? $render->render() : $render;
         $title      = $instance->getTitle();
         $recipients = $instance->getRecipients();
+
         return $notifier->send($view, [], function($m) use($title, $recipients) {
-                    $m->to($recipients->pluck('email')->toArray());
-                    $m->subject($title);
-                });
+            $m->to($recipients);
+            $m->subject($title);
+        });
     }
 
     /**
@@ -59,18 +58,21 @@ class NotificationHandler
      * @return boolean
      * @throws Exception
      */
-    public function getNotifierAdapter($type)
+    public function getNotifierAdapter(string $type)
     {
         try {
-            $config         = config("antares/notifier::{$type}");
+            $config = config("antares/notifier::{$type}");
             $notifierConfig = $config['adapters'][$config['adapters']['default']];
+
             if (!class_exists($notifierConfig['model'])) {
                 throw new Exception(sprintf('Notifier adapter: %s not exists.', $notifierConfig['model']));
             }
-            if (in_array($type, ['email', 'mail'])) {
-                return Foundation::make('antares.notifier.email');
+
+            if (in_array($type, ['email', 'mail'], true)) {
+                return app()->make('antares.notifier.email');
             }
-            return Foundation::make("antares.notifier.{$type}");
+
+            return app()->make("antares.notifier.{$type}");
         } catch (Exception $ex) {
             return false;
         }
