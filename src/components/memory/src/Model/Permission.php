@@ -229,21 +229,28 @@ class Permission extends Eloquent
             if ($name === null) {
                 return false;
             }
-            $model = null;
+            if ($name == 'acl_antares') {
+                $name = 'core';
+            }
 
+            $model = null;
             if (str_contains($name, '/')) {
+
                 list($vendor, $name) = explode('/', $name);
                 $model = $this->query()->where(['vendor' => $vendor, 'name' => $name])->first();
             } elseif ($name !== 'core' && !str_contains($name, 'component-')) {
-                $name = 'component-' . $name;
+
+                $model = $this->query()->whereIn('name', ['module-' . $name, 'component-' . $name])->first();
+            } elseif ($name === 'core') {
+
+                $model = $this->query()->where('name', $name)->first();
             }
-            $name = str_replace('module_', 'module-', $name);
-            if (is_null($model)) {
-                $model = $this->query()->where('name', '=', $name)->first();
-            }
+
+
             if ($model === null) {
                 return false;
             }
+
 
 
             $actions = [];

@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Model;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -118,7 +117,7 @@ class Role extends Eloquent
      */
     public static function managers()
     {
-        return static::query()->whereNotIn('name', ['guest', 'member']);
+        return static::query()->whereNotIn('name', ['guest', 'member', 'client']);
     }
 
     /**
@@ -128,7 +127,7 @@ class Role extends Eloquent
      */
     public static function members()
     {
-        return static::query()->whereIn('name', ['member']);
+        return static::query()->whereIn('name', ['member', 'client']);
     }
 
     /**

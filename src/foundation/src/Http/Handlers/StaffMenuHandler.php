@@ -108,7 +108,7 @@ class StaffMenuHandler extends MenuHandler
      */
     public function authorize(Authorization $acl)
     {
-        return $acl->can('manage-antares');
+        return app('antares.acl')->make('antares/acl')->can('roles-list');
     }
 
 }

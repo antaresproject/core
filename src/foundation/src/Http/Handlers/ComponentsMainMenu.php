@@ -45,7 +45,7 @@ class ComponentsMainMenu extends MenuHandler
      */
     public function authorize(Authorization $acl)
     {
-        return $acl->can('manage-antares');
+        return $acl->can('component-install');
     }
 
     /**

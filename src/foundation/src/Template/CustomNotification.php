@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Template;
 
 use Antares\View\Notification\AbstractNotificationTemplate;
