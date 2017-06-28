@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Handlers;
 
 use Antares\Foundation\Support\MenuHandler;
@@ -51,7 +50,7 @@ class ToolsMenuHandler extends MenuHandler
      */
     public function authorize(Authorization $acl)
     {
-        return $acl->can('manage-antares');
+        return app('antares.acl')->make('antares/tester')->can('tools-tester') or app('antares.acl')->make('antares/translations')->can('translations-list');
     }
 
     /**

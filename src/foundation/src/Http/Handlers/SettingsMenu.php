@@ -85,7 +85,7 @@ class SettingsMenu extends MenuHandler
      */
     public function authorize(Authorization $acl)
     {
-        return $acl->can('manage-antares');
+        return $acl->can('manage-antares') or app('antares.acl')->make('antares')->can('brand-update');
     }
 
     /**
@@ -95,6 +95,7 @@ class SettingsMenu extends MenuHandler
      */
     public function handle()
     {
+
         if (!$this->passesAuthorization()) {
             return;
         }
@@ -102,7 +103,9 @@ class SettingsMenu extends MenuHandler
         $menu->icon('zmdi-settings')
                 ->type('secondary');
 
-
+        if (!app('antares.acl')->make('antares')->can('manage-antares')) {
+            return;
+        }
         $this->handler
                 ->add('general-config', '^:settings')
                 ->title('General configuration')
