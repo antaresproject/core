@@ -284,4 +284,18 @@ class Manager
         return false;
     }
 
+    public function getExtensionsByCategory($name = 'default')
+    {
+        $collection = collect();
+        foreach ($this->availableExtensions as $extension) {
+            $extra             = $extension->getPackage()->getExtra();
+            $extra['category'] = array_get($extra, 'category', 'default');
+
+            if ($extra['category'] === $name) {
+                $collection->push($extension);
+            }
+        }
+        return $collection;
+    }
+
 }

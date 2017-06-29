@@ -110,6 +110,7 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
      * @var array
      */
     protected $fillable = [
+        'creator_id',
         'firstname',
         'lastname',
         'status',
@@ -133,6 +134,17 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
      * @var array
      */
     protected $appends = array('fullname');
+
+    /**
+     * {@inheritdocs}
+     */
+    public function save(array $options = [])
+    {
+        if (!auth()->guest() && !$this->exists) {
+            $this->creator_id = user()->id;
+        }
+        return parent::save();
+    }
 
     /**
      * Has many and belongs to relationship with Role.
@@ -419,12 +431,12 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
         }
 
         foreach ((array) $roles as $role) {
-            if (!in_array($role, $userRoles)) {
-                return false;
+            if (in_array($role, $userRoles)) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -588,9 +600,28 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
         return ($lastLogin) ? $lastLogin->created_at->diffForHumans() : 'never';
     }
 
+    /**
+     * Phone attribute getter
+     * 
+     * @return String
+     */
     public function getPhoneAttribute()
     {
-        return '697274132';
+        return '';
+    }
+
+    /**
+     * Gets user child areas
+     * 
+     * @return array
+     */
+    public function getChildAreas()
+    {
+        return $this->roles()->getModel()->newQuery()->select(['area'])->whereIn('id', $this->roles->first()
+                                ->getChilds())
+                        ->groupBy('area')
+                        ->whereNotNull('area')
+                        ->pluck('area')->toArray();
     }
 
 }

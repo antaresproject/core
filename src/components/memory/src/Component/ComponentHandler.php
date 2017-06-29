@@ -108,6 +108,7 @@ class ComponentHandler extends DefaultHandler implements HandlerContract
     {
         $items    = [];
         $memories = $this->cache instanceof Repository ? $this->getItemsFromCache() : $this->getItemsFromDatabase();
+
         foreach ($memories as $key => $value) {
             if ($key === 'extensions') {
                 foreach ($value['available'] as $keyname => $settings) {

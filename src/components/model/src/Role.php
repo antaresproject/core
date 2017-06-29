@@ -199,13 +199,15 @@ class Role extends Eloquent
     /**
      * Gets child roles
      * 
+     * @param boolean $withOwnRole
      * @return array
      */
-    public function getChilds()
+    public function getChilds($withOwnRole = false)
     {
-        $id    = $this->id;
-        $roles = $this->withTrashed()->orderby('parent_id')->get()->toArray();
-        return $this->getLowerRoles($roles, $id);
+        $id         = $this->id;
+        $roles      = $this->withTrashed()->orderby('parent_id')->get()->toArray();
+        $lowerRoles = $this->getLowerRoles($roles, $id);
+        return ($withOwnRole) ? array_merge([$this->id], $lowerRoles) : $lowerRoles;
     }
 
 }

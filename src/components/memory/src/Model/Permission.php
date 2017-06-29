@@ -110,17 +110,20 @@ class Permission extends Eloquent
      */
     protected function permissions($permissions = null)
     {
+
         if (is_null($permissions) OR strlen($permissions) <= 0) {
             return [];
         }
         $exploded = explode(';', $permissions);
         $maps     = [];
+
         foreach ($exploded as $current) {
             if (!strlen($current)) {
                 continue;
             }
+
             $permission = explode('=', $current);
-            $maps[]     = [$permission[0] => (boolean) $permission[1]];
+            $maps[]     = [$permission[0] => (boolean) array_get($permission, 1, 0)];
         }
         $return = [];
         array_walk($maps, function($item) use(&$return) {
@@ -166,6 +169,7 @@ class Permission extends Eloquent
      */
     public function getAll($brandId = null)
     {
+
         $columns = ['id', 'vendor', 'name', 'status', 'actions', 'permissions', 'options'];
         $builder = (!is_null($brandId)) ? static::select($columns)->where('brand_id', '=', $brandId)->orWhere('brand_id') : static::select($columns);
         $models  = $builder->with(['attachedActions'])->get();
@@ -196,8 +200,10 @@ class Permission extends Eloquent
             ];
         }
 
+
         ksort($return['extensions']['active']);
         ksort($return['extensions']['available']);
+
         return $return;
     }
 
