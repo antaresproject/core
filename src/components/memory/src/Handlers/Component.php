@@ -25,7 +25,6 @@ use Antares\Memory\Exception\ComponentNotSavedException;
 use Antares\Memory\Component\ComponentHandler;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use function str_contains;
 use Exception;
 
 class Component extends ComponentHandler

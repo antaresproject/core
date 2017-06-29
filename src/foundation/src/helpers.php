@@ -24,6 +24,49 @@ use Illuminate\Support\Debug\Dumper;
 use Antares\Messages\SwalMessanger;
 use Antares\Html\Form\Field;
 
+if (!function_exists('get_current_module')) {
+
+    /**
+     * Gets current extension
+     */
+    function get_current_module()
+    {
+        $route = Route::getCurrentRoute();
+
+        if (!$route instanceof \Illuminate\Routing\Route) {
+            return;
+        }
+        $action = $route->getActionName();
+
+        if ($action === 'Closure') {
+            return;
+        }
+        preg_match("/.+?(?=\\\)(.*)\Http/", $action, $matches);
+        $matched = empty($matches) ? false : trim($matches[0], '\\');
+        if (!$matched) {
+            return;
+        }
+
+
+        $extensions = app('antares.extension')->getAvailableExtensions();
+        foreach ($extensions as $extension) {
+            $package  = $extension->getPackage();
+            if (is_null($autoload = array_get($package->getAutoload(), 'psr-4'))) {
+                continue;
+            }
+            $namespace = key($autoload);
+            if (is_null($namespace)) {
+                continue;
+            }
+            if (str_contains($matched, $namespace)) {
+                return $package->getName();
+            }
+        }
+        return;
+    }
+
+}
+
 if (!function_exists('modules_path')) {
 
     /**
