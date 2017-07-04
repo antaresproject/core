@@ -49,6 +49,8 @@ class CustomfieldAdapter
             return;
         }
         foreach ($customfields as $classname => $customfield) {
+
+
             if (!$grid->row instanceof $classname) {
                 continue;
             }
@@ -63,6 +65,7 @@ class CustomfieldAdapter
                 $this->addToForm($instance);
             }
         }
+
 
         if (extension_active('customfields')) {
             $map   = config('antares/customfields::map', []);

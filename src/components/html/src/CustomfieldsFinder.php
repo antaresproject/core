@@ -68,6 +68,7 @@ class CustomfieldsFinder
         $extensions = extensions();
         $return     = [];
         event('customfields.before.search', $return);
+
         foreach ($extensions as $name => $extension) {
             $name   = 'antares/' . str_replace(['component-', 'module-'], '', $extension['name']);
             $config = config($name . '::customfields');
@@ -78,7 +79,9 @@ class CustomfieldsFinder
                 continue;
             }
             array_walk($config, function(&$value, $key) {
+
                 if (is_array($value)) {
+
                     foreach ($value as $index => &$customfield) {
                         if (!class_exists($customfield)) {
                             unset($value[$index]);
@@ -90,8 +93,13 @@ class CustomfieldsFinder
                     $value = app($value);
                 }
             });
-
-            $return = array_merge($return, $config);
+            foreach ($config as $name => $customfields) {
+                if (isset($return[$name])) {
+                    $return[$name] = array_merge($return[$name], $customfields);
+                } else {
+                    $return[$name] = $customfields;
+                }
+            }
         }
         event('customfields.after.search', [$return]);
         return $return;
