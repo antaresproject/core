@@ -157,7 +157,7 @@ class FormBuilder extends BaseBuilder implements BuilderContract
         $viewFactory = $this->container->make('view');
         $this->clientSubmit($buttons);
         view()->share('grid_container_class', 'grid-container--footer');
-        
+
         return $viewFactory->make($grid->view)->with($data)->with($grid->params)->render();
     }
 
@@ -174,9 +174,7 @@ class FormBuilder extends BaseBuilder implements BuilderContract
         }
         $scripts = false;
         foreach ($buttons as $button) {
-            if (array_get($button instanceof AbstractType ? $button->getAttributes() : $button->attributes, 'type')
-	            !== 'submit' or array_get($button instanceof AbstractType ? $button->getAttributes()
-		            : $button->attributes, 'disable_client_submit', false) == true
+            if (array_get($button instanceof AbstractType ? $button->getAttributes() : $button->attributes, 'type') !== 'submit' or array_get($button instanceof AbstractType ? $button->getAttributes() : $button->attributes, 'disable_client_submit', false) == true
             ) {
                 continue;
             }
@@ -297,8 +295,7 @@ class FormBuilder extends BaseBuilder implements BuilderContract
             foreach ($fieldsets as $fieldset) {
                 foreach ($fieldset->controls() as $control) {
                     array_push(
-                        $controls,
-                        method_exists($control, 'getName') ? $control->getName() : $control->name
+                            $controls, method_exists($control, 'getName') ? $control->getName() : $control->name
                     );
                 }
             }
