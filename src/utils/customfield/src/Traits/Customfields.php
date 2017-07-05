@@ -91,7 +91,7 @@ trait Customfields
                 continue;
             }
             $value = $customfield->setModel($this)->getValue();
-            array_set($return, $customfield->getName(), $value);
+            array_set($return, $customfield->getName(), ['label' => $customfield->label, 'value' => $value]);
         }
         return $return;
     }
