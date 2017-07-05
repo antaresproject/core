@@ -17,10 +17,12 @@
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
- namespace Antares\Contracts\Foundation\Listener\Account;
+
+namespace Antares\Contracts\Foundation\Listener\Account;
 
 interface UserRemover
 {
+
     /**
      * Response when user tried to self delete.
      *
