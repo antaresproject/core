@@ -18,11 +18,79 @@
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Debug\Dumper;
 use Antares\Messages\SwalMessanger;
 use Antares\Html\Form\Field;
+
+if (!function_exists('get_main_contact')) {
+
+    /**
+     * Gets main contact
+     */
+    function get_main_contact()
+    {
+        if (auth()->guest()) {
+            return false;
+        }
+        if (!extension_active('clients')) {
+            return false;
+        }
+        $currentContact = \Antares\Clients\Model\ClientContacts::query()->where('user_id', user()->id)->first();
+        if ($currentContact->is_main) {
+            return $currentContact->mainClient;
+        }
+        $mainContact = \Antares\Clients\Model\ClientContacts::query()
+                ->where(['client_id' => $currentContact->client_id, 'is_main' => 1])
+                ->first();
+
+        if ($mainContact) {
+            return $mainContact->mainClient;
+        }
+        return false;
+    }
+
+}
+
+if (!function_exists('is_client')) {
+
+    /**
+     * Whether user is a client
+     */
+    function is_client()
+    {
+        if (auth()->guest() or ! extension_active('clients')) {
+            return false;
+        }
+
+        return user()->hasRoles('client');
+    }
+
+}
+
+if (!function_exists('user_from_route')) {
+
+    /**
+     * Gets user from route
+     */
+    function user_from_route($default = false)
+    {
+        $current    = Route::current();
+        $parameters = $current->parameters();
+        foreach ($parameters as $name => $parameter) {
+            if ($parameter instanceof Authenticatable) {
+                return $parameter->id;
+            } elseif ($name == 'user' or $name == 'user_id') {
+                return $parameter;
+            }
+        }
+        return $default;
+    }
+
+}
+
 
 if (!function_exists('get_current_module')) {
 
