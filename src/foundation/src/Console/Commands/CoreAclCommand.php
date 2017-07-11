@@ -55,8 +55,28 @@ class CoreAclCommand extends Command {
      */
     private function getActions(Component $component) {
         $defaultActions = (array) config('antares/installer::permissions.components.' . $component->name, []);
+        $actions        = $this->mapActionsToFlat($defaultActions);
 
-        return Action::where('component_id', $component->id)->whereIn('name', $defaultActions)->get();
+        return Action::where('component_id', $component->id)->whereIn('name', $actions)->get();
+    }
+
+    /**
+     * @param array $actions
+     * @return array
+     */
+    private function mapActionsToFlat(array $actions) : array {
+        $toReturn = [];
+
+        foreach($actions as $name => $value) {
+            if(is_array($value)) {
+                $toReturn = array_merge($toReturn, $this->mapActionsToFlat($value));
+            }
+            else {
+                $toReturn[] = $name;
+            }
+        }
+
+        return $toReturn;
     }
 
     /**
