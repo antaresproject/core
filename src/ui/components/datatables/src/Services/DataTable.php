@@ -75,15 +75,13 @@ abstract class DataTable extends BaseDataTableService
     /**
      * Construct
      *
-     * @param Datatables       $datatables
-     * @param ViewFactory $viewFactory
-     * @param PerPage $perPageAdapter
      */
-    public function __construct(Datatables $datatables, ViewFactory $viewFactory, PerPage $perPageAdapter = null)
+    public function __construct()
     {
-        $this->datatables     = $datatables;
-        $this->viewFactory    = $viewFactory;
-        $this->perPageAdapter = is_null($perPageAdapter) ? app(PerPage::class) : $perPageAdapter;
+        $this->datatables     = app(Datatables::class);
+        $this->viewFactory    = app(ViewFactory::class);
+        //$this->perPageAdapter = is_null($perPageAdapter) ? app(PerPage::class) : $perPageAdapter;
+        $this->perPageAdapter = app(PerPage::class);
     }
 
     /**
