@@ -196,7 +196,7 @@ class Grid extends BaseGrid implements GridContract
     public function layout($name, array $params = null)
     {
 
-        if (in_array($name, ['horizontal', 'vertical', 'vertical_compact'])) {
+        if (in_array($name, ['horizontal', 'vertical', 'vertical_compact', 'inline'])) {
             $this->view = "antares/foundation::layouts.antares.partials.form.{$name}";
         } else {
             $this->view = $name;

@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Html\Support;
 
 use Illuminate\Routing\UrlGenerator;
@@ -175,7 +174,7 @@ class HtmlBuilder
             $title = $url;
         }
 
-        return '<a href="' . $url . '"' . $this->attributes($attributes) . '>' . $this->entities($title) . '</a>';
+        return '<a href="' . $url . '"' . $this->attributes($attributes) . '>' . $title . '</a>';
     }
 
     /**
@@ -206,7 +205,7 @@ class HtmlBuilder
     {
         $url = $this->url->asset($url, $secure);
 
-        return $this->link($url, $title ? : $url, $attributes, $secure);
+        return $this->link($url, $title ?: $url, $attributes, $secure);
     }
 
     /**
@@ -266,7 +265,7 @@ class HtmlBuilder
     {
         $email = $this->email($email);
 
-        $title = $title ? : $email;
+        $title = $title ?: $email;
 
         $email = $this->obfuscate('mailto:') . $email;
 
@@ -350,7 +349,7 @@ class HtmlBuilder
             return $html;
         }
 
-                                foreach ($list as $key => $value) {
+        foreach ($list as $key => $value) {
             $html .= $this->listingElement($key, $type, $value);
         }
 
@@ -406,7 +405,7 @@ class HtmlBuilder
     {
         $html = [];
 
-                                foreach ((array) $attributes as $key => $value) {
+        foreach ((array) $attributes as $key => $value) {
             $element = $this->attributeElement($key, $value);
 
             !is_null($element) && $html[] = $element;
