@@ -25,6 +25,18 @@ use Illuminate\Support\Debug\Dumper;
 use Antares\Messages\SwalMessanger;
 use Antares\Html\Form\Field;
 
+if (!function_exists('post')) {
+
+    /**
+     * Checks whether method is post
+     */
+    function post()
+    {
+        return request()->isMethod('post');
+    }
+
+}
+
 if (!function_exists('get_main_contact')) {
 
     /**
@@ -943,3 +955,4 @@ if (!function_exists('set_meta')) {
     }
 
 }
+    
