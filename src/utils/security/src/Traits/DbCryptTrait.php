@@ -74,7 +74,7 @@ trait DbCryptTrait
     private function getPackage()
     {
         $reflection = new ReflectionClass(get_called_class());
-        return app()->make(FilesystemFinder::class)->resolveNamespace($reflection->getFileName(), true);
+        return app(FilesystemFinder::class)->resolveNamespace($reflection->getFileName(), true);
     }
 
     /**
