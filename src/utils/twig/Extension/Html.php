@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Twig\Extension;
 
 use Antares\Html\Control\RemoteSelect;
@@ -43,18 +42,18 @@ class Html extends Twig_Extension
     {
         return [
             new Twig_SimpleFunction('anchor', function ($url, $title, $attributes = []) {
-                return anchor($url, $title, $attributes);
-            }),
+                        return anchor($url, $title, $attributes);
+                    }),
             new Twig_SimpleFunction('url_external', function ($to) {
-                return config('app.url') . str_replace(app('url')->to('/'), '', handles($to));
-            }),
+                        return config('app.url') . str_replace(app('url')->to('/'), '', handles($to));
+                    }),
             new Twig_SimpleFunction('remote_select', function ($params = null) {
-                return app(RemoteSelect::class)->setParams($params)->render();
-            }),
-            new Twig_SimpleFunction('tooltip', function ($params = null) {
-                echo tooltip($params);
-                return '';
-            })
+                        return app(RemoteSelect::class)->setParams($params)->render();
+                    }),
+            new Twig_SimpleFunction('tooltip', function ($params = null, $value = null) {
+                        echo tooltip($params, $value);
+                        return '';
+                    })
         ];
     }
 
