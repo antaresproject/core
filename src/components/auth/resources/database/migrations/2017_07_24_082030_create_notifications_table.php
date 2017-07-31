@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
-
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -42,6 +40,7 @@ class CreateNotificationsTable extends Migration
             $table->integer('type_id')->unsigned()->nullable()->index('type_id_1');
             $table->boolean('active')->default(0);
             $table->string('event');
+            $table->string('classname', 500)->nullable();
         });
         Schema::create('tbl_notification_categories', function(Blueprint $table) {
             $table->increments('id');
