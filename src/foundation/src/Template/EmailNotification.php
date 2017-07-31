@@ -96,9 +96,8 @@ class EmailNotification extends AbstractNotificationTemplate implements Sendable
 
             $result = parent::handle();
             $code   = $result->getResultCode();
-
-            $model = $this->getModel();
-            $stack = new NotificationsStack([
+            $model  = $this->getModel();
+            $stack  = new NotificationsStack([
                 'notification_id' => array_get($model, 'id'),
                 'author_id'       => auth()->guest() ? null : user()->id,
                 'variables'       => array_merge($this->predefinedVariables, ['recipients' => $this->recipients]),
