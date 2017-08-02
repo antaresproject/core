@@ -26,7 +26,6 @@ use Antares\Contracts\Tags\Taggable;
 use Antares\Logger\Model\Logs;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
-use Antares\Notifier\NotifiableTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Antares\Support\Traits\QueryFilterTrait;
@@ -38,6 +37,7 @@ use Antares\Logger\Traits\LogRecorder;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * Class User
@@ -54,11 +54,11 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
 
     use Authenticatable,
         Authorizable,
-        NotifiableTrait,
         QueryFilterTrait,
         CanResetPassword,
         SoftDeletes,
-        LogRecorder;
+        LogRecorder,
+        Notifiable;
 
     // Disables the log record in this model.
     protected $auditEnabled   = true;
@@ -622,6 +622,16 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
                         ->groupBy('area')
                         ->whereNotNull('area')
                         ->pluck('area')->toArray();
+    }
+
+    /**
+     * Route notifications for the mail channel.
+     *
+     * @return string
+     */
+    public function routeNotificationForMail()
+    {
+        return $this->email;
     }
 
 }

@@ -19,20 +19,14 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Notifier;
 
-use Aws\Ses\SesClient;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Manager;
-use Antares\Memory\ContainerTrait;
+use Swift_SendmailTransport as SendmailTransport;
 use Illuminate\Mail\Transport\LogTransport;
-use Illuminate\Mail\Transport\SesTransport;
-use Illuminate\Mail\Transport\MailgunTransport;
-use Illuminate\Mail\Transport\MandrillTransport;
 use Swift_SmtpTransport as SmtpTransport;
 use Swift_MailTransport as MailTransport;
-use Swift_SendmailTransport as SendmailTransport;
+use Antares\Memory\ContainerTrait;
+use Illuminate\Support\Manager;
 
 class TransportManager extends Manager
 {
@@ -73,24 +67,6 @@ class TransportManager extends Manager
     }
 
     /**
-     * Create an instance of the Amazon SES Swift Transport driver.
-     *
-     * @return \Swift_Transport
-     */
-    protected function createSesDriver()
-    {
-        $config = $this->getTransportConfig();
-
-        $sesClient = SesClient::factory([
-                    'key'    => $config['key'],
-                    'secret' => $config['secret'],
-                    'region' => Arr::get($config, 'region') ?: 'us-east-1',
-        ]);
-
-        return new SesTransport($sesClient);
-    }
-
-    /**
      * Register the Mail Swift Transport instance.
      *
      * @return \Swift_Transport
@@ -98,30 +74,6 @@ class TransportManager extends Manager
     protected function createMailDriver()
     {
         return MailTransport::newInstance();
-    }
-
-    /**
-     * Register the Mailgun Swift Transport instance.
-     *
-     * @return \Swift_Transport
-     */
-    protected function createMailgunDriver()
-    {
-        $config = $this->getTransportConfig();
-
-        return new MailgunTransport($config['secret'], $config['domain']);
-    }
-
-    /**
-     * Register the Mandrill Swift Transport instance.
-     *
-     * @return \Swift_Transport
-     */
-    protected function createMandrillDriver()
-    {
-        $config = $this->getTransportConfig();
-
-        return new MandrillTransport($config['secret']);
     }
 
     /**

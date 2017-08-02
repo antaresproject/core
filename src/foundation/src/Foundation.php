@@ -149,7 +149,7 @@ class Foundation extends RouteManager implements FoundationContract
             $memory = $this->bootNewApplication();
         }
         $this->app->instance('antares.platform.memory', $memory);
-        $this->registerComponents($memory);
+
         $this->app->make('events')->fire('antares.started', [$memory]);
     }
 
@@ -222,19 +222,6 @@ class Foundation extends RouteManager implements FoundationContract
         $this->app->instance('antares.platform.menu', $widget->make('menu.antares'));
         $this->app->instance('antares.platform.acl', $this->app->make('antares.acl')->make('antares'));
         $this->app->instance('app.menu', $widget->make('menu.app'));
-    }
-
-    /**
-     * Register base application components.
-     *
-     * @param  \Antares\Contracts\Memory\Provider  $memory
-     *
-     * @return void
-     */
-    protected function registerComponents(Provider $memory)
-    {
-        $this->app->make('antares.notifier')->setDefaultDriver('antares');
-        $this->app->make('antares.notifier.email')->attach($memory);
     }
 
     /**
