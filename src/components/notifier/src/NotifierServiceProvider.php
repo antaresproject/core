@@ -41,11 +41,8 @@ class NotifierServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->registerMailer();
 
-        $this->registerNotifier();
-
-        $this->registerSms();
+        $this->registerSwiftTransport();
 
         $this->registerSupportedMailer();
     }
@@ -58,24 +55,18 @@ class NotifierServiceProvider extends ServiceProvider
     protected function registerSupportedMailer()
     {
         $this->app->singleton('antares.support.mail', function ($app) {
+            $this->registerSwiftMailer();
 
-            //$this->registerSwiftMailer();
-            // Once we have create the mailer instance, we will set a container instance
-            // on the mailer. This allows us to resolve mailer classes via containers
-            // for maximum testability on said classes instead of passing Closures.
             $mailer = new Mail\Mailer(
-                    $app->make('view'), $app->make('swift.mailer'), $app->make('events')
+                    $app->make('view'), $app->make('antares.swift.mailer'), $app->make('events')
             );
-            $this->setMailerDependencies($mailer, $app);
-
-            // If a "from" address is set, we will set it on the mailer so that all mail
-            // messages sent by the applications will utilize the same "from" address
-            // on each one, which makes the developer's life a lot more convenient.
-            $from = $app->make('config')->get('mail.from');
-
-            if (is_array($from) && isset($from['address'])) {
-                $mailer->alwaysFrom($from['address'], $from['name']);
+            if ($app->bound('queue')) {
+                $mailer->setQueue($app->make('queue'));
             }
+            $from   = $app->make('antares.memory')->make('primary')->get('email.from');
+            $config = $app->make('config')->get('mail.from');
+
+            $mailer->alwaysFrom(array_get($from, 'address', array_get($config, 'address')), array_get($from, 'name', array_get($config, 'name')));
 
             $to = $app->make('config')->get('mail.to');
 
@@ -88,33 +79,14 @@ class NotifierServiceProvider extends ServiceProvider
     }
 
     /**
-     * Set a few dependencies on the mailer instance.
-     *
-     * @param  \Illuminate\Mail\Mailer  $mailer
-     * @param  \Illuminate\Foundation\Application  $app
-     * @return void
-     */
-    protected function setMailerDependencies($mailer, $app)
-    {
-        if ($app->bound('queue')) {
-            $mailer->setQueue($app->make('queue'));
-        }
-    }
-
-    /**
      * Register the Swift Mailer instance.
      *
      * @return void
      */
     public function registerSwiftMailer()
     {
-        $this->registerSwiftTransport();
-
-        // Once we have the transporter registered, we will register the actual Swift
-        // mailer instance, passing in the transport instances, which allows us to
-        // override this transporter instances during app start-up if necessary.
-        $this->app['swift.mailer'] = $this->app->share(function ($app) {
-            return new Swift_Mailer($app->make('swift.transport')->driver());
+        $this->app->singleton('antares.swift.mailer', function ($app) {
+            return new Swift_Mailer($app->make('antares.swift.transport')->driver());
         });
     }
 
@@ -125,48 +97,10 @@ class NotifierServiceProvider extends ServiceProvider
      */
     protected function registerSwiftTransport()
     {
-        $this->app['swift.transport'] = $this->app->share(function ($app) {
+        $this->app->singleton('antares.swift.transport', function ($app) {
             $transportManager = new TransportManager($app);
-            $transportManager->attach(app('antares.memory')->make('primary'));
+            $transportManager->attach($app->make('antares.memory')->make('primary'));
             return $transportManager;
-        });
-    }
-
-    /**
-     * Register the service provider for mail.
-     *
-     * @return void
-     */
-    protected function registerMailer()
-    {
-        $this->app->singleton('antares.notifier.email', function ($app) {
-            $transport = new TransportManager($app);
-            $transport->attach(app('antares.memory')->make('primary'));
-            return new Mailer($app, $transport);
-        });
-    }
-
-    /**
-     * Register the service provider for notifier.
-     *
-     * @return void
-     */
-    protected function registerNotifier()
-    {
-        $this->app->singleton('antares.notifier', function ($app) {
-            return new NotifierManager($app);
-        });
-    }
-
-    /**
-     * Register the service provider for notifier.
-     *
-     * @return void
-     */
-    protected function registerSms()
-    {
-        $this->app->singleton('antares.notifier.sms', function ($app) {
-            return new SmsManager($app);
         });
     }
 
@@ -178,7 +112,6 @@ class NotifierServiceProvider extends ServiceProvider
     public function boot()
     {
         $path = realpath(__DIR__ . '/../resources');
-
         $this->addConfigComponent('antares/notifier', 'antares/notifier', $path . '/config');
     }
 
@@ -189,7 +122,7 @@ class NotifierServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['antares.notifier.sms', 'antares.notifier.email', 'antares.notifier'];
+        return ['antares.support.mail'];
     }
 
 }

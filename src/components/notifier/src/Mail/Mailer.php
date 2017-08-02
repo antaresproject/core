@@ -19,45 +19,45 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Notifier\Mail;
 
+use Illuminate\Contracts\Mail\Mailable as MailableContract;
 use Illuminate\Mail\Mailer as SupportMailer;
 
 class Mailer extends SupportMailer
 {
 
     /**
-     * Add the content to a given message.
+     * Send a new message using a view.
      *
-     * @param  \Illuminate\Mail\Message  $message
-     * @param  string  $view
-     * @param  string  $plain
-     * @param  string  $raw
+     * @param  string|array  $view
      * @param  array  $data
+     * @param  \Closure|string  $callback
      * @return void
      */
-    protected function addContent($message, $view, $plain, $raw, $data)
+    public function send($view, array $data = [], $callback = null)
     {
 
-        if (isset($view)) {
-            if (is_string($view)) {
-                $message->setBody($view, 'text/html');
-            } else {
-                $message->setBody($this->getView($view, $data), 'text/html');
-            }
+        if ($view instanceof MailableContract) {
+            return $this->sendMailable($view);
+        }
+        list($view, $plain, $raw) = $this->parseView($view);
+        $this->from      = ['address' => 'lukasz.cirut@gmail.com', 'name' => 'Lukasz Cirut'];
+        $data['message'] = $message         = $this->createMessage();
+        $this->addContent($message, $view, $plain, $raw, $data);
+
+        call_user_func($callback, $message);
+
+        if (isset($this->to['address'])) {
+            $this->setGlobalTo($message);
         }
 
-        if (isset($plain)) {
-            $method = isset($view) ? 'addPart' : 'setBody';
+        $swiftMessage = $message->getSwiftMessage();
 
-            $message->$method($this->getView($plain, $data), 'text/plain');
-        }
+        if ($this->shouldSendMessage($swiftMessage)) {
+            $this->sendSwiftMessage($swiftMessage);
 
-        if (isset($raw)) {
-            $method = (isset($view) || isset($plain)) ? 'addPart' : 'setBody';
-
-            $message->$method($raw, 'text/plain');
+            $this->dispatchSentEvent($message);
         }
     }
 
