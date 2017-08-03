@@ -81,6 +81,31 @@ class DashboardController extends AdminController implements Listener
     }
 
     /**
+     * Boot a fresh copy of the application and get the routes.
+     *
+     * @return \Illuminate\Routing\RouteCollection
+     */
+    protected function getFreshApplicationRoutes()
+    {
+        return tap($this->getFreshApplication()['router']->getRoutes(), function ($routes) {
+            $routes->refreshNameLookups();
+            $routes->refreshActionLookups();
+        });
+    }
+
+    /**
+     * Get a fresh application instance.
+     *
+     * @return \Illuminate\Foundation\Application
+     */
+    protected function getFreshApplication()
+    {
+        return tap(require app(\Antares\Foundation\Application::class)->bootstrapPath() . '/app.php', function ($app) {
+            $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+        });
+    }
+
+    /**
      * Show missing pages.
      *
      * GET (:antares) return 404

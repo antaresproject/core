@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Part of the Antares Project package.
  *
@@ -16,6 +17,7 @@
  * @copyright  (c) 2017, Antares Project
  * @link       http://antaresproject.io
  */
+
 namespace Antares\Events;
 
 use Antares\Foundation\Support\Providers\Traits\RouteProviderTrait;
@@ -46,8 +48,7 @@ class EventsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        echo '<pre>';
-        dd(123242123);
+        
     }
 
     /**
@@ -57,8 +58,6 @@ class EventsServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        echo '<pre>';
-        dd(123242123);
         $path = realpath(__DIR__ . '/../resources');
         $this->addConfigComponent($this->routeGroup, $this->routeGroup, "{$path}/config");
         $this->addLanguageComponent($this->routeGroup, $this->routeGroup, "{$path}/lang");
@@ -75,8 +74,8 @@ class EventsServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        echo '<pre>';
-        dd(123242123);
+
         return [];
     }
+
 }
