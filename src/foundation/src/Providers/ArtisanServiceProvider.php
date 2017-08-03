@@ -19,14 +19,13 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Providers;
 
+use Illuminate\Foundation\Providers\ArtisanServiceProvider as ServiceProvider;
+use Antares\Foundation\Console\Commands\ClearCompiledCommand;
+use Antares\Foundation\Console\Commands\OptimizeCommand;
 use Illuminate\Contracts\Foundation\Application;
 use Antares\Config\Console\ConfigCacheCommand;
-use Antares\Foundation\Console\Commands\OptimizeCommand;
-use Antares\Foundation\Console\Commands\ClearCompiledCommand;
-use Illuminate\Foundation\Providers\ArtisanServiceProvider as ServiceProvider;
 
 class ArtisanServiceProvider extends ServiceProvider
 {

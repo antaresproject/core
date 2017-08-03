@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Support\Providers\Traits;
 
 use Illuminate\Routing\Router;
@@ -37,9 +36,12 @@ trait RouteProviderTrait
      */
     protected function loadBackendRoutesFrom($path, $namespace = null)
     {
-        $foundation = $this->app->make('antares.app');
-        $namespace  = $namespace ? : $this->namespace;
-        $foundation->namespaced($namespace, $this->getRouteLoader($path));
+        if (!$this->isPathIncluded($path)) {
+            $foundation = $this->app->make('antares.app');
+            $namespace  = $namespace ?: $this->namespace;
+
+            $foundation->namespaced($namespace, $this->getRouteLoader($path));
+        }
     }
 
     /**
@@ -52,15 +54,17 @@ trait RouteProviderTrait
      */
     protected function loadFrontendRoutesFrom($path, $namespace = null)
     {
-        $foundation = $this->app->make('antares.app');
-        $namespace  = $namespace ? : $this->namespace;
-        $attributes = [];
+        if (!$this->isPathIncluded($path)) {
+            $foundation = $this->app->make('antares.app');
+            $namespace  = $namespace ?: $this->namespace;
+            $attributes = [];
 
-        if (!is_null($namespace)) {
-            $attributes['namespace'] = $namespace;
+            if (!is_null($namespace)) {
+                $attributes['namespace'] = $namespace;
+            }
+            $attributes['middleware'] = ['Antares\Foundation\Http\Middleware\UseFrontendTheme'];
+            $foundation->group($this->routeGroup, $this->routePrefix, $attributes, $this->getRouteLoader($path));
         }
-        $attributes['middleware'] = ['Antares\Foundation\Http\Middleware\UseFrontendTheme'];
-        $foundation->group($this->routeGroup, $this->routePrefix, $attributes, $this->getRouteLoader($path));
     }
 
     /**
@@ -75,6 +79,17 @@ trait RouteProviderTrait
         return function (Router $router) use ($path) {
             require $path;
         };
+    }
+
+    /**
+     * Check if the given route path has been already included.
+     *
+     * @param $path
+     * @return bool
+     */
+    protected function isPathIncluded($path)
+    {
+        return in_array($path, get_included_files(), true);
     }
 
     /**
