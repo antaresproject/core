@@ -11,8 +11,7 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Antares Core
- * @version    0.9.0
- * @author     Original Orchestral https://github.com/orchestral
+ * @version    0.9.2
  * @author     Antares Team
  * @license    BSD License (3-clause)
  * @copyright  (c) 2017, Antares
@@ -70,10 +69,15 @@ class Mailer extends SupportMailer
             return $this->sendMailable($view);
         }
         list($view, $plain, $raw) = $this->parseView($view);
-        $this->from      = ['address' => 'lukasz.cirut@gmail.com', 'name' => 'Lukasz Cirut'];
-        $data['message'] = $message         = $this->createMessage();
-        $this->addContent($message, $view, $plain, $raw, $data);
 
+        $from   = app('antares.memory')->make('primary')->get('email.from');
+        $config = app('config')->get('mail.from');
+
+        $this->from = ['address' => array_get($from, 'address', array_get($config, 'address')), 'name' => array_get($from, 'name', array_get($config, 'name'))];
+
+        $data['message'] = $message         = $this->createMessage();
+
+        $this->addContent($message, $view, $plain, $raw, $data);
         call_user_func($callback, $message);
 
         if (isset($this->to['address'])) {
@@ -81,7 +85,6 @@ class Mailer extends SupportMailer
         }
 
         $swiftMessage = $message->getSwiftMessage();
-
         if ($this->shouldSendMessage($swiftMessage)) {
             $this->sendSwiftMessage($swiftMessage);
 

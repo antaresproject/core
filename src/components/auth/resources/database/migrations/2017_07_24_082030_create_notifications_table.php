@@ -38,9 +38,10 @@ class CreateNotificationsTable extends Migration
             $table->integer('severity_id')->unsigned()->nullable()->index('severity_id_idx');
             $table->integer('category_id')->unsigned()->nullable()->index('category_id_id_1');
             $table->integer('type_id')->unsigned()->nullable()->index('type_id_1');
-            $table->boolean('active')->default(0);
-            $table->string('event');
+            $table->boolean('active')->default(1);
+            $table->string('event')->nullable();
             $table->string('classname', 500)->nullable();
+            $table->string('checksum', 500)->nullable();
         });
         Schema::create('tbl_notification_categories', function(Blueprint $table) {
             $table->increments('id');

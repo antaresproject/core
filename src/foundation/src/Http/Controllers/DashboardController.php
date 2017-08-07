@@ -75,7 +75,6 @@ class DashboardController extends AdminController implements Listener
      */
     public function show()
     {
-
         view()->share('content_class', 'page-dashboard');
         return $this->processor->show($this);
     }
