@@ -19,10 +19,7 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Notifier\Adapter;
-
-use Antares\Contracts\Notification\Recipient;
 
 abstract class AbstractAdapter
 {
@@ -66,7 +63,7 @@ abstract class AbstractAdapter
     /**
      * create request to sms gateway
      */
-    abstract protected function request($action = '', $params = array());
+    abstract protected function request($action = '', array $params = []);
 
     /**
      * Sets result code

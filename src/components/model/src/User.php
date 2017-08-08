@@ -607,7 +607,7 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
      */
     public function getPhoneAttribute()
     {
-        return '';
+        return '697274132';
     }
 
     /**
@@ -632,6 +632,16 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
     public function routeNotificationForMail()
     {
         return $this->email;
+    }
+
+    /**
+     * Route notifications for the sms channel.
+     *
+     * @return string
+     */
+    public function routeNotificationForSms()
+    {
+        return $this->phone;
     }
 
 }

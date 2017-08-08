@@ -39,7 +39,6 @@ class CreateNotificationsTable extends Migration
             $table->integer('category_id')->unsigned()->nullable()->index('category_id_id_1');
             $table->integer('type_id')->unsigned()->nullable()->index('type_id_1');
             $table->boolean('active')->default(1);
-            $table->string('event')->nullable();
             $table->string('classname', 500)->nullable();
             $table->string('checksum', 500)->nullable();
         });

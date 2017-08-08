@@ -69,9 +69,11 @@ class GroupsFilterAdapter
 
     public function saveRequestedSessionKey()
     {
+
         if (!($columns = ajax('columns'))) {
             return false;
         }
+
         $index = 0;
         $value = collect($columns)->first(function($item, $key) use(&$index) {
             $value = array_get($item, 'search.value');
