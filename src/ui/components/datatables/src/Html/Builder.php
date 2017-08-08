@@ -211,6 +211,13 @@ class Builder extends BaseBuilder
     protected $disabledScripts = false;
 
     /**
+     * Default groups container
+     *
+     * @var array
+     */
+    protected $selectedGroups = [];
+
+    /**
      * Constructing
      * 
      * @param Repository $config
@@ -266,7 +273,7 @@ class Builder extends BaseBuilder
         $groupsFilter = app(\Antares\Datatables\Adapter\GroupsFilterAdapter::class);
         $sessionValue = $groupsFilter->getSessionValue();
         $cols         = '';
-        if ($sessionValue && !ajax()) {
+        if (($sessionValue && !ajax()) or ! empty($this->selectedGroups)) {
             $columns = [];
             foreach ($this->collection as $columnIndex => $column) {
 
@@ -278,6 +285,9 @@ class Builder extends BaseBuilder
                 if ($column->data == array_get($fromSession, 'data') && $column->name == array_get($fromSession, 'name')) {
 
                     $value = array_get($fromSession, 'search.value');
+                    $regex = true;
+                } elseif (isset($this->selectedGroups[$columnIndex])) {
+                    $value = $this->selectedGroups[$columnIndex];
                     $regex = true;
                 }
 
@@ -295,6 +305,7 @@ class Builder extends BaseBuilder
             }
             $cols = 'data.columns = ' . JavaScriptDecorator::decorate($columns) . ';';
         }
+
 
         $eventAfterSearch = (request()->has('search') && !request()->ajax()) ? '$(document).trigger( "datatables.searchLoaded", [ dtInstance,data,' . count(config('search.datatables')) . ' ] );' : '';
         $ajax             = <<<EOD
@@ -883,7 +894,9 @@ EOD;
         }
         $groupsFilter = app(GroupsFilterAdapter::class)->setClassname(get_class($this->datatable))->setIndex($columnIndex);
         $data         = ($options instanceof Collection) ? $options->toArray() : $options;
-
+        if ($defaultSelected) {
+            $this->selectedGroups[$columnIndex] = $defaultSelected;
+        }
 
         $id    = array_get($this->tableAttributes, 'id') . '-filter-group';
         if (is_null($value = $groupsFilter->getSelected($columnIndex))) {

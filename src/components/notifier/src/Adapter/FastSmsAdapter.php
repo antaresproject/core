@@ -19,145 +19,103 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Notifier\Adapter;
 
-use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
-use Antares\Notifier\Message\SmsMessage;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Mail\Message;
-use Illuminate\View\View;
+use Antares\Notifications\Messages\SmsMessage;
 use Exception;
-use Closure;
 
 class FastSmsAdapter extends AbstractAdapter
 {
 
     /**
-     * sends sms message
+     * Sends sms message
      * 
-     * @param View|String $view
-     * @param array $data
-     * @param closure $callback
+     * @param SmsMessage $message
+     * @param type $to
      * @return boolean
      */
-    public function send($view, array $data, $callback)
+    public function send(SmsMessage $message, $to)
     {
-        $message = $this->getMessage();
-        $this->callMessageBuilder($callback, $message);
-        $message->content($view, $data);
-        if ($message->validate() and $this->validate()) {
-            return $this->push($message);
+
+        $text = trim($message->content);
+        if ($this->validate()) {
+            return $this->push($to, $text);
         }
+
         return false;
     }
 
     /**
-     * Call the provided message builder.
-     *
-     * @param  \Closure|string  $callback
-     * @param  Message  $message
-     * @return mixed
-     *
-     * @throws InvalidArgumentException
-     */
-    protected function callMessageBuilder($callback, $message)
-    {
-        if ($callback instanceof Closure) {
-            return call_user_func($callback, $message);
-        }
-        throw new InvalidArgumentException('Callback is not valid.');
-    }
-
-    /**
-     * sends sms message
+     * Sends sms message
      * 
-     * @param String $message
-     * @param String $recipient
+     * @param String $from
+     * @param mixed $to
+     * @param String $text
      * @return mixed
      * @throws Exception
      */
-    protected function push($message)
+    protected function push($to, $text)
     {
-        $addresses = $message->getTo();
-        $body      = $message->getContent();
-        $params    = array(
-            'Body'           => $body,
+        $params = [
+            'Body'           => $text,
             'ValidityPeriod' => '86400'
-        );
-        if (is_array($addresses)) {
-            $result               = null;
-            $shouldThrowException = false;
-            foreach ($addresses as $address) {
-                $result = $this->process($params, $address, true);
-                if (isset($this->config['codes'][$result]) && !$shouldThrowException) {
-                    $shouldThrowException = true;
-                }
+        ];
+        if (is_array($to)) {
+            $result = [];
+            foreach ($to as $address) {
+                array_push($result, $this->process($params, $address, true));
             }
             return $result;
-        } else {
-            return $this->process($params, $message->getTo());
         }
+        return $this->process($params, $to);
     }
 
     /**
-     * process sending
+     * Process sending
      * 
      * @param array $params
-     * @param Sring $address
-     * @param boolean $isMultiple
+     * @param Sring $to
      * @return mixed
      * @throws Exception
      */
-    protected function process($params, $address, $isMultiple = false)
+    protected function process($params, $to)
     {
-        $params['DestinationAddress'] = $address;
+        $params['DestinationAddress'] = $to;
         $result                       = $this->request('Send', $params);
         if (!isset($this->config['codes'][$result])) {
             return $result;
         }
         $this->setResultCode($result);
         $this->setResultMessage($this->config['codes'][$result]);
-        $message = sprintf('Unable to send sms to %s with content: %s. Provider error message: %s.', $address, $params['Body'], $this->config['codes'][$result]);
-        Log::alert($message);
-        return false;
+        throw new Exception(sprintf('Unable to send sms to %s with content: %s. Provider error message: %s.', $to, $params['Body'], $this->config['codes'][$result]));
     }
 
     /**
-     * validates whether connection to gateway is established
+     * Validates whether connection to gateway is established
      * 
-     * @return type
+     * @return mixed
      * @throws Exception
      */
     protected function validate()
     {
         $result = $this->request($action = 'CheckCredits');
-        if (isset($this->config['codes'][$result])) {
-            throw new Exception($this->config['codes'][$result]);
+        if ((int) $result <= 0) {
+            throw new Exception($this->config['codes']['-100']);
         }
         return $result;
     }
 
     /**
-     * get message instance
-     * 
-     * @return SmsMessage
-     */
-    protected function getMessage()
-    {
-        return app()->make(SmsMessage::class);
-    }
-
-    /**
-     * create request to sms gateway
+     * Creates request to sms gateway
      * 
      * @param String $action
      * @param array $params
      * @return mixed
      * @throws Exception
      */
-    protected function request($action = '', $params = array())
+    protected function request($action = '', array $params = [])
     {
+
         $params['Token'] = $this->config['api']['token'];
         if ($action !== '') {
             $params['Action'] = $action;
@@ -165,7 +123,8 @@ class FastSmsAdapter extends AbstractAdapter
 
         $query = http_build_query($params);
         $url   = $this->config['api']['url'];
-        $ch    = curl_init();
+
+        $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -180,6 +139,7 @@ class FastSmsAdapter extends AbstractAdapter
 
         $result = curl_exec($ch);
         curl_close($ch);
+
         if (!$result) {
 
             throw new Exception('Connection failed. Reason unknown.');
