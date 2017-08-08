@@ -75,12 +75,6 @@ class DashboardController extends AdminController implements Listener
      */
     public function show()
     {
-//        $invoice     = new \Antares\Users\Notifications\InvoicePaid();
-//        $user        = user();
-//        $user->email = 'lukasz.cirut@gmail.com';
-//        \Antares\Notifications\Facade\Notification::send($user, $invoice);
-//        exit;
-
         view()->share('content_class', 'page-dashboard');
         return $this->processor->show($this);
     }
