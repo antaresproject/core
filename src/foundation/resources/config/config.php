@@ -18,13 +18,11 @@
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
-
-
 return [
     'application'        => [
         'name' => 'Antares'
     ],
-    'handles'            => 'antares',
+    'handles'            => '',
     'routes'             => [
         'guest' => '/',
         'admin' => 'antares.dashboard',

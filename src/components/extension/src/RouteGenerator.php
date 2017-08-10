@@ -71,12 +71,9 @@ class RouteGenerator implements RouteGeneratorContract
      */
     public function __construct($handles = null, Request $request)
     {
-
         $this->request = $request;
-
         $this->setBaseUrl($this->request->root());
-
-        if ($handles === null || ! Str::startsWith($handles, ['//', 'http://', 'https://'])) {
+        if ($handles === null || !Str::startsWith($handles, ['//', 'http://', 'https://'])) {
             $this->prefix = $handles;
         } else {
             $handles      = substr(str_replace(['http://', 'https://'], '//', $handles), 2);
@@ -120,8 +117,8 @@ class RouteGenerator implements RouteGeneratorContract
         $prefix = $this->prefix();
 
         foreach (func_get_args() as $_pattern) {
-			$_pattern = ($_pattern === '*' ? "{$prefix}*" : "{$prefix}/{$_pattern}");
-			$_pattern = trim($_pattern, '/');
+            $_pattern = ($_pattern === '*' ? "{$prefix}*" : "{$prefix}/{$_pattern}");
+            $_pattern = trim($_pattern, '/');
 
             empty($_pattern) && $_pattern = '/';
 

@@ -231,7 +231,9 @@ class Foundation extends RouteManager implements FoundationContract
     {
         $segment = request()->segment(1);
         if (in_array($name, ['antares']) && $segment !== 'install') {
+
             $level = app('antares.areas')->findMatched($segment, $this->app->make('config')->get('antares/foundation::handles', $default));
+
             return new RouteGenerator($level, $this->app->make('request'));
         }
         return parent::generateRouteByName($name, $default);
