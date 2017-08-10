@@ -11,8 +11,7 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Antares Core
- * @version    0.9.0
- * @author     Original Orchestral https://github.com/orchestral
+ * @version    0.9.2
  * @author     Antares Team
  * @license    BSD License (3-clause)
  * @copyright  (c) 2017, Antares
@@ -23,6 +22,7 @@ namespace Antares\Http;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\NamespacedItemResolver;
+use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Arr;
 use Exception;
 use Closure;
@@ -89,8 +89,9 @@ abstract class RouteManager
      */
     public function group($name, $default, $attributes = [], Closure $callback = null)
     {
+        $route = $this->route($name, $default);
 
-        $route      = $this->route($name, $default);
+
         $attributes = array_merge($attributes, [
             'prefix' => $route->prefix(),
             'domain' => $route->domain(),
@@ -112,7 +113,6 @@ abstract class RouteManager
      */
     public function handles($path, array $options = [])
     {
-
         if (str_contains($path, '.') and ! is_api_request() and ! starts_with($path, 'http') && strpos($path, '.') < 20) {
             try {
                 return route($path, $options);
@@ -124,18 +124,39 @@ abstract class RouteManager
         if ($url->isValidUrl($path)) {
             return $path;
         }
+        $area = array_get($options, 'area', true);
+        if (array_key_exists('area', $options)) {
+            unset($options['area']);
+        }
         list($package, $route) = $this->locate($path, $options);
 
-        $element = $this->route($package);
-        $element->setAreaPrefix($element);
-        $locate  = $element->to($route);
-        empty($locate) && $locate  = '/';
+        $element = ($area) ? $this->route($package) : $this->route(null);
+        if ($area) {
+            $element->setAreaPrefix($element);
+        }
+
+        $locate = $element->to($route);
+        empty($locate) && $locate = '/';
+        $this->sandbox($locate, $url, $options);
+        return $url->to($locate);
+    }
+
+    /**
+     * Creates url with sandbox param
+     * 
+     * @param String $locate
+     * @param UrlGenerator $url
+     * @param array $options
+     * @return String
+     */
+    protected function sandbox(&$locate, UrlGenerator $url, array $options = [])
+    {
         $sandbox = (isset($options['sandbox']) && $options['sandbox'] == false) ? null : $url->getRequest()->query('sandbox');
         if (!is_null($sandbox)) {
             $separator = (parse_url($locate, PHP_URL_QUERY) == NULL) ? '?' : '&';
             $locate    .= $separator . 'sandbox=' . $sandbox;
         }
-        return $url->to($locate);
+        return $locate;
     }
 
     /**

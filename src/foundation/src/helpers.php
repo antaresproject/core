@@ -11,7 +11,7 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Antares Core
- * @version    0.9.0
+ * @version    0.9.2
  * @author     Original Orchestral https://github.com/orchestral
  * @author     Antares Team
  * @license    BSD License (3-clause)
@@ -24,6 +24,18 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Debug\Dumper;
 use Antares\Messages\SwalMessanger;
 use Antares\Html\Form\Field;
+
+if (!function_exists('url_no_area')) {
+
+    /**
+     * Create url without area segement
+     */
+    function url_no_area($path, array $options = [])
+    {
+        return handles($path, array_merge($options, ['area' => false]));
+    }
+
+}
 
 if (!function_exists('post')) {
 
@@ -368,6 +380,12 @@ if (!function_exists('area')) {
     function area()
     {
         $segment = request()->segment(1);
+        $areas   = array_keys(config('areas.areas'));
+        if (!in_array($segment, $areas) && !auth()->guest()) {
+            return user()->getArea();
+        }
+
+
         return !is_null($segment) ? $segment : config('areas.default');
     }
 

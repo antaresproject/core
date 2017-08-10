@@ -36,6 +36,10 @@ class AreaMiddleware
     public function handle(Request $request, Closure $next)
     {
         $area = area();
+        if (!in_array($area, array_keys(config('areas.areas')))) {
+            return $next($request);
+        }
+
         if (!auth()->guest() && $area && $area !== 'antares' && !request()->ajax() && !($request->isJson() OR $request->wantsJson())) {
             $areas = user()->roles->pluck('area')->toArray();
             if (!in_array($area, $areas)) {
