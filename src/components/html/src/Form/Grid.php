@@ -207,7 +207,7 @@ class Grid extends BaseGrid implements GridContract
     }
 
     /**
-     * set form as ajaxable
+     * Sets form as ajaxable
      * 
      * @param array $options
      * @return Grid
@@ -434,6 +434,7 @@ class Grid extends BaseGrid implements GridContract
     public function setup(Presenter $listener, $url, $model, array $attributes = [])
     {
         $method = Arr::get($attributes, 'method', 'POST');
+
         $this->with($model);
         $this->attributes(array_merge($attributes, [
             'url'    => method_exists($listener, 'handles') ? $listener->handles($url) : handles($url),

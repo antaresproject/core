@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Html\Form\Builder;
 
 use Antares\Contracts\Html\Form\AjaxValidation as AjaxValidationContract;
@@ -74,6 +73,7 @@ class AjaxValidation implements AjaxValidationContract
      */
     public function build(Grid &$grid)
     {
+
         $attributes = array_merge($this->attributes, $grid->ajaxable);
         $inputs     = [];
         $fieldsets  = $grid->fieldsets();
@@ -86,11 +86,11 @@ class AjaxValidation implements AjaxValidationContract
             }
             foreach ($fieldset->controls as $control) {
                 $id = method_exists($control, 'getId') ? $control->getId() : $control->id;
-                
+
                 $inputId     = (is_null($id) OR strlen($id) <= 0) ? $this->generateID('input') : $id;
                 $id          = str_replace(['[', ']'], '_', $inputId);
                 $inputs[$id] = $this->field($control);
-                
+
                 if (method_exists($control, 'getId')) {
                     $control->setId($id);
                 } else {
