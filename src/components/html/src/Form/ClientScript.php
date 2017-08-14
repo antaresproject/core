@@ -11,14 +11,13 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Antares Core
- * @version    0.9.0
+ * @version    0.9.2
  * @author     Original Orchestral https://github.com/orchestral
  * @author     Antares Team
  * @license    BSD License (3-clause)
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
-
 
 namespace Antares\Html\Form;
 
@@ -133,8 +132,8 @@ class ClientScript implements ClientScriptContract
 
         foreach ($fieldsets as $fieldset) {
             foreach ($fieldset->controls as $control) {
-                $validation          = $this->resolveRules($control, $rules);
-                
+                $validation = $this->resolveRules($control, $rules);
+
                 if (method_exists($control, 'setAttributes')) {
                     $control->setAttributes(array_merge($control->getAttributes(), $validation));
                 } else {
@@ -153,28 +152,7 @@ class ClientScript implements ClientScriptContract
      */
     protected function resolveRules($control, array $rules = array())
     {
-        $validation         = [];
-        $rulesDispatcher    = new RulesDispatcher($rules);
-        $ruleName           = $rulesDispatcher->getMatchedRuleNameForControl(
-            method_exists($control, 'getName') ? $control->getType() : $control->name
-        );
-
-        if ($ruleName === null) {
-            return $validation;
-        }
-
-        $rule = array_get($rules, $ruleName);
-
-        if (is_string($rule)) {
-            $validation = array_merge($validation, $this->resolveRule($rule));
-        }
-        if (is_array($rule)) {
-            foreach ($rule as $ruleAttributes) {
-                $validation = array_merge($validation, $this->resolveRule($ruleAttributes));
-            }
-        }
-
-        return $validation;
+        return [];
     }
 
     /**
@@ -185,7 +163,11 @@ class ClientScript implements ClientScriptContract
      */
     protected function resolveRule($rule)
     {
+
         $validation = [];
+        if (is_array($rule)) {
+            return $validation;
+        }
         switch ($rule) {
             case 'required':
                 $validation['required'] = 'required';

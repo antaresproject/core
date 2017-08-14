@@ -256,6 +256,7 @@ class FormBuilder extends BaseBuilder implements BuilderContract
             $clientScript = $this->clientScript->addClientValidation($this->grid);
             $fieldsets    = $clientScript['fieldsets'];
             $this->fieldPermissionAdapter->resolveFields($fieldsets, $decryptedKey);
+
             $this->rules($fieldsets);
         } else {
 
@@ -263,8 +264,6 @@ class FormBuilder extends BaseBuilder implements BuilderContract
             $this->fieldPermissionAdapter->resolveFields($fieldsets, $decryptedKey);
             $this->rules($fieldsets);
         }
-
-
         $validator        = $this->validator->with($this->grid);
         $validator->withCustomFields($this->customFieldsValidator);
         $result           = $validator->validate($sendHeaders);

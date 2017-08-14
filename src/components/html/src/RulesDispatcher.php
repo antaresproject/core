@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Html;
 
 class RulesDispatcher
@@ -50,16 +49,7 @@ class RulesDispatcher
         if (!$this->hasRules()) {
             return [];
         }
-
-        $supportedRules = [];
-        foreach ($controls as $control) {
-            $ruleName = $this->getMatchedRuleNameForControl($control);
-            if ($ruleName) {
-                $supportedRules[$ruleName] = $this->rules[$ruleName];
-            }
-        }
-
-        return $supportedRules;
+        return $this->rules;
     }
 
     /**
@@ -70,51 +60,6 @@ class RulesDispatcher
     public function hasRules()
     {
         return count($this->rules) > 0;
-    }
-
-    /**
-     * Gets the matched rule name by the provided control name.
-     *
-     * @param string $control
-     * @return string | null
-     */
-    public function getMatchedRuleNameForControl($control)
-    {
-        foreach ($this->rules as $name => $rule) {
-            if (self::isRuleMatchedToControl($name, $control)) {
-                return $name;
-            }
-        }
-    }
-
-    /**
-     * @param string $rule Rule name
-     * @param string $control Control name
-     * @return bool
-     */
-    public static function isRuleMatchedToControl($rule, $control)
-    {
-        return str_is($rule, self::getNormalizedControlName($control));
-    }
-
-    /**
-     * Gets a normalized control name.
-     * 
-     * @param string $control
-     * @return string mixed
-     */
-    protected static function getNormalizedControlName($control)
-    {
-        $replaceMap = [
-            ']' => '',
-            '[' => '',
-        ];
-
-        foreach ($replaceMap as $search => $replace) {
-            $control = str_replace($search, $replace, $control);
-        }
-
-        return $control;
     }
 
 }

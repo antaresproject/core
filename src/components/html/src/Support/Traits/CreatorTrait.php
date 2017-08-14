@@ -18,12 +18,14 @@
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
- namespace Antares\Html\Support\Traits;
+
+namespace Antares\Html\Support\Traits;
 
 use Illuminate\Support\Arr;
 
 trait CreatorTrait
 {
+
     /**
      * The current model instance for the form.
      *
@@ -70,23 +72,23 @@ trait CreatorTrait
     {
         $method = Arr::get($options, 'method', 'post');
 
-                                $attributes = [
-            'method'         => $this->getMethod($method),
+
+        $attributes = [
+            'method'         => $method,
             'action'         => $this->getAction($options),
             'accept-charset' => 'UTF-8',
         ];
-
-                                $append = $this->getAppendage($method);
+        $append     = $this->getAppendage($method);
 
         if (isset($options['files']) && $options['files']) {
             $options['enctype'] = 'multipart/form-data';
         }
 
-                                $attributes = array_merge($attributes, Arr::except($options, $this->reserved));
+        $attributes = array_merge($attributes, Arr::except($options, $this->reserved));
 
-                                $attributes = $this->getHtmlBuilder()->attributes($attributes);
+        $attributes = $this->getHtmlBuilder()->attributes($attributes);
 
-        return '<form'.$attributes.'>'.$append;
+        return '<form' . $attributes . '>' . $append;
     }
 
     /**
@@ -114,30 +116,17 @@ trait CreatorTrait
     {
         list($method, $appendage) = [strtoupper($method), ''];
 
-                                if (in_array($method, $this->spoofedMethods)) {
+        if (in_array($method, $this->spoofedMethods)) {
             $appendage .= $this->hidden('_method', $method);
         }
 
-                                if ($method != 'GET') {
+        if ($method != 'GET') {
             $appendage .= $this->token();
         }
 
         return $appendage;
     }
 
-    /**
-     * Parse the form action method.
-     *
-     * @param  string  $method
-     *
-     * @return string
-     */
-    protected function getMethod($method)
-    {
-        $method = strtoupper($method);
-
-        return $method != 'GET' ? 'POST' : $method;
-    }
     /**
      * Get the form action from the options.
      *
@@ -147,11 +136,11 @@ trait CreatorTrait
      */
     protected function getAction(array $options)
     {
-                                if (isset($options['url'])) {
+        if (isset($options['url'])) {
             return $this->getUrlAction($options['url']);
         }
 
-                        
+
         if (isset($options['route'])) {
             return $this->getRouteAction($options['route']);
         } elseif (isset($options['action'])) {

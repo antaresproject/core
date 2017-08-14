@@ -108,11 +108,29 @@ class Validator implements ValidatorContract
             }
         }
         $rules = $this->grid->rules;
-
         if (!empty($rules)) {
             $validation = ValidatorFacade::make($inputs, $rules, $this->grid->phrases);
+
             if ($validation->fails()) {
-                $messages = $this->uniqueMessages($validation->getMessageBag(), $messages);
+                if (empty($this->grid->ajaxable) or ! post() or ! ajax()) {
+                    $messages = $this->uniqueMessages($validation->getMessageBag(), $messages);
+                    return $this->whenValidated($messages, $sendHeaders);
+                }
+                $messageBag = $validation->getMessageBag();
+                $messages   = $messageBag->getMessages();
+                $bag        = new \Illuminate\Support\MessageBag();
+                foreach ($messages as $name => $message) {
+                    $current = current($message);
+                    if (!is_array($current)) {
+                        $bag->add($name, $message);
+                        continue;
+                    }
+                    $elements = [];
+                    foreach ($current as $idx => $val) {
+                        $bag->add($name . '[' . $idx . ']', $val);
+                    }
+                }
+                $messages = $this->uniqueMessages($bag, null);
             }
         }
         return $this->whenValidated($messages, $sendHeaders);
