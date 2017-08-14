@@ -57,7 +57,7 @@ class BrandsMenuTest extends TestCase
         $app->shouldReceive('make')->once()->with('antares.platform.menu')->andReturn($menu);
         $menu->shouldReceive('has')->once()->with('settings.general-config')->andReturn(false);
         $stub = new BrandsMenu($app);
-        $this->assertEquals('>:home', $stub->getPositionAttribute());
+        $this->assertEquals('^:settings', $stub->getPositionAttribute());
     }
 
     /**
