@@ -41,7 +41,8 @@
         "antaresproject/component-users": "*",
         "antaresproject/component-tester": "*",
         "antaresproject/component-installer": "*",
-        "antaresproject/component-translations": "*"
+        "antaresproject/component-translations": "*",
+        "knplabs/knp-menu": "^2.1"
     },    
     "autoload": {
         "classmap": [
