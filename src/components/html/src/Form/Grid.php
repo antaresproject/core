@@ -384,14 +384,16 @@ class Grid extends BaseGrid implements GridContract
      *
      * @return $this
      */
-    public function resource(Presenter $listener, $url, Model $model, array $attributes = [])
+    public function resource(Presenter $listener = null, $url, Model $model, array $attributes = [])
     {
         $method = 'POST';
         if ($model->exists) {
-            $url    = "{$url}/{$model->getKey()}";
+            $last = last(explode('/', $url));
+            if (!is_numeric($last)) {
+                $url = "{$url}/{$model->getKey()}";
+            }
             $method = 'PUT';
         }
-
         $attributes['method'] = $method;
 
         return $this->setup($listener, $url, $model, $attributes);
@@ -431,7 +433,7 @@ class Grid extends BaseGrid implements GridContract
      *
      * @return $this
      */
-    public function setup(Presenter $listener, $url, $model, array $attributes = [])
+    public function setup(Presenter $listener = null, $url, $model, array $attributes = [])
     {
         $method = Arr::get($attributes, 'method', 'POST');
 
