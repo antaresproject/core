@@ -167,4 +167,15 @@ class Fluent extends SupportFluent
         return ($segments[1] == $module && isset($segments[2]) && (in_array($segments[2], ['index', 'edit', 'mail']) or is_numeric($segments[2])));
     }
 
+    /**
+     * Whether attribute exists in attributes container
+     * 
+     * @param String $keyname
+     * @return boolean
+     */
+    public function has($keyname)
+    {
+        return array_key_exists($keyname, $this->attributes);
+    }
+
 }
