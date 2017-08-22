@@ -100,8 +100,7 @@ class SettingsMenu extends MenuHandler
             return;
         }
         $menu = $this->createMenu();
-        $menu->icon('zmdi-settings')
-                ->type('secondary');
+        $menu->icon('zmdi-settings')->type('secondary');
 
         if (!app('antares.acl')->make('antares')->can('manage-antares')) {
             return;
