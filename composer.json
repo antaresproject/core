@@ -20,7 +20,7 @@
         "thomaswelton/laravel-gravatar": "~1.0",
         "sensiolabs/ansi-to-html": "^1.1",
         "symfony/filesystem": ">=2.4",
-        "satooshi/php-coveralls": "^1.0",
+        "satooshi/php-coveralls": "dev-master",
         "baum/baum": "~1.1",
         "franzose/closure-table": "4.*",
         "tymon/jwt-auth": "1.0.*",
