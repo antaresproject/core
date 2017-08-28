@@ -234,6 +234,11 @@ abstract class DataTable extends BaseDataTableService
         $datatables = $this->datatables->of($of, get_class($this));
         $path       = uri();
         Event::fire("datatables.value.{$path}", [$datatables]);
+        if (input('orderable')) {
+            $datatables->editColumn('order', function($row) {
+                return '<i class="zmdi zmdi-arrows zmdi-hc-2x"></i>';
+            });
+        }
         return $datatables;
     }
 
