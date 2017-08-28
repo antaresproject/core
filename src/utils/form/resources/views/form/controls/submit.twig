@@ -1,6 +1,3 @@
-<button type='submit'
-        name='{{ control.getName() }}'
-        value='{{ control.getValue() }}' {{ control.getAttributes()|stringify }}
->
+<button type="submit" value="{{ control.getValue() }}" {{ control.getAttributes()|stringify }}>
     {{ control.getValue() }}
 </button>
