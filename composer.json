@@ -28,7 +28,7 @@
         "predis/predis": "v1.1.*",        
         "twig/twig": "v1.30.*",                                 
         "rcrowe/twigbridge": "^0.9.0",
-        "davejamesmiller/laravel-breadcrumbs": "dev-master",
+        "davejamesmiller/laravel-breadcrumbs": "3.0.3",
         "linfo/linfo": "dev-master",
         "phpunit/phpunit": "~5.7",
         "laravel/browser-kit-testing": "^1.0",

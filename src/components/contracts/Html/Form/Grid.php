@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Contracts\Html\Form;
 
 use Closure;
@@ -104,5 +103,5 @@ interface Grid extends GridContract
      *
      * @return $this
      */
-    public function setup(Presenter $listener, $url, $model, array $attributes = []);
+    public function setup(Presenter $listener = null, $url, $model, array $attributes = []);
 }

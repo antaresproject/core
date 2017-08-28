@@ -28,9 +28,9 @@ use Antares\Support\Providers\Traits\MiddlewareProviderTrait;
 use Antares\Support\Providers\Traits\PackageProviderTrait;
 use Antares\Support\Providers\Traits\EventProviderTrait;
 use Antares\Support\Providers\Traits\BindableTrait;
+use Antares\Modules\Api\Http\Router\Adapter;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Http\Kernel;
-use Antares\Api\Http\Router\Adapter;
 use Antares\Foundation\MenuComposer;
 use Illuminate\Routing\Router;
 use RuntimeException;
@@ -156,19 +156,24 @@ abstract class ModuleServiceProvider extends ServiceProvider
      *
      * @param Router $router
      */
-    private function bootApiRouting(Router $router)
+    public function bootApiRouting(Router $router)
     {
         if (!$this->app->make('antares.request')->shouldMakeApiResponse()) {
             return;
         }
 
+
+
+
         $routerAdapter = $this->app->make(Adapter::class);
         $routes        = [];
 
         foreach ($router->getRoutes()->getRoutes() as $route) {
+
             $routeActionName = $route->getActionName();
 
             if (starts_with($routeActionName, $this->namespace)) {
+
                 $routes[] = $route;
             }
         }
