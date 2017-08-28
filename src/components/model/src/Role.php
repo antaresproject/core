@@ -131,6 +131,16 @@ class Role extends Eloquent
     }
 
     /**
+     * Get only administrators roles
+     *
+     * @return $this|null
+     */
+    public static function scopeAdministrators()
+    {
+        return static::query()->whereNotIn('name', ['guest', 'member', 'client']);
+    }
+
+    /**
      * Get default member roles for Antares.
      *
      * @return $this|null

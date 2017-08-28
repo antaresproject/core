@@ -72,13 +72,13 @@ trait CreatorTrait
     {
         $method = Arr::get($options, 'method', 'post');
 
-
         $attributes = [
-            'method'         => $method,
+            'method'         => $this->getMethod($method),
             'action'         => $this->getAction($options),
             'accept-charset' => 'UTF-8',
         ];
-        $append     = $this->getAppendage($method);
+
+        $append = $this->getAppendage($method);
 
         if (isset($options['files']) && $options['files']) {
             $options['enctype'] = 'multipart/form-data';
@@ -125,6 +125,20 @@ trait CreatorTrait
         }
 
         return $appendage;
+    }
+
+    /**
+     * Parse the form action method.
+     *
+     * @param  string  $method
+     *
+     * @return string
+     */
+    protected function getMethod($method)
+    {
+        $method = strtoupper($method);
+
+        return $method != 'GET' ? 'POST' : $method;
     }
 
     /**
