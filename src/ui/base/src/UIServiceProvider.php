@@ -22,6 +22,7 @@
 namespace Antares\UI;
 
 use Antares\Support\Providers\ServiceProvider;
+use Antares\UI\Navigation\Breadcrumbs\Manager;
 use Illuminate\Contracts\Events\Dispatcher;
 use Antares\UI\Navigation\Factory;
 use Knp\Menu\Matcher\Matcher;
