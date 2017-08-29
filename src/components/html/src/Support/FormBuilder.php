@@ -112,6 +112,9 @@ class FormBuilder
      */
     public function label($name, $value = null, $options = [])
     {
+        if (!$value) {
+            return '';
+        }
         $this->labels[] = $name;
         $options        = $this->html->attributes($options);
         $value          = e($this->formatLabel($name, $value));

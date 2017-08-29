@@ -136,6 +136,7 @@ class Builder extends BaseBuilder
         'iDisplayLength' => 10,
         'bLengthChange'  => true,
         'bInfo'          => false,
+        'rowReorder'     => false,
         "columnDefs"     => [
         ],
         "serverSide"     => true,
@@ -218,6 +219,13 @@ class Builder extends BaseBuilder
     protected $selectedGroups = [];
 
     /**
+     * Whether datatable is orderable
+     *
+     * @var boolean
+     */
+    protected $orderable = false;
+
+    /**
      * Constructing
      * 
      * @param Repository $config
@@ -250,6 +258,23 @@ class Builder extends BaseBuilder
         return false;
     }
 
+    protected function cols()
+    {
+        $columns = $this->hasColumnFilter() ? $this->getColumnFilterAdapter()->getColumns()->toArray() : $this->collection->toArray();
+        if ($this->orderable) {
+            array_unshift($columns, [
+                "data"       => "order",
+                "name"       => "order",
+                "title"      => "",
+                "orderable"  => false,
+                "searchable" => false,
+                "exportable" => false,
+                "printable"  => false,
+                "footer"     => ""]);
+        }
+        return $columns;
+    }
+
     /**
      * Get generated raw scripts.
      *
@@ -257,17 +282,17 @@ class Builder extends BaseBuilder
      */
     public function generateScripts()
     {
-
-        app('antares.asset')->container('antares/foundation::application')
-                ->add('gridstack', '/webpack/view_datatables.js', ['webpack_gridstack', 'app_cache'])
+        $asset = app('antares.asset')->container('antares/foundation::application');
+        $asset->add('gridstack', '/webpack/view_datatables.js', ['webpack_gridstack', 'app_cache'])
                 ->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
 
-
-        $columns = $this->hasColumnFilter() ? $this->getColumnFilterAdapter()->getColumns()->toArray() : $this->collection->toArray();
+        if ($this->orderable) {
+            array_set($this->attributes, 'rowReorder', true);
+        }
 
         array_set($this->attributes, 'iDisplayLength', $this->datatable->getPerPage());
         $args         = array_merge(
-                $this->attributes, ['ajax' => $this->ajax, 'columns' => $columns]
+                $this->attributes, ['ajax' => $this->ajax, 'columns' => $this->cols()]
         );
         $searching    = (($value        = $this->getGlobalSearchValue()) !== false) ? "data.search.value=instance.find('.mdl-textfield__input').val();" : '';
         $groupsFilter = app(\Antares\Datatables\Adapter\GroupsFilterAdapter::class);
@@ -305,7 +330,7 @@ class Builder extends BaseBuilder
             }
             $cols = 'data.columns = ' . JavaScriptDecorator::decorate($columns) . ';';
         }
-
+        $orderable = ($this->orderable) ? 'data.orderable=1;' : '';
 
         $eventAfterSearch = (request()->has('search') && !request()->ajax()) ? '$(document).trigger( "datatables.searchLoaded", [ dtInstance,data,' . count(config('search.datatables')) . ' ] );' : '';
         $ajax             = <<<EOD
@@ -313,12 +338,14 @@ class Builder extends BaseBuilder
                     if(data.draw===1){
                         $cols
                     }
+                    
                     var dtInstance=$(settings.oInstance);
                     var instance = dtInstance.closest('.grid-stack-item-content').length>0?dtInstance.closest('.grid-stack-item-content'):dtInstance.closest('.tbl-c');                    
                     $searching
                     if (instance.length > 0) {
                         instance.LoadingOverlay('show');
                     }
+                    $orderable
                     settings.jqXHR = $.ajax({
                         "dataType": 'json',
                         "timeout": 20000,
@@ -339,7 +366,8 @@ EOD;
 
         $url          = $this->getTargetUrl();
         $args['ajax'] = new JavaScriptExpression(sprintf($ajax, $this->method, $url));
-        $id           = $this->tableAttributes['id'];
+
+        $id = $this->tableAttributes['id'];
         if (isset($args['fnRowCallback'])) {
             $args['fnRowCallback'] = new JavaScriptExpression($args['fnRowCallback']);
         }
@@ -369,10 +397,11 @@ EOD;
         ]);
 
 
-        $javascript   = file_get_contents(sandbox_path('packages/core/js/datatables.js'));
+        $javascript = file_get_contents(sandbox_path('packages/core/js/datatables.js'));
+
+
         $instanceName = 'dataTable' . str_random(3);
         $oTable       = 'oTable' . str_random(3);
-
 
         $javascript = str_replace('inject.id', "'#$id'", $javascript);
         $javascript = str_replace('instance', $instanceName, $javascript);
@@ -380,7 +409,26 @@ EOD;
         $javascript = str_replace('inject.variables', $variables, $javascript);
         $javascript = str_replace('inject.options', $parameters, $javascript);
         $javascript = str_replace('inject.contextMenu.build', $parameters, $javascript);
+
+
+        if ($this->orderable) {
+            $javascript .= $this->onReorder($oTable);
+        }
+
         return $javascript;
+    }
+
+    protected function onReorder($oTable)
+    {
+        return <<<EOD
+            document.addEventListener("row-reorder", function (e) {
+                var result = 'Reorder started on row: '+e.detail.edit.triggerRow.data()[1]+'<br>';
+                console.log(e.detail.diff);
+                for ( var i=0, ien=e.detail.diff.length ; i<ien ; i++ ) {
+                   
+                }
+            });
+EOD;
     }
 
     protected function getTargetUrl()
@@ -951,11 +999,25 @@ EOD;
         $container = app('antares.asset')->container('antares/foundation::scripts');
         $container->add('context_menu', '/packages/core/js/contextMenu.js');
         $script    = $script ?: $this->generateScripts();
+        if ($this->orderable) {
+            app('antares.asset')->container('antares/foundation::application')->add('dataTables-rowreorder', 'https://cdn.datatables.net/rowreorder/1.2.0/js/dataTables.rowReorder.min.js', ['webpack_forms_basic']);
+        }
         if (app('request')->ajax()) {
             return '<script' . $this->html->attributes($attributes) . '>' . $script . '</script>' . PHP_EOL;
         } else {
             return $container->inlineScript($this->tableAttributes['id'], $script);
         }
+    }
+
+    /**
+     * Sets datatable as orderable
+     * 
+     * @return $this
+     */
+    public function orderable()
+    {
+        $this->orderable = true;
+        return $this;
     }
 
 }
