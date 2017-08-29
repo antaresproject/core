@@ -63,6 +63,11 @@ abstract class AbstractType implements Attributable
 	protected $appendHtml = '';
 
     /**
+     * @var string
+     */
+    protected $errorFieldName = '';
+
+    /**
      * AbstractType constructor
      *
      * @param string $name
@@ -88,6 +93,23 @@ abstract class AbstractType implements Attributable
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * @param string|null $name
+     * @return $this
+     */
+    public function withError(string $name = null) : self {
+        $this->errorFieldName = (string) ($name ?: $this->getName());
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getErrorField() : string {
+        return $this->errorFieldName;
     }
 
     /**

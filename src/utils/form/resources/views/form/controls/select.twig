@@ -1,11 +1,11 @@
-<select name='{{ control.getName() }}{% if control.isMultiple() %}[]{% endif %}' {{ control.getAttributes()|stringify }}>
+<select name="{{ control.getName() }}{% if control.isMultiple() %}[]{% endif %}" {{ control.getAttributes()|stringify }}>
     {% if control.hasEmptyValue() %}
         <option>{{ control.getEmptyValue() }}</option>
     {% endif %}
 
     {% for option in control.getValueOptions() %}
         {% if option is instanceof('Antares\\Form\\Controls\\Elements\\OptGroup') %}
-            <optgroup label='{{ option.label }}'>
+            <optgroup label="{{ option.label }}">
                 {% for opt in option.options %}
                     {% include 'antares/foundation::form.controls.elements.options' with {"option": opt} only %}
                 {% endfor %}

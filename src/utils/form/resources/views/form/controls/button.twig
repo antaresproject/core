@@ -1,6 +1,3 @@
-<button type='{{ control.getButtonType() }}'
-        name='{{ control.getName() }}'
-        value='{{ control.getValue() }}' {{ control.getAttributes()|stringify }}
->
+<button type="{{ control.getButtonType() }}" value="{{ control.getValue() }}" {{ control.getAttributes()|stringify }}>
     {{ control.getValue() }}
 </button>

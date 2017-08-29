@@ -21,6 +21,13 @@
 namespace Antares\UI;
 
 use Antares\Support\Providers\ServiceProvider;
+use Antares\UI\Navigation\Breadcrumbs\Manager;
+use Illuminate\Contracts\Events\Dispatcher;
+use Antares\UI\Navigation\Factory;
+use Knp\Menu\Matcher\Matcher;
+use Knp\Menu\Matcher\Voter\UriVoter;
+use Knp\Menu\MenuFactory;
+use View;
 
 class UIServiceProvider extends ServiceProvider
 {
@@ -53,6 +60,41 @@ class UIServiceProvider extends ServiceProvider
     {
         $path = realpath(__DIR__ . '/../resources');
         $this->addConfigComponent('antares/widget', 'antares/widget', $path . '/config');
+
+        $this->app->singleton(Factory::class, function () {
+            $renderOptions  = (array) config('antares/widget::navigation.menu.render', []);
+            $url            = $this->app['url'];
+            $dispatcher     = $this->app->make(Dispatcher::class);
+
+            $factory = new MenuFactory();
+            $matcher = new Matcher();
+            $matcher->addVoter(new UriVoter($url->current()));
+            $matcher->addVoter(new UriVoter($url->full()));
+
+            return new Factory($factory, $matcher, $dispatcher, $renderOptions);
+        });
+
+        $this->app->singleton(Manager::class);
+
+        /* @var $manager Manager */
+        $manager = $this->app->make(Manager::class);
+
+        //antares/foundation::layouts/antares/partials/_head_webpack
+        //antares/foundation::layouts.antares.partials._breadcrumbs
+
+        View::composer('antares/foundation::layouts/antares/partials/_head_webpack', function() use($manager) {
+            if($manager->isEnabled()) {
+                $manager->generate();
+                $manager->setupMeta();
+            }
+        });
+
+        View::composer('antares/foundation::layouts.antares.partials._breadcrumbs', function(\Illuminate\View\View $view) use($manager) {
+            if($manager->isEnabled()) {
+                $manager->generate();
+                $view->with('new_breadcrumbs', true)->with('breadcrumbs', $manager->render());
+            }
+        });
     }
 
     /**
@@ -62,7 +104,7 @@ class UIServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['antares.widget'];
+        return ['antares.widget', Factory::class, Manager::class];
     }
 
 }

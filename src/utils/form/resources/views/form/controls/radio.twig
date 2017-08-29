@@ -1,5 +1,5 @@
 {% if control.useHiddenElement() %}
-    <input type='hidden' name='{{ control.getName() }}' value='{{ control.getUncheckedValue() }}'/>
+    <input type="hidden" name="{{ control.getName() }}" value="{{ control.getUncheckedValue() }}"/>
 {% endif %}
 
 {% for option in control.getValueOptions() %}
@@ -7,7 +7,7 @@
         <legend>{{ option.label }}</legend>
 
         {% for opt in option.options %}
-            {% include 'antares/foundation::form.controls.elements.radio' with {"option": opt, "control": control} only %}
+            {% include "antares/foundation::form.controls.elements.radio' with {"option": opt, "control": control} only %}
         {% endfor %}
     {% else %}
         {% include 'antares/foundation::form.controls.elements.radio' with {"option": option, "control": control} only %}
