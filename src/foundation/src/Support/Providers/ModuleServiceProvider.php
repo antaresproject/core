@@ -21,6 +21,7 @@
 
 namespace Antares\Foundation\Support\Providers;
 
+use Antares\UI\Navigation\MenuAssigner;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Antares\Foundation\Support\Providers\Traits\RouteProviderTrait;
 use Antares\Support\Providers\Traits\MiddlewareProviderTrait;
@@ -35,6 +36,7 @@ use Illuminate\Routing\Router;
 use RuntimeException;
 use ReflectionClass;
 use SplFileInfo;
+use Antares\UI\Navigation\Breadcrumbs\Manager;
 
 abstract class ModuleServiceProvider extends ServiceProvider
 {
@@ -145,6 +147,8 @@ abstract class ModuleServiceProvider extends ServiceProvider
         $this->bootExtensionComponents();
         $this->bootExtensionRouting();
         $this->bootApiRouting($router);
+        $this->loadMenuFile();
+        $this->loadBreadcrumbsFile();
     }
 
     /**
@@ -347,6 +351,30 @@ abstract class ModuleServiceProvider extends ServiceProvider
 
         foreach ($di['di'] as $contract => $class) {
             $this->app->bind($contract, $class);
+        }
+    }
+
+    /**
+     * Loads breaedcrumbs file.
+     */
+    private function loadBreadcrumbsFile() {
+        $path = $this->extensionPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'breadcrumbs.php';
+
+        if(file_exists($path)) {
+            $manager = $this->app->make(Manager::class);
+            require_once $path;
+        }
+    }
+
+    /**
+     * Loads menu file.
+     */
+    private function loadMenuFile() {
+        $path = $this->extensionPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'menu.php';
+
+        if(file_exists($path)) {
+            $menu = $this->app->make(MenuAssigner::class);
+            require_once $path;
         }
     }
 
