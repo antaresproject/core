@@ -52,19 +52,42 @@ trait RouteProviderTrait
      *
      * @return void
      */
-    protected function loadFrontendRoutesFrom($path, $namespace = null)
+    protected function loadFrontendRoutesFrom($path, $namespace = '', array $attributes = [])
     {
         if (!$this->isPathIncluded($path)) {
+
             $foundation = $this->app->make('antares.app');
             $namespace  = $namespace ?: $this->namespace;
+
             $attributes = [];
 
-            if (!is_null($namespace)) {
+            if (!empty($namespace) && $namespace != '\\') {
                 $attributes['namespace'] = $namespace;
             }
-            $attributes['middleware'] = ['Antares\Foundation\Http\Middleware\UseFrontendTheme'];
-            $foundation->group($this->routeGroup, $this->routePrefix, $attributes, $this->getRouteLoader($path));
+            $attributes['middleware'] = ['antares', 'Antares\Foundation\Http\Middleware\UseFrontendTheme'];
+
+            $foundation->group('antares/foundation', 'antares', $attributes, $this->getRouteLoader($path));
         }
+    }
+
+    /**
+     * Resolve route group attributes.
+     *
+     * @param  array|string|null  $namespace
+     * @param  array  $attributes
+     *
+     * @return array
+     */
+    protected function resolveRouteGroupAttributes($namespace = null, array $attributes = [])
+    {
+        if (is_array($namespace)) {
+            $attributes = $namespace;
+            $namespace  = '';
+        }
+        if (!is_null($namespace)) {
+            $attributes['namespace'] = empty($namespace) ? $this->namespace : "{$this->namespace}\\{$namespace}";
+        }
+        return $attributes;
     }
 
     /**

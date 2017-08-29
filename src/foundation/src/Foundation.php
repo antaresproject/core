@@ -23,7 +23,6 @@ namespace Antares\Foundation;
 
 use Antares\Contracts\Foundation\Foundation as FoundationContract;
 use Antares\Logger\Http\Middleware\LoggerMiddleware;
-use Antares\Contracts\Memory\Provider;
 use Antares\Extension\RouteGenerator;
 use Antares\Http\RouteManager;
 use Exception;

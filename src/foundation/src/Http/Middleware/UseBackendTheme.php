@@ -54,6 +54,10 @@ class UseBackendTheme
      */
     public function handle($request, Closure $next)
     {
+
+        if (!auth()->guest() && user()->hasRoles(['client', 'memeber'])) {
+            return $next($request);
+        }
         app()->setLocale(user_meta('language', 'en'));
         $this->beforeSendingThroughPipeline();
 
