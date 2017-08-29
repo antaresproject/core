@@ -21,4 +21,5 @@ use Illuminate\Routing\Router;
 
 $router->group(['prefix' => 'datatables'], function (Router $router) {
     $router->post('columns-filter', 'Antares\Datatables\Http\Controllers\DatatablesController@save');
+    $router->post('reorder', 'Antares\Datatables\Http\Controllers\DatatablesController@reorder');
 });

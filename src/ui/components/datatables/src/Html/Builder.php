@@ -260,19 +260,7 @@ class Builder extends BaseBuilder
 
     protected function cols()
     {
-        $columns = $this->hasColumnFilter() ? $this->getColumnFilterAdapter()->getColumns()->toArray() : $this->collection->toArray();
-        if ($this->orderable) {
-            array_unshift($columns, [
-                "data"       => "order",
-                "name"       => "order",
-                "title"      => "",
-                "orderable"  => false,
-                "searchable" => false,
-                "exportable" => false,
-                "printable"  => false,
-                "footer"     => ""]);
-        }
-        return $columns;
+        return $this->hasColumnFilter() ? $this->getColumnFilterAdapter()->getColumns()->toArray() : $this->collection->toArray();
     }
 
     /**
@@ -282,6 +270,7 @@ class Builder extends BaseBuilder
      */
     public function generateScripts()
     {
+
         $asset = app('antares.asset')->container('antares/foundation::application');
         $asset->add('gridstack', '/webpack/view_datatables.js', ['webpack_gridstack', 'app_cache'])
                 ->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
@@ -409,24 +398,30 @@ EOD;
         $javascript = str_replace('inject.variables', $variables, $javascript);
         $javascript = str_replace('inject.options', $parameters, $javascript);
         $javascript = str_replace('inject.contextMenu.build', $parameters, $javascript);
-
-
         if ($this->orderable) {
-            $javascript .= $this->onReorder($oTable);
+            $data       = serialize(['datatable' => get_class($this->datatable), 'model' => get_class($this->query->getModel())]);
+            $javascript .= $this->onReorder($oTable, handles('antares/foundation::datatables/reorder'), encrypt($data));
         }
 
         return $javascript;
     }
 
-    protected function onReorder($oTable)
+    protected function onReorder($oTable, $url, $data)
     {
         return <<<EOD
+            $.extend($.fn.dataTable.RowReorder.defaults, {update: false});
             document.addEventListener("row-reorder", function (e) {
-                var result = 'Reorder started on row: '+e.detail.edit.triggerRow.data()[1]+'<br>';
-                console.log(e.detail.diff);
-                for ( var i=0, ien=e.detail.diff.length ; i<ien ; i++ ) {
-                   
+                var data=[];
+                for ( var i=0, ien=e.detail.diff.length ; i<ien ; i++ ) {   
+                    var id=$(e.detail.diff[i].node).find('td:nth-child(2)').text();
+                    data.push({id:id,pos:e.detail.diff[i].newPosition});
                 }
+                $.ajax({
+                    url:'$url',
+                    data:{pos:data,data:"$data"},
+                    method:"POST"
+                })
+                return false;
             });
 EOD;
     }
@@ -972,10 +967,11 @@ EOD;
     {
         if (!is_null($defaultOrder = array_get($attributes, 'order'))) {
             $orderAdapter = app(OrderAdapter::class)->setClassname(get_class($this->datatable));
-            if (($order        = $orderAdapter->getSelected()) !== false) {
-                $attributes = array_merge($attributes, [
-                    'order' => [[$order['column'], $order['dir']]],
-                ]);
+
+            if (($order = $orderAdapter->getSelected()) !== false) {
+//                $attributes = array_merge($attributes, [
+//                    'order' => [[$order['column'], $order['dir']]],
+//                ]);
             }
         }
 

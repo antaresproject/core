@@ -669,6 +669,28 @@ if (!function_exists('extensions')) {
     }
 
 }
+if (!function_exists('from_routes')) {
+
+    /**
+     * Get param from routes
+     */
+    function from_routes(...$args)
+    {
+        if (php_sapi_name() === 'cli' or ! is_array($args)) {
+            return null;
+        }
+        $current = Route::current();
+        $params  = $current->parameters();
+
+        foreach ($args as $bindedParam) {
+            if (!isset($params[$bindedParam])) {
+                continue;
+            }
+            return $params[$bindedParam];
+        }
+    }
+
+}
 
 if (!function_exists('from_route')) {
 
