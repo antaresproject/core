@@ -384,7 +384,10 @@ if (!function_exists('area')) {
         if (!in_array($segment, $areas) && !auth()->guest()) {
             return user()->getArea();
         }
-
+//        $areas = config('areas.areas');
+//        if (auth()->guest() && array_key_exists('client', $areas)) {
+//            return 'client';
+//        }
 
         return !is_null($segment) ? $segment : config('areas.default');
     }

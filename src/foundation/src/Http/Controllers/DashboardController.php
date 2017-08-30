@@ -75,6 +75,8 @@ class DashboardController extends AdminController implements Listener
      */
     public function show()
     {
+
+
         view()->share('content_class', 'page-dashboard');
         return $this->processor->show($this);
     }
@@ -124,7 +126,7 @@ class DashboardController extends AdminController implements Listener
     {
         set_meta('title', trans('antares/foundation::title.home'));
         $this->app->make('events')->fire('version.check');
-        if (auth()->user()->hasRoles('member')) {
+        if (!auth()->guest() && auth()->user()->hasRoles('member')) {
             return view('antares/foundation::dashboard.member');
         }
 

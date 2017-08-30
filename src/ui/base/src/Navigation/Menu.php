@@ -12,7 +12,6 @@
  *
  * @package    UI
  * @version    0.9.2
- * @author     Original Orchestral https://github.com/orchestral
  * @author     Antares Team
  * @license    BSD License (3-clause)
  * @copyright  (c) 2017, Antares
@@ -21,15 +20,16 @@
 
 namespace Antares\UI\Navigation;
 
-use Antares\UI\Navigation\Events\ItemAdded;
 use Antares\UI\Navigation\Events\ItemAdding;
+use Antares\UI\Navigation\Events\ItemAdded;
 use Illuminate\Contracts\Events\Dispatcher;
+use Knp\Menu\Renderer\RendererInterface;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Knp\Menu\ItemInterface;
-use Knp\Menu\Renderer\RendererInterface;
 
-class Menu {
+class Menu
+{
 
     /**
      * @var ItemInterface
@@ -52,10 +52,11 @@ class Menu {
      * @param Dispatcher $dispatcher
      * @param RendererInterface $renderer
      */
-    public function __construct(ItemInterface $menuItem, Dispatcher $dispatcher, RendererInterface $renderer) {
-        $this->menuItem     = $menuItem;
-        $this->dispatcher   = $dispatcher;
-        $this->renderer     = $renderer;
+    public function __construct(ItemInterface $menuItem, Dispatcher $dispatcher, RendererInterface $renderer)
+    {
+        $this->menuItem   = $menuItem;
+        $this->dispatcher = $dispatcher;
+        $this->renderer   = $renderer;
     }
 
     /**
@@ -63,7 +64,8 @@ class Menu {
      *
      * @return ItemInterface
      */
-    public function getMenuItem() : ItemInterface {
+    public function getMenuItem(): ItemInterface
+    {
         return $this->menuItem;
     }
 
@@ -77,16 +79,17 @@ class Menu {
      * @param array $attributes
      * @return Menu
      */
-    public function addItem(string $id, string $label, string $uri = null, string $icon = null, array $attributes = []) : Menu {
+    public function addItem(string $id, string $label, string $uri = null, string $icon = null, array $attributes = []): Menu
+    {
         $attributes = Arr::except($attributes, ['label', 'uri', 'icon']);
 
         $this->dispatcher->dispatch(new ItemAdding($id, $this->generateMenuItem($this->menuItem)));
 
-        if($icon && Str::startsWith($icon, 'zmdi-')) {
+        if ($icon && Str::startsWith($icon, 'zmdi-')) {
             $icon = 'zmdi ' . $icon;
         }
 
-        if($icon) {
+        if ($icon) {
             $label = sprintf('<i class="%s"></i> %s', $icon, $label);
         }
 
@@ -109,7 +112,8 @@ class Menu {
      * @param string $id
      * @return Menu|null
      */
-    public function getChild(string $id) : ?Menu {
+    public function getChild(string $id)
+    {
         $menuItem = $this->menuItem->getChild($id);
 
         return $menuItem ? $this->generateMenuItem($menuItem) : null;
@@ -120,7 +124,8 @@ class Menu {
      *
      * @param string $id
      */
-    public function forget(string $id) : void {
+    public function forget(string $id): void
+    {
         $this->menuItem->removeChild($id);
     }
 
@@ -130,7 +135,8 @@ class Menu {
      * @param ItemInterface $menuItem
      * @return Menu
      */
-    protected function generateMenuItem(ItemInterface $menuItem) : Menu {
+    protected function generateMenuItem(ItemInterface $menuItem): Menu
+    {
         return new Menu($menuItem, $this->dispatcher, $this->renderer);
     }
 
@@ -140,9 +146,9 @@ class Menu {
      * @param array $options
      * @return string
      */
-    public function render(array $options = []) : string {
+    public function render(array $options = []): string
+    {
         return $this->renderer->render($this->menuItem, $options);
     }
-
 
 }
