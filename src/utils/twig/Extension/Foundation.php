@@ -275,6 +275,18 @@ class Foundation extends Twig_Extension
                         }
                         return false;
                     }),
+            new Twig_SimpleFunction('error', function ($messageBag, $name) {
+                        if (!str_contains($name, ['[', ']'])) {
+                            return $messageBag->first($name, ':message');
+                        }
+                        preg_match("/\[([^\]]*)\]/", $name, $matches);
+                        if (!isset($matches[1])) {
+                            return $messageBag->first($name, ':message');
+                        }
+                        $idx = $matches[1];
+                        $key = str_replace('[' . $idx . ']', '', $name);
+                        return array_get($messageBag->messages(), $key . '.0.' . $idx);
+                    }),
         ];
     }
 
