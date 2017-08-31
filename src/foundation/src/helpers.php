@@ -683,7 +683,10 @@ if (!function_exists('from_routes')) {
             return null;
         }
         $current = Route::current();
-        $params  = $current->parameters();
+        if (is_null($current)) {
+            return null;
+        }
+        $params = $current->parameters();
 
         foreach ($args as $bindedParam) {
             if (!isset($params[$bindedParam])) {
