@@ -399,7 +399,8 @@ EOD;
         $javascript = str_replace('inject.options', $parameters, $javascript);
         $javascript = str_replace('inject.contextMenu.build', $parameters, $javascript);
         if ($this->orderable) {
-            $data       = serialize(['datatable' => get_class($this->datatable), 'model' => get_class($this->query->getModel())]);
+            $query      = $this->query instanceof \Illuminate\Database\Eloquent\Collection ? $this->query->first() : $this->query->getModel();
+            $data       = serialize(['datatable' => get_class($this->datatable), 'model' => get_class($query)]);
             $javascript .= $this->onReorder($oTable, handles('antares/foundation::datatables/reorder'), encrypt($data));
         }
 
