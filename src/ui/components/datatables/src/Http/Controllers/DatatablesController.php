@@ -22,6 +22,7 @@ namespace Antares\Datatables\Http\Controllers;
 
 use Antares\Datatables\Adapter\ColumnFilterAdapter as ColumnFilter;
 use Antares\Foundation\Http\Controllers\AdminController;
+use Antares\Datatables\Events\Reorder;
 
 class DatatablesController extends AdminController
 {
@@ -43,6 +44,29 @@ class DatatablesController extends AdminController
     public function index(ColumnFilter $filter)
     {
         return $filter->save(inputs());
+    }
+
+    /**
+     * Saves colum filtering options
+     * 
+     * @param ColumnFilter $filter
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function reorder()
+    {
+        $data = input('data');
+        $pos  = input('pos');
+        if (is_null($data) or is_null($pos)) {
+            return false;
+        }
+        $unserialize    = unserialize(decrypt($data));
+        $modelClass     = array_get($unserialize, 'model');
+        $datatableClass = array_get($unserialize, 'datatable');
+
+        if (!class_exists($modelClass) or ! class_exists($datatableClass)) {
+            return false;
+        }
+        return app('events')->dispatch(new Reorder($modelClass, $datatableClass, $pos));
     }
 
 }

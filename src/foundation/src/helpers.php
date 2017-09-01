@@ -384,7 +384,10 @@ if (!function_exists('area')) {
         if (!in_array($segment, $areas) && !auth()->guest()) {
             return user()->getArea();
         }
-
+//        $areas = config('areas.areas');
+//        if (auth()->guest() && array_key_exists('client', $areas)) {
+//            return 'client';
+//        }
 
         return !is_null($segment) ? $segment : config('areas.default');
     }
@@ -666,6 +669,31 @@ if (!function_exists('extensions')) {
         }
 
         return $return;
+    }
+
+}
+if (!function_exists('from_routes')) {
+
+    /**
+     * Get param from routes
+     */
+    function from_routes(...$args)
+    {
+        if (php_sapi_name() === 'cli' or ! is_array($args)) {
+            return null;
+        }
+        $current = Route::current();
+        if (is_null($current)) {
+            return null;
+        }
+        $params = $current->parameters();
+
+        foreach ($args as $bindedParam) {
+            if (!isset($params[$bindedParam])) {
+                continue;
+            }
+            return $params[$bindedParam];
+        }
     }
 
 }

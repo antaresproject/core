@@ -55,7 +55,12 @@ class Request extends YajraRequest
         if ($this->has('columns')) {
             return $this;
         }
+
         $replace = [];
+        if (empty($columns)) {
+            return $this;
+        }
+
         foreach ($columns as $column) {
             $replace[] = [
                 "data"       => $column,

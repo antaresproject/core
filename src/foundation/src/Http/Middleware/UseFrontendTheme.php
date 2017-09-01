@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Middleware;
 
 use Closure;
@@ -55,6 +54,10 @@ class UseFrontendTheme
      */
     public function handle($request, Closure $next)
     {
+        if (!auth()->guest() && !user()->hasRoles(['client', 'memeber'])) {
+            return $next($request);
+        }
+
         $this->beforeSendingThroughPipeline();
         $response = $next($request);
         $this->afterSendingThroughPipeline();
