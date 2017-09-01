@@ -61,6 +61,7 @@ class Migration
     protected function getNormalizedName(string $name): string
     {
         $name = str_replace('antaresproject/component-', 'antares/', $name);
+        $name = str_replace('antaresproject/module-', 'antares/', $name);
 
         return str_replace('-', '_', $name);
     }
