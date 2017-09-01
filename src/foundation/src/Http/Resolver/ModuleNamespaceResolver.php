@@ -23,8 +23,11 @@
 namespace Antares\Foundation\Http\Resolver;
 
 use Antares\Contracts\Http\Middleware\ModuleNamespaceResolver as ModuleResolverContract;
+use Antares\Extension\Factories\ExtensionFactory;
 use Illuminate\Contracts\Routing\Registrar;
+use Composer\Package\CompletePackageInterface;
 use RuntimeException;
+use ReflectionClass;
 
 class ModuleNamespaceResolver implements ModuleResolverContract
 {
@@ -68,14 +71,28 @@ class ModuleNamespaceResolver implements ModuleResolverContract
     protected $name;
 
     /**
-     * instance creator
-     * 
+     * @var CompletePackageInterface|null
+     */
+    protected $package;
+
+    /**
+     * Extension factory instance.
+     *
+     * @var ExtensionFactory
+     */
+    protected $extensionFactory;
+
+    /**
+     * ModuleNamespaceResolver constructor.
      * @param Registrar $registrar
      */
     public function __construct(Registrar $registrar)
     {
+        $this->extensionFactory = app()->make(ExtensionFactory::class);
+
         $current = $registrar->current();
-        if (!is_null($current)) {
+
+        if ($current !== null) {
             $this->route = $current->getAction();
         }
     }
@@ -92,12 +109,20 @@ class ModuleNamespaceResolver implements ModuleResolverContract
         if (!isset($this->route['controller'])) {
             return false;
         }
-        $name = $this->route['controller'];
-        preg_match("/.+?(?=Http)/", $name, $matches);
-        if (!isset($matches[0])) {
-            throw new RuntimeException('Unable to resolve module namespace from controller.');
+
+        list($controller,) = explode('@', $this->route['controller']);
+
+        $fileName = (new ReflectionClass($controller))->getFileName();
+        $rootPath = substr($fileName, 0, strrpos($fileName, 'src'));
+        $composerFilePath = $rootPath . 'composer.json';
+
+        if(! file_exists($composerFilePath)) {
+            return false;
         }
-        $this->name = str_replace('\\', '/', strtolower(rtrim($matches[0], '\\')));
+
+        $this->package = $this->extensionFactory->getComposerPackage($composerFilePath);
+        $this->name = $this->package->getName();
+
         return $this->name;
     }
 
@@ -118,7 +143,10 @@ class ModuleNamespaceResolver implements ModuleResolverContract
         if ($return == 'app') {
             return 'content';
         }
-        return ($return == 'app') ? self::frontendContentComponent : $return;
+
+        $name = ($return == 'app') ? self::frontendContentComponent : $return;
+
+        return str_replace('antaresproject/', '', $name);
     }
 
     /*
