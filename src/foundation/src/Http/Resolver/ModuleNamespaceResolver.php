@@ -116,7 +116,7 @@ class ModuleNamespaceResolver implements ModuleResolverContract
         $rootPath = substr($fileName, 0, strrpos($fileName, 'src'));
         $composerFilePath = $rootPath . 'composer.json';
 
-        if(! file_exists($composerFilePath)) {
+        if($rootPath === '' || ! file_exists($composerFilePath)) {
             return false;
         }
 
