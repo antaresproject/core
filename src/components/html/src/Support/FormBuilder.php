@@ -250,9 +250,10 @@ class FormBuilder
             return $value;
         }
 
-        if (!is_null($this->old($name))) {
+        if (!str_contains($name, ['[', ']']) && !is_null($this->old($name))) {
             return $this->old($name);
         }
+
 
         if (!is_null($value)) {
             return $value;
