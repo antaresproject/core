@@ -220,11 +220,11 @@ abstract class ModuleServiceProvider extends ServiceProvider
                     continue;
                 }
                 switch ($keyname) {
-                    case 'backend':
-                        $this->loadBackendRoutesFrom($route);
-                        break;
                     case 'frontend':
                         $this->loadFrontendRoutesFrom($route);
+                        break;
+                    case 'backend':
+                        $this->loadBackendRoutesFrom($route);
                         break;
                 }
             }
@@ -357,10 +357,11 @@ abstract class ModuleServiceProvider extends ServiceProvider
     /**
      * Loads breaedcrumbs file.
      */
-    private function loadBreadcrumbsFile() {
+    private function loadBreadcrumbsFile()
+    {
         $path = $this->extensionPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'breadcrumbs.php';
 
-        if(file_exists($path)) {
+        if (file_exists($path)) {
             $manager = $this->app->make(Manager::class);
             require_once $path;
         }
@@ -369,10 +370,11 @@ abstract class ModuleServiceProvider extends ServiceProvider
     /**
      * Loads menu file.
      */
-    private function loadMenuFile() {
+    private function loadMenuFile()
+    {
         $path = $this->extensionPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'menu.php';
 
-        if(file_exists($path)) {
+        if (file_exists($path)) {
             $menu = $this->app->make(MenuAssigner::class);
             require_once $path;
         }
