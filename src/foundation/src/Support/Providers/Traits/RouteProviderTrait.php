@@ -37,8 +37,7 @@ trait RouteProviderTrait
     protected function loadBackendRoutesFrom($path, $namespace = null)
     {
         $area = area();
-
-        if (in_array($area, ['client', 'member', 'user', null])) {
+        if (in_array($area, config('areas.routes.frontend'))) {
             return false;
         }
 
@@ -60,6 +59,10 @@ trait RouteProviderTrait
      */
     protected function loadFrontendRoutesFrom($path, $namespace = '', array $attributes = [])
     {
+        $area = area();
+        if (in_array($area, config('areas.routes.backend'))) {
+            return false;
+        }
         if (!$this->isPathIncluded($path)) {
             $foundation = $this->app->make('antares.app');
             $namespace  = $namespace ?: $this->namespace;
