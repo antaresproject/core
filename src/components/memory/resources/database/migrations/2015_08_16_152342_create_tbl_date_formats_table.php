@@ -18,8 +18,6 @@
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
-
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
@@ -40,8 +38,13 @@ class CreateTblDateFormatsTable extends Migration
         });
         Schema::table('tbl_date_formats', function(Blueprint $table) {
             DB::table('tbl_date_formats')->insert([
-                ['format' => 'yyyy-mm-dd'],
-                ['format' => 'dd-mm-yyyy'],
+                ['format' => 'Y-m-d'],
+                ['format' => 'd-m-Y'],
+                ['format' => 'F j, Y, g:i a'],
+                ['format' => 'j, n, Y'],
+                ['format' => 'Ymd'],
+                ['format' => 'j-m-y'],
+                ['format' => 'D M j T Y'],
             ]);
         });
     }
