@@ -39,6 +39,7 @@ class Application extends BaseApplication implements ApplicationContract
      */
     protected function registerBaseServiceProviders()
     {
+
         $this->register(new EventServiceProvider($this));
         $this->register(new RoutingServiceProvider($this));
     }
