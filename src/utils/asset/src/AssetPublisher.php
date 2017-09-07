@@ -125,6 +125,7 @@ class AssetPublisher
         if (!is_null($extension)) {
             $this->extension = $extension;
         }
+
         foreach ($files as $file) {
             if ($file->getRealPath() !== false) {
                 $name      = $this->extension . DIRECTORY_SEPARATOR . $file->getRelativePathname();
@@ -135,9 +136,13 @@ class AssetPublisher
             } else {
                 $published = $file->getRelativePathname();
             }
+            $basename = str_replace('\\', '/', $published);
 
-
-            $container->add(str_slug($file->getBasename()), str_replace('\\', '/', $published), [], $before);
+            if ($file->getExtension() === 'css') {
+                $this->assetFactory->container('antares/foundation::application')->style(str_slug($file->getBasename()), $basename);
+            } else {
+                $container->add(str_slug($file->getBasename()), $basename, [], $before);
+            }
         }
         return $container;
     }
@@ -167,7 +172,6 @@ class AssetPublisher
                 $files[] = new SplFileInfo($realPath, str_replace(public_path(), '', $realPath), last(explode('/', $realPath)));
             }
         }
-
         return $this->publishAndPropagate($files, null, $before);
     }
 
