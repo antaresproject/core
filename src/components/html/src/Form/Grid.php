@@ -207,6 +207,19 @@ class Grid extends BaseGrid implements GridContract
     }
 
     /**
+     * Adds layout params
+     * 
+     * @param String $key
+     * @param mixed $value
+     * @return $this
+     */
+    public function addLayoutParams($key, $value)
+    {
+        array_set($this->params, $key, $value);
+        return $this;
+    }
+
+    /**
      * Sets form as ajaxable
      * 
      * @param array $options
