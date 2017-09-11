@@ -492,6 +492,7 @@ class Grid extends BaseGrid implements GridContract
             return false;
         }
         $this->tests[$name] = $this->generator->build($name, $attributes, $callback);
+        return $this;
     }
 
     /**
@@ -543,6 +544,16 @@ class Grid extends BaseGrid implements GridContract
     {
         $this->customValidator = $validator;
         return $this;
+    }
+
+    /**
+     * Tests getter
+     * 
+     * @return array
+     */
+    public function tests()
+    {
+        return $this->tests;
     }
 
 }

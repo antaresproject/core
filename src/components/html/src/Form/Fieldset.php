@@ -571,4 +571,9 @@ class Fieldset extends BaseGrid implements FieldsetContract
         $this->orientation = $orientation;
     }
 
+    public function addTestButton()
+    {
+        
+    }
+
 }
