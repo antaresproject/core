@@ -323,8 +323,8 @@ abstract class DataTable extends BaseDataTableService
             'content'  => view($view, $data)->render(),
             'category' => array_get($this->search, 'category'),
         ];
-        if (is_null($id     = array_get($data, 'id'))) {
-            array_set($return, 'id', str_replace('{id}', $id, $pattern));
+        if (!is_null($id     = array_get($data, 'id'))) {
+            array_set($return, 'url', str_replace('{id}', $id, $pattern));
         }
         return $return;
     }
