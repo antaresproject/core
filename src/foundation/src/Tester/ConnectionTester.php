@@ -91,6 +91,7 @@ class ConnectionTester extends ResponseAdapter implements Tester
             $transport->setUsername($data['email_username']);
             $transport->setPassword($data['email_password']);
         }
+
         $mailer = new Swift_Mailer($transport);
 
 
@@ -99,6 +100,7 @@ class ConnectionTester extends ResponseAdapter implements Tester
 
         $message->from($data['email_address'], $data['email_address']);
         $message->setBody(trans('antares/foundation::tester.smtp_connection_succeed'), 'text/html');
+
         $message->setTo(user()->email);
         $message->setSubject(trans('antares/foundation::tester.email_title'));
         $failedRecipients = [];

@@ -36,10 +36,15 @@ trait RouteProviderTrait
      */
     protected function loadBackendRoutesFrom($path, $namespace = null)
     {
+        $area = area();
+        if (in_array($area, config('areas.routes.frontend'))) {
+            return false;
+        }
+
         if (!$this->isPathIncluded($path)) {
+
             $foundation = $this->app->make('antares.app');
             $namespace  = $namespace ?: $this->namespace;
-
             $foundation->namespaced($namespace, $this->getRouteLoader($path));
         }
     }
@@ -54,8 +59,11 @@ trait RouteProviderTrait
      */
     protected function loadFrontendRoutesFrom($path, $namespace = '', array $attributes = [])
     {
+        $area = area();
+        if (in_array($area, config('areas.routes.backend'))) {
+            return false;
+        }
         if (!$this->isPathIncluded($path)) {
-
             $foundation = $this->app->make('antares.app');
             $namespace  = $namespace ?: $this->namespace;
 
@@ -65,7 +73,6 @@ trait RouteProviderTrait
                 $attributes['namespace'] = $namespace;
             }
             $attributes['middleware'] = ['antares', 'Antares\Foundation\Http\Middleware\UseFrontendTheme'];
-
             $foundation->group('antares/foundation', 'antares', $attributes, $this->getRouteLoader($path));
         }
     }

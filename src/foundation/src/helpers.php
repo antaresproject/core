@@ -19,11 +19,48 @@
  * @link       http://antaresproject.io
  */
 use Illuminate\Contracts\Auth\Authenticatable;
+use Antares\Brands\Model\DateFormat;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Debug\Dumper;
 use Antares\Messages\SwalMessanger;
 use Antares\Html\Form\Field;
+
+if (!function_exists('format_time')) {
+
+    /**
+     * Creates time format representation depends on brand settings
+     */
+    function format_time($date, $format = null)
+    {
+        if (is_null($format)) {
+            $timeFormat = app('antares.memory')->make('registry')->get('brand.configuration.options.time_format');
+            $format     = $timeFormat ?? 'H:i:s';
+        }
+        $time = is_numeric($date) ? $date : strtotime($date);
+        return date($format, $time);
+    }
+
+}
+
+if (!function_exists('format_date')) {
+
+    /**
+     * Creates date format representation depends on brand settings
+     */
+    function format_date($date, $format = null)
+    {
+        if (is_null($format)) {
+            $dateFormatId = app('antares.memory')->make('component')->get('brand.configuration.options.date_format_id');
+            $dateFormat   = DateFormat::query()->find($dateFormatId);
+            $format       = !is_null($dateFormat) ? $dateFormat->format : 'y-m-d';
+        }
+        $time = is_numeric($date) ? $date : strtotime($date);
+        return date($format, $time);
+    }
+
+}
+
 
 if (!function_exists('url_no_area')) {
 
