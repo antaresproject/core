@@ -283,9 +283,11 @@ class Foundation extends Twig_Extension
                         if (!isset($matches[1])) {
                             return $messageBag->first($name, ':message');
                         }
-                        $idx = $matches[1];
-                        $key = str_replace('[' . $idx . ']', '', $name);
-                        return array_get($messageBag->messages(), $key . '.0.' . $idx);
+                        $idx  = $matches[1];
+                        $key  = str_replace('[' . $idx . ']', '', $name);
+                        $find = array_get($messageBag->messages(), $key . '.0.' . $idx);
+
+                        return is_null($find) ? array_get($messageBag->messages(), $key . '.' . $idx) : $find;
                     }),
             new Twig_SimpleFunction('format_date', function ($date, $format = 'Y-m-d') {
                         return format_date($date, $format);
