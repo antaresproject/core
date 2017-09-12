@@ -61,7 +61,6 @@ class CreateNotificationsTable extends Migration
             $table->integer('notification_id')->unsigned()->nullable()->index('notification_id_1');
             $table->integer('lang_id')->unsigned()->index('notification_contents_lang_id');
             $table->string('title', 500);
-            $table->string('subject', 500);
             $table->text('content');
         });
         Schema::create('tbl_notifications_stack', function(Blueprint $table) {
