@@ -22,15 +22,21 @@
 namespace Antares\Date;
 
 use Carbon\Carbon;
+use Antares\Brands\Model\DateFormat;
 
 class DateFormatter
 {
 
     /**
+     * @var DateFormat|null|false
+     */
+    protected static $formatDateModel = false;
+
+    /**
      * creates representation of human readable date in the past
      * 
      * @param string $date
-     * @param String $html
+     * @param bool $html
      * @return String
      */
     public function formatTimeAgoForHumans($date, $html = true)
@@ -51,4 +57,43 @@ class DateFormatter
         return '<span data-tooltip-inline="' . $original . '" >' . $value . '</span>';
     }
 
+    /**
+     * @param $date
+     * @param string|null $format
+     * @return false|string
+     */
+    public static function formatDate($date, string $format = null) {
+        if($format === null) {
+            if(self::$formatDateModel === false) {
+                $dateFormatId           = app('antares.memory')->make('component')->get('brand.configuration.options.date_format_id');
+                self::$formatDateModel  = DateFormat::query()->find($dateFormatId);
+            }
+
+            $format = self::$formatDateModel ? self::$formatDateModel->format : 'y-m-d';
+        }
+
+        if($date instanceof Carbon) {
+            return $date->format($format);
+        }
+
+        $time = is_numeric($date) ? $date : strtotime($date);
+
+        return date($format, $time);
+    }
+
+    /**
+     * @param $date
+     * @param string|null $format
+     * @return false|string
+     */
+    public static function formatTime($date, string $format = null) {
+        if (is_null($format)) {
+            $timeFormat = app('antares.memory')->make('registry')->get('brand.configuration.options.time_format');
+            $format     = $timeFormat ?? 'H:i:s';
+        }
+        $time = is_numeric($date) ? $date : strtotime($date);
+        return date($format, $time);
+    }
+
 }
+

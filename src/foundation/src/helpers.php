@@ -33,12 +33,7 @@ if (!function_exists('format_time')) {
      */
     function format_time($date, $format = null)
     {
-        if (is_null($format)) {
-            $timeFormat = app('antares.memory')->make('registry')->get('brand.configuration.options.time_format');
-            $format     = $timeFormat ?? 'H:i:s';
-        }
-        $time = is_numeric($date) ? $date : strtotime($date);
-        return date($format, $time);
+        return \Antares\Date\DateFormatter::formatTime($date, $format);
     }
 
 }
@@ -50,13 +45,7 @@ if (!function_exists('format_date')) {
      */
     function format_date($date, $format = null)
     {
-        if (is_null($format)) {
-            $dateFormatId = app('antares.memory')->make('component')->get('brand.configuration.options.date_format_id');
-            $dateFormat   = DateFormat::query()->find($dateFormatId);
-            $format       = !is_null($dateFormat) ? $dateFormat->format : 'y-m-d';
-        }
-        $time = is_numeric($date) ? $date : strtotime($date);
-        return date($format, $time);
+        return \Antares\Date\DateFormatter::formatDate($date, $format);
     }
 
 }
