@@ -415,7 +415,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
     }
 
     /**
-     * detach control from controls collection
+     * Detaches control from controls collection
      *
      * @param FieldContract $control
      * @return Fieldset
@@ -431,6 +431,17 @@ class Fieldset extends BaseGrid implements FieldsetContract
             }
         }
         return $this;
+    }
+
+    /**
+     * Detaches control from controls collection
+     * 
+     * @param FieldContract $control
+     * @return Fieldset
+     */
+    public function delete(FieldContract $control)
+    {
+        return $this->detachControl($control);
     }
 
     /**
@@ -571,9 +582,16 @@ class Fieldset extends BaseGrid implements FieldsetContract
         $this->orientation = $orientation;
     }
 
-    public function addTestButton()
+    /**
+     * Layout params setter
+     * 
+     * @param array $params
+     * @return $this
+     */
+    public function layoutParams(array $params = [])
     {
-        
+        $this->params = array_merge($this->params, $params);
+        return $this;
     }
 
 }

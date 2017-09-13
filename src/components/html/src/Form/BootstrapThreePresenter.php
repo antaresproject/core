@@ -164,6 +164,7 @@ class BootstrapThreePresenter implements Template
     public function password(FieldContract $field)
     {
         $attributes = $this->html->decorate($field->get('attributes'), ['class' => 'form-control']);
+        array_set($attributes, 'value', $field->get('value'));
         return $this->form->password($field->get('name'), $attributes);
     }
 

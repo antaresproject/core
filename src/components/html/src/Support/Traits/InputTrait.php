@@ -18,13 +18,15 @@
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
- namespace Antares\Html\Support\Traits;
+
+namespace Antares\Html\Support\Traits;
 
 use DateTime;
 use Illuminate\Support\Arr;
 
 trait InputTrait
 {
+
     /**
      * The types of inputs to not fill values on by default.
      *
@@ -44,19 +46,19 @@ trait InputTrait
      */
     public function input($type, $name, $value = null, $options = [])
     {
-        ! isset($options['name']) && $options['name'] = $name;
+        !isset($options['name']) && $options['name'] = $name;
 
-                                $id = $this->getIdAttribute($name, $options);
+        $id = $this->getIdAttribute($name, $options);
 
-        if (! in_array($type, $this->skipValueTypes)) {
+        if (!in_array($type, $this->skipValueTypes)) {
             $value = $this->getValueAttribute($name, $value);
         }
 
-                                $merge = compact('type', 'value', 'id');
+        $merge = compact('type', 'value', 'id');
 
         $options = array_merge($options, $merge);
 
-        return '<input'.$this->html->attributes($options).'>';
+        return '<input' . $this->html->attributes($options) . '>';
     }
 
     /**
@@ -83,7 +85,7 @@ trait InputTrait
      */
     public function password($name, $options = [])
     {
-        return $this->input('password', $name, '', $options);
+        return $this->input('password', $name, array_get($options, 'value', ''), $options);
     }
 
     /**
@@ -185,9 +187,9 @@ trait InputTrait
      */
     public function textarea($name, $value = null, $options = [])
     {
-        ! isset($options['name']) && $options['name'] = $name;
+        !isset($options['name']) && $options['name'] = $name;
 
-                                $options = $this->setTextAreaSize($options);
+        $options = $this->setTextAreaSize($options);
 
         $options['id'] = $this->getIdAttribute($name, $options);
 
@@ -195,9 +197,9 @@ trait InputTrait
 
         unset($options['size']);
 
-                                $options = $this->html->attributes($options);
+        $options = $this->html->attributes($options);
 
-        return '<textarea'.$options.'>'.e($value).'</textarea>';
+        return '<textarea' . $options . '>' . e($value) . '</textarea>';
     }
 
     /**
@@ -213,7 +215,7 @@ trait InputTrait
             return $this->setQuickTextAreaSize($options);
         }
 
-                                $cols = Arr::get($options, 'cols', 50);
+        $cols = Arr::get($options, 'cols', 50);
 
         $rows = Arr::get($options, 'rows', 10);
 
@@ -233,4 +235,5 @@ trait InputTrait
 
         return array_merge($options, ['cols' => $segments[0], 'rows' => $segments[1]]);
     }
+
 }
