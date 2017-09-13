@@ -50,7 +50,7 @@ class Mailer extends SupportMailer
 
         if (isset($raw)) {
             $method = (isset($view) || isset($plain)) ? 'addPart' : 'setBody';
-            $message->$method($raw, 'text/plain');
+            $message->$method($raw, 'text/html'); // Changed from plan text to html
         }
     }
 
