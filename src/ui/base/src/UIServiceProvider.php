@@ -80,8 +80,6 @@ class UIServiceProvider extends ServiceProvider
 
         /* @var $manager Manager */
         $manager = $this->app->make(Manager::class);
-        //antares/foundation::layouts/antares/partials/_head_webpack
-        //antares/foundation::layouts.antares.partials._breadcrumbs
 
         View::composer('antares/foundation::layouts/antares/partials/_head_webpack', function() use($manager) {
             if ($manager->isEnabled()) {
