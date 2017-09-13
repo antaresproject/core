@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 use Illuminate\Contracts\Auth\Authenticatable;
-use Antares\Brands\Model\DateFormat;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Debug\Dumper;
