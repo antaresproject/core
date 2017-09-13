@@ -107,8 +107,7 @@ class FormBuilder extends BaseBuilder implements BuilderContract
         if ($grid->row instanceof Model) {
             $action = $grid->row->exists ? 'edit' : 'create';
         }
-        $events = $this->container->make('events');
-
+        $events             = $this->container->make('events');
         $events->fire('antares.form: ' . snake_case($grid->name) . (($action) ? '.' . $action : ''), [$grid->row, $this]);
         $customFieldsActive = app('antares.extension')->isActive('customfields');
         if ($customFieldsActive) {
