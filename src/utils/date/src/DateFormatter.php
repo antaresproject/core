@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Date;
 
 use Carbon\Carbon;
@@ -62,17 +61,19 @@ class DateFormatter
      * @param string|null $format
      * @return false|string
      */
-    public static function formatDate($date, string $format = null) {
-        if($format === null) {
-            if(self::$formatDateModel === false) {
-                $dateFormatId           = app('antares.memory')->make('component')->get('brand.configuration.options.date_format_id');
-                self::$formatDateModel  = DateFormat::query()->find($dateFormatId);
+    public static function formatDate($date, string $format = null)
+    {
+
+        if ($format === null) {
+            if (self::$formatDateModel === false) {
+                $dateFormatId          = app('antares.memory')->make('registry')->get('brand.configuration.options.date_format_id');
+                self::$formatDateModel = DateFormat::query()->find($dateFormatId);
             }
+
 
             $format = self::$formatDateModel ? self::$formatDateModel->format : 'y-m-d';
         }
-
-        if($date instanceof Carbon) {
+        if ($date instanceof Carbon) {
             return $date->format($format);
         }
 
@@ -86,7 +87,8 @@ class DateFormatter
      * @param string|null $format
      * @return false|string
      */
-    public static function formatTime($date, string $format = null) {
+    public static function formatTime($date, string $format = null)
+    {
         if (is_null($format)) {
             $timeFormat = app('antares.memory')->make('registry')->get('brand.configuration.options.time_format');
             $format     = $timeFormat ?? 'H:i:s';
@@ -96,4 +98,3 @@ class DateFormatter
     }
 
 }
-
