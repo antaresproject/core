@@ -316,7 +316,6 @@ class FormBuilder extends BaseBuilder implements BuilderContract
                 array_push($controls, $control->name);
             }
         }
-
         $keys = $this->resolveWithMultiples($controls);
         return array_only(inputs(), $keys);
     }
@@ -331,13 +330,13 @@ class FormBuilder extends BaseBuilder implements BuilderContract
     {
         $return = [];
         foreach ($controlKeys as $key) {
-            preg_match("/\[[^\]]*\]/", $key, $matches);
+            preg_match_all("/\[[^\]]*\]/", $key, $matches);
             if (isset($matches[0])) {
-                $key = str_replace($matches[0], '', $key);
+                $key = str_replace(is_array($matches[0]) ? implode('', $matches[0]) : $matches[0], '', $key);
             }
             array_push($return, $key);
         }
-        return $return;
+        return array_unique($return);
     }
 
     /**
