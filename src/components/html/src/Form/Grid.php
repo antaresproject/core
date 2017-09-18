@@ -491,8 +491,7 @@ class Grid extends BaseGrid implements GridContract
         if (is_null($this->generator)) {
             return false;
         }
-        $this->tests[$name] = $this->generator->build($name, $attributes, $callback);
-        return $this;
+        return $this->tests[$name] = $this->generator->build($name, $attributes, $callback);
     }
 
     /**
