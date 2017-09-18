@@ -675,9 +675,10 @@ EOD;
         }
 
         $totalItemsCount    = $this->datatable->count();
-        $this->deferredData = $this->datatable->ajax()->getData()->data;
+        $this->deferredData = $this->datatable->ajax()->getData()->data; // dubluje zapytania sql
         $filters            = $this->datatable->getFilters();
         $query              = $this->datatable->query();
+
         foreach ($filters as $filter) {
             $this->addFilter($filter, $query);
         }
@@ -704,9 +705,12 @@ EOD;
             $params                    = $this->html->attributes($columnAttributes);
             $string                    .= "<th " . $params . ">{$collectedItem->title}</th>";
         }
+
+        $dataItems = $this->getDeferredDataItems();
+
         $string .= '</tr></thead>';
         $string .= '<tbody>';
-        foreach ($this->getDeferredDataItems() as $item) {
+        foreach ($dataItems as $item) {
             $string .= '<tr>';
             foreach ($this->collection as $collectedItem) {
                 $value  = isset($item->{$collectedItem->data}) ? $item->{$collectedItem->data} : '---';
@@ -717,7 +721,7 @@ EOD;
         $string                .= '</tbody>';
         $this->tableAttributes = array_merge($this->tableAttributes, $attributes);
         $scrollable            = '';
-        if ($this->datatable->count() > 10 or strlen($this->ajax) > 0) {
+        if ( count($dataItems) > 10 or strlen($this->ajax) > 0) {
             $scrollable = 'data-scrollable';
         }
         $massable = (int) $this->hasMassActions();
