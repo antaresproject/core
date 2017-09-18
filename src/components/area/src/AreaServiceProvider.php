@@ -35,7 +35,15 @@ class AreaServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(AreaManagerContract::class, AreaManager::class);
+        $this->app->singleton(AreaManager::class, function() {
+            $auth       = $this->app->make('auth');
+            $request    = $this->app->make('request');
+            $config     = (array) config('areas', []);
+
+            return new AreaManager($request, $auth, $config);
+        });
+
+        $this->app->bind(AreaManagerContract::class, AreaManager::class);
     }
 
     /**

@@ -25,7 +25,7 @@ use Antares\Area\Contracts\AreaManagerContract;
 use Antares\Area\Contracts\AreaContract;
 use Antares\Area\Middleware\AreasCollection;
 use Antares\Model\User;
-use Illuminate\Auth\AuthManager as Auth;
+use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Antares\Area\Model\Area;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -71,12 +71,14 @@ class AreaManager implements AreaManagerContract
     /**
      * AreaManager constructor.
      * @param Request $request
+     * @param AuthFactory $auth
+     * @param array $config
      */
-    public function __construct(Request $request)
+    public function __construct(Request $request, AuthFactory $auth, array $config = [])
     {
-        $this->auth     = auth();
+        $this->auth     = $auth;
         $this->request  = $request;
-        $this->config   = (array) config('areas', []);
+        $this->config   = $config;
         $this->areas    = new AreasCollection();
 
         $areas      = Arr::get($this->config, 'areas', []);

@@ -404,10 +404,7 @@ if (!function_exists('area')) {
      */
     function area()
     {
-        /* @var $areaManager \Antares\Area\Contracts\AreaManagerContract */
-        $areaManager = app()->make(\Antares\Area\Contracts\AreaManagerContract::class);
-
-        return $areaManager->getCurrentArea()->getId();
+        return \Antares\Area\Facade\AreasManager::manager()->getCurrentArea()->getId();
     }
 
 }
