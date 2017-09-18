@@ -404,17 +404,10 @@ if (!function_exists('area')) {
      */
     function area()
     {
-        $segment = request()->segment(1);
-        $areas   = array_keys(config('areas.areas'));
-        if (!in_array($segment, $areas) && !auth()->guest()) {
-            return user()->getArea();
-        }
-//        $areas = config('areas.areas');
-//        if (auth()->guest() && array_key_exists('client', $areas)) {
-//            return 'client';
-//        }
+        /* @var $areaManager \Antares\Area\Contracts\AreaManagerContract */
+        $areaManager = app()->make(\Antares\Area\Contracts\AreaManagerContract::class);
 
-        return !is_null($segment) ? $segment : config('areas.default');
+        return $areaManager->getCurrentArea()->getId();
     }
 
 }
