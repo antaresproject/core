@@ -55,7 +55,7 @@ class UseBackendTheme
     public function handle($request, Closure $next)
     {
 
-        if (!auth()->guest() && user()->hasRoles(['client', 'memeber'])) {
+        if (auth()->check() && user()->hasRoles(['client', 'memeber'])) {
             return $next($request);
         }
         app()->setLocale(user_meta('language', 'en'));
@@ -73,9 +73,9 @@ class UseBackendTheme
      */
     protected function beforeSendingThroughPipeline()
     {
-        $this->dispatcher->fire('antares.started: admin');
-        $this->dispatcher->fire('antares.ready: admin');
-        $this->dispatcher->fire('antares.ready: menu');
+        $this->dispatcher->dispatch('antares.started: admin');
+        $this->dispatcher->dispatch('antares.ready: admin');
+        $this->dispatcher->dispatch('antares.ready: menu');
     }
 
     /**
@@ -85,7 +85,7 @@ class UseBackendTheme
      */
     protected function afterSendingThroughPipeline()
     {
-        $this->dispatcher->fire('antares.done: admin');
+        $this->dispatcher->dispatch('antares.done: admin');
     }
 
 }
