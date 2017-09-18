@@ -63,8 +63,14 @@ class Auth extends Twig_Extension
             new Twig_SimpleFunction('auth_check', [$this->auth, 'check']),
             new Twig_SimpleFunction('auth_guest', [$this->auth, 'guest']),
             new Twig_SimpleFunction('auth_user', function () {
-                        return $this->auth->user();
-                    }),
+                return $this->auth->user();
+            }),
+            new Twig_SimpleFunction('auth_client', function () {
+                return $this->auth->check() && $this->auth->user()->isAny(['member']);
+            }),
+            new Twig_SimpleFunction('auth_admin', function () {
+                return $this->auth->check() && ! $this->auth->user()->isAny(['member']);
+            }),
         ];
     }
 
