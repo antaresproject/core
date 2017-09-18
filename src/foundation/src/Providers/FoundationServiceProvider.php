@@ -141,7 +141,7 @@ class FoundationServiceProvider extends ServiceProvider
                 continue;
             }
             $filename = (php_sapi_name() === 'cli') ? 'laravel-cli' : 'laravel';
-            $handler->setFilenameFormat($filename . '-{date}.log', 'Y-m-d');
+            $handler->setFilenameFormat($filename . '-{date}', 'Y-m-d');
         }
 
         return;

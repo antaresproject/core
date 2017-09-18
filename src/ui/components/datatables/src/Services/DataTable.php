@@ -80,7 +80,6 @@ abstract class DataTable extends BaseDataTableService
     {
         $this->datatables     = app(Datatables::class);
         $this->viewFactory    = app(ViewFactory::class);
-        //$this->perPageAdapter = is_null($perPageAdapter) ? app(PerPage::class) : $perPageAdapter;
         $this->perPageAdapter = app(PerPage::class);
     }
 
@@ -100,7 +99,7 @@ abstract class DataTable extends BaseDataTableService
         Event::fire('datatables:' . $path . ':before.action.' . $action, [$this->tableActions, $row]);
         $this->tableActions->push($btn);
         Event::fire('datatables:' . $path . ':after.action.' . $action, [$this->tableActions, $row]);
-
+        Event::fire('datatables.' . get_class($this) . '.after.action.' . $action, [$this->tableActions, $row]);
         return $this;
     }
 
