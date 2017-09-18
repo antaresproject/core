@@ -20,11 +20,25 @@
 
 namespace Antares\Area\Middleware;
 
+use Antares\Area\Contracts\AreaManagerContract;
 use Illuminate\Http\Request;
 use Closure;
 
 class AreaMiddleware
 {
+
+    /**
+     * @var AreaManagerContract
+     */
+    protected $areaManager;
+
+    /**
+     * AreaMiddleware constructor.
+     * @param AreaManagerContract $areaManager
+     */
+    public function __construct(AreaManagerContract $areaManager) {
+        $this->areaManager = $areaManager;
+    }
 
     /**
      * Checking whther user is allowed to area
@@ -35,17 +49,20 @@ class AreaMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $area = area();
-        if (!in_array($area, array_keys(config('areas.areas')))) {
+        if( ! $this->areaManager->hasAreaInUri() ) {
             return $next($request);
         }
 
-        if (!auth()->guest() && $area && $area !== 'antares' && !request()->ajax() && !($request->isJson() OR $request->wantsJson())) {
+        $area = $this->areaManager->getCurrentArea()->getId();
+
+        if (auth()->check() && $area && $area !== 'antares' && !$request->ajax() && !($request->isJson() OR $request->wantsJson())) {
             $areas = user()->roles->pluck('area')->toArray();
+
             if (!in_array($area, $areas)) {
                 return redirect_with_message(handles('antares/foundation::/'), trans('You are not allowed to area.'), 'error');
             }
         }
+
         return $next($request);
     }
 
