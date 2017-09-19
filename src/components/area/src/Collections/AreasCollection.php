@@ -24,7 +24,8 @@ use Antares\Area\Contracts\AreaContract;
 use ArrayAccess;
 use Countable;
 
-class AreasCollection implements ArrayAccess, Countable {
+class AreasCollection implements ArrayAccess, Countable
+{
 
     /**
      * @var AreaContract[]
@@ -34,14 +35,16 @@ class AreasCollection implements ArrayAccess, Countable {
     /**
      * @param AreaContract $area
      */
-    public function add(AreaContract $area) {
+    public function add(AreaContract $area)
+    {
         $this->areas[$area->getId()] = $area;
     }
 
     /**
      * @return AreaContract[]
      */
-    public function all() : array {
+    public function all(): array
+    {
         return array_values($this->areas);
     }
 
@@ -49,7 +52,8 @@ class AreasCollection implements ArrayAccess, Countable {
      * @param AreaContract $area
      * @return bool
      */
-    public function has(AreaContract $area) : bool {
+    public function has(AreaContract $area): bool
+    {
         return array_key_exists($area->getId(), $this->areas);
     }
 
@@ -57,8 +61,9 @@ class AreasCollection implements ArrayAccess, Countable {
      * @param string $id
      * @return AreaContract|null
      */
-    public function getById(string $id) : ?AreaContract {
-        if( array_key_exists($id, $this->areas) ) {
+    public function getById(string $id)
+    {
+        if (array_key_exists($id, $this->areas)) {
             return $this->areas[$id];
         }
         return null;
@@ -76,7 +81,8 @@ class AreasCollection implements ArrayAccess, Countable {
      * The return value will be casted to boolean if non-boolean was returned.
      * @since 5.0.0
      */
-    public function offsetExists($offset) {
+    public function offsetExists($offset)
+    {
         return isset($this->areas[$offset]);
     }
 
@@ -89,7 +95,8 @@ class AreasCollection implements ArrayAccess, Countable {
      * @return mixed Can return all value types.
      * @since 5.0.0
      */
-    public function offsetGet($offset) {
+    public function offsetGet($offset)
+    {
         return isset($this->areas[$offset]) ? $this->areas[$offset] : null;
     }
 
@@ -105,8 +112,9 @@ class AreasCollection implements ArrayAccess, Countable {
      * @return void
      * @since 5.0.0
      */
-    public function offsetSet($offset, $value) {
-        if($value instanceof AreaContract) {
+    public function offsetSet($offset, $value)
+    {
+        if ($value instanceof AreaContract) {
             $this->add($value);
         }
 
@@ -122,7 +130,8 @@ class AreasCollection implements ArrayAccess, Countable {
      * @return void
      * @since 5.0.0
      */
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset)
+    {
         unset($this->areas[$offset]);
     }
 
@@ -139,4 +148,5 @@ class AreasCollection implements ArrayAccess, Countable {
     {
         return count($this->areas);
     }
+
 }
