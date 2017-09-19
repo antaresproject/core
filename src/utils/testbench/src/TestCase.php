@@ -82,11 +82,9 @@ abstract class TestCase extends PHPUnit_Framework_TestCase implements TestCaseCo
      */
     public function setUp()
     {
-
         if (!$this->app) {
             $this->refreshApplication();
         }
-
 
         if (!$this->factory) {
             $this->factory = $this->app->make(Factory::class);
