@@ -22,7 +22,7 @@
 
 namespace Antares\Auth\Passwords;
 
-use Antares\Contracts\Notification\Notification;
+use Antares\Auth\Notifications\PasswordReset;
 use Illuminate\Auth\Passwords\PasswordBroker as Broker;
 use Illuminate\Auth\Passwords\TokenRepositoryInterface;
 use Illuminate\Contracts\Auth\CanResetPassword;
@@ -30,7 +30,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as RemindableContract;
 use Illuminate\Contracts\Auth\PasswordBroker as PasswordBrokerContract;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Facades\Event;
+use Antares\Notifications\Facade\Notification;
 use Closure;
 use function config;
 
@@ -45,19 +45,15 @@ class PasswordBroker extends Broker
     protected $mailer;
 
     /**
-     * Create a new password broker instance.
-     *
-     * @param  TokenRepositoryInterface  $tokens
-     * @param  UserProvider  $users
-     * @param  \Antares\Contracts\Notification\Notification  $mailer
-     * @param  string  $emailView
+     * PasswordBroker constructor.
+     * @param TokenRepositoryInterface $tokens
+     * @param UserProvider $users
+     * @param $emailView
      */
-    public function __construct(TokenRepositoryInterface $tokens, UserProvider $users, Notification $mailer, $emailView
-    )
+    public function __construct(TokenRepositoryInterface $tokens, UserProvider $users, $emailView)
     {
-        $this->users     = $users;
-        $this->mailer    = $mailer;
-        $this->tokens    = $tokens;
+        parent::__construct($tokens, $users);
+
         $this->emailView = $emailView;
     }
 
@@ -97,7 +93,6 @@ class PasswordBroker extends Broker
      */
     public function emailResetLink(RemindableContract $user, $token, Closure $callback = null)
     {
-
         $data = [
             'user'   => ($user instanceof Arrayable ? $user->toArray() : $user),
             'email'  => $user->getEmailForPasswordReset(),
@@ -105,8 +100,10 @@ class PasswordBroker extends Broker
             'url'    => handles('antares/foundation::forgot/reset/' . $token),
             'expire' => config('auth.passwords.users.expire', 60)
         ];
-        email_notification('email.forgot_password', [$user], $data);
-        return;
+
+        Notification::send($user, new PasswordReset($data));
+
+        //email_notification('email.forgot_password', [$user], $data);
     }
 
 }
