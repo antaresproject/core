@@ -18,68 +18,68 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Area\Contracts;
 
 use Antares\Area\Middleware\AreasCollection;
 
-interface AreaManagerContract {
+interface AreaManagerContract
+{
 
     /**
      * Returns the default area.
      *
      * @return AreaContract
      */
-    public function getDefault() : AreaContract;
+    public function getDefault(): AreaContract;
 
     /**
      * Checks if the route has area.
      *
      * @return bool
      */
-    public function hasAreaInUri() : bool;
+    public function hasAreaInUri(): bool;
 
     /**
      * Gets an area object based on the current authentication and URI..
      *
      * @return AreaContract
      */
-    public function getCurrentArea() : AreaContract;
+    public function getCurrentArea(): AreaContract;
 
     /**
      * Returns collection of frontend areas.
      *
      * @return AreasCollection
      */
-    public function getFrontendAreas() : AreasCollection;
+    public function getFrontendAreas(): AreasCollection;
 
     /**
      * Returns collection of backend areas.
      *
      * @return AreasCollection
      */
-    public function getBackendAreas() : AreasCollection;
+    public function getBackendAreas(): AreasCollection;
 
     /**
      * Checks if the current area belongs to the Frontend Areas.
      *
      * @return boolean
      */
-    public function isFrontendArea() : bool;
+    public function isFrontendArea(): bool;
 
     /**
      * Checks if the current area belongs to the Backend Areas.
      *
      * @return boolean
      */
-    public function isBackendArea() : bool;
+    public function isBackendArea(): bool;
 
     /**
      * Returns a collection with areas.
      *
      * @return AreasCollection
      */
-    public function getAreas() : AreasCollection;
+    public function getAreas(): AreasCollection;
 
     /**
      * Returns an area object based on ID. Null returns if not found.
@@ -87,7 +87,7 @@ interface AreaManagerContract {
      * @param string $id
      * @return AreaContract | null
      */
-    public function getById(string $id) : ?AreaContract;
+    public function getById(string $id);
 
     /**
      * Returns an area object based on ID. Default area returns if not found the desired one.
@@ -95,6 +95,5 @@ interface AreaManagerContract {
      * @param string $id
      * @return AreaContract
      */
-    public function getByIdOrDefault(string $id) : AreaContract;
-    
+    public function getByIdOrDefault(string $id): AreaContract;
 }
