@@ -20,7 +20,7 @@
 
 namespace Antares\Area\Facade;
 
-use Antares\Area\Contracts\AreaManagerContract;
+use Antares\Area\AreaManager;
 
 class AreasManager
 {
@@ -28,10 +28,10 @@ class AreasManager
     /**
      * Returns manager instance.
      *
-     * @return AreaManagerContract
+     * @return AreaManager
      */
-    public static function manager() : AreaManagerContract {
-        return app()->make(AreaManagerContract::class);
+    public static function manager() : AreaManager {
+        return app()->make(AreaManager::class);
     }
 
 }
