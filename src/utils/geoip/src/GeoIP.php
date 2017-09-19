@@ -23,7 +23,7 @@ namespace Antares\GeoIP;
 use Illuminate\Session\Store as SessionStore;
 use Torann\GeoIP\GeoIP as SupportGeoIP;
 use Antares\Config\Repository;
-use Guzzle\Http\Client;
+//use Guzzle\Http\Client;
 use Exception;
 
 class GeoIP extends SupportGeoIP
@@ -58,14 +58,7 @@ class GeoIP extends SupportGeoIP
     public function getLocation($ip = null)
     {
         try {
-            $ip       = is_null($ip) ? request()->ip() : $ip;
-            $client   = new Client();
-            $res      = $client->createRequest('GET', self::LOCATION . $ip);
-            $response = $res->send();
-            if ($response->getStatusCode() === 200) {
-                $body = $response->getBody(true);
-                return json_decode($body, true);
-            }
+            
         } catch (Exception $ex) {
             
         }

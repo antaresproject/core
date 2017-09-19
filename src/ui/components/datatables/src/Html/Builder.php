@@ -23,6 +23,8 @@ namespace Antares\Datatables\Html;
 use Antares\Datatables\Contracts\DatatabledContract;
 use Antares\Datatables\Adapter\ColumnFilterAdapter;
 use Antares\Datatables\Adapter\GroupsFilterAdapter;
+use Antares\Events\Datatables\AfterMassActionsAction;
+use Antares\Events\Datatables\BeforeMassActionsAction;
 use Yajra\Datatables\Html\Builder as BaseBuilder;
 use Antares\Datatables\Adapter\FilterAdapter;
 use Antares\Datatables\Adapter\OrderAdapter;
@@ -862,12 +864,18 @@ EOD;
     public function addMassAction($name, Expression $massAction)
     {
         $model             = $this->getQuery()->getModel();
-        $this->massActions = array_merge($this->massActions, (array) event('datatables:' . uri() . ':before.massactions.action.' . $name, [$this->massActions, $model], true));
+        $this->massActions = array_merge($this->massActions, (array)
+            //event('datatables:' . uri() . ':before.massactions.action.' . $name, [$this->massActions, $model], true)
+            event(new BeforeMassActionsAction(uri(), $name, $model, $this->massActions))
+        );
         if (empty($this->massActions)) {
             $this->massActions = [];
         }
         array_push($this->massActions, $massAction);
-        $this->massActions = array_merge($this->massActions, (array) event('datatables:' . uri() . ':after.massactions.action.' . $name, [$this->massActions, $model], true));
+        $this->massActions = array_merge($this->massActions, (array)
+            //event('datatables:' . uri() . ':after.massactions.action.' . $name, [$this->massActions, $model], true)
+            event(new AfterMassActionsAction(uri(), $name, $model, $this->massActions))
+        );
         $this->massActions = array_unique($this->massActions);
         return $this;
     }
