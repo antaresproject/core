@@ -83,6 +83,7 @@ class UiComponentsServiceProvider extends ModuleServiceProvider
     {
         $path = realpath(__DIR__);
         $this->loadBackendRoutesFrom("{$path}/routes.php");
+        $this->loadFrontendRoutesFrom("{$path}/routes.php");
     }
 
     /**
