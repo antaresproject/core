@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Area;
 
 use Antares\Area\Contracts\AreaManagerContract;
@@ -76,15 +75,15 @@ class AreaManager implements AreaManagerContract
      */
     public function __construct(Request $request, AuthFactory $auth, array $config = [])
     {
-        $this->auth     = $auth;
-        $this->request  = $request;
-        $this->config   = $config;
-        $this->areas    = new AreasCollection();
+        $this->auth    = $auth;
+        $this->request = $request;
+        $this->config  = $config;
+        $this->areas   = new AreasCollection();
 
-        $areas      = Arr::get($this->config, 'areas', []);
-        $default    = Arr::get($this->config, 'default', 'client');
+        $areas   = Arr::get($this->config, 'areas', []);
+        $default = Arr::get($this->config, 'default', 'client');
 
-        foreach($areas as $name => $title) {
+        foreach ($areas as $name => $title) {
             $this->areas->add(new Area($name, trans($title)));
         }
 
@@ -96,7 +95,8 @@ class AreaManager implements AreaManagerContract
      *
      * @return AreaContract
      */
-    public function getDefault() : AreaContract {
+    public function getDefault(): AreaContract
+    {
         return $this->default;
     }
 
@@ -105,25 +105,25 @@ class AreaManager implements AreaManagerContract
      *
      * @return bool
      */
-    public function hasAreaInUri() : bool {
-        $segment    = $this->request->segment(1);
-        $area       = $segment ? $this->getById($segment) : null;
+    public function hasAreaInUri(): bool
+    {
+        $segment = $this->request->segment(1);
+        $area    = $segment ? $this->getById($segment) : null;
 
-        return !! $area;
+        return !!$area;
     }
-
 
     /**
      * Gets an area object based on the current authentication and URI.
      * 
      * @return AreaContract
      */
-    public function getCurrentArea() : AreaContract
+    public function getCurrentArea(): AreaContract
     {
-        $segment    = $this->request->segment(1);
-        $area       = $segment ? $this->getById($segment) : null;
+        $segment = $this->request->segment(1);
+        $area    = $segment ? $this->getById($segment) : null;
 
-        if( ! $area && $this->auth->check() ) {
+        if (!$area && $this->auth->check()) {
             /* @var $user User */
             $user = $this->auth->user();
             $area = $this->areas->getById($user->getArea());
@@ -137,14 +137,15 @@ class AreaManager implements AreaManagerContract
      *
      * @return AreasCollection
      */
-    public function getFrontendAreas() : AreasCollection {
+    public function getFrontendAreas(): AreasCollection
+    {
         $areas      = (array) Arr::get($this->config, 'routes.frontend', []);
         $collection = new AreasCollection();
 
-        foreach($areas as $areaId) {
+        foreach ($areas as $areaId) {
             $area = $this->areas->getById($areaId);
 
-            if($area) {
+            if ($area) {
                 $collection->add($area);
             }
         }
@@ -157,14 +158,15 @@ class AreaManager implements AreaManagerContract
      *
      * @return AreasCollection
      */
-    public function getBackendAreas() : AreasCollection {
+    public function getBackendAreas(): AreasCollection
+    {
         $areas      = (array) Arr::get($this->config, 'routes.backend', []);
         $collection = new AreasCollection();
 
-        foreach($areas as $areaId) {
+        foreach ($areas as $areaId) {
             $area = $this->areas->getById($areaId);
 
-            if($area) {
+            if ($area) {
                 $collection->add($area);
             }
         }
@@ -177,7 +179,7 @@ class AreaManager implements AreaManagerContract
      * 
      * @return boolean
      */
-    public function isFrontendArea() : bool
+    public function isFrontendArea(): bool
     {
         return $this->getFrontendAreas()->has($this->getCurrentArea());
     }
@@ -187,7 +189,7 @@ class AreaManager implements AreaManagerContract
      * 
      * @return boolean
      */
-    public function isBackendArea() : bool
+    public function isBackendArea(): bool
     {
         return $this->getBackendAreas()->has($this->getCurrentArea());
     }
@@ -197,7 +199,7 @@ class AreaManager implements AreaManagerContract
      * 
      * @return AreasCollection
      */
-    public function getAreas() : AreasCollection
+    public function getAreas(): AreasCollection
     {
         return $this->areas;
     }
@@ -208,7 +210,7 @@ class AreaManager implements AreaManagerContract
      * @param string $id
      * @return AreaContract | null
      */
-    public function getById(string $id) : ?AreaContract
+    public function getById(string $id)
     {
         return $this->areas->getById($id);
     }
@@ -219,7 +221,7 @@ class AreaManager implements AreaManagerContract
      * @param string $id
      * @return AreaContract
      */
-    public function getByIdOrDefault(string $id) : AreaContract
+    public function getByIdOrDefault(string $id): AreaContract
     {
         $area = $this->getById($id);
 
