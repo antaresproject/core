@@ -21,6 +21,9 @@
 
 namespace Antares\Html;
 
+use Antares\Events\Customfields\AfterSearch;
+use Antares\Events\Customfields\BeforeSearch;
+
 class CustomfieldsFinder
 {
 
@@ -67,7 +70,8 @@ class CustomfieldsFinder
     {
         $extensions = extensions();
         $return     = [];
-        event('customfields.before.search', $return);
+        //event('customfields.before.search', $return);
+        event(new BeforeSearch($return));
 
         foreach ($extensions as $name => $extension) {
             $name   = 'antares/' . str_replace(['component-', 'module-'], '', $extension['name']);
@@ -101,7 +105,9 @@ class CustomfieldsFinder
                 }
             }
         }
-        event('customfields.after.search', [$return]);
+
+        //event('customfields.after.search', [$return]);
+        event(new AfterSearch($return));
         return $return;
     }
 

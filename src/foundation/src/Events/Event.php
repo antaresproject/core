@@ -70,9 +70,9 @@ abstract class AbstractEvent implements Event
         $details = debug_backtrace()[1] ?? null;
 
         $model->details = $details ? serialize([
-            'file'     => $details['file'],
-            'line'     => $details['line'],
-            'function' => $details['function']
+            'file'     => $details['file'] ?? null,
+            'line'     => $details['line'] ?? null,
+            'function' => $details['function'] ?? null
         ]) : null;
         $model->fire_count = $fireCount;
         $model->save();
