@@ -21,6 +21,7 @@
 
 namespace Antares\Foundation\Listeners;
 
+use Antares\Events\Views\BreadcrumbBeforeRender;
 use Antares\Support\Fluent;
 use Closure;
 
@@ -44,12 +45,12 @@ class BreadcrumbsMenuDependableActions extends AbstractDependableActions
     /**
      * Handle when event firing
      * 
-     * @param \Antares\Foundation\Support\MenuHandler $menu
+     * @param BreadcrumbBeforeRender $event
      * @return void
      */
-    public function handle($eventName, array $params = [])
+    public function handle(BreadcrumbBeforeRender $event)
     {
-        $menu       = last($params);
+        $menu       = $event->items;
         $this->menu = $menu;
 
         $attributes = $menu->getAttributes();

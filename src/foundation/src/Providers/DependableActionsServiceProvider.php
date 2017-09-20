@@ -21,6 +21,7 @@
 
 namespace Antares\Foundation\Providers;
 
+use Antares\Events\Views\BreadcrumbBeforeRender;
 use Antares\Foundation\Listeners\DatatableMassActionsDependableActions;
 use Antares\Foundation\Listeners\BreadcrumbsMenuDependableActions;
 use Antares\Foundation\Listeners\DatatableDependableActions;
@@ -49,7 +50,8 @@ class DependableActionsServiceProvider extends ServiceProvider
         $events = $this->app->make('events');
         $events->listen('datatables:*:before.action.edit', DatatableDependableActions::class);
         $events->listen('datatables:*:after.massactions.action.delete', DatatableMassActionsDependableActions::class);
-        $events->listen('breadcrumb.before.render.*', BreadcrumbsMenuDependableActions::class);
+        //$events->listen('breadcrumb.before.render.*', BreadcrumbsMenuDependableActions::class);
+        $events->listen(BreadcrumbBeforeRender::class, BreadcrumbsMenuDependableActions::class);
     }
 
 }

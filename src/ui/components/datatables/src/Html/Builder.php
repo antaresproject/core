@@ -25,6 +25,7 @@ use Antares\Datatables\Adapter\ColumnFilterAdapter;
 use Antares\Datatables\Adapter\GroupsFilterAdapter;
 use Antares\Events\Datatables\AfterMassActionsAction;
 use Antares\Events\Datatables\BeforeMassActionsAction;
+use Antares\Events\Datatables\TopCenterContent;
 use Yajra\Datatables\Html\Builder as BaseBuilder;
 use Antares\Datatables\Adapter\FilterAdapter;
 use Antares\Datatables\Adapter\OrderAdapter;
@@ -538,8 +539,8 @@ EOD;
         }
         $return .= '</div>';
 
-
-        $result = event(strtolower(class_basename($this->datatable)) . '.datatables.top.center', [&$return]);
+        //$result = event(strtolower(class_basename($this->datatable)) . '.datatables.top.center', [&$return]);
+        $result = event(new TopCenterContent(strtolower(class_basename($this->datatable)), $return), [], true);
         $return .= isset($result[0]) ? $result[0] : '';
 
         $return .= '<div class="card-ctrls__right">';
@@ -866,7 +867,7 @@ EOD;
         $model             = $this->getQuery()->getModel();
         $this->massActions = array_merge($this->massActions, (array)
             //event('datatables:' . uri() . ':before.massactions.action.' . $name, [$this->massActions, $model], true)
-            event(new BeforeMassActionsAction(uri(), $name, $model, $this->massActions))
+            event(new BeforeMassActionsAction(uri(), $name, $model, $this->massActions), [], true)
         );
         if (empty($this->massActions)) {
             $this->massActions = [];
@@ -874,7 +875,7 @@ EOD;
         array_push($this->massActions, $massAction);
         $this->massActions = array_merge($this->massActions, (array)
             //event('datatables:' . uri() . ':after.massactions.action.' . $name, [$this->massActions, $model], true)
-            event(new AfterMassActionsAction(uri(), $name, $model, $this->massActions))
+            event(new AfterMassActionsAction(uri(), $name, $model, $this->massActions), [], true)
         );
         $this->massActions = array_unique($this->massActions);
         return $this;

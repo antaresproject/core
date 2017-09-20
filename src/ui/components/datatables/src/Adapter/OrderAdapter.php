@@ -2,6 +2,7 @@
 
 namespace Antares\Datatables\Adapter;
 
+use Antares\Events\Datatables\Order;
 use Closure;
 
 class OrderAdapter
@@ -52,7 +53,8 @@ class OrderAdapter
             $name = str_replace('*', 'id', $name);
         }
         $queryBuilder = $engine->getQuery();
-        $fired        = event('datatables.order.' . $name, [&$queryBuilder, $direction], true);
+        //$fired        = event('datatables.order.' . $name, [&$queryBuilder, $direction], true);
+        $fired        = event(new Order($name, $queryBuilder, $direction), [], true);
 
 
 
