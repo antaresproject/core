@@ -55,8 +55,7 @@ final class MenuComposer
     /**
      * singleton implementation
      *
-     * @return Singleton
-     * @static
+     * @return MenuComposer
      */
     public static function getInstance()
     {
