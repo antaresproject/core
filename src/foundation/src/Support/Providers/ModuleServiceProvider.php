@@ -162,18 +162,14 @@ abstract class ModuleServiceProvider extends ServiceProvider
             return;
         }
 
-
-
-
         $routerAdapter = $this->app->make(Adapter::class);
         $routes        = [];
 
+        /* @var $route \Illuminate\Routing\Route */
         foreach ($router->getRoutes()->getRoutes() as $route) {
-
             $routeActionName = $route->getActionName();
 
             if (starts_with($routeActionName, $this->namespace)) {
-
                 $routes[] = $route;
             }
         }
@@ -188,10 +184,9 @@ abstract class ModuleServiceProvider extends ServiceProvider
      */
     protected function setExtensionPath()
     {
-        $reflection          = new ReflectionClass($this);
-        $filename            = $reflection->getFileName();
-        $splFileInfo         = new SplFileInfo($filename);
-        return $this->extensionPath = $splFileInfo->getPath();
+        $filename = (new ReflectionClass($this))->getFileName();
+
+        return $this->extensionPath = (new SplFileInfo($filename))->getPath();
     }
 
     /**
@@ -206,20 +201,22 @@ abstract class ModuleServiceProvider extends ServiceProvider
         $routes = [
             'backend'  => [
                 $path . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'backend.php',
-                $path . DIRECTORY_SEPARATOR . 'routes.php'
+                $path . DIRECTORY_SEPARATOR . 'backend.php',
+                $path . DIRECTORY_SEPARATOR . 'routes.php',
             ],
             'frontend' => [
-                $path . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'frontend.php'
+                $path . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'frontend.php',
+                $path . DIRECTORY_SEPARATOR . 'frontend.php',
+                $path . DIRECTORY_SEPARATOR . 'routes.php',
             ]
         ];
 
-
-        foreach ($routes as $keyname => $routePaths) {
+        foreach ($routes as $area => $routePaths) {
             foreach ($routePaths as $route) {
                 if (!file_exists($route)) {
                     continue;
                 }
-                switch ($keyname) {
+                switch ($area) {
                     case 'frontend':
                         $this->loadFrontendRoutesFrom($route);
                         break;
@@ -243,7 +240,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
         }
 
         $this->app->make('antares.acl')->make($this->routeGroup)->attach(
-                $this->app->make('antares.platform.memory')
+            $this->app->make('antares.platform.memory')
         );
     }
 

@@ -12,7 +12,7 @@ class ValidateForm extends AbstractEvent
 	public function __construct($grid, $params = null)
 	{
 		parent::__construct($params);
-		$this->grid = grid;
+		$this->grid = $grid;
 	}
 
 	public function setName()
