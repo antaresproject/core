@@ -31,7 +31,7 @@ class JavaScriptExpression
 
     /**
      * @param string $code a javascript expression that is to be wrapped by this object
-     * @throws CException if argument is not a string
+     * @throws \Exception if argument is not a string
      */
     public function __construct($code)
     {

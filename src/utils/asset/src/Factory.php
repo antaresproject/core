@@ -21,6 +21,8 @@
 
 namespace Antares\Asset;
 
+use Antares\Extension\Manager;
+
 class Factory
 {
 
@@ -32,6 +34,20 @@ class Factory
     protected $dispatcher;
 
     /**
+     * Extensions Manager instance.
+     *
+     * @var Manager
+     */
+    protected $extensionsManager;
+
+    /**
+     * Asset Symlinker instance.
+     *
+     * @var AssetSymlinker
+     */
+    protected $assetSymlinker;
+
+    /**
      * All of the instantiated asset containers.
      *
      * @var array
@@ -39,13 +55,16 @@ class Factory
     protected $containers = [];
 
     /**
-     * Construct a new environment.
-     *
-     * @param  \Antares\Asset\Dispatcher  $dispatcher
+     * Factory constructor.
+     * @param Dispatcher $dispatcher
+     * @param Manager $extensionsManager
+     * @param AssetSymlinker $assetSymlinker
      */
-    public function __construct(Dispatcher $dispatcher)
+    public function __construct(Dispatcher $dispatcher, Manager $extensionsManager, AssetSymlinker $assetSymlinker)
     {
-        $this->dispatcher = $dispatcher;
+        $this->dispatcher           = $dispatcher;
+        $this->extensionsManager    = $extensionsManager;
+        $this->assetSymlinker       = $assetSymlinker;
     }
 
     /**
@@ -66,7 +85,7 @@ class Factory
     public function container($container = 'default')
     {
         if (!isset($this->containers[$container])) {
-            $this->containers[$container] = new Asset($container, $this->dispatcher);
+            $this->containers[$container] = new Asset($container, $this->dispatcher, $this->extensionsManager, $this->assetSymlinker);
         }
 
         return $this->containers[$container];

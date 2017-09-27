@@ -58,7 +58,8 @@ class AssetServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->make(Router::class)->pushMiddlewareToGroup('web', AfterMiddleware::class);
+        //TODO: probably to remove because of invalid Dumper class.
+        //$this->app->make(Router::class)->pushMiddlewareToGroup('web', AfterMiddleware::class);
     }
 
     /**
@@ -66,11 +67,19 @@ class AssetServiceProvider extends ServiceProvider
      */
     protected function registerAssetSymlinker()
     {
-        $this->app->singleton('asset.symlinker', function($app) {
+//        $this->app->singleton('asset.symlinker', function() {
+//            $publicPath = sandbox_path('packages/antares');
+//
+//            return new AssetSymlinker(new Filesystem, $publicPath);
+//        });
+
+        $this->app->singleton(AssetSymlinker::class, function() {
             $publicPath = sandbox_path('packages/antares');
-            $symlinker  = new AssetSymlinker(new Filesystem, $publicPath);
-            return $symlinker;
+
+            return new AssetSymlinker(new Filesystem, $publicPath);
         });
+
+        $this->app->alias(AssetSymlinker::class, 'asset.symlinker');
     }
 
     /**
@@ -78,9 +87,8 @@ class AssetServiceProvider extends ServiceProvider
      */
     protected function registerAssetPublisher()
     {
-        $this->app->singleton('antares.asset.publisher', function($app) {
-            return new AssetPublisher($app->make('antares.asset'), $app->make('asset.symlinker'));
-        });
+        $this->app->singleton(AssetPublisher::class);
+        $this->app->alias(AssetPublisher::class, 'antares.asset.publisher');
     }
 
     /**
@@ -90,9 +98,8 @@ class AssetServiceProvider extends ServiceProvider
      */
     protected function registerAsset()
     {
-        $this->app->singleton('antares.asset', function ($app) {
-            return new Factory($app->make('antares.asset.dispatcher'));
-        });
+        $this->app->singleton(Factory::class);
+        $this->app->alias(Factory::class, 'antares.asset');
     }
 
     /**
@@ -102,11 +109,13 @@ class AssetServiceProvider extends ServiceProvider
      */
     protected function registerDispatcher()
     {
-        $this->app->singleton('antares.asset.dispatcher', function ($app) {
+        $this->app->singleton(Dispatcher::class, function() {
             return new Dispatcher(
-                    $app->make('files'), $app->make('html'), $app->make('antares.asset.resolver'), $app->make('path.public')
+                $this->app->make('files'), $this->app->make('html'), $this->app->make('antares.asset.resolver'), $this->app->make('path.public')
             );
         });
+
+        $this->app->alias(Dispatcher::class, 'antares.asset.dispatcher');
     }
 
     /**
@@ -116,9 +125,12 @@ class AssetServiceProvider extends ServiceProvider
      */
     protected function registerResolver()
     {
-        $this->app->singleton('antares.asset.resolver', function () {
-            return new DependencyResolver();
-        });
+        $this->app->singleton(DependencyResolver::class);
+        $this->app->alias(DependencyResolver::class, 'antares.asset.resolver');
+
+//        $this->app->singleton('antares.asset.resolver', function () {
+//            return new DependencyResolver();
+//        });
     }
 
     /**

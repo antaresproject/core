@@ -34,7 +34,7 @@ class AssetManager extends Twig_Extension
 {
 
     /**
-     * @var Antares\Asset\Factory 
+     * @var \Antares\Asset\Asset
      */
     protected $factory;
 

@@ -20,6 +20,7 @@
 
 namespace Antares\Asset;
 
+use Antares\Extension\Manager;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -41,6 +42,13 @@ class AssetPublisher
     protected $symlinker;
 
     /**
+     * Extensions Manager instance
+     *
+     * @var Manager
+     */
+    protected $extensionsManager;
+
+    /**
      * default scripts position
      *
      * @var String 
@@ -55,16 +63,17 @@ class AssetPublisher
     protected $extension = '';
 
     /**
-     * constructing
-     * 
+     * AssetPublisher constructor.
      * @param Factory $assetFactory
      * @param AssetSymlinker $symlinker
+     * @param Manager $extensionsManager
      */
-    public function __construct(Factory $assetFactory, AssetSymlinker $symlinker)
+    public function __construct(Factory $assetFactory, AssetSymlinker $symlinker, Manager $extensionsManager)
     {
-        $this->assetFactory = $assetFactory;
-        $this->symlinker    = $symlinker;
-        $this->position     = "antares/foundation::scripts";
+        $this->assetFactory         = $assetFactory;
+        $this->symlinker            = $symlinker;
+        $this->extensionsManager    = $extensionsManager;
+        $this->position             = "antares/foundation::scripts";
     }
 
     /**
@@ -85,13 +94,12 @@ class AssetPublisher
             return [];
         }
 
-
-        $path = app('antares.extension')->getExtensionPathByName($this->extension);
-
+        $path = $this->extensionsManager->getExtensionPathByName($this->extension);
 
         if (!$path) {
             return [];
         }
+
         $public     = $path . DIRECTORY_SEPARATOR . 'public';
         $filesystem = app(Filesystem::class);
         if (empty($specified)) {
@@ -99,13 +107,17 @@ class AssetPublisher
         }
 
         $return = [];
+
         foreach ($specified as $file) {
             $target = $public . DIRECTORY_SEPARATOR . $file;
-            if (!file_exists($target) and file_exists(public_path($file))) {
+
+            if (!file_exists($target) && file_exists(public_path($file))) {
                 $target = public_path($file);
             }
+
             array_push($return, new SplFileInfo($public . DIRECTORY_SEPARATOR . $file, current(explode('/', $file)), $file));
         }
+
         return $return;
     }
 
@@ -114,11 +126,14 @@ class AssetPublisher
      * 
      * @param array $files
      * @param String $extension
+     * @param array $before
      * @return Asset
      */
     public function publishAndPropagate(array $files = array(), $extension = null, $before = [])
     {
-        $container = $this->assetFactory->container($this->position);
+        $container              = $this->assetFactory->container($this->position);
+        $applicationContainer   = $this->assetFactory->container('antares/foundation::application');
+
         if (empty($files)) {
             return $container;
         }
@@ -127,21 +142,26 @@ class AssetPublisher
         }
 
         foreach ($files as $file) {
-            if ($file->getRealPath() !== false) {
+            $fileRealPath = $file->getRealPath();
+
+            if ($fileRealPath !== false) {
                 $name      = $this->extension . DIRECTORY_SEPARATOR . $file->getRelativePathname();
-                $published = $this->symlinker->publish($name, $file->getRealPath());
+                $published = $this->symlinker->publish($name, $fileRealPath);
+
                 if (!in_array($file->getExtension(), ['css', 'js']) or $published === false) {
                     continue;
                 }
             } else {
                 $published = $file->getRelativePathname();
             }
-            $basename = str_replace('\\', '/', $published);
+
+            $basename           = str_replace('\\', '/', $published);
+            $sluggedBaseName    = str_slug($file->getBasename());
 
             if ($file->getExtension() === 'css') {
-                $this->assetFactory->container('antares/foundation::application')->style(str_slug($file->getBasename()), $basename);
+                $applicationContainer->style($sluggedBaseName, $basename);
             } else {
-                $container->add(str_slug($file->getBasename()), $basename, [], $before);
+                $container->add($sluggedBaseName, $basename, [], $before);
             }
         }
         return $container;
@@ -152,6 +172,7 @@ class AssetPublisher
      * 
      * @param String $extension
      * @param mixed $options
+     * @param array $before
      * @return Asset
      */
     public function publish($extension, $options = null, $before = [])
