@@ -207,7 +207,6 @@ abstract class ModuleServiceProvider extends ServiceProvider
             'frontend' => [
                 $path . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'frontend.php',
                 $path . DIRECTORY_SEPARATOR . 'frontend.php',
-                $path . DIRECTORY_SEPARATOR . 'routes.php',
             ]
         ];
 

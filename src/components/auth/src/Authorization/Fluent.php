@@ -44,6 +44,11 @@ class Fluent
     protected $items = [];
 
     /**
+     * @var array
+     */
+    protected static $sluggedNames = [];
+
+    /**
      * Construct a new instance.
      *
      * @param  string  $name
@@ -303,7 +308,11 @@ class Fluent
      */
     protected function getSlugFromName($name)
     {
-        return trim(Str::slug($name, '-'));
+        if( array_key_exists($name, self::$sluggedNames) ) {
+            return self::$sluggedNames[$name];
+        }
+
+        return self::$sluggedNames[$name] = trim(Str::slug($name, '-'));
     }
 
 }

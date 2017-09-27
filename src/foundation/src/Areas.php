@@ -62,25 +62,29 @@ class Areas
 
     /**
      * Creates levels collection
-     * 
-     * @return \Antares\Foundation\Levels
+     *
+     * @return $this
      */
     public function refresh()
     {
         $collection      = $this->model->query()->get();
         $this->areaRoles = $collection;
-        $filtered        = $collection->pluck('area')->unique()->filter(function($element) {
+
+        $filtered = $collection->pluck('area')->unique()->filter(function($element) {
             return !is_null($element);
         });
+
         $this->areas = $filtered->toArray();
+
         return $this;
     }
 
     /**
      * Finds matched route prefix name as level name
-     * 
-     * @param String $name
-     * @param mixed $default
+     *
+     * @param string|null $name
+     * @param string|null $default
+     * @return string|null
      */
     public function findMatched($name, $default = null)
     {
