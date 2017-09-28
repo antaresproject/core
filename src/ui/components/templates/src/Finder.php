@@ -20,6 +20,7 @@
 
 namespace Antares\UI\UIComponents;
 
+use Antares\Extension\Manager;
 use Antares\UI\UIComponents\Contracts\Finder as FinderContract;
 use Antares\UI\UIComponents\Adapter\AbstractTemplate;
 use Antares\UI\UIComponents\Registry\Registry;
@@ -91,35 +92,43 @@ class Finder implements FinderContract
      */
     protected function detectUiComponents()
     {
-        $components  = [];
-        $factory     = app('antares.extension');
-        $directories = [];
+
+        /* @var $extensionsManager Manager */
+        $extensionsManager  = app()->make(Manager::class);
+        $components         = [];
+        $directories        = [];
 
         foreach ($this->paths as $path) {
             try {
-                $directories = array_merge($directories, $this->files->directories($path));
+                $directories[] = $this->files->directories($path);
             } catch (Exception $ex) {
                 continue;
             }
         }
-        $inner = [];
-        foreach ($directories as $index => $directory) {
 
+        $directories    = array_merge(...$directories);
+        $inner          = [];
+
+        foreach ($directories as $index => $directory) {
             $classBasename = class_basename($directory);
-            if (!in_array($classBasename, ['Widgets', 'UiComponents']) or ! $factory->getActiveExtensionByPath($directory)) {
+
+            if (!in_array($classBasename, ['Widgets', 'UiComponents'], true) || ! $extensionsManager->getActiveExtensionByPath($directory)) {
                 unset($directories[$index]);
                 continue;
             }
+
             if (!empty($componentDirectory = $this->files->directories($directory))) {
-                $inner = array_merge($inner, $componentDirectory);
+                $inner[] = $componentDirectory;
             }
         }
 
-        $directories = array_merge($directories, $inner);
+        $inner          = array_merge(...$inner);
+        $directories    = array_merge($directories, $inner);
+
         foreach ($directories as $directory) {
-            $components = array_merge($components, $this->files->files($directory));
+            $components[] = $this->files->files($directory);
         }
-        return $components;
+        return array_merge(...$components);
     }
 
     /**
@@ -133,8 +142,7 @@ class Finder implements FinderContract
         $files      = $this->detectUiComponents();
 
         foreach ($files as $file) {
-            $name = $this->files->name($file);
-
+            $name   = $this->files->name($file);
             $params = $this->resolveUIComponentParams($name, $file);
 
             if (!$params) {
@@ -257,10 +265,10 @@ class Finder implements FinderContract
 
     /**
      * Trying to get file namespace from file content
-     * 
-     * @param String $src
-     * @param numeric $i
-     * @return String | null
+     *
+     * @param $src
+     * @param int $i
+     * @return null|string
      */
     public function resolveUIComponentNamespace($src, $i = 0)
     {

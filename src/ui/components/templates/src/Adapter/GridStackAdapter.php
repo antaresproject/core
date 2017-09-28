@@ -38,8 +38,7 @@ class GridStackAdapter implements GridStack
     protected $config;
 
     /**
-     * constructor
-     * 
+     * GridStackAdapter constructor.
      * @param Repository $config
      * @param AssetFactory $assetFactory
      */
@@ -71,15 +70,19 @@ class GridStackAdapter implements GridStack
     {
         $inline = <<<EOD
            $(document).ready(function(){                         
-            var element =null;
-            $('.grid-stack').on('resizestop', function(event, ui) {                               
+            var 
+                element = null,
+                grid = $('.grid-stack'),
+                container = grid.first(); 
+            
+            grid.on('resizestop', function(event, ui) {                               
                 element = event.target;                
             });
-            $('.grid-stack').on('dragstop', function(event, ui) {               
+            grid.on('dragstop', function(event, ui) {               
                 element = event.target;                                
             });
-            container=$('div.grid-stack:first'); 
-            $('.grid-stack:first').on('change', function (e, items) { 
+            
+            container.on('change', function (e, items) { 
                 if(!$('#widgets-edit').length){
                     return false;
                 }
