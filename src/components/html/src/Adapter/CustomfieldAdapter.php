@@ -133,7 +133,7 @@ class CustomfieldAdapter
             });
         }
 
-        $this->grid->rules(array_merge(...$rules));
+        $this->grid->rules( count($rules) ? array_merge(...$rules) : []);
     }
 
 }

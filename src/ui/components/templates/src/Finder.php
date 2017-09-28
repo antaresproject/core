@@ -106,7 +106,7 @@ class Finder implements FinderContract
             }
         }
 
-        $directories    = array_merge(...$directories);
+        $directories    = count($directories) ? array_merge(...$directories) : [];
         $inner          = [];
 
         foreach ($directories as $index => $directory) {
@@ -122,13 +122,14 @@ class Finder implements FinderContract
             }
         }
 
-        $inner          = array_merge(...$inner);
+        $inner          = count($inner) ? array_merge(...$inner) : [];
         $directories    = array_merge($directories, $inner);
 
         foreach ($directories as $directory) {
             $components[] = $this->files->files($directory);
         }
-        return array_merge(...$components);
+
+        return count($components) ? array_merge(...$components) : [];
     }
 
     /**

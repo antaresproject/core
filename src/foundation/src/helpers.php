@@ -54,10 +54,16 @@ if (!function_exists('url_no_area')) {
 
     /**
      * Create url without area segement
+     *
+     * @param $path
+     * @param array $options
+     * @return string
      */
     function url_no_area($path, array $options = [])
     {
-        return handles($path, array_merge($options, ['area' => false]));
+        $options['area'] = false;
+
+        return handles($path, $options);
     }
 
 }
