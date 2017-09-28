@@ -29,10 +29,9 @@ class DatatableDependableActions extends AbstractDependableActions
 
     /**
      * Handle when event firing
-     * 
-     * @param array $actions
-     * @param \Illuminate\Database\Eloquent\Model $row
-     * 
+     *
+     * @param $eventName
+     * @param array $params
      * @return array
      */
     public function handle($eventName, array $params = [])
@@ -41,14 +40,15 @@ class DatatableDependableActions extends AbstractDependableActions
         $row      = $params[1];
         $elements = $this->getActions($row);
         $return   = [];
+
         foreach ($elements as $element) {
             $resolved = $this->resolveDatatableAction($actions, $row, $element);
             if (is_array($resolved)) {
-                $return = array_merge($return, $resolved);
+                $return[] = $resolved;
             }
         }
 
-        return $return;
+        return count($return) ? array_merge(...$return) : [];
     }
 
     /**
