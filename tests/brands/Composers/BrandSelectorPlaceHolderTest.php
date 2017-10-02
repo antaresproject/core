@@ -29,6 +29,13 @@ use Mockery as m;
 class BrandSelectorPlaceHolderTest extends ApplicationTestCase
 {
 
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
+    }
+
     /**
      * test contructor
      */

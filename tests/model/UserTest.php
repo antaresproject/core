@@ -123,14 +123,15 @@ class UserTest extends ApplicationTestCase
      */
     public function testIsNotMethod()
     {
+        /* @var $model User */
         $model = User::query()->where(['id' => 1])->first();
-        $this->assertTrue($model->isNot('user'));
-        $this->assertFalse($model->isNot('super-administrator'));
+        $this->assertTrue($model->isNotAn('user'));
+        $this->assertFalse($model->isNotAn('super-administrator'));
 
-        $this->assertTrue($model->isNot(['superadmin', 'user']));
+        $this->assertTrue($model->isNotAny(['superadmin', 'user']));
         $memberRoleId = \Antares\Model\Role::query()->where('name', 'member')->first()->id;
         $model->attachRole($memberRoleId);
-        $this->assertFalse($model->isNot(['super-administrator', 'member']));
+        $this->assertFalse($model->isNotAny(['super-administrator', 'member']));
         $model->detachRole($memberRoleId);
     }
 
@@ -142,13 +143,14 @@ class UserTest extends ApplicationTestCase
      */
     public function testIsNotMethodWhenInvalidRolesIsReturned()
     {
+        /* @var $model User */
         $model = User::query()->where(['id' => 1])->first();
 
-        $this->assertTrue($model->isNot('admin'));
-        $this->assertTrue($model->isNot('user'));
+        $this->assertTrue($model->isNotAn('admin'));
+        $this->assertTrue($model->isNotAn('user'));
 
-        $this->assertTrue($model->isNot(['admin', 'editor']));
-        $this->assertTrue($model->isNot(['admin', 'user']));
+        $this->assertTrue($model->isNotAny(['admin', 'editor']));
+        $this->assertTrue($model->isNotAny(['admin', 'user']));
     }
 
     /**
@@ -158,6 +160,7 @@ class UserTest extends ApplicationTestCase
      */
     public function testIsAnyMethod()
     {
+        /* @var $model User */
         $model = User::query()->where(['id' => 1])->first();
 
         $this->assertTrue($model->isAny(['super-administrator', 'user']));
@@ -410,21 +413,6 @@ class UserTest extends ApplicationTestCase
         $this->assertFalse($stub->isSuspended());
         $stub->suspend();
         $this->assertTrue($stub->isSuspended());
-    }
-
-    public function testNotifyMethod()
-    {
-        $stub = m::mock('\Antares\Model\User')->makePartial();
-        $stub->shouldAllowMockingProtectedMethods();
-
-        $subject = 'foo';
-        $view    = 'email.notification';
-        $data    = ['foo' => 'bar'];
-
-        $stub->shouldReceive('sendNotification')->once()
-                ->with($stub, $subject, $view, $data)->andReturn(true);
-
-        $this->assertTrue($stub->notify($subject, $view, $data));
     }
 
     /**

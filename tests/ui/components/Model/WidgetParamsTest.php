@@ -22,17 +22,15 @@ namespace Antares\Widgets\Model\Tests;
 
 use Antares\Support\Traits\Testing\EloquentConnectionTrait;
 use Antares\UI\UIComponents\Model\ComponentParams as Stub;
-use Illuminate\Database\ConnectionResolverInterface;
-use Illuminate\Database\Query\Processors\Processor;
-use Illuminate\Database\Query\Grammars\Grammar;
-use Illuminate\Database\Connection;
+use Antares\UI\UIComponents\Model\Components;
 use Antares\Testing\TestCase;
-use Mockery as m;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class WidgetParamsTest extends TestCase
 {
 
     use EloquentConnectionTrait;
+    use DatabaseTransactions;
 
     /**
      * Test Antares\Widgets\Model\WidgetParams::fillable params
@@ -66,21 +64,24 @@ class WidgetParamsTest extends TestCase
      */
     public function testSaveTree()
     {
-        $model = new Stub();
-        $this->addMockConnection($model);
+        $widget = Components::query()->create([
+            'type_id' => 1,
+            'name' => 'Testable component',
+        ]);
 
-        $resolver   = m::mock(ConnectionResolverInterface::class);
-        $model->setConnectionResolver($resolver);
-        $resolver->shouldReceive('connection')->andReturn($connection = m::mock(Connection::class));
-        $model->getConnection()->shouldReceive('getQueryGrammar')->andReturn($grammar    = m::mock(Grammar::class));
-        $model->getConnection()->shouldReceive('getPostProcessor')->andReturn($processor  = m::mock(Processor::class));
+        $model = Stub::query()->create([
+            'wid' => $widget->id,
+            'uid' => 1,
+            'brand_id' => 1,
+            'resource' => '/',
+            'name' => 'test_component',
+            'data' => [
+                'fixed_width' => 100, // this will be ignored
+                'some_dump_key' => 'foo',
+            ],
+        ]);
 
-        $grammar->shouldReceive('compileInsertGetId')->andReturn('');
-        $grammar->shouldReceive('compileSelect')->once()->andReturn('INSERT INTO `tbl_widgets_params`(brand_id,resource,uid) VALUES(?,?,?)');
-        $connection->shouldReceive('select')->once()->with('INSERT INTO `tbl_widgets_params`(brand_id,resource,uid) VALUES(?,?,?)', [1, '/', 1], true)->andReturn(null);
-        $processor->shouldReceive('processInsertGetId')->andReturn(1);
-        $processor->shouldReceive('processSelect')->once()->andReturn([]);
-        $this->assertTrue($model->save([]));
+        $this->assertEquals(['some_dump_key' => 'foo'], $model->data);
     }
 
 }

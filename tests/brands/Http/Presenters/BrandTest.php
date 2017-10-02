@@ -24,18 +24,19 @@ use Antares\Support\Traits\Testing\EloquentConnectionTrait;
 use Antares\Brands\Http\Breadcrumb\Breadcrumb;
 use Antares\Brands\Http\Presenters\Brand;
 use Antares\Testing\ApplicationTestCase;
-use Illuminate\Database\Query\Builder;
 use Antares\Html\Form\FormBuilder;
 use Antares\Brands\Model\Brands;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Mockery as m;
 
 class BrandTest extends ApplicationTestCase
 {
 
     use EloquentConnectionTrait;
+    use DatabaseTransactions;
 
     /**
-     * @var Antares\Brands\Http\Presenters\Brand
+     * @var \Antares\Brands\Http\Presenters\Brand
      */
     protected $stub;
 
@@ -87,56 +88,19 @@ class BrandTest extends ApplicationTestCase
 
         $foundation = m::mock('\Antares\Contracts\Foundation\Foundation');
         $model      = new Brands();
-        $this->addMockConnection($model);
-
-
-        $resolver = m::mock('Illuminate\Database\ConnectionResolverInterface');
-        $model->setConnectionResolver($resolver);
-
-        $resolver->shouldReceive('connection')
-                ->andReturn($connection = m::mock('Illuminate\Database\Connection'));
-        $model->getConnection()
-                ->shouldReceive('getQueryGrammar')
-                ->andReturn($grammar    = m::mock('Illuminate\Database\Query\Grammars\Grammar'));
-
-        $grammar->shouldReceive('wrap')->with(m::type('String'))->andReturn(m::type('String'));
-
-        $model->getConnection()
-                ->shouldReceive('raw')
-                ->andReturn($expression = m::mock('Illuminate\Database\Query\Expression'));
-
-        $model->getConnection()
-                ->shouldReceive('getPostProcessor')
-                ->andReturn($processor = m::mock('Illuminate\Database\Query\Processors\Processor'));
-
-
-        $queryBuilder = new Builder($model->getConnection(), $grammar, $processor);
-        $model->getConnection()
-                ->shouldReceive('table')
-                ->andReturn($queryBuilder);
-
-        $model->getConnection()
-                ->shouldReceive('getTablePrefix')
-                ->andReturn('');
-
-        $model->getConnection()
-                ->shouldReceive('getDriverName')
-                ->andReturn('mysql');
-
-        $grammar->shouldReceive('compileInsertGetId')
-                ->andReturn('');
-        $grammar->shouldReceive('compileSelect')->once()->andReturn('SELECT * FROM `tbl_widgets_params` WHERE brand_id=? and uid=? and resource=?');
-        $connection->shouldReceive('select')->once()->withAnyArgs()->andReturn(null)
-                ->shouldReceive('getName')->andReturn('mysql');
-        $processor->shouldReceive('processInsertGetId')->andReturn(1);
-        $processor->shouldReceive('processSelect')->once()->andReturn([]);
-
 
         $foundation->shouldReceive('make')->with("antares.brand")->andReturn($model)
                 ->shouldReceive('handles')->andReturn('#');
         $this->app['antares.app'] = $foundation;
         $this->app['antares.acl'] = $acl;
         $this->app['view']->addNamespace('antares/brands', realpath(base_path() . '../../../../components/brands/resources/views'));
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
     }
 
     /**
@@ -155,7 +119,7 @@ class BrandTest extends ApplicationTestCase
      */
     public function testForm()
     {
-        $this->app['antares.brand'] = Brands::where('default', 1);
+        $this->app['antares.brand'] = Brands::query()->where('default', 1)->first();
         $this->assertInstanceOf(FormBuilder::class, $this->stub->form(new Brands()));
     }
 

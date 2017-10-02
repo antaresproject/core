@@ -20,18 +20,16 @@
 
 namespace Antares\Foundation\Http\Controllers\TestCase;
 
-use Antares\Testing\ApplicationTestCase;
-use Mockery as m;
+use Antares\Model\User;
 use Antares\Testing\TestCase;
+use Mockery as m;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\View;
 use Antares\Support\Facades\Messages;
-use Antares\Support\Facades\Foundation;
 
-class SettingsControllerTest extends ApplicationTestCase
+class SettingsControllerTest extends TestCase
 {
 
-    use \Illuminate\Foundation\Testing\WithoutMiddleware;
+    //use \Illuminate\Foundation\Testing\WithoutMiddleware;
 
     /**
      * Setup the test environment.
@@ -39,7 +37,7 @@ class SettingsControllerTest extends ApplicationTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->disableMiddlewareForAllTests();
+        //$this->disableMiddlewareForAllTests();
     }
 
     /**
@@ -60,6 +58,13 @@ class SettingsControllerTest extends ApplicationTestCase
         return [$presenter, $validator];
     }
 
+    public function tearDown()
+    {
+        m::close();
+
+        parent::tearDown();
+    }
+
     /**
      * Test GET /admin/settings.
      *
@@ -67,17 +72,11 @@ class SettingsControllerTest extends ApplicationTestCase
      */
     public function testGetIndexAction()
     {
-        $memory = m::mock('\Antares\Contracts\Memory\Provider');
-        list($presenter, ) = $this->bindDependencies();
+        $user = User::administrators()->first();
 
-        $memory->shouldReceive('get')->times(16)->andReturn('');
-        $presenter->shouldReceive('form')->once()->andReturn('edit.settings');
+        $response = $this->actingAs($user)->get('admin/settings/index');
 
-        $this->app->instance('Antares\Contracts\Memory\Provider', $memory);
-
-        View::shouldReceive('make')->once()->with('antares/foundation::settings.index', m::type('Array'), [])->andReturn('foo');
-        $this->call('GET', 'antares/settings/index');
-        $this->assertResponseOk();
+        $response->assertSuccessful();
     }
 
     /**

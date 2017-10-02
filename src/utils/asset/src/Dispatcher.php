@@ -214,6 +214,7 @@ class Dispatcher
     protected function getAssetSandboxSourceUrl(&$source, $group = null)
     {
         if (is_null(self::$sandboxPath)) {
+
             if (!Foundation::bound('antares.version')) {
                 self::$sandboxPath = '';
             }
