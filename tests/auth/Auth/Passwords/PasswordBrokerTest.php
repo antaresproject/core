@@ -21,10 +21,11 @@
 namespace Antares\Auth\Passwords\TestCase;
 
 use Antares\Auth\Passwords\PasswordBroker;
-use Antares\Testing\ApplicationTestCase;
+use Antares\Testing\TestCase;
+use Illuminate\Support\Facades\Notification;
 use Mockery as m;
 
-class PasswordBrokerTest extends ApplicationTestCase
+class PasswordBrokerTest extends TestCase
 {
 
     /**
@@ -34,22 +35,35 @@ class PasswordBrokerTest extends ApplicationTestCase
      */
     public function testRemindMethod()
     {
-        $stub      = new PasswordBroker(
-                $reminders = m::mock('\Illuminate\Auth\Passwords\TokenRepositoryInterface'), $user      = m::mock('\Illuminate\Contracts\Auth\UserProvider'), $mailer    = m::mock('\Antares\Notifier\Handlers\Antares'), $view      = 'foo'
-        );
+        Notification::fake();
+
+        $user      = m::mock('\Illuminate\Contracts\Auth\UserProvider');
+        $reminders = m::mock('\Illuminate\Auth\Passwords\TokenRepositoryInterface');
+        $mailer    = m::mock('\Antares\Notifier\Handlers\Antares');
+        $stub      = new PasswordBroker($reminders, $user, $mailer, 'foo');
 
         $userReminderable = m::mock('\Illuminate\Contracts\Auth\CanResetPassword, \Antares\Contracts\Notification\Recipient');
-        $userReminderable->shouldReceive('getEmailForPasswordReset')->andReturn('foo@bar.com');
+        $userReminderable->shouldReceive('getEmailForPasswordReset')->andReturn('foo@bar.com')->getMock();
+        $userReminderable->shouldReceive('sendPasswordResetNotification')->andReturnNull()->getMock();
         $callback         = function () {
             
         };
 
         $user->shouldReceive('retrieveByCredentials')->once()
                 ->with(['username' => 'user-foo'])
-                ->andReturn($userReminderable);
-        $reminders->shouldReceive('create')->once()->with($userReminderable)->andReturnNull();
+                ->andReturn($userReminderable)
+                ->getMock();
+
+        $reminders->shouldReceive('create')->once()->with($userReminderable)->andReturnNull()->getMock();
 
         $this->assertEquals('passwords.sent', $stub->sendResetLink(['username' => 'user-foo'], $callback));
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
     }
 
     /**

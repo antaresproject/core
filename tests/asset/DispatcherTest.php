@@ -20,11 +20,19 @@
 
 namespace Antares\Asset\TestCase;
 
+use Antares\Testing\TestCase;
 use Mockery as m;
 use Antares\Asset\Dispatcher;
 
-class DispatcherTest extends \PHPUnit_Framework_TestCase
+class DispatcherTest extends TestCase
 {
+
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
+    }
 
     /**
      * Test Orchesta\Asset\Dispatcher::run() method.
@@ -70,12 +78,12 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
 
         $stub->addVersioning();
 
-        //$this->assertEquals('jqueryfoo', $stub->run('script', $assets));
+        $this->assertEquals('jqueryfoo', $stub->run('script', $assets));
         $this->assertEquals('', $stub->run('style', $assets));
 
         $stub->removeVersioning();
 
-        //$this->assertEquals('jqueryfoo', $stub->run('script', $assets));
+        $this->assertEquals('jqueryfoo', $stub->run('script', $assets));
     }
 
     /**

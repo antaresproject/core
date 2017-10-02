@@ -39,6 +39,13 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
         $this->filesystem = m::mock(Filesystem::class);
     }
 
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
+    }
+
     /**
      * @return SettingsFactory
      */

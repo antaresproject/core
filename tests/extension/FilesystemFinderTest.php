@@ -78,6 +78,13 @@ class FilesystemFinderTest extends \PHPUnit_Framework_TestCase
                 ->getMock();
     }
 
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
+    }
+
     /**
      * @return FilesystemFinder
      */

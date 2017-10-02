@@ -42,10 +42,10 @@ class PasswordReset extends Notification
 
     /**
      * @param $notifiable
-     * @return string
+     * @return array
      */
     public function via($notifiable) {
-        return 'mail';
+        return ['mail'];
     }
 
     /**

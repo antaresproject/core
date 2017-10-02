@@ -68,6 +68,28 @@ class AreaManager implements AreaManagerContract
     protected $default;
 
     /**
+     * @var array
+     */
+    protected static $fallbackAreas = [
+        'admin'    => 'Admin',
+        'client'   => 'Client',
+    ];
+
+    /**
+     * @var array
+     */
+    protected static $fallbackFrontendRoutes = [
+        'client',
+    ];
+
+    /**
+     * @var array
+     */
+    protected static $fallbackBackendRoutes = [
+        'admin', 'reseller'
+    ];
+
+    /**
      * AreaManager constructor.
      * @param Request $request
      * @param AuthFactory $auth
@@ -80,7 +102,7 @@ class AreaManager implements AreaManagerContract
         $this->config  = $config;
         $this->areas   = new AreasCollection();
 
-        $areas   = Arr::get($this->config, 'areas', []);
+        $areas   = Arr::get($this->config, 'areas', self::$fallbackAreas);
         $default = Arr::get($this->config, 'default', 'client');
 
         foreach ($areas as $name => $title) {
@@ -139,7 +161,7 @@ class AreaManager implements AreaManagerContract
      */
     public function getFrontendAreas(): AreasCollection
     {
-        $areas      = (array) Arr::get($this->config, 'routes.frontend', []);
+        $areas      = (array) Arr::get($this->config, 'routes.frontend', self::$fallbackFrontendRoutes);
         $collection = new AreasCollection();
 
         foreach ($areas as $areaId) {
@@ -160,7 +182,7 @@ class AreaManager implements AreaManagerContract
      */
     public function getBackendAreas(): AreasCollection
     {
-        $areas      = (array) Arr::get($this->config, 'routes.backend', []);
+        $areas      = (array) Arr::get($this->config, 'routes.backend', self::$fallbackBackendRoutes);
         $collection = new AreasCollection();
 
         foreach ($areas as $areaId) {
