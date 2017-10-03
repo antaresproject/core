@@ -77,6 +77,18 @@ class AssetPublisher
     }
 
     /**
+     * Sets position.
+     *
+     * @param string $position
+     * @return AssetPublisher
+     */
+    public function setPosition(string $position) : self {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    /**
      * get files to publish
      * 
      * @param array $specified
