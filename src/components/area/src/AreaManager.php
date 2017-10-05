@@ -147,8 +147,15 @@ class AreaManager implements AreaManagerContract
 
         if (!$area && $this->auth->check()) {
             /* @var $user User */
-            $user = $this->auth->user();
-            $area = $this->areas->getById($user->getArea());
+            $user   = $this->auth->user();
+            $areas  = $user->getArea();
+
+            if(is_array($areas)) {
+                $area = $this->areas->getById( reset($areas) );
+            }
+            else {
+                $area = $this->areas->getById($areas);
+            }
         }
 
         return $area ?: $this->getDefault();
