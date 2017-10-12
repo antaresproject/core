@@ -14,7 +14,7 @@
      data-gs-no-resize="{{ resizable=="true"?false:true }}"
      data-gs-no-move="{{ draggable=="true"?false:true }}"
      ajaxable="{{ (ajaxable is same as(false)) ? '0':'1'  }}"
-     >     
+    >
     <div class="grid-stack-item-content" >                        
         <input type="hidden" name="current" value="{{ id }}" />
         <div class="card__edit-view">
@@ -37,15 +37,18 @@
                                     {{ trans('Refresh') }}
                                 </a>
                             </li> 
-                            {{ event('ui-components:render.widget-actions.'~name)|raw }}
+                            {#{{ event('ui-components:render.widget-actions.'~name)|raw }}#}
+                            {{ event('Antares\\Events\\Views\\WidgetActions', 'forced', name)|raw }}
                         </ul>
                     </div>
                 {% endif %}
             </div>
         </div>
-        {{ event('ui-components:render.before.'~name)|raw }}
-        {{ content|raw }}                                
-        {{ event('ui-components:render.after.'~name)|raw }}        
+        {#{{ event('ui-components:render.before.'~name)|raw }}#}
+        {{ event('Antares\\Events\\Views\\BeforeRenderComponent', 'forced', name)|raw }}
+        {{ content|raw }}
+        {#{{ event('ui-components:render.after.'~name)|raw }}#}
+        {{ event('Antares\\Events\\Views\\AfterRenderComponent', 'forced', name)|raw }}
     </div>   
     {% if app('request').ajax() %}    
         {% set asset = app('antares.asset').container('antares/foundation::scripts') %}

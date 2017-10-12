@@ -3,11 +3,13 @@
     <div class="card card--detail-info card--dark">
         <div class="card__header">
             <div class="card__header--top">
-                {{ event('ui-components:render.header-left.'~name)|raw }}
+                {#{{ event('ui-components:render.header-left.'~name)|raw }}#}
+                {{ event('Antares\\Events\\Views\\TemplateHeaderLeft', 'dark', name)|raw }}
                 <div class="client-name">                    
                     <span>{{ name }}</span>                    
                 </div>
-                {{ event('ui-components:render.header-right.'~name)|raw }}
+                {#{{ event('ui-components:render.header-right.'~name)|raw }}#}
+                {{ event('Antares\\Events\\Views\\TemplateHeaderRight', 'dark', name)|raw }}
             </div>
         </div>
         <div class="card__content">

@@ -60,7 +60,6 @@ abstract class AbstractEvent implements Event
     public function __construct()
     {
         $model = $this->model();
-
         $fireCount = $model->fire_count ?? 0;
 
         if (static::isCountable()) {

@@ -21,6 +21,7 @@
 
 namespace Antares\Foundation\Providers;
 
+use Antares\Events\SystemReady\AntaresReady;
 use Illuminate\Routing\Router;
 use Illuminate\Contracts\Http\Kernel;
 use Antares\Users\Http\Middleware\Can;
@@ -79,7 +80,8 @@ class RouteServiceProvider extends ServiceProvider
         $router = $this->app->make(Router::class);
         $kernel = $this->app->make(Kernel::class);
         $this->registerRouteMiddleware($router, $kernel);
-        $this->app->make('events')->fire('antares.ready');
+        //$this->app->make('events')->fire('antares.ready');
+        $this->app->make('events')->fire(new AntaresReady());
     }
 
     /**

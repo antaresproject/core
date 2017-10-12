@@ -21,6 +21,10 @@
 
 namespace Antares\Foundation\Listeners;
 
+use Antares\Events\Datatables\AfterMassActionsAction;
+use Antares\Events\Datatables\AfterTableAction;
+use Antares\Events\Datatables\BeforeMassActionsAction;
+use Antares\Events\Datatables\BeforeTableAction;
 use Illuminate\Support\Collection;
 use Closure;
 
@@ -35,10 +39,30 @@ class DatatableDependableActions extends AbstractDependableActions
      * 
      * @return array
      */
-    public function handle($eventName, array $params = [])
+    public function handle($event)
     {
-        $actions  = $params[0];
-        $row      = $params[1];
+        switch (get_class($event)) {
+            case AfterMassActionsAction::class:
+                $actions = $event->massActions;
+                $row = $event->model;
+                break;
+
+            case BeforeMassActionsAction::class:
+                $actions = $event->massActions;
+                $row = $event->model;
+                break;
+
+            case AfterTableAction::class:
+                $actions = $event->tableActions;
+                $row = $event->row;
+                break;
+
+            case BeforeTableAction::class:
+                $actions = $event->tableActions;
+                $row = $event->row;
+                break;
+        }
+
         $elements = $this->getActions($row);
         $return   = [];
         foreach ($elements as $element) {

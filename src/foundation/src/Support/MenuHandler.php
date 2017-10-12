@@ -21,6 +21,10 @@
 
 namespace Antares\Foundation\Support;
 
+use Antares\Events\SystemReady\AfterMenu;
+use Antares\Events\SystemReady\BeforeMenu;
+use Antares\Support\Str;
+use Antares\UI\Handler;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\Facades\Event;
@@ -79,13 +83,16 @@ abstract class MenuHandler
     public function handle()
     {
         $id = $this->getAttribute('id');
-        Event::fire('antares.ready: menu.before.' . $id);
+        //Event::fire('antares.ready: menu.before.' . $id);
+        Event::fire(new BeforeMenu($id, $this));
+
         if (!$this->passesAuthorization()) {
             return;
         }
         $args = func_get_args();
-        if (isset($args[0])) {
-            $menu = $args[0];
+        if (isset($args[0]) && ($args[0] instanceof AfterMenu || $args[0] instanceof Handler)) {
+            $menu = $args[0] instanceof AfterMenu ? $args[0]->menu : $args[0];
+
             $menu->add($this->getAttribute('id'))
                     ->link($this->getAttribute('link'))
                     ->title($this->getAttribute('title'))
@@ -98,7 +105,9 @@ abstract class MenuHandler
                 $this->attachIcon($menu);
             }
         }
-        Event::fire('antares.ready: menu.after.' . $id);
+
+        //Event::fire('antares.ready: menu.after.' . $id);
+        Event::fire(new AfterMenu($id, $this));
     }
 
     /**

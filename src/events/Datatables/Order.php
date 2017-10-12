@@ -8,7 +8,7 @@ class Order extends AbstractEvent
 {
 
     /** @var string */
-    protected static $name = 'Datatable: Order';
+    protected static $name = 'Datatables: Order';
 
     /** @var string */
     protected static $description = 'Runs on Datatable column order';

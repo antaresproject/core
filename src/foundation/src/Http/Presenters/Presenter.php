@@ -25,6 +25,8 @@ namespace Antares\Foundation\Http\Presenters;
 use Antares\Contracts\Html\Form\Presenter as PresenterContract;
 use Antares\Contracts\Html\Form\Factory;
 use Antares\Contracts\Html\Form\Grid;
+use Antares\Events\Datatables\AfterTableAction;
+use Antares\Events\Datatables\BeforeTableAction;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Antares\Support\Collection;
@@ -61,9 +63,11 @@ abstract class Presenter implements PresenterContract
             $this->tableActions = new Collection();
         }
         $path = Route::getCurrentRoute()->getPath();
-        Event::fire('datatables:' . $path . ':before.action.' . $action, [$this->tableActions, $row]);
+        //Event::fire('datatables:' . $path . ':before.action.' . $action, [$this->tableActions, $row]);
+        Event::fire(new BeforeTableAction($path, $action, $row, $this->tableActions));
         $this->tableActions->push($btn);
-        Event::fire('datatables:' . $path . ':after.action.' . $action, [$this->tableActions, $row]);
+        //Event::fire('datatables:' . $path . ':after.action.' . $action, [$this->tableActions, $row]);
+        Event::fire(new AfterTableAction($path, $action, $row, $this->tableActions));
         return $this;
     }
 

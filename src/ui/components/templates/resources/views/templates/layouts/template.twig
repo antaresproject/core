@@ -1,10 +1,12 @@
 {% if isAjaxRequest() %}
     <div class="widget-ajax-response">
     {% endif %}    
-    {{ event('ui-components:render.before.template.'~template)|raw }}
+    {#{{ event('ui-components:render.before.template.'~template)|raw }}#}
+    {{ event('Antares\\Events\\Views\\BeforeRenderTemplate', template)|raw }}
     {% block content %}
     {% endblock %} 
-    {{ event('ui-components:render.after.template.'~template)|raw }}
+    {#{{ event('ui-components:render.after.template.'~template)|raw }}#}
+    {{ event('Antares\\Events\\Views\\AfterRenderTemplate', template)|raw }}
     {% if isAjaxRequest() %} 
     </div>
 {% endif %}    

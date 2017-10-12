@@ -200,13 +200,13 @@ class Foundation extends Twig_Extension
                 if (class_exists($name)) {
                     call_user_func_array('event', [
                         (new \ReflectionClass($name))
-                            ->newInstanceArgs(array_slice(func_get_args(), 1))
+                            ->newInstanceArgs(array_slice($args, 1))
                     ]);
                     return '';
                 }
 
                 $event     = snake_case(strtolower($name));
-                $arguments = array_slice(func_get_args(), 1);
+                $arguments = array_slice($args, 1);
                 Event::fire($event, $arguments);
                 return '';
             }),

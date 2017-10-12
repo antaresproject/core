@@ -2,13 +2,13 @@
 
 namespace Antares\Foundation\Listeners;
 
-use Antares\Extension\Events\Activated;
+use Antares\Events\Compontents\ComponentActivated;
+use Antares\Events\Compontents\ComponentDeactivated;
+use Antares\Events\Compontents\ComponentInstallationFailed;
+use Antares\Events\Compontents\ComponentInstalled;
+use Antares\Events\Compontents\ComponentUninstalled;
+use Antares\Events\Composer\Failed;
 use Antares\Extension\Contracts\ProgressContract;
-use Antares\Extension\Events\ComposerFailed;
-use Antares\Extension\Events\Deactivated;
-use Antares\Extension\Events\Failed;
-use Antares\Extension\Events\Installed;
-use Antares\Extension\Events\Uninstalled;
 use Antares\Extension\ExtensionProgress;
 use Illuminate\Events\Dispatcher;
 use Log;
@@ -31,67 +31,67 @@ class AfterExtensionOperation
     }
 
     /**
-     * @param Activated $event
+     * @param ComponentActivated $event
      */
-    public function onActivated(Activated $event)
+    public function onActivated(ComponentActivated $event)
     {
         $this->progress->advanceStep();
 
         if ($this->progress->isFinished()) {
-            $name = $event->extension->getFriendlyName();
+            $name = $event->component->getFriendlyName();
 
             $this->progress->setSuccessMessage('The package [' . $name . '] has been successfully activated.');
         }
     }
 
     /**
-     * @param Deactivated $event
+     * @param ComponentDeactivated $event
      */
-    public function onDeactivated(Deactivated $event)
+    public function onDeactivated(ComponentDeactivated $event)
     {
         $this->progress->advanceStep();
 
         if ($this->progress->isFinished()) {
-            $name = $event->extension->getFriendlyName();
+            $name = $event->component->getFriendlyName();
 
             $this->progress->setSuccessMessage('The package [' . $name . '] has been successfully deactivated.');
         }
     }
 
     /**
-     * @param Installed $event
+     * @param ComponentInstalled $event
      */
-    public function onInstalled(Installed $event)
+    public function onInstalled(ComponentInstalled $event)
     {
         $this->progress->advanceStep();
 
         if ($this->progress->isFinished()) {
-            $name = $event->extension->getFriendlyName();
+            $name = $event->component->getFriendlyName();
 
             $this->progress->setSuccessMessage('The package [' . $name . '] has been successfully installed.');
         }
     }
 
     /**
-     * @param Uninstalled $event
+     * @param ComponentUninstalled $event
      */
-    public function onUninstalled(Uninstalled $event)
+    public function onUninstalled(ComponentUninstalled $event)
     {
         $this->progress->advanceStep();
 
         if ($this->progress->isFinished()) {
-            $name = $event->extension->getFriendlyName();
+            $name = $event->component->getFriendlyName();
 
             $this->progress->setSuccessMessage('The package [' . $name . '] has been successfully uninstalled.');
         }
     }
 
     /**
-     * @param Failed $event
+     * @param ComponentInstallationFailed $event
      */
-    public function onFailed(Failed $event)
+    public function onFailed(ComponentInstallationFailed $event)
     {
-        $name = $event->extension->getFriendlyName();
+        $name = $event->component->getFriendlyName();
 
         $this->progress->setFailed('An error occurs while doing operation of the [' . $name . '] package.');
         Log::error($event->exception);
@@ -99,12 +99,11 @@ class AfterExtensionOperation
     }
 
     /**
-     * @param ComposerFailed $event
+     * @param Failed $event
      */
-    public function onComposerFailed(ComposerFailed $event)
+    public function onComposerFailed(Failed $event)
     {
         $this->progress->setFailed($event->exception->getMessage());
-
         Log::critical($event->exception->getMessage());
     }
 
@@ -120,27 +119,27 @@ class AfterExtensionOperation
         }
 
         $events->listen(
-                Activated::class, static::class . '@onActivated'
+                ComponentActivated::class, static::class . '@onActivated'
         );
 
         $events->listen(
-                Installed::class, static::class . '@onInstalled'
+                ComponentInstalled::class, static::class . '@onInstalled'
         );
 
         $events->listen(
-                Deactivated::class, static::class . '@onDeactivated'
+                ComponentDeactivated::class, static::class . '@onDeactivated'
         );
 
         $events->listen(
-                Uninstalled::class, static::class . '@onUninstalled'
+                ComponentUninstalled::class, static::class . '@onUninstalled'
         );
 
         $events->listen(
-                Failed::class, static::class . '@onFailed'
+            ComponentInstallationFailed::class, static::class . '@onFailed'
         );
 
         $events->listen(
-                ComposerFailed::class, static::class . '@onComposerFailed'
+                Failed::class, static::class . '@onComposerFailed'
         );
     }
 

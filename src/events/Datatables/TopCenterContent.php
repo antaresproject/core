@@ -8,7 +8,7 @@ class TopCenterContent extends AbstractEvent
 {
 
     /** @var string */
-    protected static $name = 'Datatable: Top center content';
+    protected static $name = 'Datatables: Top center content';
 
     /** @var string */
     protected static $description = 'Runs when Datatable is rendered, allows to change content of table (search field etc.)';

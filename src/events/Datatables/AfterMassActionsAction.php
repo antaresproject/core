@@ -8,7 +8,7 @@ class AfterMassActionsAction extends AbstractEvent
 {
 
     /** @var string */
-    protected static $name = 'Datatable: After MassActions Action';
+    protected static $name = 'Datatables: After MassActions Action';
 
     /** @var string */
     protected static $description = 'Runs after Datatable Mass Action is rendered';

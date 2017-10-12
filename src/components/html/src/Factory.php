@@ -19,11 +19,10 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Html;
 
-use Antares\Events\Form\Form;
 use Closure;
+use Antares\Events\Form\Form;
 use Illuminate\Contracts\Container\Container;
 
 abstract class Factory

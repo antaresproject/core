@@ -39,13 +39,15 @@ class AntaresAuthCreateUsersTable extends Migration
             $table->integer('creator_id')->nullable()->unsigned();
             $table->string('email');
             $table->string('password');
-            Event::fire('antares.install.schema: users', [$table]);
+//            Event::fire('antares.install.schema: users', [$table]);
             $table->string('firstname', 255);
             $table->string('lastname', 255);
             $table->integer('status')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->unique('email');
+
+            Event::fire(new \Antares\Events\Installation\SchemaInstalled('users', $table));
         });
         Schema::table('tbl_users', function (Blueprint $table) {
             $table->index(['creator_id']);
