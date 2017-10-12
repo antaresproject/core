@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Antares\Extension\Processors;
 
 use Antares\Acl\Migration;
+use Antares\Events\Compontents\ComponentDeactivated;
+use Antares\Events\Compontents\ComponentDeactivating;
+use Antares\Events\Compontents\ComponentInstallationFailed;
 use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
-use Antares\Extension\Events\Deactivated;
-use Antares\Extension\Events\Deactivating;
-use Antares\Extension\Events\Failed;
 use Antares\Extension\Exception\ExtensionException;
 use Antares\Extension\Model\Operation;
 use Antares\Extension\Repositories\ComponentsRepository;
@@ -73,14 +73,14 @@ class Deactivator extends AbstractOperation {
             }
 
             $handler->operationInfo(new Operation('Deactivating the [' . $name . '] extension.'));
-            $this->dispatcher->fire(new Deactivating($extension));
+            $this->dispatcher->fire(new ComponentDeactivating($extension));
             $this->aclMigration->down($name);
 
             $this->extensionsRepository->save($extension, [
                 'status' => ExtensionContract::STATUS_INSTALLED,
             ]);
 
-            $this->dispatcher->fire(new Deactivated($extension));
+            $this->dispatcher->fire(new ComponentDeactivated($extension));
 
             $operation = new Operation('The package [' . $name . '] has been successfully deactivated.');
 
@@ -88,7 +88,7 @@ class Deactivator extends AbstractOperation {
         }
         catch(\Exception $e) {
             Log::error($e);
-            $this->dispatcher->fire(new Failed($extension, $e));
+            $this->dispatcher->fire(new ComponentInstallationFailed($extension, $e));
 
             return $handler->operationFailed(new Operation($e->getMessage()));
         }

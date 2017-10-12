@@ -4,8 +4,10 @@ declare(strict_types = 1);
 
 namespace Antares\Extension\Processors;
 
+use Antares\Events\Composer\Success;
 use Antares\Extension\Events\ComposerFailed;
 use Antares\Extension\Events\ComposerSuccess;
+use Antares\Events\Composer\Failed;
 use Illuminate\Events\Dispatcher;
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
 use Antares\Extension\Exception\ExtensionException;
@@ -80,12 +82,12 @@ class Composer
                 throw new ExtensionException($process->getErrorOutput());
             }
 
-            $this->dispatcher->fire(new ComposerSuccess($command));
+            $this->dispatcher->fire(new Success($command));
 
             return $handler->operationInfo(new Operation('Composer command has been finished.'));
         } catch (\Exception $e) {
             Log::error($e);
-            $this->dispatcher->fire(new ComposerFailed($command, $e));
+            $this->dispatcher->fire(new Failed($command, $e));
 
             return $handler->operationFailed(new Operation($e->getMessage()));
         }

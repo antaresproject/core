@@ -22,6 +22,7 @@
 namespace Antares\Foundation;
 
 use Antares\Contracts\Foundation\Foundation as FoundationContract;
+use Antares\Events\SystemReady\AntaresStarted;
 use Antares\Logger\Http\Middleware\LoggerMiddleware;
 use Antares\Extension\RouteGenerator;
 use Antares\Http\RouteManager;
@@ -149,7 +150,8 @@ class Foundation extends RouteManager implements FoundationContract
         }
         $this->app->instance('antares.platform.memory', $memory);
 
-        $this->app->make('events')->fire('antares.started', [$memory]);
+        //$this->app->make('events')->fire('antares.started', [$memory]);
+        $this->app->make('events')->fire(new AntaresStarted($memory));
     }
 
     /**

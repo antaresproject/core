@@ -4,10 +4,12 @@ declare(strict_types = 1);
 
 namespace Antares\Extension;
 
+use Antares\Events\Compontents\ComponentBooted;
+use Antares\Events\Compontents\ComponentsBooted;
+use Antares\Events\Compontents\ComponentStarted;
+use Antares\Events\SystemReady\LoadServiceProviders;
 use Antares\Extension\Collections\Extensions;
 use Antares\Extension\Contracts\ExtensionContract;
-use Antares\Extension\Events\Booted;
-use Antares\Extension\Events\BootedAll;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use Closure;
@@ -85,7 +87,8 @@ class Dispatcher
         foreach ($extensions as $extension) {
             $this->register($extension);
         }
-        $this->eventDispatcher->fire('antares.after.load-service-providers');
+        //$this->eventDispatcher->fire('antares.after.load-service-providers');
+        $this->eventDispatcher->fire(new LoadServiceProviders());
     }
 
     /**
@@ -110,22 +113,25 @@ class Dispatcher
     {
         foreach ($this->extensions as $extension) {
             try {
-                $this->eventDispatcher->dispatch(new Booted($extension));
+                //$this->eventDispatcher->dispatch(new Booted($extension));
 
                 $name = $extension->getPackage()->getName();
 
-                $this->eventDispatcher->dispatch('extension.started', [$name, []]);
-                $this->eventDispatcher->dispatch('extension.started: {$name}', [[]]);
+                //$this->eventDispatcher->dispatch('extension.started', [$name, []]);
+                //$this->eventDispatcher->dispatch('extension.started: {$name}', [[]]);
+                $this->eventDispatcher->dispatch(new ComponentStarted($name));
 
-                $this->eventDispatcher->dispatch('extension.booted', [$name, []]);
-                $this->eventDispatcher->dispatch('extension.booted: {$name}', [[]]);
+                //$this->eventDispatcher->dispatch('extension.booted', [$name, []]);
+                //$this->eventDispatcher->dispatch('extension.booted: {$name}', [[]]);
+                $this->eventDispatcher->dispatch(new ComponentBooted($name));
             } catch (Exception $e) {
                 throw $e;
             }
         }
 
-        $this->eventDispatcher->dispatch(new BootedAll());
-        $this->eventDispatcher->dispatch('antares.extension: booted');
+        //$this->eventDispatcher->dispatch(new BootedAll());
+        //$this->eventDispatcher->dispatch('antares.extension: booted');
+        $this->eventDispatcher->dispatch(new ComponentsBooted());
 
         $this->loader->writeManifest();
         $this->booted = true;
@@ -142,7 +148,7 @@ class Dispatcher
             $this->container->call($callback);
         }
 
-        $this->eventDispatcher->listen(BootedAll::class, $callback);
+        $this->eventDispatcher->listen(ComponentsBooted::class, $callback);
         $this->eventDispatcher->listen('antares.extension: booted', $callback);
     }
 

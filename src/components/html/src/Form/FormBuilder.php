@@ -24,6 +24,7 @@ namespace Antares\Html\Form;
 use Antares\Contracts\Html\Adapter\FieldPermissionAdapter as FieldPermissionContract;
 use Antares\Contracts\Html\Form\Builder as BuilderContract;
 use Antares\Contracts\Html\Grid as GridContract;
+use Antares\Events\Form\Form;
 use Antares\Form\Controls\AbstractType;
 use Antares\Html\Adapter\CustomfieldAdapter;
 use Antares\Html\Builder as BaseBuilder;
@@ -109,6 +110,7 @@ class FormBuilder extends BaseBuilder implements BuilderContract
         }
         $events             = $this->container->make('events');
         $events->fire('antares.form: ' . snake_case($grid->name) . (($action) ? '.' . $action : ''), [$grid->row, $this]);
+        //$events->fire(new Form(snake_case($grid->name), $this, $action, $grid->row));
         $customFieldsActive = app('antares.extension')->isActive('customfields');
         if ($customFieldsActive) {
             $events->fire('antares.form: ready', $this);

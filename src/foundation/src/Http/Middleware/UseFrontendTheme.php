@@ -21,6 +21,9 @@
 
 namespace Antares\Foundation\Http\Middleware;
 
+use Antares\Events\SystemReady\ClientDone;
+use Antares\Events\SystemReady\ClientReady;
+use Antares\Events\SystemReady\ClientStarted;
 use Closure;
 use Illuminate\Contracts\Events\Dispatcher;
 
@@ -54,7 +57,7 @@ class UseFrontendTheme
      */
     public function handle($request, Closure $next)
     {
-        if (auth()->guest() || !user()->hasRoles(['client', 'memeber'])) {
+        if (!auth()->guest() && !user()->hasRoles(['client', 'memeber'])) {
             return $next($request);
         }
 
@@ -72,8 +75,10 @@ class UseFrontendTheme
      */
     protected function beforeSendingThroughPipeline()
     {
-        $this->dispatcher->dispatch('antares.started: client');
-        $this->dispatcher->dispatch('antares.ready: client');
+        //$this->dispatcher->fire('antares.started: client');
+        //$this->dispatcher->fire('antares.ready: client');
+        $this->dispatcher->fire(new ClientStarted());
+        $this->dispatcher->fire(new ClientReady());
     }
 
     /**
@@ -83,7 +88,8 @@ class UseFrontendTheme
      */
     protected function afterSendingThroughPipeline()
     {
-        $this->dispatcher->dispatch('antares.done: client');
+        //$this->dispatcher->fire('antares.done: client');
+        $this->dispatcher->fire(new ClientDone());
     }
 
 }

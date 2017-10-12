@@ -21,6 +21,9 @@
 
 namespace Antares\Foundation\Providers;
 
+use Antares\Events\SystemReady\AntaresDone;
+use Antares\Events\SystemReady\AntaresReady;
+use Antares\Events\SystemReady\LoadServiceProviders;
 use Antares\UI\UIComponents\Http\Middleware\Middleware as UIComponentsMiddleware;
 use Antares\Foundation\Listeners\AfterExtensionOperation;
 use Antares\Support\Providers\Traits\AliasesProviderTrait;
@@ -222,7 +225,8 @@ class FoundationServiceProvider extends ServiceProvider
     protected function registerEvents()
     {
         $this->app->terminating(function () {
-            $this->app->make('events')->fire('antares.done');
+            //$this->app->make('events')->fire('antares.done');
+            $this->app->make('events')->fire(new AntaresDone());
         });
     }
 
@@ -250,10 +254,12 @@ class FoundationServiceProvider extends ServiceProvider
         $this->bootNotificationVariables();
 
 
-        $this->app->make('events')->fire('antares.ready');
+        //$this->app->make('events')->fire('antares.ready');
+        $this->app->make('events')->fire(new AntaresReady());
         $this->app->make('view')->composer(['antares/foundation::account.index', 'antares/logger::admin.devices.*'], \Antares\Users\Http\Handlers\AccountPlaceholder::class);
 
-        $this->app->make('events')->listen('antares.after.load-service-providers', function() {
+        //$this->app->make('events')->listen('antares.after.load-service-providers', function() {
+        $this->app->make('events')->listen(LoadServiceProviders::class, function() {
             $widgets = $this->app->make('antares.ui-components.finder')->detectRoutes();
 
             $widgets->each(function($widget) {

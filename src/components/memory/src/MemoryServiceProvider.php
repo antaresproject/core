@@ -21,9 +21,10 @@
 
 namespace Antares\Memory;
 
-use Antares\Support\Providers\ServiceProvider;
-use Antares\Memory\Repository\Resource;
 use Antares\Model\Component;
+use Antares\Memory\Repository\Resource;
+use Antares\Support\Providers\ServiceProvider;
+use Antares\Events\SystemReady\LoadServiceProviders;
 
 class MemoryServiceProvider extends ServiceProvider
 {
@@ -91,7 +92,8 @@ class MemoryServiceProvider extends ServiceProvider
                 //$app->make('antares.memory')->finish();
             }
         });
-        $app->make('events')->listen('antares.after.load-service-providers', function() {
+        //$app->make('events')->listen('antares.after.load-service-providers', function() {
+        $app->make('events')->listen(LoadServiceProviders::class, function() {
             $this->app->make('antares.defered.service')->run();
         });
     }

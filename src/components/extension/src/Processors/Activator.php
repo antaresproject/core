@@ -4,15 +4,15 @@ declare(strict_types = 1);
 
 namespace Antares\Extension\Processors;
 
+use Antares\Events\Compontents\ComponentActivated;
+use Antares\Events\Compontents\ComponentActivating;
+use Antares\Events\Compontents\ComponentInstallationFailed;
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
 use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Antares\Extension\Contracts\ExtensionContract;
-use Antares\Extension\Events\Activating;
-use Antares\Extension\Events\Activated;
 use Antares\Memory\Model\DeferedEvent;
 use Antares\Extension\Model\Operation;
-use Antares\Extension\Events\Failed;
 use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
 use Antares\Console\Kernel;
@@ -66,7 +66,7 @@ class Activator extends AbstractOperation
             $name = $extension->getPackage()->getName();
 
             $handler->operationInfo(new Operation('Activating the [' . $name . '] extension.'));
-            $this->dispatcher->fire(new Activating($extension));
+            $this->dispatcher->fire(new ComponentActivating($extension));
             $this->aclMigration->import($handler, $extension);
 
             $this->extensionsRepository->save($extension, [
@@ -83,10 +83,12 @@ class Activator extends AbstractOperation
 
             $operation = new Operation('The package [' . $name . '] has been successfully activated.');
 
+            $this->dispatcher->fire(new ComponentActivated($extension));
+
             return $handler->operationSuccess($operation);
         } catch (Exception $e) {
             Log::error($e);
-            $this->dispatcher->fire(new Failed($extension, $e));
+            $this->dispatcher->fire(new ComponentInstallationFailed($extension, $e));
 
             return $handler->operationFailed(new Operation($e->getMessage()));
         }
