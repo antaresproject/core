@@ -21,14 +21,14 @@
 namespace Antares\Extension\TestCase;
 
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
+use Antares\Testing\TestCase;
 use Symfony\Component\Process\Process;
 use Antares\Extension\Processors\Composer;
 use Antares\Extension\Composer\Handler as ComposerHandler;
 use Illuminate\Events\Dispatcher;
 use Mockery as m;
-use Antares\Testbench\ApplicationTestCase;
 
-class ComposerTest extends ApplicationTestCase
+class ComposerTest extends TestCase
 {
 
     /**
@@ -47,6 +47,13 @@ class ComposerTest extends ApplicationTestCase
 
         $this->dispatcher      = m::mock(Dispatcher::class);
         $this->composerHandler = m::mock(ComposerHandler::class);
+    }
+
+    public function tearDown()
+    {
+        m::close();
+
+        parent::tearDown();
     }
 
     /**
@@ -72,8 +79,6 @@ class ComposerTest extends ApplicationTestCase
                 ->once()
                 ->andReturnNull()
                 ->getMock();
-
-        $this->app['log'] = m::mock(\Psr\Log\LoggerInterface::class)->shouldReceive('error')->once()->withAnyArgs()->getMock();
 
         $this->getProcessor()->run($handler, []);
     }

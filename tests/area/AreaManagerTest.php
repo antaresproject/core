@@ -60,6 +60,13 @@ class AreaManagerTest extends TestCase
         $this->app['translator'] = m::mock('\Illuminate\Translation\Translator')->makePartial();
     }
 
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
+    }
+
     /**
      * @param array $config
      * @return AreaManager
@@ -79,7 +86,7 @@ class AreaManagerTest extends TestCase
         $areas       = $areaManager->getAreas();
 
         $this->assertInstanceOf(AreasCollection::class, $areas);
-        $this->assertCount(0, $areas);
+        $this->assertCount(2, $areas);
     }
 
     public function testAreas()

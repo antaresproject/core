@@ -29,7 +29,7 @@ class FluentTest extends \PHPUnit_Framework_TestCase
     /**
      * Stub instance.
      *
-     * @return Antares\Authorization\Fluent
+     * @return \Antares\Authorization\Fluent
      */
     private $stub = null;
 
@@ -40,6 +40,12 @@ class FluentTest extends \PHPUnit_Framework_TestCase
     {
         $this->stub = new Fluent('stub');
         $this->stub->attach(['Hello World']);
+    }
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
     }
 
     /**

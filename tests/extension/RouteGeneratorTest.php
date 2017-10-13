@@ -58,6 +58,13 @@ class RouteGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('http://localhost/laravel/foo', $stub->root());
     }
 
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
+    }
+
     public function isDataProvider()
     {
         return [

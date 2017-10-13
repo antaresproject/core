@@ -21,9 +21,9 @@ use Illuminate\Events\Dispatcher;
 use Antares\Console\Kernel;
 use Antares\Publisher\AssetManager;
 use Antares\Publisher\MigrateManager;
-use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 
 class Installer extends AbstractOperation
 {
@@ -154,7 +154,7 @@ class Installer extends AbstractOperation
     private function importSettings(OperationHandlerContract $handler, ExtensionContract $extension)
     {
         $settingsPath = $extension->getPath() . '/resources/config/settings.php';
-        if (file_exists($settingsPath)) {
+        if (File::exists($settingsPath)) {
             $settings = $this->settingsFactory->createFromConfig($extension->getPath() . '/resources/config/settings.php');
             $extension->setSettings($settings);
             $handler->operationInfo(new Operation('Importing settings.'));

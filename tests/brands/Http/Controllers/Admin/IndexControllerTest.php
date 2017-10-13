@@ -38,4 +38,11 @@ class IndexControllerTest extends TestCase
         $this->assertSame(get_class($stub), 'Antares\Brands\Http\Controllers\Admin\IndexController');
     }
 
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
+    }
+
 }

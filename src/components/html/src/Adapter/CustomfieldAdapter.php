@@ -112,6 +112,7 @@ class CustomfieldAdapter
     protected function getFields(array $types = [])
     {
         $fields = FieldView::query()->whereIn('category_name', $types)->where(['imported' => 0, 'force_display' => 1])->get();
+        $rules  = [];
 
         foreach ($fields as $field) {
             if (is_null($field)) {
@@ -124,12 +125,15 @@ class CustomfieldAdapter
             $this->grid->fieldset(function (Fieldset $fieldset) use($customfield) {
                 $fieldset->add($customfield);
             });
-            $this->grid->rules(array_merge($this->grid->rules, $customfield->getRules()));
+
+            $rules[] = $customfield->getRules();
 
             $this->grid->row->saved(function($row) use($customfield) {
                 $customfield->onSave($row);
             });
         }
+
+        $this->grid->rules( count($rules) ? array_merge(...$rules) : []);
     }
 
 }

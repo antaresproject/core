@@ -54,12 +54,12 @@ class Composer
         if (count($extensionsNames) === 0) {
             return $handler->operationInfo(new Operation('No extensions to install. Skipping composer.'));
         }
-        $required = config('components.required');
+        $required = (array) config('components.required', []);
 
         $modules = [];
         if (!empty($required)) {
             foreach ($extensionsNames as $extension) {
-                list($requiredExtension, $version) = explode(':', $extension);
+                list($requiredExtension) = explode(':', $extension);
                 if (!in_array($requiredExtension, $required)) {
                     array_push($modules, $extension);
                 }

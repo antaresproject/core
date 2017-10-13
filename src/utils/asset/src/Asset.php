@@ -20,6 +20,10 @@
 
 namespace Antares\Asset;
 
+use Antares\Extension\Contracts\ExtensionContract;
+use Antares\Extension\Manager;
+use Illuminate\Support\Str;
+
 class Asset
 {
 
@@ -52,15 +56,32 @@ class Asset
     protected $assets = [];
 
     /**
-     * Create a new asset container instance.
+     * Extensions Manager instance.
      *
-     * @param  string  $name
-     * @param  \Antares\Asset\Dispatcher  $dispatcher
+     * @var Manager
      */
-    public function __construct($name, Dispatcher $dispatcher)
+    protected $extensionsManager;
+
+    /**
+     * Asset Symlinker instance.
+     *
+     * @var AssetSymlinker
+     */
+    protected $assetSymlinker;
+
+    /**
+     * Asset constructor.
+     * @param string $name
+     * @param Dispatcher $dispatcher
+     * @param Manager $extensionsManager
+     * @param AssetSymlinker $assetSymlinker
+     */
+    public function __construct(string $name, Dispatcher $dispatcher, Manager $extensionsManager, AssetSymlinker $assetSymlinker)
     {
-        $this->name       = $name;
-        $this->dispatcher = $dispatcher;
+        $this->name                 = $name;
+        $this->dispatcher           = $dispatcher;
+        $this->extensionsManager    = $extensionsManager;
+        $this->assetSymlinker       = $assetSymlinker;
     }
 
     /**
@@ -129,26 +150,33 @@ class Asset
      */
     public function add($name, $source, $dependencies = [], $attributes = [], $replaces = [])
     {
-        if (!is_null($from      = array_get($attributes, 'from')) && !is_null($extension = extensions($from))) {
-            $extensions = app('antares.extension')->getAvailableExtensions();
-            $path       = null;
-            foreach ($extensions as $extension) {
-                if (str_contains($extension->getPackageName(), $from)) {
+        $from = array_get($attributes, 'from');
+
+        if($from !== null) {
+            $availableExtensions = $this->extensionsManager->getAvailableExtensions();
+
+            $path = null;
+
+            /* @var $extension ExtensionContract */
+            foreach($availableExtensions->all() as $extension) {
+                if( Str::contains($extension->getPackageName(), $from) ) {
                     $path = $extension->isActivated() ? $extension->getPath() : null;
                     break;
                 }
             }
 
-
             $realPath = $path . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . $source;
+
             if (file_exists($realPath)) {
-                $symlinker  = app(AssetSymlinker::class);
-                $symlinker->setPublishPath(public_path('packages/antares'));
                 $sourceName = last(explode('/', $source));
-                $symlinker->publish($sourceName, $realPath);
-                $source     = '/packages/antares/' . $sourceName;
+
+                $this->assetSymlinker->setPublishPath( public_path('packages/antares') );
+                $this->assetSymlinker->publish($sourceName, $realPath);
+
+                $source  = '/packages/antares/' . $sourceName;
             }
         }
+
         $type = (pathinfo($source, PATHINFO_EXTENSION) == 'css') ? 'style' : 'script';
 
         return $this->$type($name, $source, $dependencies, $attributes, $replaces);
@@ -314,10 +342,14 @@ class Asset
                 $externals[] = $script;
                 continue;
             }
-            if (!file_exists(public_path($script))) {
+
+            $scriptPublicPath = public_path($script);
+
+            if (!file_exists($scriptPublicPath)) {
                 continue;
             }
-            $internals[] = file_get_contents(public_path($script));
+
+            $internals[] = file_get_contents($scriptPublicPath);
         }
 
         $return = [];
@@ -335,9 +367,8 @@ class Asset
         }
 
         file_put_contents($path, $input);
+
         $return[] = '<script  src="' . asset($filename) . '?t=' . time() . '" ></script>';
-
-
 
         return implode(PHP_EOL, $return);
     }
@@ -391,10 +422,13 @@ class Asset
     {
 
         $inline = <<<EOD
-            $(".grid-stack").css("opacity", "1");
             $(document).ready(function () {
-                if($('.activity-logger-filter').length){
-                    $('.activity-logger-filter').select2();
+                $(".grid-stack").css("opacity", "1");
+            
+                var activityLoggerFilter = $('.activity-logger-filter');
+                
+                if(activityLoggerFilter.length){
+                    activityLoggerFilter.select2();
                 }
                 componentHandler.upgradeAllRegistered();
                 $('.card > * > *, .tbl-c > *,form').css('opacity', '1'); 

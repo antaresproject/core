@@ -21,9 +21,14 @@
 
 namespace Antares\Foundation\Providers;
 
+<<<<<<< HEAD
 use Antares\Events\SystemReady\AntaresDone;
 use Antares\Events\SystemReady\AntaresReady;
 use Antares\Events\SystemReady\LoadServiceProviders;
+=======
+use Antares\Foundation\Notifications\Variables\CoreVariablesProvider;
+use Antares\Notifications\Services\VariablesService;
+>>>>>>> 8dbbe06fc1581758f204b9a1835bd0948f54ef0e
 use Antares\UI\UIComponents\Http\Middleware\Middleware as UIComponentsMiddleware;
 use Antares\Foundation\Listeners\AfterExtensionOperation;
 use Antares\Support\Providers\Traits\AliasesProviderTrait;
@@ -342,24 +347,29 @@ class FoundationServiceProvider extends ServiceProvider
         if (!app('antares.installed')) {
             return;
         }
-        $registry = app('antares.memory')->make('registry');
-        $vars     = [
-            'brand.name' => [
-                'value'       => brand_name(),
-                'description' => 'Brand name'
-            ],
-        ];
-        $emails   = $registry->get('email');
-        if (!empty($emails)) {
-            foreach (array_except($emails, ['password']) as $name => $value) {
-                $vars['email.' . $name] = ['value' => $value];
-            }
-        }
-        $this->app->make('antares.notifications')->push([
-            'foundation' => [
-                'variables' => array_merge($vars, config('antares/foundation::notification.variables'))
-            ]
-        ]);
+//        $registry = app('antares.memory')->make('registry');
+//        $vars     = [
+//            'brand.name' => [
+//                'value'       => brand_name(),
+//                'description' => 'Brand name'
+//            ],
+//        ];
+//        $emails   = $registry->get('email');
+//        if (!empty($emails)) {
+//            foreach (array_except($emails, ['password']) as $name => $value) {
+//                $vars['email.' . $name] = ['value' => $value];
+//            }
+//        }
+//        $this->app->make('antares.notifications')->push([
+//            'foundation' => [
+//                'variables' => array_merge($vars, config('antares/foundation::notification.variables'))
+//            ]
+//        ]);
+
+        /* @var $notification VariablesService */
+        $notification = app()->make(VariablesService::class);
+
+        $notification->register('foundation', new CoreVariablesProvider());
     }
 
 }

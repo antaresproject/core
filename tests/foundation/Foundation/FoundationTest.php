@@ -40,10 +40,13 @@ class FoundationTest extends ApplicationTestCase
             'address' => 'hello@antaresplatform.com',
             'name'    => 'Antares Platform',
         ]);
+    }
 
-        $transport                 = new \Antares\Notifier\TransportManager($this->app);
-        $mailer                    = with(new \Antares\Notifier\Mailer($this->app, $transport))->attach($memory);
-        $this->app['antares.mail'] = $mailer;
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
     }
 
     /**
@@ -136,8 +139,8 @@ class FoundationTest extends ApplicationTestCase
         $stub = new StubRouteManager($app);
         $this->assertEquals('http://localhost', $stub->handles('app::/'));
         $this->assertEquals('http://localhost/info?foo=bar', $stub->handles('info?foo=bar'));
-        $this->assertEquals('http://localhost/antares/installer', $stub->handles('antares::installer'));
-        $this->assertEquals('http://localhost/antares/installer', $stub->handles('antares::installer/'));
+        $this->assertEquals('http://localhost/installer', $stub->handles('antares::installer'));
+        $this->assertEquals('http://localhost/installer', $stub->handles('antares::installer/'));
     }
 
     /**

@@ -56,6 +56,13 @@ class BrandsTest extends TestCase
         $this->model = $model;
     }
 
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
+    }
+
     /**
      * test getDefault method
      */
