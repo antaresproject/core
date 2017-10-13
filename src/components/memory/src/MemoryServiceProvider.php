@@ -21,6 +21,7 @@
 
 namespace Antares\Memory;
 
+use Antares\Events\Form\Form;
 use Antares\Model\Component;
 use Antares\Memory\Repository\Resource;
 use Antares\Support\Providers\ServiceProvider;
@@ -83,8 +84,9 @@ class MemoryServiceProvider extends ServiceProvider
     {
         $app = $this->app;
         /** looking for forms * */
-        $app->make('events')->listen('antares.forms', function ($name) use ($app) {
-            $app->make('antares.memory')->make('registry.forms')->put('forms', $name);
+        //$app->make('events')->listen('antares.forms', function ($name) use ($app) {
+        $app->make('events')->listen(Form::class, function (Form $event) use ($app) {
+            $app->make('antares.memory')->make('registry.forms')->put('forms', $event->formName);
         });
         /** when application is terminating we collect all data from application * */
         $app->terminating(function () use ($app) {

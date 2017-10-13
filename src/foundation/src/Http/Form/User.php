@@ -21,6 +21,7 @@
 
 namespace Antares\Foundation\Http\Form;
 
+use Antares\Events\Form\Form;
 use Illuminate\Contracts\Container\Container;
 use Antares\Contracts\Html\Form\Presenter;
 use Antares\Contracts\Html\Form\Fieldset;
@@ -56,6 +57,7 @@ class User extends FormBuilder implements Presenter
 
         parent::__construct(app(HtmlGrid::class), app(ClientScript::class), app(Container::class));
         Event::fire('antares.forms', 'users.register');
+        Event::fire(new Form('users.register'));
         $this->grid->name('User form');
         $this->grid->resource($this, 'antares/foundation::users', $model);
         $this->grid->hidden('id');

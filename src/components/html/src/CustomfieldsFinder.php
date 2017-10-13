@@ -70,7 +70,7 @@ class CustomfieldsFinder
     {
         $extensions = extensions();
         $return     = [];
-        //event('customfields.before.search', $return);
+        event('customfields.before.search', $return);
         event(new BeforeSearch($return));
 
         foreach ($extensions as $name => $extension) {
@@ -106,7 +106,7 @@ class CustomfieldsFinder
             }
         }
 
-        //event('customfields.after.search', [$return]);
+        event('customfields.after.search', [$return]);
         event(new AfterSearch($return));
         return $return;
     }

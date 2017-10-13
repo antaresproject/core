@@ -150,7 +150,7 @@ class Foundation extends RouteManager implements FoundationContract
         }
         $this->app->instance('antares.platform.memory', $memory);
 
-        //$this->app->make('events')->fire('antares.started', [$memory]);
+        $this->app->make('events')->fire('antares.started', [$memory]);
         $this->app->make('events')->fire(new AntaresStarted($memory));
     }
 

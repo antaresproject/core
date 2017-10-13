@@ -77,9 +77,9 @@ class UseBackendTheme
      */
     protected function beforeSendingThroughPipeline()
     {
-        //$this->dispatcher->fire('antares.started: admin');
-        //$this->dispatcher->fire('antares.ready: admin');
-        //$this->dispatcher->fire('antares.ready: menu');
+        $this->dispatcher->fire('antares.started: admin');
+        $this->dispatcher->fire('antares.ready: admin');
+        $this->dispatcher->fire('antares.ready: menu');
         $this->dispatcher->fire(new AdminStarted());
         $this->dispatcher->fire(new AdminReady());
         $this->dispatcher->fire(new MenuReady());
@@ -92,7 +92,7 @@ class UseBackendTheme
      */
     protected function afterSendingThroughPipeline()
     {
-        //$this->dispatcher->fire('antares.done: admin');
+        $this->dispatcher->fire('antares.done: admin');
         $this->dispatcher->fire(new AdminDone());
     }
 

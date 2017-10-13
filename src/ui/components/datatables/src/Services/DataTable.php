@@ -22,6 +22,7 @@ namespace Antares\Datatables\Services;
 
 use Antares\Events\Datatables\AfterTableAction;
 use Antares\Events\Datatables\BeforeTableAction;
+use Antares\Events\Datatables\Value;
 use Yajra\Datatables\Services\DataTable as BaseDataTableService;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Contracts\View\Factory as ViewFactory;
@@ -98,10 +99,10 @@ abstract class DataTable extends BaseDataTableService
             $this->tableActions = new Collection();
         }
         $path = uri();
-        //Event::fire('datatables:' . $path . ':before.action.' . $action, [$this->tableActions, $row]);
+        Event::fire('datatables:' . $path . ':before.action.' . $action, [$this->tableActions, $row]);
         Event::fire(new BeforeTableAction($path, $action, $row, $this->tableActions));
         $this->tableActions->push($btn);
-        //Event::fire('datatables:' . $path . ':after.action.' . $action, [$this->tableActions, $row]);
+        Event::fire('datatables:' . $path . ':after.action.' . $action, [$this->tableActions, $row]);
         Event::fire(new AfterTableAction($path, $action, $row, $this->tableActions));
         Event::fire('datatables.' . get_class($this) . '.after.action.' . $action, [$this->tableActions, $row]);
         return $this;
@@ -237,6 +238,7 @@ abstract class DataTable extends BaseDataTableService
         $datatables = $this->datatables->of($of, get_class($this));
         $path       = uri();
         Event::fire("datatables.value.{$path}", [$datatables]);
+        Event::fire(new Value($path, $datatables));
 
         return $datatables;
     }

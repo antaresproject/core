@@ -50,10 +50,10 @@ abstract class Eloquent extends Model
      */
     public function find($id, $columns = array('*'))
     {
-        //Event::fire('before.find', [new static]);
+        Event::fire('before.find', [new static]);
         Event::fire(new BeforeFind(new static));
         $result = parent::find($id, $columns);
-        //Event::fire('after.find', array($result));
+        Event::fire('after.find', array($result));
         Event::fire(new AfterFind($result));
         return $result;
     }
@@ -63,10 +63,10 @@ abstract class Eloquent extends Model
      */
     public function findOrFail($id, $columns = array('*'))
     {
-        //Event::fire('before.find', [new static]);
+        Event::fire('before.find', [new static]);
         Event::fire(new BeforeFind(new static));
         $result = parent::findOrFail($id, $columns);
-        //Event::fire('after.find', array($result));
+        Event::fire('after.find', array($result));
         Event::fire(new AfterFind($result));
         return $result;
     }

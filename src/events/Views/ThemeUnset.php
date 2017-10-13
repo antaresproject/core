@@ -1,0 +1,31 @@
+<?php
+
+namespace Antares\Events\Views;
+
+use Antares\Foundation\Events\AbstractEvent;
+
+class ThemeUnset extends AbstractEvent
+{
+
+    /** @var string */
+    protected static $name = 'View: Theme set';
+
+    /** @var string */
+    protected static $description = 'Runs when the theme is set';
+
+    /** @var string */
+    public $themeName;
+
+    /**
+     * ThemeUnset constructor
+     *
+     * @param string $themeName
+     */
+    public function __construct(string $themeName)
+    {
+        $this->themeName = $themeName;
+
+        parent::__construct();
+    }
+
+}

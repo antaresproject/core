@@ -21,6 +21,7 @@
 
 namespace Antares\Html;
 
+use Antares\Events\Form\FormReady;
 use Antares\Html\Memory\Config as MemoryConfig;
 use Antares\Support\Providers\ServiceProvider;
 use Antares\Html\Form\Factory as FormFactory;
@@ -121,7 +122,6 @@ class HtmlServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
         $path = realpath(__DIR__ . '/../resources');
 
         $this->addConfigComponent('antares/html', 'antares/html', $path . '/config');
@@ -150,8 +150,10 @@ class HtmlServiceProvider extends ServiceProvider
             $handler    = new MemoryConfig('forms-config', $config->get('antares/html::form.memory.form-config'), $app, $driver);
             return new Provider($handler);
         });
-        listen('antares.form: ready', function() {
-            app('antares.asset')->container('antares/foundation::application')->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
+        listen(FormReady::class, function() {
+            app('antares.asset')
+                ->container('antares/foundation::application')
+                ->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
         });
     }
 
