@@ -28,6 +28,13 @@ use Mockery as m;
 class BrandsMenuTest extends TestCase
 {
 
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
+    }
+
     public function testItIsInitializable()
     {
 

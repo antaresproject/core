@@ -20,6 +20,8 @@
 
 namespace Antares\Asset\TestCase;
 
+use Antares\Asset\AssetSymlinker;
+use Antares\Extension\Manager;
 use Mockery as m;
 use Antares\Asset\Factory;
 
@@ -34,15 +36,24 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
     public function testConstructMethod()
     {
         $dispatcher = m::mock('\Antares\Asset\Dispatcher');
+        $extensionsManager = m::mock(Manager::class);
+        $assetSymlinker = m::mock(AssetSymlinker::class);
 
         $dispatcher->shouldReceive('addVersioning')->once()->andReturn(null)->shouldReceive('removeVersioning')->once()->andReturn(null);
 
-        $env  = new Factory($dispatcher);
+        $env  = new Factory($dispatcher, $extensionsManager, $assetSymlinker);
         $stub = $env->container();
 
         $this->assertInstanceOf('\Antares\Asset\Asset', $stub);
 
         $env->addVersioning()->removeVersioning();
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
     }
 
 }

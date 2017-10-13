@@ -84,6 +84,7 @@ trait DbCryptTrait
      */
     private function setCasting()
     {
+        return false;
         $package   = $this->getPackage();
         $tablename = $this->getTable();
         $config    = config("db_cryptor", []);

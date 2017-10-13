@@ -58,11 +58,12 @@ class DependencyResolver
      */
     protected function evaluateAsset($asset, $value, $original, &$sorted, &$assets)
     {
-                                        if (count($assets[$asset]['dependencies']) == 0) {
+        if (count($assets[$asset]['dependencies']) == 0) {
             $sorted[$asset] = $value;
 
             unset($assets[$asset]);
-        } else {
+        }
+        else {
             $this->evaluateAssetWithDependencies($asset, $original, $sorted, $assets);
         }
     }

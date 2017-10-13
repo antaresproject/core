@@ -27,6 +27,13 @@ use Mockery as m;
 class FactoryTest extends ApplicationTestCase
 {
 
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
+    }
+
     /**
      * Test Antares\Authorization\Factory::make().
      *

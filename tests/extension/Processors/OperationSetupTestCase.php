@@ -22,16 +22,19 @@ namespace Antares\Extension\TestCase;
 
 use Antares\Console\Kernel;
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
+use Antares\Testing\TestCase;
 use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
-use Antares\Testing\ApplicationTestCase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Mockery as m;
 use Composer\Package\CompletePackageInterface;
 use Antares\Extension\Contracts\Config\SettingsContract;
 use Antares\Extension\Contracts\ExtensionContract;
 
-abstract class OperationSetupTestCase extends ApplicationTestCase
+abstract class OperationSetupTestCase extends TestCase
 {
+
+    use DatabaseTransactions;
 
     /**
      * @var \Mockery\MockInterface
@@ -55,6 +58,13 @@ abstract class OperationSetupTestCase extends ApplicationTestCase
         $this->container  = m::mock(Container::class);
         $this->dispatcher = m::mock(Dispatcher::class);
         $this->kernel     = m::mock(Kernel::class);
+    }
+
+    public function tearDown()
+    {
+        m::close();
+
+        parent::tearDown();
     }
 
     /**

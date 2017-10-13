@@ -73,17 +73,17 @@ class ActivatorTest extends OperationSetupTestCase
             ->andReturnNull()
             ->getMock();
 
-        $queryBuilder = m::mock(\Illuminate\Database\Eloquent\Builder::class)
-            ->shouldReceive('firstOrCreate')
-            ->with(m::type('array'))
-            ->once()
-            ->andReturnNull()
-            ->getMock();
+//        $queryBuilder = m::mock(\Illuminate\Database\Eloquent\Builder::class)
+//            ->shouldReceive('firstOrCreate')
+//            ->with(m::type('array'))
+//            ->once()
+//            ->andReturnNull()
+//            ->getMock();
 
-        $deferedEvent = m::mock('overload:' . DeferedEvent::class);
-        $deferedEvent->shouldReceive('query')->once()->andReturn($queryBuilder)->getMock();
+        //$deferedEvent = m::mock('overload:' . DeferedEvent::class);
+        //$deferedEvent->shouldReceive('query')->once()->andReturn($queryBuilder)->getMock();
 
-        $this->app->instance(DeferedEvent::class, $deferedEvent);
+        //$this->app->instance(DeferedEvent::class, $deferedEvent);
 
         $name = 'foo/bar';
         $extension = $this->buildExtensionMock($name)
@@ -91,7 +91,7 @@ class ActivatorTest extends OperationSetupTestCase
             ->andReturn('/src/component/foo/bar')
             ->getMock();
 
-        $this->dispatcher->shouldReceive('fire')->twice()->andReturnNull()->getMock();
+        $this->dispatcher->shouldReceive('fire')->once()->andReturnNull()->getMock();
         $this->aclMigration->shouldReceive('import')->once()->with($handler, $extension)->andReturnNull()->getMock();
 
         $this->extensionsRepository->shouldReceive('save')->once()->with($extension, [

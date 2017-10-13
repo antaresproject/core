@@ -28,6 +28,8 @@ ini_set('memory_limit', '-1');
 abstract class ApplicationTestCase extends TestCase
 {
 
+    public function addProvider($dump) {}
+
     public function setUp()
     {
         $this->addProvider(\Antares\Area\AreaServiceProvider::class);

@@ -51,6 +51,11 @@ class AttributesAdapter
      */
     private $name;
 
+    /**
+     * AttributesAdapter constructor.
+     * @param $name
+     * @param null $params
+     */
     public function __construct($name, $params = null)
     {
         $this->name   = $name;
@@ -60,8 +65,8 @@ class AttributesAdapter
 
     /**
      * created defaults dimenstion settings
-     * 
-     * @param array $config
+     *
+     * @return array
      */
     public function defaults()
     {
@@ -92,13 +97,14 @@ class AttributesAdapter
 
     /**
      * widget attributes manager
-     * 
+     *
+     * @param array $current
      * @return array
      */
     public function attributes(array $current = array())
     {
         $attributes               = isset($this->params['attributes']) ? $this->params['attributes'] : [];
-        $this->attributes         = array_merge(array_merge($this->config, $attributes), $current);
+        $this->attributes         = array_merge($this->config, $attributes, $current);
         $this->attributes['name'] = $this->name;
         $this->attributes['x']    = isset($attributes['x']) ? $attributes['x'] : $this->attributes['x'];
         $this->attributes['y']    = isset($attributes['y']) ? $attributes['y'] : $this->attributes['y'];

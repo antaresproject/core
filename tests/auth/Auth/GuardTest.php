@@ -29,21 +29,21 @@ class GuardTest extends \PHPUnit_Framework_TestCase
     /**
      * Provider instance.
      *
-     * @var Illuminate\Contracts\Auth\UserProvider
+     * @var \Illuminate\Contracts\Auth\UserProvider
      */
     private $provider = null;
 
     /**
      * Session instance.
      *
-     * @var Illuminate\Session\Store
+     * @var \Illuminate\Session\Store
      */
     private $session = null;
 
     /**
      * Event dispatcher instance.
      *
-     * @var Illuminate\Event\Dispatcher
+     * @var \Illuminate\Events\Dispatcher
      */
     private $events = null;
 
@@ -63,6 +63,13 @@ class GuardTest extends \PHPUnit_Framework_TestCase
         $this->session  = m::mock('\Illuminate\Session\Store');
         $this->events   = m::mock('\Illuminate\Contracts\Events\Dispatcher');
         $this->request  = m::mock('\Illuminate\Http\Request');
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
     }
 
     /**
