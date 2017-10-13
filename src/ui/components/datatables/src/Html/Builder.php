@@ -651,10 +651,10 @@ EOD;
         }
         $filter = str_slug(class_basename($filterClass));
         $path   = uri();
-        //$this->dispatcher->fire("datatables:filters.{$path}.{$filter}.before", [$this->filterAdapter, $query]);
+        $this->dispatcher->fire("datatables:filters.{$path}.{$filter}.before", [$this->filterAdapter, $query]);
         $this->dispatcher->fire(new BeforeFilters($path, $filter, $this->filterAdapter, $query));
         $this->filterAdapter->add($classname);
-        //$this->dispatcher->fire("datatables:filters.{$path}.{$filter}.after", [$this->filterAdapter, $query]);
+        $this->dispatcher->fire("datatables:filters.{$path}.{$filter}.after", [$this->filterAdapter, $query]);
         $this->dispatcher->fire(new AfterFilters($path, $filter, $this->filterAdapter, $query));
         return $this;
     }
@@ -821,10 +821,10 @@ EOD;
             }
         }
         $path = uri();
-        //$this->dispatcher->fire('datatables:' . $path . ':column.' . $attributes['name'], [&$attributes]);
+        $this->dispatcher->fire('datatables:' . $path . ':column.' . $attributes['name'], [&$attributes]);
         $this->dispatcher->fire(new \Antares\Events\Datatables\Column($path, $attributes['name'], $attributes));
         $this->collection->push(new Column($attributes));
-        //$this->dispatcher->fire('datatables:' . $path . ':after.' . $attributes['name'], $this);
+        $this->dispatcher->fire('datatables:' . $path . ':after.' . $attributes['name'], $this);
         $this->dispatcher->fire(new AfterColumn($path, $attributes['name'], $this));
         return $this;
     }
@@ -881,7 +881,7 @@ EOD;
         }
         array_push($this->massActions, $massAction);
         $this->massActions = array_merge($this->massActions, (array)
-            //event('datatables:' . uri() . ':after.massactions.action.' . $name, [$this->massActions, $model], true)
+            //event('datatables:' . uri() . ':after.massactions.action.' . $name, [$this->massActions, $model], true);
             event(new AfterMassActionsAction(uri(), $name, $model, $this->massActions), [], true)
         );
         $this->massActions = array_unique($this->massActions);

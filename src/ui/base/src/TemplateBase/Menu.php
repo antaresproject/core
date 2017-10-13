@@ -51,10 +51,10 @@ class Menu extends Handler
      */
     public function add($id, $location = '#', $callback = null)
     {
-        //Event::fire('antares.ready: menu.before.' . $id, $this);
+        Event::fire('antares.ready: menu.before.' . $id, $this);
         Event::fire(new BeforeMenu($id, $this));
         $return = $this->addItem($id, $location, $callback);
-        //Event::fire('antares.ready: menu.after.' . $id, $this);
+        Event::fire('antares.ready: menu.after.' . $id, $this);
         Event::fire(new AfterMenu($id, $this));
         return $return;
     }

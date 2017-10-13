@@ -106,13 +106,13 @@ class Configure extends Processor implements Command
 
         unset($input['_token']);
 
-        //Event::fire("antares.saving: extension.{$extension->get('name')}", [& $input]);
+        Event::fire("antares.saving: extension.{$extension->get('name')}", [& $input]);
         Event::fire(new ComponentSaving($extension->get('name'), $input));
 
         $memory->put("extensions.active.{$extension->get('name')}.config", $input->getAttributes());
         $memory->put("extension_{$extension->get('name')}", $input->getAttributes());
 
-        //Event::fire("antares.saved: extension.{$extension->get('name')}", [$input]);
+        Event::fire("antares.saved: extension.{$extension->get('name')}", [$input]);
         Event::fire(new ComponentSaved($extension->get('name'), $input));
 
         return $listener->configurationUpdated($extension);

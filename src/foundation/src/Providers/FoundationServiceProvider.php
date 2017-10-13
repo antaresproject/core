@@ -225,7 +225,7 @@ class FoundationServiceProvider extends ServiceProvider
     protected function registerEvents()
     {
         $this->app->terminating(function () {
-            //$this->app->make('events')->fire('antares.done');
+            $this->app->make('events')->fire('antares.done');
             $this->app->make('events')->fire(new AntaresDone());
         });
     }
@@ -254,7 +254,7 @@ class FoundationServiceProvider extends ServiceProvider
         $this->bootNotificationVariables();
 
 
-        //$this->app->make('events')->fire('antares.ready');
+        $this->app->make('events')->fire('antares.ready');
         $this->app->make('events')->fire(new AntaresReady());
         $this->app->make('view')->composer(['antares/foundation::account.index', 'antares/logger::admin.devices.*'], \Antares\Users\Http\Handlers\AccountPlaceholder::class);
 

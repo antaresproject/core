@@ -67,14 +67,69 @@ abstract class AbstractEvent implements Event
         }
 
         $details = debug_backtrace()[1] ?? null;
+        $listenersData = $this->collectListenersData($model->namespace);
 
         $model->details = $details ? serialize([
-            'file'     => $details['file'] ?? null,
-            'line'     => $details['line'] ?? null,
-            'function' => $details['function'] ?? null
+            'file'      => $details['file'] ?? null,
+            'line'      => $details['line'] ?? null,
+            'function'  => $details['function'] ?? null,
+            'listeners' => $listenersData
         ]) : null;
         $model->fire_count = $fireCount;
         $model->save();
+    }
+
+    /**
+     * @param string $event
+     * @return array
+     */
+    private function collectListenersData(string $event): array
+    {
+        $listenersData = [];
+        $listeners = app('events')->getListeners($event);
+
+        if (!empty($listeners)) {
+            foreach ($listeners as $listener) {
+                if (!$listener instanceof \Closure) {
+                    continue;
+                }
+
+                $reflection = new \ReflectionFunction($listener);
+                $uses = $reflection->getStaticVariables();
+
+                if (!isset($uses['listener'])) {
+                    continue;
+                }
+
+                $listenerParameter = $uses['listener'];
+
+                if ($listenerParameter instanceof \Closure) {
+                    $reflection = new \ReflectionFunction($listenerParameter);
+
+                    $listenersData[] = [
+                        'type' => 'Closure',
+                        'file' => $reflection->getFileName(),
+                        'lines' => sprintf('%s-%s', $reflection->getStartLine(), $reflection->getEndLine()),
+                    ];
+                } else if (is_string($listenerParameter)) {
+                    if (strpos($listenerParameter, '@') === false) {
+                        $namespace = $listenerParameter;
+                    } else {
+                        $parts = explode('@', $listenerParameter);
+                        $namespace = $parts[0];
+                        $function = $parts[1];
+                    }
+
+                    $listenersData[] = [
+                        'type'      => 'Class',
+                        'namespace' => $namespace,
+                        'function'  => $function ?? 'handle'
+                    ];
+                }
+            }
+        }
+
+        return $listenersData;
     }
 
 }

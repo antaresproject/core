@@ -76,7 +76,7 @@ abstract class Factory
             $this->names[$name]->name = $name;
         }
         $form = $this->names[$name];
-        //event('form.' . $name, [&$form]);
+        event('form.' . $name, [&$form]);
         event(new Form($name, $form));
         return $form;
     }

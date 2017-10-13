@@ -21,6 +21,7 @@
 
 namespace Antares\Html\Validation;
 
+use Antares\Events\Form\FormValidate;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Antares\Html\Validation\SupportValidator;
 use Illuminate\Support\Facades\Response;
@@ -99,6 +100,7 @@ class Validator implements ValidatorContract
     public function validate($sendHeaders = true)
     {
         app('events')->fire('antares.form: validate', $this->grid);
+        app('events')->fire(new FormValidate($this->grid));
         $inputs          = Input::all();
         $messages        = null;
         $customValidator = !is_null($this->grid->customValidator) ? $this->grid->customValidator : null;

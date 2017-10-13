@@ -24,6 +24,7 @@ namespace Antares\View\Console;
 
 use Antares\Automation\Model\Jobs;
 use Antares\Contracts\Html\Form\Grid as FormGrid;
+use Antares\Events\Form\Form;
 use Antares\Html\Form\Fieldset;
 use Antares\Html\Form\FormBuilder;
 use Antares\Support\Fluent;
@@ -200,8 +201,8 @@ abstract class Command extends BaseCommand
      */
     public function form(array $configuration = array())
     {
-
         Event::fire('antares.forms', 'commands.' . $this->name);
+        Event::fire(new Form('commands.' . $this->name));
 
         return app('antares.form')->of("antares.command: " . $this->name, function (FormGrid $form) use ($configuration) {
                     $form->name('Command Configuration Form');

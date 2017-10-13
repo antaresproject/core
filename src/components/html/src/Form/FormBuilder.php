@@ -24,7 +24,9 @@ namespace Antares\Html\Form;
 use Antares\Contracts\Html\Adapter\FieldPermissionAdapter as FieldPermissionContract;
 use Antares\Contracts\Html\Form\Builder as BuilderContract;
 use Antares\Contracts\Html\Grid as GridContract;
-use Antares\Events\Form\Form;
+use Antares\Events\Form\BeforeFormRender;
+use Antares\Events\Form\FormReady;
+use Antares\Events\Form\FormRender;
 use Antares\Form\Controls\AbstractType;
 use Antares\Html\Adapter\CustomfieldAdapter;
 use Antares\Html\Builder as BaseBuilder;
@@ -108,14 +110,17 @@ class FormBuilder extends BaseBuilder implements BuilderContract
         if ($grid->row instanceof Model) {
             $action = $grid->row->exists ? 'edit' : 'create';
         }
-        $events             = $this->container->make('events');
+        $events = $this->container->make('events');
         $events->fire('antares.form: ' . snake_case($grid->name) . (($action) ? '.' . $action : ''), [$grid->row, $this]);
-        //$events->fire(new Form(snake_case($grid->name), $this, $action, $grid->row));
+        $events->fire(new FormRender(snake_case($grid->name), $this, $action, $grid->row));
+
         $customFieldsActive = app('antares.extension')->isActive('customfields');
         if ($customFieldsActive) {
             $events->fire('antares.form: ready', $this);
+            $events->fire(new FormReady($this));
         }
         $events->fire('before.form.render', $grid);
+        $events->fire(new BeforeFormRender($grid));
 
         $this->addHiddenKey($grid);
         $isEmpty = $grid->fieldsets()->isEmpty();
@@ -360,8 +365,10 @@ class FormBuilder extends BaseBuilder implements BuilderContract
         $events             = $this->container->make('events');
         if ($customFieldsActive) {
             $events->fire('antares.form: ready', $this);
+            $events->fire(new FormReady($this));
         }
         $events->fire('before.form.render', $grid);
+        $events->fire(new BeforeFormRender($grid));
 
         $this->addHiddenKey($grid);
         $isEmpty = $grid->fieldsets()->isEmpty();

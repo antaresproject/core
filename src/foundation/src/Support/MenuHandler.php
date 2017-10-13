@@ -83,7 +83,7 @@ abstract class MenuHandler
     public function handle()
     {
         $id = $this->getAttribute('id');
-        //Event::fire('antares.ready: menu.before.' . $id);
+        Event::fire('antares.ready: menu.before.' . $id);
         Event::fire(new BeforeMenu($id, $this));
 
         if (!$this->passesAuthorization()) {
@@ -106,7 +106,7 @@ abstract class MenuHandler
             }
         }
 
-        //Event::fire('antares.ready: menu.after.' . $id);
+        Event::fire('antares.ready: menu.after.' . $id);
         Event::fire(new AfterMenu($id, $this));
     }
 

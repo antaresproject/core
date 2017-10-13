@@ -63,10 +63,10 @@ abstract class Presenter implements PresenterContract
             $this->tableActions = new Collection();
         }
         $path = Route::getCurrentRoute()->getPath();
-        //Event::fire('datatables:' . $path . ':before.action.' . $action, [$this->tableActions, $row]);
+        Event::fire('datatables:' . $path . ':before.action.' . $action, [$this->tableActions, $row]);
         Event::fire(new BeforeTableAction($path, $action, $row, $this->tableActions));
         $this->tableActions->push($btn);
-        //Event::fire('datatables:' . $path . ':after.action.' . $action, [$this->tableActions, $row]);
+        Event::fire('datatables:' . $path . ':after.action.' . $action, [$this->tableActions, $row]);
         Event::fire(new AfterTableAction($path, $action, $row, $this->tableActions));
         return $this;
     }

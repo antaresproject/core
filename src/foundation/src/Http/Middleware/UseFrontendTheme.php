@@ -21,10 +21,10 @@
 
 namespace Antares\Foundation\Http\Middleware;
 
+use Closure;
 use Antares\Events\SystemReady\ClientDone;
 use Antares\Events\SystemReady\ClientReady;
 use Antares\Events\SystemReady\ClientStarted;
-use Closure;
 use Illuminate\Contracts\Events\Dispatcher;
 
 class UseFrontendTheme
@@ -75,8 +75,8 @@ class UseFrontendTheme
      */
     protected function beforeSendingThroughPipeline()
     {
-        //$this->dispatcher->fire('antares.started: client');
-        //$this->dispatcher->fire('antares.ready: client');
+        $this->dispatcher->fire('antares.started: client');
+        $this->dispatcher->fire('antares.ready: client');
         $this->dispatcher->fire(new ClientStarted());
         $this->dispatcher->fire(new ClientReady());
     }
@@ -88,7 +88,7 @@ class UseFrontendTheme
      */
     protected function afterSendingThroughPipeline()
     {
-        //$this->dispatcher->fire('antares.done: client');
+        $this->dispatcher->fire('antares.done: client');
         $this->dispatcher->fire(new ClientDone());
     }
 

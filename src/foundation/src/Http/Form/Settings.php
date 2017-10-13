@@ -21,6 +21,7 @@
 
 namespace Antares\Foundation\Http\Form;
 
+use Antares\Events\Form\Form;
 use Illuminate\Contracts\Container\Container;
 use Antares\Contracts\Html\Form\Presenter;
 use Antares\Contracts\Html\Form\Fieldset;
@@ -43,6 +44,7 @@ class Settings extends FormBuilder implements Presenter
         view()->share('grid_container_class', 'grid-container--footer');
         parent::__construct(app(HtmlGrid::class), app(ClientScript::class), app(Container::class));
         Event::fire('antares.forms', 'foundation.settings');
+        Event::fire(new Form('foundation.settings'));
         $this->grid->name('General configuration');
 
         $this->grid->setup($this, 'antares::settings/index', $model);
