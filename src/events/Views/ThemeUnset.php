@@ -19,9 +19,9 @@ class ThemeUnset extends AbstractEvent
     /**
      * ThemeUnset constructor
      *
-     * @param string $themeName
+     * @param string|null $themeName
      */
-    public function __construct(string $themeName)
+    public function __construct(string $themeName = null)
     {
         $this->themeName = $themeName;
 
