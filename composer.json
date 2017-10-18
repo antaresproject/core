@@ -10,7 +10,6 @@
     "prefer-stable": true,
     "minimum-stability": "dev",    
     "require": {        
-        "laravel/framework": "5.4.*",
         "php": ">=7.0.1",
         "yajra/laravel-datatables-oracle": "6.15.2",
         "aarondfrancis/urlcrypt": "0.2.*",        
