@@ -539,7 +539,13 @@ if (!function_exists('lang')) {
     function lang($locale = null)
     {
         $code = !is_null($locale) ? $locale : app()->getLocale();
-        return \Antares\Translations\Models\Languages::where('code', $code)->first();
+
+        \Cache::store('array');
+
+        return \Cache::get('lang-' . $code, function() use($code) {
+            return \Antares\Translations\Models\Languages::where('code', $code)->first();
+        });
+
     }
 
 }
@@ -550,7 +556,11 @@ if (!function_exists('langs')) {
      */
     function langs()
     {
-        return \Antares\Translations\Models\Languages::all();
+        \Cache::store('array');
+
+        return \Cache::get('langs', function() {
+            return \Antares\Translations\Models\Languages::all();
+        });
     }
 
 }
