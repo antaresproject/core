@@ -671,10 +671,8 @@ EOD;
 
     /**
      * defered data setter
-     * 
-     * @param array | mixed $data
-     * @param mixed $count
-     * @return Builder
+     *
+     * @return $this
      */
     public function setDeferedData()
     {
