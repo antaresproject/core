@@ -23,6 +23,7 @@
 namespace Antares\View\Theme;
 
 use Antares\Events\Views\ThemeBoot;
+use Antares\Events\Views\ThemeResolving;
 use Antares\Events\Views\ThemeSet;
 use Antares\Events\Views\ThemeUnset;
 use Illuminate\Filesystem\Filesystem;
@@ -209,6 +210,7 @@ class Theme implements ThemeContract
         $this->resolved = true;
 
         $this->dispatcher->fire('antares.theme.resolving', [$this, $this->app]);
+        $this->dispatcher->fire(new ThemeResolving($this, $this->app));
 
         $this->setViewPaths();
 

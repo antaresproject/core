@@ -9,7 +9,7 @@ class FormValidate extends AbstractEvent
 {
 
     /** @var string */
-    protected static $name = 'Form validate';
+    protected static $name = 'Form: validate';
 
     /** @var string */
     protected static $description = 'Runs when form is validated';

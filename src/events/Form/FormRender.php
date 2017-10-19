@@ -10,7 +10,7 @@ class FormRender extends AbstractEvent
 {
 
     /** @var string */
-    protected static $name = 'Form rendered';
+    protected static $name = 'Form: rendered';
 
     /** @var string */
     protected static $description = 'Runs when form is rendered';

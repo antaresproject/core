@@ -22,6 +22,7 @@
 namespace Antares\Html;
 
 use Antares\Events\Form\FormReady;
+use Antares\Html\Events\BeforeFormRender;
 use Antares\Html\Memory\Config as MemoryConfig;
 use Antares\Support\Providers\ServiceProvider;
 use Antares\Html\Form\Factory as FormFactory;
@@ -127,7 +128,7 @@ class HtmlServiceProvider extends ServiceProvider
         $this->addConfigComponent('antares/html', 'antares/html', $path . '/config');
         $this->addViewComponent('html', 'antares/html', $path . '/views');
 
-        $this->app->make('events')->listen('before.form.render', Events\BeforeFormRender::class);
+        $this->app->make('events')->listen(BeforeFormRender::class, Events\BeforeFormRender::class);
 
         $memory = $this->app->make('antares.memory');
 

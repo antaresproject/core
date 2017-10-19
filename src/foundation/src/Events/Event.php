@@ -11,11 +11,36 @@ abstract class AbstractEvent implements Event
     /** @var string */
     protected static $name;
 
-    /** @var  string */
+    /** @var string */
     protected static $description;
 
     /** @var bool */
     protected static $isCountable = true;
+
+    /**
+     * Event constructor
+     */
+    public function __construct()
+    {
+        $model = $this->model();
+        $fireCount = $model->fire_count ?? 0;
+
+        if (static::isCountable()) {
+            $fireCount++;
+        }
+
+        $details = debug_backtrace()[1] ?? null;
+        $listenersData = $this->collectListenersData($model->namespace);
+
+        $model->details = $details ? serialize([
+            'file'      => $details['file'] ?? null,
+            'line'      => $details['line'] ?? null,
+            'function'  => $details['function'] ?? null,
+            'listeners' => $listenersData
+        ]) : null;
+        $model->fire_count = $fireCount;
+        $model->save();
+    }
 
     /**
      * @return string
@@ -55,31 +80,6 @@ abstract class AbstractEvent implements Event
     }
 
     /**
-     * Event constructor
-     */
-    public function __construct()
-    {
-        $model = $this->model();
-        $fireCount = $model->fire_count ?? 0;
-
-        if (static::isCountable()) {
-            $fireCount++;
-        }
-
-        $details = debug_backtrace()[1] ?? null;
-        $listenersData = $this->collectListenersData($model->namespace);
-
-        $model->details = $details ? serialize([
-            'file'      => $details['file'] ?? null,
-            'line'      => $details['line'] ?? null,
-            'function'  => $details['function'] ?? null,
-            'listeners' => $listenersData
-        ]) : null;
-        $model->fire_count = $fireCount;
-        $model->save();
-    }
-
-    /**
      * @param string $event
      * @return array
      */
@@ -106,11 +106,11 @@ abstract class AbstractEvent implements Event
                 if ($listenerParameter instanceof \Closure) {
                     $reflection = new \ReflectionFunction($listenerParameter);
 
-                    $listenersData[] = [
+                    $this->addListener([
                         'type' => 'Closure',
                         'file' => $reflection->getFileName(),
                         'lines' => sprintf('%s-%s', $reflection->getStartLine(), $reflection->getEndLine()),
-                    ];
+                    ], $listenersData);
                 } else if (is_string($listenerParameter)) {
                     if (strpos($listenerParameter, '@') === false) {
                         $namespace = $listenerParameter;
@@ -120,16 +120,47 @@ abstract class AbstractEvent implements Event
                         $function = $parts[1];
                     }
 
-                    $listenersData[] = [
+                    $this->addListener([
                         'type'      => 'Class',
                         'namespace' => $namespace,
                         'function'  => $function ?? 'handle'
-                    ];
+                    ], $listenersData);
                 }
             }
         }
 
         return $listenersData;
+    }
+
+    /**
+     * @param array $listener
+     * @param array $listeners
+     */
+    public function addListener(array $listener, array &$listeners)
+    {
+        $hasSameListener = false;
+
+        foreach ($listeners as $listenerData) {
+            if ($listener['type'] != $listenerData['type']) {
+                continue;
+            }
+
+            $type = $listener['type'];
+
+            if ($type == 'Closure' && $listener['file'] == $listenerData['file'] && $listener['lines'] == $listenerData['lines']) {
+                $hasSameListener = true;
+                break;
+            } else if ($type == 'Class' && $listener['namespace'] == $listenerData['namespace'] && $listener['function'] == $listenerData['function']) {
+                $hasSameListener = true;
+                break;
+            }
+        }
+
+        if ($hasSameListener) {
+            return;
+        }
+
+        $listeners[] = $listener;
     }
 
 }
