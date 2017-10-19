@@ -8,7 +8,7 @@ class ThemeUnset extends AbstractEvent
 {
 
     /** @var string */
-    protected static $name = 'View: Theme set';
+    protected static $name = 'View: Theme unset';
 
     /** @var string */
     protected static $description = 'Runs when the theme is set';

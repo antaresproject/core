@@ -9,7 +9,7 @@ class FormReady extends AbstractEvent
 {
 
     /** @var string */
-    protected static $name = 'Form ready';
+    protected static $name = 'Form: ready';
 
     /** @var string */
     protected static $description = 'Runs when form is ready';

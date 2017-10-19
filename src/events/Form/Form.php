@@ -8,7 +8,7 @@ class Form extends AbstractEvent
 {
 
     /** @var string */
-    protected static $name = 'Form created';
+    protected static $name = 'Form: created';
 
     /** @var string */
     protected static $description = 'Runs when form is created';

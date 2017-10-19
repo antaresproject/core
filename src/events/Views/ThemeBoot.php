@@ -8,7 +8,7 @@ class ThemeBoot extends AbstractEvent
 {
 
     /** @var string */
-    protected static $name = 'View: Themeun boot';
+    protected static $name = 'View: Theme boot';
 
     /** @var string */
     protected static $description = 'Runs when the theme is loaded';

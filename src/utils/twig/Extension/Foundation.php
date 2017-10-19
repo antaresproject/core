@@ -20,6 +20,8 @@
 
 namespace Antares\Twig\Extension;
 
+use Antares\Events\Placeholder\After;
+use Antares\Events\Placeholder\Before;
 use Antares\Events\Views\BreadcrumbBeforeRender;
 use Illuminate\Support\Fluent as FluentSupport;
 use Antares\Asset\JavaScriptDecorator;
@@ -171,10 +173,12 @@ class Foundation extends Twig_Extension
             new Twig_SimpleFunction('placeholder', function ($name) {
                         $__ps = $this->widgetManager->make("placeholder." . $name);
                         Event::fire("placeholder.before." . $name, [$__ps]);
+                        Event::fire(new Before($name, $__ps));
                         foreach ($__ps as $__p) {
                             echo value($__p->value ?: "");
                         }
                         Event::fire("placeholder.after." . $name, [$__ps]);
+                        Event::fire(new After($name, $__ps));
                     }),
             new Twig_SimpleFunction('stack', function ($name) {
                         echo $this->factory->yieldContent($name);
