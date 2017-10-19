@@ -31,7 +31,10 @@ class ExtensionsRepository {
 			'name'      => $extension->getPackageName(),
 		];
 
-		return ExtensionModel::updateOrCreate($identity, $attributes);
+		/* @var $model ExtensionModel */
+		$model = ExtensionModel::query()->updateOrCreate($identity, $attributes);
+
+		return $model;
 	}
 
 }
