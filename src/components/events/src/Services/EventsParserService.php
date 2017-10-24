@@ -4,6 +4,7 @@ namespace Antares\Events\Services;
 
 use Symfony\Component\Finder\Finder;
 use Antares\Events\Model\Event as EventModel;
+use Exception;
 
 /**
  * Class EventsParserService

@@ -52,9 +52,7 @@ class ComponentParams extends Model
     public $timestamps = false;
 
     /**
-     * one to one relation
-     *
-     * @return OneToOneRelation
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function widget()
     {
@@ -63,11 +61,15 @@ class ComponentParams extends Model
 
     /**
      * {@inherited}
+     *
+     * @param array $options
+     * @return bool
      */
     public function save(array $options = [])
     {
-        $ignored    = config('antares/ui-components::defaults.ignored');
-        $this->data = array_except($this->data, $ignored);
+        $ignored    = config('antares/ui-components::defaults.ignored', []);
+        $this->data = array_except( (array) $this->data, $ignored);
+
         return parent::save();
     }
 

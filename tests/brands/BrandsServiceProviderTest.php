@@ -48,6 +48,13 @@ class BrandsServiceProviderTest extends TestCase
         $this->assertInstanceOf('\Antares\Brands\BrandsTeller', $app['antares.brands']);
     }
 
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
+    }
+
     /**
      * Test Antares\Notifier\NotifierServiceProvider::boot() method.
      *

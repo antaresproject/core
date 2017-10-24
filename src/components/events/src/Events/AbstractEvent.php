@@ -32,7 +32,7 @@ abstract class AbstractEvent implements GlobalEventInterface
 	public function __construct($params)
 	{
 		if (!(is_array($params) && isset($params['showEvents'])) && $this->countable) {
-			(new EventModel())->where('namespace', get_class($this))->increment('fire_count');
+		    EventModel::query()->where('namespace', get_class($this))->increment('fire_count');
 		}
 
 	}

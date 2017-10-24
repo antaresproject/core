@@ -136,6 +136,7 @@ class Builder extends BaseBuilder
         'iDisplayLength' => 10,
         'bLengthChange'  => true,
         'bInfo'          => false,
+        'rowReorder'     => false,
         "columnDefs"     => [
         ],
         "serverSide"     => true,
@@ -219,6 +220,13 @@ class Builder extends BaseBuilder
     protected $selectedGroups = [];
 
     /**
+     * Whether datatable is orderable
+     *
+     * @var boolean
+     */
+    protected $orderable = false;
+
+    /**
      * Constructing
      * 
      * @param Repository $config
@@ -250,6 +258,11 @@ class Builder extends BaseBuilder
         return false;
     }
 
+    protected function cols()
+    {
+        return $this->hasColumnFilter() ? $this->getColumnFilterAdapter()->getColumns()->toArray() : $this->collection->toArray();
+    }
+
     /**
      * Get generated raw scripts.
      *
@@ -260,13 +273,16 @@ class Builder extends BaseBuilder
 
         app('antares.asset')->container('antares/foundation::application')->add('gridstack', '//51.254.36.218:71/js/view_datatables.js', ['webpack_gridstack', 'app_cache']);
 
+        if ($this->orderable) {
+            array_set($this->attributes, 'rowReorder', true);
+        }
 
         $columns = $this->hasColumnFilter() ? $this->getColumnFilterAdapter()->getColumns()->toArray() : $this->collection->toArray();
         array_set($this->attributes, 'sEmptyTable', $this->zeroData());
         array_set($this->attributes, 'iDisplayLength', $this->datatable->getPerPage());
 
         $args         = array_merge(
-                $this->attributes, ['ajax' => $this->ajax, 'columns' => $columns]
+                $this->attributes, ['ajax' => $this->ajax, 'columns' => $this->cols()]
         );
         $searching    = (($value        = $this->getGlobalSearchValue()) !== false) ? "data.search.value=instance.find('.mdl-textfield__input').val();" : '';
         $groupsFilter = app(\Antares\Datatables\Adapter\GroupsFilterAdapter::class);
@@ -304,7 +320,7 @@ class Builder extends BaseBuilder
             }
             $cols = 'data.columns = ' . JavaScriptDecorator::decorate($columns) . ';';
         }
-
+        $orderable = ($this->orderable) ? 'data.orderable=1;' : '';
 
         $eventAfterSearch = (request()->has('search') && !request()->ajax()) ? '$(document).trigger( "datatables.searchLoaded", [ dtInstance,data,' . count(config('search.datatables')) . ' ] );' : '';
         $ajax             = <<<EOD
@@ -312,9 +328,11 @@ class Builder extends BaseBuilder
                     if(data.draw===1){
                         $cols
                     }
+                    
                     var dtInstance=$(settings.oInstance);
                     var instance = dtInstance.closest('.grid-stack-item-content').length>0?dtInstance.closest('.grid-stack-item-content'):dtInstance.closest('.tbl-c');                    
                     $searching
+                    $orderable
                     settings.jqXHR = $.ajax({
                         "dataType": 'json',
                         "timeout": 20000,
@@ -337,11 +355,30 @@ EOD;
         $javascript           = file_get_contents(sandbox_path('packages/core/js/datatables.js'));
         $parameters           = JavaScriptDecorator::decorate(['options' => $args]);
         return str_replace(['$params = null,', '$instanceName = null;'], ['$params = ' . $parameters . ',', '$instanceName = "' . $this->tableAttributes['id'] . '";'], $javascript);
-    }
 
     protected function zeroData()
     {
         return view('datatables-helpers::zero_data')->render();
+    }
+
+    protected function onReorder($oTable, $url, $data)
+    {
+        return <<<EOD
+            $.extend($.fn.dataTable.RowReorder.defaults, {update: false});
+            document.addEventListener("row-reorder", function (e) {
+                var data=[];
+                for ( var i=0, ien=e.detail.diff.length ; i<ien ; i++ ) {   
+                    var id=$(e.detail.diff[i].node).find('td:nth-child(2)').text();
+                    data.push({id:id,pos:e.detail.diff[i].newPosition});
+                }
+                $.ajax({
+                    url:'$url',
+                    data:{pos:data,data:"$data"},
+                    method:"POST"
+                })
+                return false;
+            });
+EOD;
     }
 
     protected function getTargetUrl()
@@ -567,9 +604,7 @@ EOD;
     /**
      * defered data setter
      * 
-     * @param array | mixed $data
-     * @param mixed $count
-     * @return Builder
+     * @return $this
      */
     public function setDeferedData()
     {
@@ -578,9 +613,10 @@ EOD;
         }
 
         $totalItemsCount    = $this->datatable->count();
-        $this->deferredData = $this->datatable->ajax()->getData()->data;
+        $this->deferredData = $this->datatable->ajax()->getData()->data; // dubluje zapytania sql
         $filters            = $this->datatable->getFilters();
         $query              = $this->datatable->query();
+
         foreach ($filters as $filter) {
             $this->addFilter($filter, $query);
         }
@@ -607,9 +643,12 @@ EOD;
             $params                    = $this->html->attributes($columnAttributes);
             $string                    .= "<th " . $params . ">{$collectedItem->title}</th>";
         }
+
+        $dataItems = $this->getDeferredDataItems();
+
         $string .= '</tr></thead>';
         $string .= '<tbody>';
-        foreach ($this->getDeferredDataItems() as $item) {
+        foreach ($dataItems as $item) {
             $string .= '<tr>';
             foreach ($this->collection as $collectedItem) {
                 $value  = isset($item->{$collectedItem->data}) ? $item->{$collectedItem->data} : '---';
@@ -620,7 +659,7 @@ EOD;
         $string                .= '</tbody>';
         $this->tableAttributes = array_merge($this->tableAttributes, $attributes);
         $scrollable            = '';
-        if ($this->datatable->count() > 10 or strlen($this->ajax) > 0) {
+        if ( count($dataItems) > 10 or strlen($this->ajax) > 0) {
             $scrollable = 'data-scrollable';
         }
         $massable = (int) $this->hasMassActions();
@@ -912,10 +951,11 @@ EOD;
     {
         if (!is_null($defaultOrder = array_get($attributes, 'order'))) {
             $orderAdapter = app(OrderAdapter::class)->setClassname(get_class($this->datatable));
+
             if (($order        = $orderAdapter->getSelected()) !== false) {
-                $attributes = array_merge($attributes, [
-                    'order' => [[$order['column'], $order['dir']]],
-                ]);
+//                $attributes = array_merge($attributes, [
+//                    'order' => [[$order['column'], $order['dir']]],
+//                ]);
             }
         }
 
@@ -939,11 +979,25 @@ EOD;
         $container = app('antares.asset')->container('antares/foundation::scripts');
         $container->add('context_menu', '/packages/core/js/contextMenu.js');
         $script    = $script ?: $this->generateScripts();
+        if ($this->orderable) {
+            app('antares.asset')->container('antares/foundation::application')->add('dataTables-rowreorder', 'https://cdn.datatables.net/rowreorder/1.2.0/js/dataTables.rowReorder.min.js', ['webpack_forms_basic']);
+        }
         if (app('request')->ajax()) {
             return '<script' . $this->html->attributes($attributes) . '>' . $script . '</script>' . PHP_EOL;
         } else {
             return $container->inlineScript($this->tableAttributes['id'], $script);
         }
     }
+
+    /**
+     * Sets datatable as orderable
+     * 
+     * @return $this
+     */
+    public function orderable()
+    {
+        $this->orderable = true;
+        return $this;
+}
 
 }

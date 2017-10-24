@@ -42,6 +42,7 @@ class Acl
     {
         $name     = $extension->getPackage()->getName();
         $filePath = $extension->getPath() . '/acl.php';
+
         if (!File::exists($filePath)) {
             $handler->operationInfo(new Operation('Skipping importing ACL settings for ' . $name . '.'));
             return;

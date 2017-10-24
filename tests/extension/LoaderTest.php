@@ -42,6 +42,13 @@ class ProviderRepositoryTest extends \PHPUnit_Framework_TestCase
         $stub->registerExtensionProviders($extension);
     }
 
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
+    }
+
     /**
      * Test Orchestra\Extension\ProviderRepository::provides()
      * method.

@@ -21,20 +21,22 @@
 
 namespace Antares\Foundation\Support\Providers;
 
+use Antares\UI\Navigation\MenuAssigner;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Antares\Foundation\Support\Providers\Traits\RouteProviderTrait;
 use Antares\Support\Providers\Traits\MiddlewareProviderTrait;
 use Antares\Support\Providers\Traits\PackageProviderTrait;
 use Antares\Support\Providers\Traits\EventProviderTrait;
 use Antares\Support\Providers\Traits\BindableTrait;
+use Antares\Modules\Api\Http\Router\Adapter;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Http\Kernel;
-use Antares\Api\Http\Router\Adapter;
 use Antares\Foundation\MenuComposer;
 use Illuminate\Routing\Router;
 use RuntimeException;
 use ReflectionClass;
 use SplFileInfo;
+use Antares\UI\Navigation\Breadcrumbs\Manager;
 
 abstract class ModuleServiceProvider extends ServiceProvider
 {
@@ -145,6 +147,8 @@ abstract class ModuleServiceProvider extends ServiceProvider
         $this->bootExtensionComponents();
         $this->bootExtensionRouting();
         $this->bootApiRouting($router);
+        $this->loadMenuFile();
+        $this->loadBreadcrumbsFile();
     }
 
     /**
@@ -152,7 +156,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
      *
      * @param Router $router
      */
-    private function bootApiRouting(Router $router)
+    public function bootApiRouting(Router $router)
     {
         if (!$this->app->make('antares.request')->shouldMakeApiResponse()) {
             return;
@@ -161,6 +165,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
         $routerAdapter = $this->app->make(Adapter::class);
         $routes        = [];
 
+        /* @var $route \Illuminate\Routing\Route */
         foreach ($router->getRoutes()->getRoutes() as $route) {
             $routeActionName = $route->getActionName();
 
@@ -179,10 +184,9 @@ abstract class ModuleServiceProvider extends ServiceProvider
      */
     protected function setExtensionPath()
     {
-        $reflection          = new ReflectionClass($this);
-        $filename            = $reflection->getFileName();
-        $splFileInfo         = new SplFileInfo($filename);
-        return $this->extensionPath = $splFileInfo->getPath();
+        $filename = (new ReflectionClass($this))->getFileName();
+
+        return $this->extensionPath = (new SplFileInfo($filename))->getPath();
     }
 
     /**
@@ -197,25 +201,26 @@ abstract class ModuleServiceProvider extends ServiceProvider
         $routes = [
             'backend'  => [
                 $path . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'backend.php',
-                $path . DIRECTORY_SEPARATOR . 'routes.php'
+                $path . DIRECTORY_SEPARATOR . 'backend.php',
+                $path . DIRECTORY_SEPARATOR . 'routes.php',
             ],
             'frontend' => [
-                $path . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'frontend.php'
+                $path . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'frontend.php',
+                $path . DIRECTORY_SEPARATOR . 'frontend.php',
             ]
         ];
 
-
-        foreach ($routes as $keyname => $routePaths) {
+        foreach ($routes as $area => $routePaths) {
             foreach ($routePaths as $route) {
                 if (!file_exists($route)) {
                     continue;
                 }
-                switch ($keyname) {
-                    case 'backend':
-                        $this->loadBackendRoutesFrom($route);
-                        break;
+                switch ($area) {
                     case 'frontend':
                         $this->loadFrontendRoutesFrom($route);
+                        break;
+                    case 'backend':
+                        $this->loadBackendRoutesFrom($route);
                         break;
                 }
             }
@@ -234,7 +239,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
         }
 
         $this->app->make('antares.acl')->make($this->routeGroup)->attach(
-                $this->app->make('antares.platform.memory')
+            $this->app->make('antares.platform.memory')
         );
     }
 
@@ -342,6 +347,32 @@ abstract class ModuleServiceProvider extends ServiceProvider
 
         foreach ($di['di'] as $contract => $class) {
             $this->app->bind($contract, $class);
+        }
+    }
+
+    /**
+     * Loads breaedcrumbs file.
+     */
+    private function loadBreadcrumbsFile()
+    {
+        $path = $this->extensionPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'breadcrumbs.php';
+
+        if (file_exists($path)) {
+            $manager = $this->app->make(Manager::class);
+            require_once $path;
+        }
+    }
+
+    /**
+     * Loads menu file.
+     */
+    private function loadMenuFile()
+    {
+        $path = $this->extensionPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'menu.php';
+
+        if (file_exists($path)) {
+            $menu = $this->app->make(MenuAssigner::class);
+            require_once $path;
         }
     }
 

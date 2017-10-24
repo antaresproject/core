@@ -25,6 +25,7 @@ use Antares\Acl\RoleActionList;
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
 use Antares\Extension\Processors\Acl;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\File;
 use Mockery as m;
 use Antares\Testbench\ApplicationTestCase;
 use Composer\Package\CompletePackageInterface;
@@ -44,6 +45,13 @@ class AclTest extends ApplicationTestCase
         parent::setUp();
 
         $this->aclMigration = m::mock(Migration::class);
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
     }
 
     /**

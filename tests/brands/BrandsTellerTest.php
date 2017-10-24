@@ -43,6 +43,13 @@ class BrandsTellerTest extends ApplicationTestCase
         $this->stub = new BrandsTeller($this->app, app(BrandsRepository::class));
     }
 
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
+    }
+
     /**
      * Create a new instance of Brandstelling.
      * @test

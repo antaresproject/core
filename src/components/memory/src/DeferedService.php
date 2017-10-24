@@ -35,11 +35,13 @@ class DeferedService
      */
     public function run()
     {
-        if (!$this->validate()) {
-            return false;
-        }
+        return $this->validate();
 
-        return DB::transaction(function() {
+//        if (!$this->validate()) {
+//            return false;
+//        }
+//
+//        return DB::transaction(function() {
 //                    $events = $this->getDeferedEvents();
 //                    foreach ($events as $event) {
 //                        if (!empty($event->value)) {
@@ -49,7 +51,7 @@ class DeferedService
 //                        $event->value = $return;
 //                        $event->save();
 //                    }
-                });
+//                });
     }
 
     /**

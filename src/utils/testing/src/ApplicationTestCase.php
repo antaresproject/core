@@ -28,6 +28,15 @@ ini_set('memory_limit', '-1');
 abstract class ApplicationTestCase extends TestCase
 {
 
+    public function addProvider($dump) {}
+
+    public function setUp()
+    {
+        $this->addProvider(\Antares\Area\AreaServiceProvider::class);
+
+        parent::setUp();
+    }
+
     /**
      * Get application aliases.
      *
@@ -61,7 +70,6 @@ abstract class ApplicationTestCase extends TestCase
     {
         $app = new Application($this->getBasePath());
         $app->singleton('Illuminate\Foundation\Bootstrap\LoadConfiguration', 'Antares\Config\Bootstrap\LoadConfiguration');
-
 
         return $app;
     }

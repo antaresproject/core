@@ -21,10 +21,10 @@
 namespace Antares\Foundation\Http\Middleware\TestCase;
 
 use Antares\Foundation\Http\Middleware\UseBackendTheme;
-use Antares\Testing\ApplicationTestCase;
+use Antares\Testing\TestCase;
 use Mockery as m;
 
-class UseBackendThemeTest extends ApplicationTestCase
+class UseBackendThemeTest extends TestCase
 {
 
     /**
@@ -38,10 +38,10 @@ class UseBackendThemeTest extends ApplicationTestCase
         $events  = m::mock('\Illuminate\Contracts\Events\Dispatcher');
         $request = m::mock('\Illuminate\Http\Request');
 
-        $events->shouldReceive('fire')->with('antares.started: admin')->andReturnNull()
-                ->shouldReceive('fire')->with('antares.ready: admin')->andReturnNull()
-                ->shouldReceive('fire')->with('antares.ready: menu')->andReturnNull()
-                ->shouldReceive('fire')->with('antares.done: admin')->andReturnNull();
+        $events->shouldReceive('dispatch')->with('antares.started: admin')->andReturnNull()
+                ->shouldReceive('dispatch')->with('antares.ready: admin')->andReturnNull()
+                ->shouldReceive('dispatch')->with('antares.ready: menu')->andReturnNull()
+                ->shouldReceive('dispatch')->with('antares.done: admin')->andReturnNull();
 
         $next = function ($request) {
             return 'foo';

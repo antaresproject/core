@@ -78,8 +78,8 @@ class CustomfieldsFinder
             if (!$this->validate($config)) {
                 continue;
             }
-            array_walk($config, function(&$value, $key) {
 
+            array_walk($config, function(&$value, $key) {
                 if (is_array($value)) {
 
                     foreach ($value as $index => &$customfield) {
@@ -93,6 +93,7 @@ class CustomfieldsFinder
                     $value = app($value);
                 }
             });
+
             foreach ($config as $name => $customfields) {
                 if (isset($return[$name])) {
                     $return[$name] = array_merge($return[$name], $customfields);

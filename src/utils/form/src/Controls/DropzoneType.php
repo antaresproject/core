@@ -28,20 +28,54 @@ class DropzoneType extends AbstractType
     protected $type = 'file';
 
     /**
+     * @var array
+     */
+    protected $options = [];
+
+    /**
+     * @var string|null
+     */
+    protected $currentImagePath;
+
+    /**
      * Rendering this very control
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function renderControl()
     {
-        return view('antares/foundation::form.controls.dropzone', ['control' => $this]);
+        return view('antares/foundation::form.controls.dropzone', [
+            'control' => $this,
+            'current_image_path' => $this->currentImagePath,
+            'options' =>  (object) $this->options,
+        ]);
+    }
+
+    /**
+     * @param string|null $path
+     * @return $this
+     */
+    public function setCurrentImage(string $path = null) {
+        $this->currentImagePath = $path;
+
+        return $this;
+    }
+
+    /**
+     * @param array $options
+     * @return $this
+     */
+    public function setOptions(array $options) {
+        $this->options = $options;
+
+        return $this;
     }
 
     public function render()
     {
         app('antares.asset')->container('antares/foundation::application')->add('webpack_brand_settings', '/webpack/view_brand_settings.js', ['app_cache']);
 
-        $this->addAttribute('class', $this->name);
+        $this->addAttribute('class', 'dropzone dropzone-form brand-logo dz-clickable');
         $this->addAttribute('id', $this->name);
 
         return parent::render();

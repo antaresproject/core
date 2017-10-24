@@ -20,18 +20,19 @@
 
 namespace Antares\Asset\TestCase;
 
+use Antares\Asset\AssetSymlinker;
+use Antares\Extension\Manager;
 use Mockery as m;
 use Antares\Asset\Asset;
 
 class AssetTest extends \PHPUnit_Framework_TestCase
 {
 
-    /**
-     * Teardown the test environment.
-     */
     public function tearDown()
     {
         parent::tearDown();
+
+        m::close();
     }
 
     /**
@@ -42,6 +43,8 @@ class AssetTest extends \PHPUnit_Framework_TestCase
     public function testConstructMethod()
     {
         $dispatcher = m::mock('\Antares\Asset\Dispatcher');
+        $extensionsManager = m::mock(Manager::class);
+        $assetSymlinker = m::mock(AssetSymlinker::class);
 
         $assets = [
             'script' => [
@@ -84,7 +87,7 @@ class AssetTest extends \PHPUnit_Framework_TestCase
                 ->shouldReceive('run')->twice()->with('style', $assets, null)->andReturn('styled')
                 ->shouldReceive('run')->twice()->with('inline', $assets, null)->andReturn('inlined');
 
-        $stub = new Asset('default', $dispatcher);
+        $stub = new Asset('default', $dispatcher, $extensionsManager, $assetSymlinker);
 
         $stub->add('foo', 'foo.js');
         $stub->add('foobar', 'foobar.css');
@@ -104,6 +107,8 @@ class AssetTest extends \PHPUnit_Framework_TestCase
     public function testPrefixMethod()
     {
         $dispatcher = m::mock('\Antares\Asset\Dispatcher');
+        $extensionsManager = m::mock(Manager::class);
+        $assetSymlinker = m::mock(AssetSymlinker::class);
 
         $prefix = '//ajax.googleapis.com/ajax/libs/';
         $assets = [];
@@ -112,7 +117,7 @@ class AssetTest extends \PHPUnit_Framework_TestCase
                 ->shouldReceive('run')->once()->with('style', $assets, $prefix)->andReturn('styled')
                 ->shouldReceive('run')->once()->with('inline', $assets, $prefix)->andReturn('inlined');
 
-        $stub = new Asset('default', $dispatcher);
+        $stub = new Asset('default', $dispatcher, $extensionsManager, $assetSymlinker);
         $stub->prefix($prefix);
 
         $this->assertEquals('scriptedstyledinlined', $stub->show());
@@ -127,12 +132,14 @@ class AssetTest extends \PHPUnit_Framework_TestCase
     public function testAssetMethod()
     {
         $dispatcher = m::mock('\Antares\Asset\Dispatcher');
+        $extensionsManager = m::mock(Manager::class);
+        $assetSymlinker = m::mock(AssetSymlinker::class);
 
         $dispatcher->shouldReceive('run')->once()->with('script', [], null)->andReturn('')
                 ->shouldReceive('run')->once()->with('inline', [], null)->andReturn('');
 
 
-        $stub = new Asset('default', $dispatcher);
+        $stub = new Asset('default', $dispatcher, $extensionsManager, $assetSymlinker);
         $this->assertEquals('', $stub->scripts());
     }
 
