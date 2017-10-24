@@ -1,6 +1,6 @@
 {% extends 'antares/ui-components::templates.layouts.template' %}
 {% block content %}
-    <div class="card card--detail-info card--dark">
+    <div class="card card--detail-info card--dark" data-preload>
         <div class="card__header">
             <div class="card__header--top">
                 {{ event('ui-components:render.header-left.'~name)|raw }}

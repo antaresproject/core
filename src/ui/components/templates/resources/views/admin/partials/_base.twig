@@ -24,12 +24,15 @@
             <div class="widget-actions-area">
                 <input type="hidden" name="current" value="{{ id }}" />
                 <div class="card__edit-view">
-                    <div class="card__edit-overlay"></div>
-                    <span class="card__edit-message"></span>
-                    <div class="card__edit-icons">
+                    <div class="card__edit-icons ">
                         {% if(removable) %}
-                            <i rel="{{ id }}" class="zmdi zmdi-delete remove-button ddown__header mdl-js-button mdl-js-ripple-effect ajaxable widget-disable disable-with-modal" href="{{ handles('antares/ui-components::ui-components/destroyer/'~id~'/disable') }}" title="{{ trans('Disable') }}"></i>
+                            <i data-tooltip-inline="{{ trans('Detach Widget') }}" 
+                               rel="{{ id }}"
+                               class=" zmdi zmdi-delete remove-button mdl-js-button mdl-js-ripple-effect ajaxable widget-disable"
+                               href="{{ handles('antares/ui-components::ui-components/destroyer/'~id~'/disable') }}"
+                               ></i>
                         {% endif %}     
+                        <i data-tooltip-inline="Move Widget" class="zmdi zmdi-arrows move-button mdl-js-button mdl-js-ripple-effect"></i>                        
                         {% if(editable) %}
                             <div class="ddown ddown--left">
                                 <div class="ddown__init ddown__init--clean mdl-js-button mdl-js-button mdl-js-ripple-effect"><i class="zmdi zmdi-settings edit-button"></i></div>

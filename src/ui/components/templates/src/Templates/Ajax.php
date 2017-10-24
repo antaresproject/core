@@ -74,7 +74,7 @@ class Ajax extends AbstractTemplate
                     widgetContainer=$('.jquery-modal').find('.widget-content');
                     parentWidgetContainer=widgetContainer.closest('.card--enlarged');
                 }
-                parentWidgetContainer.LoadingOverlay('show');                
+                //parentWidgetContainer.LoadingOverlay('show');                
                 $.ajax({
                    url:"$url",
                    type: "GET",
@@ -85,7 +85,7 @@ class Ajax extends AbstractTemplate
                         widgetContainer.html('<div class="alert alert--glow alert--error alert--lg alert--border mb20" "><i class="alert__icon zmdi zmdi-alert-circle"></i><span><strong>Unable to load widget content:</strong><br/>'+response.statusText+'</span></div>');
                    },
                    complete:function(){
-                        parentWidgetContainer.LoadingOverlay('hide');                        
+                        //parentWidgetContainer.LoadingOverlay('hide');                        
                    }
                 });
                 });

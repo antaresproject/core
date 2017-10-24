@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Datatables\Adapter;
 
 use Illuminate\Contracts\Foundation\Application;
@@ -215,7 +214,7 @@ class FilterAdapter
         if (is_string($classname) and ! class_exists($classname)) {
             throw new Exception(sprintf('Invalid filter object. Classname not exists %s.', $classname));
         }
-        app('antares.asset')->container('antares/foundation::application')->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
+        //app('antares.asset')->container('antares/foundation::application')->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
         $filter = is_object($classname) ? $classname : $this->app->make($classname);
         array_push($this->filters, $filter);
 

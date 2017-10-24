@@ -11,7 +11,7 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Antares Core
- * @version    0.9.0
+ * @version    0.9.2
  * @author     Antares Team
  * @license    BSD License (3-clause)
  * @copyright  (c) 2017, Antares
@@ -115,7 +115,7 @@ class Builder extends BaseBuilder
      * @var array 
      */
     protected $tableAttributes = [
-        'class'       => 'table dataTable billevo-table',
+        'class'       => 'antares-table table dataTable',
         'id'          => 'dataTableBuilder',
         'cellspacing' => '0',
         'width'       => '100%'
@@ -148,12 +148,13 @@ class Builder extends BaseBuilder
                 "sPrevious" => "<i class='zmdi zmdi-long-arrow-left dt-pag-left'></i>",
                 "sNext"     => "<i class='zmdi zmdi-long-arrow-right dt-pag-right'></i>",
             ],
-            "sLengthMenu" => "_MENU_",
+            "sLengthMenu" => "_MENU_"
         ],
         'lengthMenu'     => [
             [10, 25, 50],
             [10, 25, 50]
         ],
+        'deferLoading'   => 0
     ];
 
     /**
@@ -237,12 +238,11 @@ class Builder extends BaseBuilder
         $this->filterAdapter         = $filterAdapter;
         $this->router                = $router;
         $this->dispatcher            = $dispatcher;
-        $this->tableAttributes['id'] = $this->tableAttributes['id'] . str_random(3);
+        $this->tableAttributes['id'] = 'dataTableBuilderg49'; //$this->tableAttributes['id'] . str_random(3);
     }
 
     protected function getGlobalSearchValue()
     {
-
         if (request()->has('search') && !is_array($value = request()->get('search'))) {
 
             return $value;
@@ -258,14 +258,13 @@ class Builder extends BaseBuilder
     public function generateScripts()
     {
 
-        app('antares.asset')->container('antares/foundation::application')
-                ->add('gridstack', '/webpack/view_datatables.js', ['webpack_gridstack', 'app_cache'])
-                ->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
+        app('antares.asset')->container('antares/foundation::application')->add('gridstack', '//51.254.36.218:71/js/view_datatables.js', ['webpack_gridstack', 'app_cache']);
 
 
         $columns = $this->hasColumnFilter() ? $this->getColumnFilterAdapter()->getColumns()->toArray() : $this->collection->toArray();
-
+        array_set($this->attributes, 'sEmptyTable', $this->zeroData());
         array_set($this->attributes, 'iDisplayLength', $this->datatable->getPerPage());
+
         $args         = array_merge(
                 $this->attributes, ['ajax' => $this->ajax, 'columns' => $columns]
         );
@@ -316,9 +315,6 @@ class Builder extends BaseBuilder
                     var dtInstance=$(settings.oInstance);
                     var instance = dtInstance.closest('.grid-stack-item-content').length>0?dtInstance.closest('.grid-stack-item-content'):dtInstance.closest('.tbl-c');                    
                     $searching
-                    if (instance.length > 0) {
-                        instance.LoadingOverlay('show');
-                    }
                     settings.jqXHR = $.ajax({
                         "dataType": 'json',
                         "timeout": 20000,
@@ -328,59 +324,24 @@ class Builder extends BaseBuilder
                         "success": callback
                     }).always(function (data) {
                         $eventAfterSearch
-                        if (instance.length > 0) {
-                            instance.LoadingOverlay('hide');
-                        }                 
+                        window.antaresEvents.emit('dt_data_loaded', dtInstance);    
                         $(document).trigger( "datatablesLoaded", [ dtInstance ] );
                     });                    
             }
 EOD;
 
 
-        $url          = $this->getTargetUrl();
-        $args['ajax'] = new JavaScriptExpression(sprintf($ajax, $this->method, $url));
-        $id           = $this->tableAttributes['id'];
-        if (isset($args['fnRowCallback'])) {
-            $args['fnRowCallback'] = new JavaScriptExpression($args['fnRowCallback']);
-        }
-        $args['fnRowCallback']  = new JavaScriptExpression("function( nRow, aData, iDisplayIndex, iDisplayIndexFull ){
-                
-                if($(nRow).find('.dt-actions').length<=0){
-                    $(nRow).addClass('no-actions');
-                }
-            }");
-        $args['fnDrawCallback'] = new JavaScriptExpression("function (oSettings) {
-                var tblC=this.closest('.tbl-c');
-                if ( this.fnGetData().length === 0 ) {                    
-                    tblC.addClass('tbl-c--zd');
-                }else{
-                   tblC.removeClass('tbl-c--zd');  
-                }
-            }");
-
-        $args['initComplete'] = new JavaScriptExpression(isset($args['initComplete']) ? $args['initComplete'] : 'function () {}');
+        $url                  = $this->getTargetUrl();
+        $args['ajax']         = new JavaScriptExpression(sprintf($ajax, $this->method, $url));
         $args['columnDefs'][] = new JavaScriptExpression('{ responsivePriority:0, targets: -1 }');
+        $javascript           = file_get_contents(sandbox_path('packages/core/js/datatables.js'));
+        $parameters           = JavaScriptDecorator::decorate(['options' => $args]);
+        return str_replace(['$params = null,', '$instanceName = null;'], ['$params = ' . $parameters . ',', '$instanceName = "' . $this->tableAttributes['id'] . '";'], $javascript);
+    }
 
-        $parameters = JavaScriptDecorator::decorate($args);
-
-        $variables = JavaScriptDecorator::decorate([
-                    'table' => new JavaScriptExpression('$("#' . $id . '")'),
-                    'tr'    => new JavaScriptExpression("$('#" . $id . " tr')")
-        ]);
-
-
-        $javascript   = file_get_contents(sandbox_path('packages/core/js/datatables.js'));
-        $instanceName = 'dataTable' . str_random(3);
-        $oTable       = 'oTable' . str_random(3);
-
-
-        $javascript = str_replace('inject.id', "'#$id'", $javascript);
-        $javascript = str_replace('instance', $instanceName, $javascript);
-        $javascript = str_replace('oTable', $oTable, $javascript);
-        $javascript = str_replace('inject.variables', $variables, $javascript);
-        $javascript = str_replace('inject.options', $parameters, $javascript);
-        $javascript = str_replace('inject.contextMenu.build', $parameters, $javascript);
-        return $javascript;
+    protected function zeroData()
+    {
+        return view('datatables-helpers::zero_data')->render();
     }
 
     protected function getTargetUrl()
@@ -454,7 +415,6 @@ EOD;
         if ($this->datatable->count() > 10 or strlen($this->ajax) > 0) {
             $scrollable = 'data-scrollable';
         }
-
         return $this->tableInit() . $this->beforeTable() . '<table ' . $scrollable . ' data-table-init = "true" ' . $this->html->attributes($this->tableAttributes) . '></table>' . $this->afterTable();
     }
 
@@ -465,41 +425,33 @@ EOD;
      */
     protected function beforeTable()
     {
-        $hasMassActions  = $this->hasMassActions();
-        $filters         = $this->filterAdapter->getFilters();
-        $hasColumnFilter = $this->hasColumnFilter();
+        $hasMassActions = $this->hasMassActions();
+        $filters        = $this->filterAdapter->getFilters();
 
+        $hasColumnFilter = $this->hasColumnFilter();
+        $params          = [];
         if (!$hasMassActions and ! $this->searchable and empty($this->selects) and ! $filters and ! $hasColumnFilter) {
             return '';
         }
-        $return = '<div class="card-ctrls mt24"><div class="card-ctrls__left">';
+
 
         if (!empty($this->selects)) {
-            $return .= implode('', $this->selects);
+            array_set($params, 'selects', implode('', $this->selects));
         }
-
+        array_set($params, 'searchable', $this->searchable);
         if ($this->searchable) {
-            $value  = (($value  = $this->getGlobalSearchValue()) !== false) ? $value : '';
-            $return .= '<div class="search-box search-box--dark search-box--big ' . (!empty($this->selects) ? 'ml25' : '') . ' mr50">
-                    <i class="zmdi zmdi-search"></i>
-                    <form action="#">
-                        <div class="search-box__mdl-textfield mdl-textfield mdl-js-textfield w260" >
-                            <input class="mdl-textfield__input search-box__search-field" type="text" id="main-search" value="' . $value . '">
-                            <label class="mdl-textfield__label" for="sample1">Search...</label>
-                        </div>
-                    </form>
-                </div>';
+            $value = (($value = $this->getGlobalSearchValue()) !== false) ? $value : '';
+            array_set($params, 'search', $value);
         }
-        $return .= '</div>';
-
-
         $result = event(strtolower(class_basename($this->datatable)) . '.datatables.top.center', [&$return]);
-        $return .= isset($result[0]) ? $result[0] : '';
-
-        $return .= '<div class="card-ctrls__right">';
-        if (!is_null($this->rightCtrls)) {
-            $return .= $this->rightCtrls;
+        if (isset($result[0])) {
+            array_set($params, 'datatables_top_center', $result[0]);
         }
+
+        if (!is_null($this->rightCtrls)) {
+            array_set($params, 'rightCtrls', $this->rightCtrls);
+        }
+
         if (empty($filters) and ! is_null($this->datatable)) {
             $list = $this->datatable->getFilters();
             foreach ($list as $filter) {
@@ -507,25 +459,20 @@ EOD;
             }
             $filters = $this->filterAdapter->getFilters();
         }
+
         if ($hasColumnFilter) {
-            $return .= $this->getColumnFilterAdapter();
+            array_set($params, 'columnFilter', $this->getColumnFilterAdapter());
         }
         if ($filters) {
-            $return .= '<div id="filter-save-url" data-url=' . handles('antares/foundation::datatables/filters/save') . '></div><div class="ddown ctrls__right ml10 ">' . $filters . '</div>';
+            array_set($params, 'filters', $filters);
         }
+
+
+
         if ($hasMassActions) {
-            $return .= '
-                <div class="ddown ddown--left">
-                    <div class="ddown__init btn--dropdown btn btn--capitalize btn--md btn--primary mdl-js-button is-disabled ml8" id="table-ma" disabled>' . trans('antares/foundation::label.with_selected') . '</div>                    
-                    <div class="ddown__content">
-                    <div class="ddown__arrow"></div>
-                    <ul class="ddown__menu">';
-            foreach ($this->massActions as $massAction) {
-                $return .= '<li>' . $massAction->get() . '</li>';
-            }
-            $return .= '</ul></div></div>';
+            array_set($params, 'massActions', $this->massActions);
         }
-        return $return . '</div></div>';
+        return view('datatables-helpers::before', $params)->render();
     }
 
     /**
@@ -614,7 +561,7 @@ EOD;
      */
     protected function afterTable()
     {
-        return '</div>';
+        return '</div></div>';
     }
 
     /**
@@ -677,7 +624,46 @@ EOD;
             $scrollable = 'data-scrollable';
         }
         $massable = (int) $this->hasMassActions();
-        return $this->tableInit() . $this->beforeTable() . '<table data-massable="' . $massable . '" ' . $scrollable . ' data-table-init = "true" ' . $this->html->attributes($this->tableAttributes) . '>' . $string . '</table>' . $this->afterTable();
+        $attrs    = $this->html->attributes($this->containerAttributes);
+
+        return view('datatables-helpers::datatable', ['attributes' => $attrs, 'gridstack' => array_get($attributes, 'gridstack', true), 'table' => $this->beforeTable() . '<table data-massable="' . $massable . '" ' . $scrollable . ' data-table-init = "true" ' . $this->html->attributes($this->tableAttributes) . '>' . $string . '</table>']);
+    }
+
+    /**
+     * Generate DataTable's table html.
+     *
+     * @param array $attributes
+     * @return string
+     */
+    public function widget(array $attributes = [])
+    {
+        $string = '<thead><tr>';
+        foreach ($this->collection as $collectedItem) {
+            $columnAttributes          = array_only($collectedItem->toArray(), ['class', 'id', 'width', 'style', 'data-class', 'data-hide']);
+            $columnAttributes['class'] = (isset($collectedItem->bolded) and $collectedItem->bolded === true) ? 'bolded' : array_get($columnAttributes, 'class', '');
+            $params                    = $this->html->attributes($columnAttributes);
+            $string                    .= "<th " . $params . ">{$collectedItem->title}</th>";
+        }
+        $string .= '</tr></thead>';
+        $string .= '<tbody>';
+        foreach ($this->getDeferredDataItems() as $item) {
+            $string .= '<tr>';
+            foreach ($this->collection as $collectedItem) {
+                $value  = isset($item->{$collectedItem->data}) ? $item->{$collectedItem->data} : '---';
+                $string .= "<td>{$value}</td>";
+            }
+            $string .= '</tr>';
+        }
+        $string                .= '</tbody>';
+        $this->tableAttributes = array_merge($this->tableAttributes, $attributes);
+        $scrollable            = '';
+        if ($this->datatable->count() > 10 or strlen($this->ajax) > 0) {
+            $scrollable = 'data-scrollable';
+        }
+        $massable = (int) $this->hasMassActions();
+        $attrs    = $this->html->attributes($this->containerAttributes);
+
+        return view('datatables-helpers::widget', ['attributes' => $attrs, 'table' => $this->beforeTable() . '<table data-massable="' . $massable . '" ' . $scrollable . ' data-table-init = "true" ' . $this->html->attributes($this->tableAttributes) . '>' . $string . '</table>']);
     }
 
     /**
@@ -699,7 +685,7 @@ EOD;
     protected function tableInit(): String
     {
         $attributes = $this->html->attributes($this->containerAttributes);
-        return "<div {$attributes}>";
+        return "<div data-preload=\"\" class=\"card card--pagination\"><div {$attributes}>";
     }
 
     /**
@@ -902,10 +888,12 @@ EOD;
         if (is_null($value = $groupsFilter->getSelected($columnIndex))) {
             $value = $defaultSelected;
         }
+
         $decorated = $this->html->decorate($attributes, [
-            'data-selectAR--mdl-big' => "true",
-            'class'                  => 'select2--prefix',
-            'id'                     => $id
+            'data-selectar--mdl-big' => "true",
+            'class'                  => 'mb24 select2-left select--category select2--prefix',
+            'id'                     => $id,
+            'data-select2--class'    => 'card-ctrls--select2'
         ]);
 
         $html = Form::select('category', $data, $value, $decorated);
