@@ -40,8 +40,10 @@ class CreateTblBrandOptionsTable extends Migration
             $table->increments('id')->unsigned();
             $table->integer('brand_id')->unsigned()->index('brand_id');
             $table->integer('country_id')->unsigned()->index('country_id');
+            $table->string('timezone', 100)->default('Europe/Warsaw');
             $table->integer('language_id')->unsigned()->index('language_id');
             $table->integer('date_format_id')->unsigned()->index('date_format_id');
+            $table->string('time_format', 255)->default('H:i:s');
             $table->boolean('maintenance');
             $table->string('url', 255)->nullable();
             $table->longText('header')->nullable();

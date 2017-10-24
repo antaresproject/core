@@ -25,14 +25,45 @@ use Illuminate\Support\Debug\Dumper;
 use Antares\Messages\SwalMessanger;
 use Antares\Html\Form\Field;
 
+if (!function_exists('format_time')) {
+
+    /**
+     * Creates time format representation depends on brand settings
+     */
+    function format_time($date, $format = null)
+    {
+        return \Antares\Date\DateFormatter::formatTime($date, $format);
+    }
+
+}
+
+if (!function_exists('format_date')) {
+
+    /**
+     * Creates date format representation depends on brand settings
+     */
+    function format_date($date, $format = null)
+    {
+        return \Antares\Date\DateFormatter::formatDate($date, $format);
+    }
+
+}
+
+
 if (!function_exists('url_no_area')) {
 
     /**
      * Create url without area segement
+     *
+     * @param $path
+     * @param array $options
+     * @return string
      */
     function url_no_area($path, array $options = [])
     {
-        return handles($path, array_merge($options, ['area' => false]));
+        $options['area'] = false;
+
+        return handles($path, $options);
     }
 
 }
@@ -379,14 +410,7 @@ if (!function_exists('area')) {
      */
     function area()
     {
-        $segment = request()->segment(1);
-        $areas   = array_keys(config('areas.areas'));
-        if (!in_array($segment, $areas) && !auth()->guest()) {
-            return user()->getArea();
-        }
-
-
-        return !is_null($segment) ? $segment : config('areas.default');
+        return \Antares\Area\Facade\AreasManager::manager()->getCurrentArea()->getId();
     }
 
 }
@@ -515,7 +539,13 @@ if (!function_exists('lang')) {
     function lang($locale = null)
     {
         $code = !is_null($locale) ? $locale : app()->getLocale();
-        return \Antares\Translations\Models\Languages::where('code', $code)->first();
+
+        \Cache::store('array');
+
+        return \Cache::get('lang-' . $code, function() use($code) {
+            return \Antares\Translations\Models\Languages::where('code', $code)->first();
+        });
+
     }
 
 }
@@ -526,7 +556,11 @@ if (!function_exists('langs')) {
      */
     function langs()
     {
-        return \Antares\Translations\Models\Languages::all();
+        \Cache::store('array');
+
+        return \Cache::get('langs', function() {
+            return \Antares\Translations\Models\Languages::all();
+        });
     }
 
 }
@@ -666,6 +700,31 @@ if (!function_exists('extensions')) {
         }
 
         return $return;
+    }
+
+}
+if (!function_exists('from_routes')) {
+
+    /**
+     * Get param from routes
+     */
+    function from_routes(...$args)
+    {
+        if (php_sapi_name() === 'cli' or ! is_array($args)) {
+            return null;
+        }
+        $current = Route::current();
+        if (is_null($current)) {
+            return null;
+        }
+        $params = $current->parameters();
+
+        foreach ($args as $bindedParam) {
+            if (!isset($params[$bindedParam])) {
+                continue;
+            }
+            return $params[$bindedParam];
+        }
     }
 
 }

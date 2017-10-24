@@ -25,6 +25,7 @@ use Antares\Memory\Provider;
 use Antares\Memory\Handlers\Runtime;
 use Antares\Authorization\Authorization;
 use Antares\Testing\ApplicationTestCase;
+use Illuminate\Support\Facades\Event;
 
 class AuthorizationTest extends ApplicationTestCase
 {
@@ -32,7 +33,7 @@ class AuthorizationTest extends ApplicationTestCase
     /**
      * Acl Container instance.
      *
-     * @var Antares\Authorization\Authorization
+     * @var \Antares\Authorization\Authorization
      */
     private $stub = null;
 
@@ -55,6 +56,13 @@ class AuthorizationTest extends ApplicationTestCase
         $memory->put('acl_foo', $this->memoryProvider());
 
         $this->stub = new Authorization($this->app['auth'], 'foo', $memory);
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
     }
 
     /**
@@ -88,6 +96,8 @@ class AuthorizationTest extends ApplicationTestCase
      */
     public function testInstanceOfStub()
     {
+        Event::fake();
+
         $refl    = new \ReflectionObject($this->stub);
         $memory  = $refl->getProperty('memory');
         $roles   = $refl->getProperty('roles');

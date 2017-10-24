@@ -85,7 +85,7 @@ class Dispatcher
         foreach ($extensions as $extension) {
             $this->register($extension);
         }
-        $this->eventDispatcher->fire('antares.after.load-service-providers');
+        $this->eventDispatcher->dispatch('antares.after.load-service-providers');
     }
 
     /**
@@ -108,6 +108,8 @@ class Dispatcher
      */
     public function boot()
     {
+        $this->loader->loadManifest();
+
         foreach ($this->extensions as $extension) {
             try {
                 $this->eventDispatcher->dispatch(new Booted($extension));

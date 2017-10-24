@@ -84,8 +84,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
      *
      * @var array
      */
-    protected $params = [];
-
+    protected $params      = [];
     protected $orientation = 'horizontal';
 
     /**
@@ -235,10 +234,10 @@ class Fieldset extends BaseGrid implements FieldsetContract
         }
 
         $fieldView = \Antares\Customfields\Model\FieldView::query()->where([
-            'name'          => $name,
-            'brand_id'      => brand_id(),
-            'category_name' => $category,
-            'imported'      => 0])->first();
+                    'name'          => $name,
+                    'brand_id'      => brand_id(),
+                    'category_name' => $category,
+                    'imported'      => 0])->first();
         if (is_null($fieldView)) {
             return;
         }
@@ -305,10 +304,10 @@ class Fieldset extends BaseGrid implements FieldsetContract
         }
 
         $fields = $query->whereHas('fieldFieldset', function ($query) use ($name) {
-            $query->whereHas('fieldset', function ($subquery) use ($name) {
-                $subquery->where('name', $name);
-            });
-        })->get();
+                    $query->whereHas('fieldset', function ($subquery) use ($name) {
+                        $subquery->where('name', $name);
+                    });
+                })->get();
         foreach ($fields as $field) {
             $this->addCustomfield($grid, $field);
         }
@@ -337,8 +336,8 @@ class Fieldset extends BaseGrid implements FieldsetContract
         $control->setField(function ($row, $cont, $templates) use ($control, $renderable) {
 
             $control = app(Control::class)
-                ->setTemplates($this->control->getTemplates())
-                ->setPresenter($this->control->getPresenter());
+                    ->setTemplates($this->control->getTemplates())
+                    ->setPresenter($this->control->getPresenter());
 
             $field = $control->buildFieldByType($cont->type, $row, $cont);
             $cont->setModel($row);
@@ -416,7 +415,7 @@ class Fieldset extends BaseGrid implements FieldsetContract
     }
 
     /**
-     * detach control from controls collection
+     * Detaches control from controls collection
      *
      * @param FieldContract $control
      * @return Fieldset
@@ -432,6 +431,17 @@ class Fieldset extends BaseGrid implements FieldsetContract
             }
         }
         return $this;
+    }
+
+    /**
+     * Detaches control from controls collection
+     * 
+     * @param FieldContract $control
+     * @return Fieldset
+     */
+    public function delete(FieldContract $control)
+    {
+        return $this->detachControl($control);
     }
 
     /**
@@ -511,6 +521,8 @@ class Fieldset extends BaseGrid implements FieldsetContract
      */
     public function render($row = null)
     {
+        //vdump($this);
+
         if (is_null($this->layout)) {
             throw new Exception('Unable to render fieldset layout. Layout is empty.');
         }
@@ -533,9 +545,8 @@ class Fieldset extends BaseGrid implements FieldsetContract
     {
         $return = [];
         foreach ($this->controls as $control) {
-            if (in_array((method_exists($control, 'getType') ? $control->getType() : $control->type),
-                ['button', 'submit']
-            )) {
+            if (in_array((method_exists($control, 'getType') ? $control->getType() : $control->type), ['button', 'submit']
+                    )) {
                 continue;
             }
             array_push($return, $control);
@@ -569,6 +580,18 @@ class Fieldset extends BaseGrid implements FieldsetContract
     public function setOrientation(string $orientation)
     {
         $this->orientation = $orientation;
+    }
+
+    /**
+     * Layout params setter
+     * 
+     * @param array $params
+     * @return $this
+     */
+    public function layoutParams(array $params = [])
+    {
+        $this->params = array_merge($this->params, $params);
+        return $this;
     }
 
 }

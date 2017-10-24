@@ -31,6 +31,7 @@ use Antares\Extension\Repositories\ExtensionsRepository;
 use Antares\Extension\Validators\ExtensionValidator;
 use Antares\Publisher\AssetManager;
 use Antares\Publisher\MigrateManager;
+use Illuminate\Support\Facades\File;
 use Mockery as m;
 use Symfony\Component\Process\Process;
 
@@ -136,6 +137,8 @@ class InstalledTest extends OperationSetupTestCase
 
         $settings = m::mock(SettingsContract::class);
 
+        File::shouldReceive('exists')->once()->andReturn(true)->getMock();
+
         $this->settingsFactory->shouldReceive('createFromConfig')
             ->once()
             ->with('/src/component/foo/bar/resources/config/settings.php')
@@ -221,6 +224,8 @@ class InstalledTest extends OperationSetupTestCase
         ])->andReturnNull()->getMock();
 
         $settings = m::mock(SettingsContract::class);
+
+        File::shouldReceive('exists')->once()->andReturn(true)->getMock();
 
         $this->settingsFactory->shouldReceive('createFromConfig')
             ->once()

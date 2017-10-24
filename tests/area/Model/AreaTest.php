@@ -21,12 +21,12 @@
 
 namespace Antares\Area\Tests\Model;
 
-use Antares\Testing\TestCase;
+use Antares\Testbench\TestCase;
 use Antares\Area\Contracts\AreaContract;
 use Antares\Area\Model\Area;
 
 class AreaTest extends TestCase {
-    
+
     public function testContract() {
         $area = new Area('client', 'Client Area');
         

@@ -107,8 +107,7 @@ class FormBuilder extends BaseBuilder implements BuilderContract
         if ($grid->row instanceof Model) {
             $action = $grid->row->exists ? 'edit' : 'create';
         }
-        $events = $this->container->make('events');
-
+        $events             = $this->container->make('events');
         $events->fire('antares.form: ' . snake_case($grid->name) . (($action) ? '.' . $action : ''), [$grid->row, $this]);
         $customFieldsActive = app('antares.extension')->isActive('customfields');
         if ($customFieldsActive) {
@@ -318,7 +317,7 @@ class FormBuilder extends BaseBuilder implements BuilderContract
             }
         }
         $keys = $this->resolveWithMultiples($controls);
-        return array_only(Input::all(), $keys);
+        return array_only(inputs(), $keys);
     }
 
     /**
@@ -329,16 +328,15 @@ class FormBuilder extends BaseBuilder implements BuilderContract
      */
     protected function resolveWithMultiples(array $controlKeys = array())
     {
-        $keys   = array_keys(Input::all());
         $return = [];
         foreach ($controlKeys as $key) {
-            if (str_contains($key, '[]') and array_search(str_replace(['[', ']'], '', $key), $keys)) {
-                array_push($return, str_replace(['[', ']'], '', $key));
-                continue;
+            preg_match_all("/\[[^\]]*\]/", $key, $matches);
+            if (isset($matches[0])) {
+                $key = str_replace(is_array($matches[0]) ? implode('', $matches[0]) : $matches[0], '', $key);
             }
             array_push($return, $key);
         }
-        return $return;
+        return array_unique($return);
     }
 
     /**

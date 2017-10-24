@@ -80,7 +80,6 @@ abstract class DataTable extends BaseDataTableService
     {
         $this->datatables     = app(Datatables::class);
         $this->viewFactory    = app(ViewFactory::class);
-        //$this->perPageAdapter = is_null($perPageAdapter) ? app(PerPage::class) : $perPageAdapter;
         $this->perPageAdapter = app(PerPage::class);
     }
 
@@ -100,7 +99,7 @@ abstract class DataTable extends BaseDataTableService
         Event::fire('datatables:' . $path . ':before.action.' . $action, [$this->tableActions, $row]);
         $this->tableActions->push($btn);
         Event::fire('datatables:' . $path . ':after.action.' . $action, [$this->tableActions, $row]);
-
+        Event::fire('datatables.' . get_class($this) . '.after.action.' . $action, [$this->tableActions, $row]);
         return $this;
     }
 
@@ -233,6 +232,7 @@ abstract class DataTable extends BaseDataTableService
         $datatables = $this->datatables->of($of, get_class($this));
         $path       = uri();
         Event::fire("datatables.value.{$path}", [$datatables]);
+
         return $datatables;
     }
 
@@ -321,8 +321,8 @@ abstract class DataTable extends BaseDataTableService
             'content'  => view($view, $data)->render(),
             'category' => array_get($this->search, 'category'),
         ];
-        if (is_null($id     = array_get($data, 'id'))) {
-            array_set($return, 'id', str_replace('{id}', $id, $pattern));
+        if (!is_null($id     = array_get($data, 'id'))) {
+            array_set($return, 'url', str_replace('{id}', $id, $pattern));
         }
         return $return;
     }

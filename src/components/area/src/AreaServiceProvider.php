@@ -24,7 +24,6 @@ use Antares\Support\Providers\ServiceProvider;
 use Antares\Area\Contracts\AreaManagerContract;
 use Antares\Area\Middleware\AreaMiddleware;
 use Illuminate\Routing\Router;
-use Antares\Area\AreaManager;
 
 class AreaServiceProvider extends ServiceProvider
 {
@@ -36,7 +35,15 @@ class AreaServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(AreaManagerContract::class, AreaManager::class);
+        $this->app->singleton(AreaManager::class, function() {
+            $auth       = $this->app->make('auth');
+            $request    = $this->app->make('request');
+            $config     = (array) config('areas', []);
+
+            return new AreaManager($request, $auth, $config);
+        });
+
+        $this->app->bind(AreaManagerContract::class, AreaManager::class);
     }
 
     /**
@@ -44,8 +51,8 @@ class AreaServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
         $router = $this->app->make(Router::class);
+
         $router->bind('area', function($value) {
             return $this->app->make(AreaManagerContract::class)->getById($value);
         });

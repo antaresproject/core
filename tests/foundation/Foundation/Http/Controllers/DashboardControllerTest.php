@@ -39,6 +39,13 @@ class DashboardControllerTest extends ApplicationTestCase
         $this->disableMiddlewareForAllTests();
     }
 
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
+    }
+
     /**
      * Test GET /antares.
      *
@@ -46,19 +53,14 @@ class DashboardControllerTest extends ApplicationTestCase
      */
     public function testIndexAction()
     {
-        $this->app[\Illuminate\Contracts\Auth\Factory::class] = $auth                                                 = m::mock(\Illuminate\Contracts\Auth\Factory::class);
-        $auth->shouldReceive('guest')->times(3)->andReturn(false);
-        $auth->shouldReceive('user')->once()->andReturn(\Antares\Model\User::query()->whereId(1)->first());
+        $this->app[\Illuminate\Contracts\Auth\Factory::class] = $auth = m::mock(\Illuminate\Contracts\Auth\Factory::class);
 
+        $auth->shouldReceive('guest')->andReturn(false);
+        $auth->shouldReceive('user')->andReturn(\Antares\Model\User::query()->whereId(1)->first());
 
-        View::shouldReceive('make')->once()->with('antares/foundation::dashboard.index', ['panes' => 'foo'], [])->andReturn('foo')
-                ->shouldReceive('share')->once()->with(m::type('string'), m::type('string'))->andReturnSelf()
-                ->shouldReceive('addNamespace')->once()->with(m::type('string'), m::type('string'))->andReturnSelf()
-                ->shouldReceive('make')->once()->withAnyArgs()->andReturnSelf()
-                ->shouldReceive('render')->once()->withNoArgs()->andReturn('foo');
+        $response = $this->get('/');
 
-        $this->call('GET', 'antares');
-        $this->assertResponseOk();
+        $response->assertSuccessful();
     }
 
     /**
@@ -67,8 +69,8 @@ class DashboardControllerTest extends ApplicationTestCase
      */
     public function testMissingAction()
     {
-//        $this->call('GET', 'antares/missing');
-//        $this->assertResponseStatus(404);
+        $response =  $this->get('antares/missing');
+        $response->assertStatus(404);
     }
 
 }

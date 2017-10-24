@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation;
 
 use Illuminate\Support\Facades\Route;
@@ -158,7 +157,7 @@ class Request
     {
         $accept   = request()->header('Accept');
         $accepted = implode('.', [env('API_STANDARDS_TREE'), env('API_SUBTYPE')]);
-        return request()->wantsJson() && extension_active('api') && str_contains($accept, $accepted) && class_exists('\Antares\Api\Http\Router\Adapter');
+        return request()->wantsJson() && extension_active('api') && str_contains($accept, $accepted) && class_exists('\Antares\Modules\Api\Http\Router\Adapter');
     }
 
 }

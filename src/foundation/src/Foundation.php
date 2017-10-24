@@ -23,7 +23,6 @@ namespace Antares\Foundation;
 
 use Antares\Contracts\Foundation\Foundation as FoundationContract;
 use Antares\Logger\Http\Middleware\LoggerMiddleware;
-use Antares\Contracts\Memory\Provider;
 use Antares\Extension\RouteGenerator;
 use Antares\Http\RouteManager;
 use Exception;
@@ -40,9 +39,9 @@ class Foundation extends RouteManager implements FoundationContract
     protected $booted = false;
 
     /**
-     * Get acl services.
+     * Get ACL service.
      *
-     * @var \Antares\Contracts\Authorization\Authorization
+     * @return \Antares\Contracts\Authorization\Authorization
      */
     public function acl()
     {
@@ -62,7 +61,6 @@ class Foundation extends RouteManager implements FoundationContract
             $this->bootApplication();
         }
 
-
         return $this;
     }
 
@@ -79,7 +77,7 @@ class Foundation extends RouteManager implements FoundationContract
     /**
      * Get memory services.
      *
-     * @var \Antares\Contracts\Memory\Provider
+     * @return \Antares\Contracts\Memory\Provider
      */
     public function memory()
     {
@@ -89,7 +87,7 @@ class Foundation extends RouteManager implements FoundationContract
     /**
      * Get menu services.
      *
-     * @var \Antares\UI\Menu
+     * @return \Antares\UI\Menu
      */
     public function menu()
     {
@@ -253,7 +251,7 @@ class Foundation extends RouteManager implements FoundationContract
     }
 
     /**
-     * @return type
+     * @return \Illuminate\Contracts\Foundation\Application
      */
     public function app()
     {

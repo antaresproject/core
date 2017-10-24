@@ -83,6 +83,13 @@ class ManagerTest extends TestCase
         $this->settingsFactory      = m::mock(SettingsFactory::class);
     }
 
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
+    }
+
     /**
      * @return Manager
      */

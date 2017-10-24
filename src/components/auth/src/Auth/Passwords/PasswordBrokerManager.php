@@ -37,15 +37,19 @@ class PasswordBrokerManager extends BaseManager
     protected function resolve($name)
     {
         $config = $this->getConfig($name);
+
         if (is_null($config)) {
             throw new InvalidArgumentException("Password resetter [{$name}] is not defined.");
         }
         // The password broker uses a token repository to validate tokens and send user
         // password e-mails, as well as validating that password reset process as an
         // aggregate service of sorts providing a convenient interface for resets.
-        return new PasswordBroker(
-                $this->createTokenRepository($config), $this->app->make('auth')->createUserProvider($config['provider']), $this->app->make('antares.notifier')->driver(), $config['email']
-        );
+
+        $repository     = $this->createTokenRepository($config);
+        $authProvider   = $this->app->make('auth')->createUserProvider($config['provider']);
+       // $notification   = $this->app->make('antares.notifier.mail')->driver();
+
+        return new PasswordBroker($repository, $authProvider, $config['email']);
     }
 
 }

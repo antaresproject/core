@@ -19,9 +19,10 @@ class Extensions extends Collection
     public function quessByName(string $name)
     {
         return $this->first(function(ExtensionContract $extension) use($name) {
-                    $package = $extension->getPackageName();
-                    return (str_contains($package, 'module-')) ? $package === 'module-' . $name : $package === 'component-' . $name;
-                });
+            $package = $extension->getPackageName();
+
+            return (str_contains($package, 'module-')) ? $package === 'module-' . $name : $package === 'component-' . $name;
+        });
     }
 
     /**
@@ -33,8 +34,8 @@ class Extensions extends Collection
     public function findByName(string $name)
     {
         return $this->first(function(ExtensionContract $extension) use($name) {
-                    return $extension->getPackage()->getName() === $name;
-                });
+            return $extension->getPackage()->getName() === $name;
+        });
     }
 
     /**

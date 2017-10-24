@@ -28,7 +28,7 @@ class FactoryTest extends TestCase
 {
 
     /**
-     * @var \Antares\Widgets\Factory 
+     * @var Stub
      */
     protected $stub;
 

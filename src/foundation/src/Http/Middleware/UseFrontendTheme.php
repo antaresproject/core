@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Middleware;
 
 use Closure;
@@ -55,6 +54,10 @@ class UseFrontendTheme
      */
     public function handle($request, Closure $next)
     {
+        if (auth()->guest() || !user()->hasRoles(['client', 'memeber'])) {
+            return $next($request);
+        }
+
         $this->beforeSendingThroughPipeline();
         $response = $next($request);
         $this->afterSendingThroughPipeline();
@@ -69,8 +72,8 @@ class UseFrontendTheme
      */
     protected function beforeSendingThroughPipeline()
     {
-        $this->dispatcher->fire('antares.started: client');
-        $this->dispatcher->fire('antares.ready: client');
+        $this->dispatcher->dispatch('antares.started: client');
+        $this->dispatcher->dispatch('antares.ready: client');
     }
 
     /**
@@ -80,7 +83,7 @@ class UseFrontendTheme
      */
     protected function afterSendingThroughPipeline()
     {
-        $this->dispatcher->fire('antares.done: client');
+        $this->dispatcher->dispatch('antares.done: client');
     }
 
 }

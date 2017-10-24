@@ -21,15 +21,16 @@
 
 namespace Antares\Model;
 
+use Antares\Auth\Passwords\CanResetPassword;
 use Antares\Contracts\Comments\Commentable;
 use Antares\Contracts\Tags\Taggable;
 use Antares\Logger\Model\Logs;
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Notifications\Dispatcher;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Antares\Support\Traits\QueryFilterTrait;
-use Illuminate\Auth\Passwords\CanResetPassword;
 use Antares\Contracts\Notification\Recipient;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
@@ -363,8 +364,11 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
      */
     public function getRoles()
     {
-        $roles = (array_key_exists('roles', $this->relations) ? $this->relations['roles'] : $this->roles());
-        return $roles->pluck('name');
+        if( ! $this->relationLoaded('roles') ) {
+            $this->load('roles');
+        }
+
+        return $this->roles->pluck('name');
     }
 
     /**
@@ -508,17 +512,12 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
     }
 
     /**
-     * Send notification for a user.
-     *
-     * @param  \Antares\Contracts\Notification\Message|string $subject
-     * @param  string|array|null $view
-     * @param  array $data
-     *
-     * @return \Antares\Contracts\Notification\Receipt
+     * @param $instance
+     * @return mixed
      */
-    public function notify($subject, $view = null, array $data = [])
+    public function notify($instance)
     {
-        return $this->sendNotification($this, $subject, $view, $data);
+        app(Dispatcher::class)->send($this, $instance);
     }
 
     /**

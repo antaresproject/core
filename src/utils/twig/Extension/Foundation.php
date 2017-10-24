@@ -275,8 +275,33 @@ class Foundation extends Twig_Extension
                         }
                         return false;
                     }),
-            new Twig_SimpleFunction('is_translated', function ($key) {
+			new Twig_SimpleFunction('is_translated', function ($key) {
                         return $key !== trans($key);
+                    }),            new Twig_SimpleFunction('error', function ($messageBag, $name) {
+                        if (!str_contains($name, ['[', ']'])) {
+                            return $messageBag->first($name, ':message');
+                        }
+                        preg_match("/\[([^\]]*)\]/", $name, $matches);
+                        if (!isset($matches[1])) {
+                            return $messageBag->first($name, ':message');
+                        }
+                        $messages = $messageBag->messages();
+                        $tabular  = str_replace(['[', ']'], ['.', ''], $name);
+                        if (array_key_exists($tabular, $messages)) {
+                            return $messageBag->first($tabular, ':message');
+                        }
+
+                        $idx  = $matches[1];
+                        $key  = str_replace('[' . $idx . ']', '', $name);
+                        $find = array_get($messages, $key . '.0.' . $idx);
+
+                        return is_null($find) ? array_get($messages, $key . '.' . $idx) : $find;
+                    }),
+            new Twig_SimpleFunction('format_date', function ($date, $format = 'Y-m-d') {
+                        return format_date($date, $format);
+                    }),
+            new Twig_SimpleFunction('format_time', function ($time, $format = 'H:i:s') {
+                        return format_time($time, $format);
                     }),
         ];
     }

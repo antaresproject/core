@@ -43,7 +43,7 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
     /**
      * Event dispatcher instance.
      *
-     * @var \Illuminate\Event\Dispatcher
+     * @var \Illuminate\Events\Dispatcher
      */
     private $events = null;
 
@@ -63,6 +63,13 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
         $this->session  = m::mock('\Illuminate\Session\Store');
         $this->events   = m::mock('\Illuminate\Contracts\Events\Dispatcher');
         $this->request  = m::mock('\Illuminate\Http\Request');
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        m::close();
     }
 
     /**
@@ -342,7 +349,7 @@ class SessionGuardTest extends \PHPUnit_Framework_TestCase
         $request->cookies = $cookie;
         $events->shouldReceive('until')->never()
                 ->with('antares.auth: roles', m::any())->andReturn(['admin', 'editor'])
-                ->shouldReceive('fire')->once()
+                ->shouldReceive('fire')
                 ->with(m::type('\Illuminate\Auth\Events\Logout'))->andReturnNull()
                 ->shouldReceive('dispatch')->once()->withAnyArgs()->andReturnSelf();
         $provider->shouldReceive('updateRememberToken')->once();

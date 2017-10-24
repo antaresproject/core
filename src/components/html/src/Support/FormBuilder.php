@@ -112,6 +112,9 @@ class FormBuilder
      */
     public function label($name, $value = null, $options = [])
     {
+        if (!$value) {
+            return '';
+        }
         $this->labels[] = $name;
         $options        = $this->html->attributes($options);
         $value          = e($this->formatLabel($name, $value));
@@ -247,9 +250,10 @@ class FormBuilder
             return $value;
         }
 
-        if (!is_null($this->old($name))) {
+        if (!str_contains($name, ['[', ']']) && !is_null($this->old($name))) {
             return $this->old($name);
         }
+
 
         if (!is_null($value)) {
             return $value;

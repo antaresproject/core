@@ -18,98 +18,243 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Area;
 
 use Antares\Area\Contracts\AreaManagerContract;
 use Antares\Area\Contracts\AreaContract;
-use Illuminate\Auth\AuthManager as Auth;
+use Antares\Area\Middleware\AreasCollection;
+use Antares\Model\User;
+use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Antares\Area\Model\Area;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class AreaManager implements AreaManagerContract
 {
 
     /**
+     * Auth Guard instance
      *
-     * @var Auth
+     * @var \Illuminate\Contracts\Auth\Factory|\Illuminate\Contracts\Auth\Guard|\Illuminate\Contracts\Auth\StatefulGuard
      */
     protected $auth;
 
     /**
-     * Collection of available areas
+     * Request instance
+     *
+     * @var Request
+     */
+    protected $request;
+
+    /**
+     * Configuration array
      *
      * @var array
+     */
+    protected $config = [];
+
+    /**
+     * Collection of available areas
+     *
+     * @var AreaContract[]
      */
     protected $areas = [];
 
     /**
-     * Constructing
-     * 
-     * @param Auth $auth
+     * Default area instance
+     *
+     * @var AreaContract
      */
-    public function __construct(Auth $auth)
+    protected $default;
+
+    /**
+     * @var array
+     */
+    protected static $fallbackAreas = [
+        'admin'    => 'Admin',
+        'client'   => 'Client',
+    ];
+
+    /**
+     * @var array
+     */
+    protected static $fallbackFrontendRoutes = [
+        'client',
+    ];
+
+    /**
+     * @var array
+     */
+    protected static $fallbackBackendRoutes = [
+        'admin', 'reseller'
+    ];
+
+    /**
+     * AreaManager constructor.
+     * @param Request $request
+     * @param AuthFactory $auth
+     * @param array $config
+     */
+    public function __construct(Request $request, AuthFactory $auth, array $config = [])
     {
-        $this->auth = $auth;
-        $areas      = config('areas.areas', []);
+        $this->auth    = $auth;
+        $this->request = $request;
+        $this->config  = $config;
+        $this->areas   = new AreasCollection();
+
+        $areas   = Arr::get($this->config, 'areas', self::$fallbackAreas);
+        $default = Arr::get($this->config, 'default', 'client');
 
         foreach ($areas as $name => $title) {
-            array_set($this->areas, $name, new Area($name, trans($title)));
+            $this->areas->add(new Area($name, trans($title)));
         }
+
+        $this->default = $this->areas->getById($default);
     }
 
     /**
-     * Get an area object based on the current authentication.
+     * Returns the default area.
+     *
+     * @return AreaContract
+     */
+    public function getDefault(): AreaContract
+    {
+        return $this->default;
+    }
+
+    /**
+     * Checks if the route has area.
+     *
+     * @return bool
+     */
+    public function hasAreaInUri(): bool
+    {
+        $segment = $this->request->segment(1);
+        $area    = $segment ? $this->getById($segment) : null;
+
+        return !!$area;
+    }
+
+    /**
+     * Gets an area object based on the current authentication and URI.
      * 
      * @return AreaContract
      */
-    public function getCurrentArea()
+    public function getCurrentArea(): AreaContract
     {
-        return $this->isAdminArea() ? $this->areas[config('areas.default')] : key((array_except(config('areas.areas'), config('areas.default'))));
+        $segment = $this->request->segment(1);
+        $area    = $segment ? $this->getById($segment) : null;
+
+        if (!$area && $this->auth->check()) {
+            /* @var $user User */
+            $user   = $this->auth->user();
+            $areas  = $user->getArea();
+
+            if(is_array($areas)) {
+                $area = $this->areas->getById( reset($areas) );
+            }
+            else {
+                $area = $this->areas->getById($areas);
+            }
+        }
+
+        return $area ?: $this->getDefault();
     }
 
     /**
-     * Check if the current authentication belongs to the Client Area.
+     * Returns collection of frontend areas.
+     *
+     * @return AreasCollection
+     */
+    public function getFrontendAreas(): AreasCollection
+    {
+        $areas      = (array) Arr::get($this->config, 'routes.frontend', self::$fallbackFrontendRoutes);
+        $collection = new AreasCollection();
+
+        foreach ($areas as $areaId) {
+            $area = $this->areas->getById($areaId);
+
+            if ($area) {
+                $collection->add($area);
+            }
+        }
+
+        return $collection;
+    }
+
+    /**
+     * Returns collection of backend areas.
+     *
+     * @return AreasCollection
+     */
+    public function getBackendAreas(): AreasCollection
+    {
+        $areas      = (array) Arr::get($this->config, 'routes.backend', self::$fallbackBackendRoutes);
+        $collection = new AreasCollection();
+
+        foreach ($areas as $areaId) {
+            $area = $this->areas->getById($areaId);
+
+            if ($area) {
+                $collection->add($area);
+            }
+        }
+
+        return $collection;
+    }
+
+    /**
+     * Checks if the current area belongs to the Frontend Areas.
      * 
      * @return boolean
      */
-    public function isClientArea()
+    public function isFrontendArea(): bool
     {
-        return $this->auth->isAny(['member']);
+        return $this->getFrontendAreas()->has($this->getCurrentArea());
     }
 
     /**
-     * Check if the current authentication belongs to the Admin Area.
+     * Checks if the current area belongs to the Backend Areas.
      * 
      * @return boolean
      */
-    public function isAdminArea()
+    public function isBackendArea(): bool
     {
-        return !$this->isClientArea();
+        return $this->getBackendAreas()->has($this->getCurrentArea());
     }
 
     /**
-     * Return an array with areas.
+     * Returns a collection with areas.
      * 
-     * @return AreaContract[]
+     * @return AreasCollection
      */
-    public function getAreas()
+    public function getAreas(): AreasCollection
     {
         return $this->areas;
     }
 
     /**
-     * Return an area object based on ID. Null returns if not found.
+     * Returns an area object based on ID. Null returns if not found.
      * 
      * @param string $id
      * @return AreaContract | null
      */
-    public function getById($id)
+    public function getById(string $id)
     {
-        foreach ($this->getAreas() as $area) {
-            if ($area->getId() === (string) $id) {
-                return $area;
-            }
-        }
+        return $this->areas->getById($id);
+    }
+
+    /**
+     * Returns an area object based on ID. Default area returns if not found the desired one.
+     *
+     * @param string $id
+     * @return AreaContract
+     */
+    public function getByIdOrDefault(string $id): AreaContract
+    {
+        $area = $this->getById($id);
+
+        return $area ?: $this->getDefault();
     }
 
 }

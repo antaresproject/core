@@ -207,6 +207,19 @@ class Grid extends BaseGrid implements GridContract
     }
 
     /**
+     * Adds layout params
+     * 
+     * @param String $key
+     * @param mixed $value
+     * @return $this
+     */
+    public function addLayoutParams($key, $value)
+    {
+        array_set($this->params, $key, $value);
+        return $this;
+    }
+
+    /**
      * Sets form as ajaxable
      * 
      * @param array $options
@@ -478,7 +491,7 @@ class Grid extends BaseGrid implements GridContract
         if (is_null($this->generator)) {
             return false;
         }
-        $this->tests[$name] = $this->generator->build($name, $attributes, $callback);
+        return $this->tests[$name] = $this->generator->build($name, $attributes, $callback);
     }
 
     /**
@@ -530,6 +543,16 @@ class Grid extends BaseGrid implements GridContract
     {
         $this->customValidator = $validator;
         return $this;
+    }
+
+    /**
+     * Tests getter
+     * 
+     * @return array
+     */
+    public function tests()
+    {
+        return $this->tests;
     }
 
 }
