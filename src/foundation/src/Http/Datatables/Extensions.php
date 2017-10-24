@@ -143,7 +143,7 @@ class Extensions extends DataTable
                         ->addColumn(['data' => 'version', 'name' => 'version', 'title' => trans('antares/foundation::label.extensions.header.version')])
                         ->addColumn(['data' => 'status', 'name' => 'status', 'title' => trans('antares/foundation::label.extensions.header.status')])
                         ->addColumn(['data' => 'type', 'name' => 'type', 'title' => trans('antares/foundation::label.extensions.header.type')])
-                        ->addAction(['name' => 'edit', 'title' => '', 'class' => 'dt-row-actions'])
+                        ->addAction(['name' => 'edit', 'title' => '', 'class' => 'mass-actions dt-actions'])
                         ->addGroupSelect($this->getTypes(), $this->typeColumnIndex, Types::TYPE_ADDITIONAL, $options)
                         ->parameters([
                             'aoColumnDefs' => [

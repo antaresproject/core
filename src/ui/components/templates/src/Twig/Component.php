@@ -259,8 +259,11 @@ class Component extends Twig_Extension
             if (!empty($params)) {
                 $component->setAttributes($params);
             }
-            $component->setView('antares/ui-components::admin.partials._forced');
-            app('antares.asset')->container('antares/foundation::application')->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache'])->add('webpack_gridstack', '/webpack/view_gridstack.js', ['app_cache']);
+
+            $classname = 'Antares\UI\UIComponents\Templates\Datatables';
+            $view      = ($component instanceof $classname) ? 'antares/ui-components::admin.partials._forced_datatable' : 'antares/ui-components::admin.partials._forced';
+
+            $component->setView($view);
             return $component;
         };
 

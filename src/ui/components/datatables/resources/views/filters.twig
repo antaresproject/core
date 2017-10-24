@@ -1,45 +1,124 @@
 {% for name,url in urls %}
     <input type="hidden" value="{{ url }}" name="{{ name }}" class="datatables-filter-{{name}}" />
-{% endfor %}    
-<div class="card-ctrls__right">
-    <div class="card-filter">        
-        {% for item in selected %}
-            {{ item|raw }}
-        {% endfor %}           
+{% endfor %}
+<div class="swiper-filters--box">
+    <div class="swiper-container swiper-filters">
+        <!-- Additional required wrapper -->
+        <div class="swiper-wrapper card-filters--swiper">
+            <!-- Slides -->
+            <div class="swiper-slide"> <!--Single filter DATE-PICKER-->
+                <div class="filter filter-type--date-picker antares-dropjs-filter" data-type="datePicker">
+                    <div class="card-filter__sgl ddown__init dropjs-target dropjs--no-active" data-filter-value="DatePicker">
+                        <span>Oct 9, 2017 - Oct 17, 2017 </span><i class="zmdi zmdi-close filter-close"></i></div>
+                    <div class="dropjs-wrapper">
+                        <div class="filter-content filter--date-picker" data-type="datePicker" data-daterangepicker-text="Oct 9, 2017 - Oct 17, 2017 "><span>Filter By DatePicker</span>
+                            <div class="slider-box">
+                                <div class="input-field input-field--group" >
+                                    <input  data-default-data="" data-daterangepicker--filter="true" placeholder="Placeholder">
+                                </div>
+                                <a class="btn btn--md btn--default mdl-js-button mdl-js-ripple-effect change-filter change-filter--date-picker">Confirm</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!--Single filter DATE-PICKER end-->
+            <div class="swiper-slide">  <!--Single filter NUMBER-->
+                <div class="filter filter-type--number antares-dropjs-filter" data-type="services">
+                    <div class="card-filter__sgl ddown__init dropjs-target dropjs--no-active" data-filter-type="ammount"
+                         data-filter-value="16 - 128">
+                        <span>16 - 128</span><i class="zmdi zmdi-close filter-close"></i></div>
+                    <div class="dropjs-wrapper">
+                        <div class="filter-content filter--number" data-type="services" data-min="16" data-max="128"><span>Filter By Services</span>
+                            <div class="slider-box">
+                                <div class="filter-slider ui-slider--minimal" data-slider-range-filter="true"></div>
+                            </div>
+                            <div class="form-block ff-rnw  spinners-box">
+                                <div class="spinner-basic"><input
+                                        class="filter-spinner filter-spinner-mode-min filter-spinner--min"
+                                        type="number" value="16" data-min="16"  name="value"></div>
+                                <span class="ml16 mr16"> - </span>
+                                <div class="spinner-basic"><input
+                                        class="filter-spinner filter-spinner-mode-max filter-spinner--max"
+                                        type="number" value="128" data-max="128"  name="value2"></div>
+                            </div>
+                            <a class="btn btn--md btn--default mdl-js-button mdl-js-ripple-effect change-filter change-filter--number">Confirm</a>
+                        </div>
+                    </div>
+                </div>
+            </div> <!--Single filter NUMBER end-->
+            <div class="swiper-slide"> <!--Single filter BADGE-->
+                <div class="filter filter-type--badge antares-dropjs-filter" data-type="status">
+                    <div class="card-filter__sgl ddown__init dropjs-target dropjs--no-active" data-filter-value="Active">
+                        <span>Active</span><i class="zmdi zmdi-close filter-close"></i></div>
+                    <div class="dropjs-wrapper">
+                        <div class="filter-content filter--badge" data-type="status"><span>Filter By Status</span>
+                            <div class="slider-box">
+                                <select name="select" data-selectAR="true" class="select--badge">
+                                    <option value="Active" selected>Active</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="In space">In space</option>
+                                </select>
+                                <a class="btn btn--md btn--default mdl-js-button mdl-js-ripple-effect change-filter change-filter--badge">Confirm</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!--Single filter BADGE end-->
+            <div class="swiper-slide"> <!--Single filter BADGE-->
+                <div class="filter filter-type--badge antares-dropjs-filter" data-type="status">
+                    <div class="card-filter__sgl ddown__init dropjs-target dropjs--no-active" data-filter-value="Active">
+                        <span>Active</span><i class="zmdi zmdi-close filter-close"></i></div>
+                    <div class="dropjs-wrapper">
+                        <div class="filter-content filter--badge" data-type="status"><span>Filter By Status</span>
+                            <div class="slider-box">
+                                <select name="select" data-selectAR="true" class="select--badge">
+                                    <option value="Active" selected>Active</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="In space">In space</option>
+                                </select>
+                                <a class="btn btn--md btn--default mdl-js-button mdl-js-ripple-effect change-filter change-filter--badge">Confirm</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!--Single filter BADGE end-->
+
+        </div>
     </div>
+    <div class="swiper-filters-next"></div>
+    <div class="swiper-filters-prev"></div>
 </div>
 <div class = "ddown ddown-multi">
-    <div class = "ddown-multi__init btn--dropdown btn btn--md btn--default mdl-js-button mdl-js-ripple-effect mr-24">
-        Filter
+    <div class = "mdl-js-button mdl-js-ripple-effect btn btn--md ddown-multi__init btn--dropdown btn--capitalize btn--default mr-24">
+        <span>Filter</span>
+        <i class="zmdi zmdi-filter-list"></i>
     </div>
-    <input type="hidden" name="route" value="{{ route }}" class="filter-group-route" />
-    <ul class="ddown-multi__menu">        
-        <li class="ddown-multi__label">
-            <span>Filter By</span>
-        </li>
-        {% for filter in filters %}                
-            <li class="has-submenu">                
-                <a data-target="{{ filter.get('name') }}" href="#">
-                    <span>
-                        {{ filter.get('name') }}
-                    </span>
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-    {% for filter in filters %}
-        <div class="filter-container">
-            <input type="hidden" name="column" value="{{ filter.get('column') }}" class="filter-group-column" />            
-            <ul data-name="{{ filter.get('name') }}" class="ddown-multi__submenu">
-                <li class="ddown-multi__label"><span>Filter By</span></li>        
-                <li class="ddown-multi__return">
-                    <a href="#">
-                        <i class="zmdi zmdi-chevron-left"></i>
+    <div class="ddown__content">
+        <ul class="ddown-multi__menu">
+            <li class="ddown-multi__label"><span>Filter By</span></li>
+                {% for filter in filters %}                
+                <li class="has-submenu">                
+                    <a data-target="{{ filter.get('name') }}" href="#">
                         <span>{{ filter.get('name') }}</span>
                     </a>
                 </li>
-                {{ filter|raw }}                
-            </ul> 
-        </div>    
+            {% endfor %}
+        </ul>
+    </div>
+    <input type="hidden" name="route" value="{{ route }}" class="filter-group-route" />
+    {% for filter in filters %}
+        <div class="filter-container ddown__content filter-content" data-type="{{ filter.get('name') }}">
+            <input type="hidden" name="column" value="{{ filter.get('column') }}" class="filter-group-column" />            
+            <ul data-name="{{ filter.get('name') }}" class="ddown-multi__submenu">
+                <li class="ddown-multi__label"><span>Filter By</span></li>
+                <li class="ddown-multi__return">
+                    <a>
+                        <i class="zmdi zmdi-chevron-left"></i>
+                        <span>Status</span>
+                    </a>
+                </li>
+                {{ filter|raw }}   
+            </ul>
+        </div>        
     {% endfor %}    
 </div>

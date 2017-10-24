@@ -1,0 +1,36 @@
+<div class="card-ctrls tab-search tab-search--filter swiper--no-slides">
+
+    <div class="card-ctrls__left">
+        {% if selects %}
+            {{ selects|raw }}
+        {% endif %}
+        {% if searchable %}
+            <div class="search-box search-box--dark">
+                <i class="zmdi zmdi-search"></i>
+                <form action="">
+                    <div class="mdl-js-textfield mdl-textfield search-box__mdl-textfield">
+                        <input class="mdl-textfield__input search-box__search-field" type="text" id="tableSearch" autocomplete="off" value="{{ search|escape('html') }}">
+                        <label class="mdl-textfield__label" for="tableSearch">Search</label>
+                    </div>
+                </form>
+            </div>
+        {% endif %}        
+    </div>
+    {% if datatables_top_center %}
+        {{ datatables_top_center|raw }}
+    {% endif %}
+    <div class="card-ctrls__right">
+        {% if rightCtrls %}
+            {{ rightCtrls|raw }}
+        {% endif %}
+        {% if columnFilter %}
+            {{ columnFilter|raw }}
+        {% endif %}
+        <div class="filters" id="filter-save-url" data-url="{{ handles('antares/foundation::datatables/filters/save') }}">
+            {% if filters %}
+                {{ filters|raw }}
+            {% endif %}
+
+        </div>
+    </div>                                    
+</div>

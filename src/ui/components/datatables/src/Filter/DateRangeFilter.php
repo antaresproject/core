@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Datatables\Filter;
 
 class DateRangeFilter extends AbstractFilter
@@ -103,6 +102,7 @@ class DateRangeFilter extends AbstractFilter
      */
     public function render($start = null, $end = null)
     {
+
         publish('automation', ['js/automation_date_range_filter.js']);
         return view('antares/automation::admin.partials._date_range_filter', ['start' => $start, 'end' => $end])->render();
     }

@@ -1,7 +1,5 @@
 <div class="grid-stack-item"          
      id="{{ id }}" 
-     fixed-width="{{ fixed_width }}" 
-     fixed-height="{{ fixed_height }}" 
      data-gs-x="{{ x }}" 
      data-gs-y="{{ y }}" 
      data-gs-auto-position=false
@@ -17,11 +15,11 @@
      >     
     <div class="grid-stack-item-content" >                        
         <input type="hidden" name="current" value="{{ id }}" />
-        <div class="card__edit-view">
-            <div class="card__edit-overlay"></div>
-            <span class="card__edit-message"></span>
-            <div class="card__edit-icons">
-                {% if(editable) %}
+        {% if(editable) %}
+            <div class="card__edit-view">
+                <div class="card__edit-overlay"></div>
+                <span class="card__edit-message"></span>
+                <div class="card__edit-icons">
                     <div class="ddown ddown--left">
                         <div class="ddown__init ddown__init--clean mdl-js-button mdl-js-button mdl-js-ripple-effect"><i class="zmdi zmdi-settings edit-button"></i></div>
                         <ul class="ddown__menu">
@@ -40,9 +38,10 @@
                             {{ event('ui-components:render.widget-actions.'~name)|raw }}
                         </ul>
                     </div>
-                {% endif %}
-            </div>
-        </div>
+
+                </div>
+            </div>   
+        {% endif %}
         {{ event('ui-components:render.before.'~name)|raw }}
         {{ content|raw }}                                
         {{ event('ui-components:render.after.'~name)|raw }}        

@@ -36,7 +36,7 @@ return [
                         'SSL' => 'SSL',
                         'TLS' => 'TLS'
                     ],
-                    'fieldClass' => 'w150'
+                    'class'      => 'col-mb-16 col-18 col-dt-10 col-ld-4'
                 ],
             ]
         ],

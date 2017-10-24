@@ -1,0 +1,39 @@
+<div class="grid-stack-item" id="{{ id }}" data-gs-x="{{ x }}"  
+     data-gs-y="{{ y }}"  
+     data-gs-auto-position=false 
+     data-gs-width="{{ width }}"  
+     data-gs-height="{{ height }}" 
+     data-gs-max-width="{{ max_width }}" data-gs-max-height="{{ max_height }}" data-gs-min-width="{{ min_width }}" data-gs-min-height="{{ min_height }}" data-gs-no-resize="{{ resizable=="true"?false:true }}" data-gs-no-move="{{ draggable=="true"?false:true }}" ajaxable="{{ (ajaxable is same as(false)) ? '0':'1'  }}">     
+    <div class="grid-stack-item-content card-datatables" >
+        <input type="hidden" name="current" value="{{ id }}" />        
+        <div class="card__edit-view">
+            <div class="card__edit-icons">
+                <i data-tooltip-inline="Remove Widget" class="zmdi zmdi-delete remove-button mdl-js-button mdl-js-ripple-effect" >
+                    <span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span>
+                </i>
+                <i data-tooltip-inline="Move Widget" class="zmdi zmdi-arrows move-button mdl-js-button mdl-js-ripple-effect ui-draggable-handle" >
+                    <span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span>
+                </i>
+                <i data-tooltip-inline="Detach Widget" class="zmdi zmdi-square-right detach-button mdl-js-button mdl-js-ripple-effect" >
+                    <span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span>
+                </i>
+            </div>
+        </div>
+        <div class="card card--pagination" data-preload>
+            <div class="card__header">
+                <div class="card__header-left">
+                    <span>{{ title|raw }}</span>
+                </div>               
+            </div>
+            <div class="tbl-c tbl-c--nopadding">
+                {{ content|raw }}   
+            </div>
+        </div>
+
+    </div>   
+    {% if app('request').ajax() %}    
+        {% set asset = app('antares.asset').container('antares/foundation::scripts') %}
+        {{ asset.styles()|raw }}
+        {{ asset.scripts()|raw }}
+    {% endif %}
+</div>

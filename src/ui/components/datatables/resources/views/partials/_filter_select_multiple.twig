@@ -1,14 +1,10 @@
-<li class="ddown__sgl ddown__sgl--range" style="padding-top: 20px;">    
-    <div class="form-block mb1">
-        <div class="input-field">        
-            <select class="filter-multiple-select" data-selectAR="true" name="{{ column|raw }}" multiple="multiple" data-placeholder="{{ placeholder|raw }}">
-                {% for id,name in options %}                
-                    <option {{ id in selected ? 'selected="selected"':''}} value="{{ id }}">{{ name|raw }}</option>
-                {% endfor %}
-            </select>
-        </div>            
-    </div>
-    <a href="#" class="btn btn--md btn--primary mdl-button mdl-js-button mdl-js-ripple-effect add-select-filter-button" >
+<li class="ddown__sgl ddown__sgl--range" >    
+    <select class="filter-multiple-select select--badge" data-selectar="true" name="{{ column|raw }}" multiple="multiple" data-placeholder="{{ placeholder|raw }}">
+        {% for id,name in options %}                
+            <option {{ id in selected ? 'selected="selected"':''}} value="{{ id }}">{{ name|raw }}</option>
+        {% endfor %}
+    </select>
+    <a href="#" class="mdl-js-button mdl-js-ripple-effect btn btn--md btn--default add-filter add-select-filter-button" >
         {{ trans('antares/foundation::messages.confirm') }}
     </a>
 </li>
