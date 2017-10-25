@@ -267,6 +267,10 @@ class FoundationServiceProvider extends ServiceProvider
         });
 
         $this->app->make('events')->subscribe(AfterExtensionOperation::class);
+
+        $this->app->make('view')->composer('antares/foundation::breadcrumbs.bootstrap3', function($view) {
+            view()->share('breadcrumbs_data', array_get($view->getData(), 'breadcrumbs', []));
+        });
     }
 
     /**
