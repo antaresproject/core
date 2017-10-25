@@ -38,6 +38,13 @@ class SelectFilter extends AbstractFilter
     protected $placeholder = null;
 
     /**
+     * Type of filter for frontend issues
+     *
+     * @var String 
+     */
+    protected $type = 'status';
+
+    /**
      * Values getter
      * 
      * @return array
@@ -74,6 +81,7 @@ class SelectFilter extends AbstractFilter
         $name      = str_replace('%value', implode(', ', array_only($this->options(), $values)), trans($this->pattern));
         $classname = get_called_class();
         return view('antares/automation::admin.partials._deleted')->with([
+                    'type'      => $this->type,
                     'column'    => $this->column,
                     'instance'  => $this,
                     'route'     => uri(),
@@ -88,13 +96,16 @@ class SelectFilter extends AbstractFilter
      */
     public function render()
     {
+        $classname   = get_called_class();
         publish('automation', ['js/automation_status_filter.js']);
         $selected    = $this->getValues();
         $placeholder = is_null($this->placeholder) ? trans('antares/foundation::messages.select_placeholder_default', ['name' => strtolower($this->name)]) : $this->placeholder;
-        return view('datatables-helpers::partials._filter_select_multiple', [
+        return view('datatables-helpers::partials._filter_select', [
+                    'type'        => $this->type,
                     'options'     => $this->options(),
                     'column'      => $this->column,
                     'placeholder' => $placeholder,
+                    'classname'   => $classname,
                     'selected'    => $selected
                 ])->render();
     }
