@@ -271,7 +271,7 @@ class Builder extends BaseBuilder
     public function generateScripts()
     {
 
-        app('antares.asset')->container('antares/foundation::application')->add('gridstack', '//51.254.36.218:71/js/view_datatables.js', ['webpack_gridstack', 'app_cache']);
+        app('antares.asset')->container('antares/foundation::application')->add('gridstack', '//10.10.10.35:71/js/view_datatables.js', ['webpack_gridstack', 'app_cache']);
 
         if ($this->orderable) {
             array_set($this->attributes, 'rowReorder', true);
@@ -355,6 +355,7 @@ EOD;
         $javascript           = file_get_contents(sandbox_path('packages/core/js/datatables.js'));
         $parameters           = JavaScriptDecorator::decorate(['options' => $args]);
         return str_replace(['$params = null,', '$instanceName = null;'], ['$params = ' . $parameters . ',', '$instanceName = "' . $this->tableAttributes['id'] . '";'], $javascript);
+    }
 
     protected function zeroData()
     {
@@ -503,8 +504,6 @@ EOD;
         if ($filters) {
             array_set($params, 'filters', $filters);
         }
-
-
 
         if ($hasMassActions) {
             array_set($params, 'massActions', $this->massActions);
@@ -659,7 +658,7 @@ EOD;
         $string                .= '</tbody>';
         $this->tableAttributes = array_merge($this->tableAttributes, $attributes);
         $scrollable            = '';
-        if ( count($dataItems) > 10 or strlen($this->ajax) > 0) {
+        if (count($dataItems) > 10 or strlen($this->ajax) > 0) {
             $scrollable = 'data-scrollable';
         }
         $massable = (int) $this->hasMassActions();
@@ -952,7 +951,7 @@ EOD;
         if (!is_null($defaultOrder = array_get($attributes, 'order'))) {
             $orderAdapter = app(OrderAdapter::class)->setClassname(get_class($this->datatable));
 
-            if (($order        = $orderAdapter->getSelected()) !== false) {
+            if (($order = $orderAdapter->getSelected()) !== false) {
 //                $attributes = array_merge($attributes, [
 //                    'order' => [[$order['column'], $order['dir']]],
 //                ]);
@@ -977,8 +976,12 @@ EOD;
             return false;
         }
         $container = app('antares.asset')->container('antares/foundation::scripts');
-        $container->add('context_menu', '/packages/core/js/contextMenu.js');
-        $script    = $script ?: $this->generateScripts();
+        $container
+                ->add('context_menu', '/packages/core/js/contextMenu.js')
+                ->add('context_menu', '/packages/core/js/filters_mdl.js');
+
+        $script = $script ?: $this->generateScripts();
+
         if ($this->orderable) {
             app('antares.asset')->container('antares/foundation::application')->add('dataTables-rowreorder', 'https://cdn.datatables.net/rowreorder/1.2.0/js/dataTables.rowReorder.min.js', ['webpack_forms_basic']);
         }
@@ -998,6 +1001,6 @@ EOD;
     {
         $this->orderable = true;
         return $this;
-}
+    }
 
 }
