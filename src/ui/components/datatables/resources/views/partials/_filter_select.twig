@@ -1,0 +1,10 @@
+<li class="ddown__sgl ddown__sgl--range filter-config"  column="{{ column }}" data-classname="{{classname|raw}}">    
+    <select class="select--badge" data-selectar="true" name="{{ column|raw }}" data-placeholder="{{ placeholder|raw }}">
+        {% for id,name in options %}                
+            <option {{ id in selected ? 'selected="selected"':''}} value="{{ id }}">{{ name|raw }}</option>
+        {% endfor %}
+    </select>    
+    <a href="#" class="mdl-js-button mdl-js-ripple-effect btn btn--md btn--default add-filter add-select-filter-button" data-type="{{ type|default('status')|raw }}" >
+        {{ trans('antares/foundation::messages.confirm') }}
+    </a>
+</li>

@@ -30,7 +30,22 @@
             {% if filters %}
                 {{ filters|raw }}
             {% endif %}
-
+        </div>
+        <div class="ddown ddown--left ddown--disabled btn-selected mass-actions-container {{ massActions|length>0 ? '' : 'mass-actions-disabled' }}">
+            <div class="ddown__init btn--dropdown btn btn--capitalize btn--md btn--primary mdl-js-button ml8 btn-with-selected" id="table-ma" disabled>
+                <span>{{ trans('antares/foundation::label.with_selected') }}</span>
+            </div>
+            <div class="ddown__content">
+                {% if massActions|length>0 %}
+                    <ul class="ddown__menu">
+                        {% for massAction in massActions %}
+                            <li>
+                                {{ massAction.get()|raw }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
         </div>
     </div>                                    
 </div>

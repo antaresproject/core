@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Processor;
 
 use Antares\Datatables\Adapter\FilterAdapter;
@@ -129,7 +128,7 @@ class FilterProcessor
 
             //this chunk of code will automatically add custom $params values
             //everything else then 'value' will be saved in session
-            //this allow developer to send custom parameters through request 
+            //this allows developer to send custom parameters through request 
             foreach ($params as $key => $value) {
                 if ($key == 'value') {
                     continue;
