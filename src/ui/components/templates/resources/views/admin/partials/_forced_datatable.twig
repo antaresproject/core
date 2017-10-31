@@ -3,7 +3,17 @@
      data-gs-auto-position=false 
      data-gs-width="{{ width }}"  
      data-gs-height="{{ height }}" 
-     data-gs-max-width="{{ max_width }}" data-gs-max-height="{{ max_height }}" data-gs-min-width="{{ min_width }}" data-gs-min-height="{{ min_height }}" data-gs-no-resize="{{ resizable=="true"?false:true }}" data-gs-no-move="{{ draggable=="true"?false:true }}" ajaxable="{{ (ajaxable is same as(false)) ? '0':'1'  }}">     
+     data-gs-max-width="{{ max_width }}" 
+     data-gs-max-height="{{ max_height }}" 
+     data-gs-min-width="{{ min_width }}" 
+     data-gs-min-height="{{ min_height }}" 
+     data-gs-no-resize="{{ resizable=="true"?false:true }}" 
+     data-gs-no-move="{{ draggable=="true"?false:true }}" 
+     ajaxable="{{ (ajaxable is same as(false)) ? '0':'1'  }}"
+     data-desktop="{{ desktop ? desktop|json_encode() : ''  }}"
+     data-tablet="{{ tablet ? tablet|json_encode() : ''  }}"
+     data-mobile="{{ mobile ? mobile|json_encode() : ''  }}"
+     >     
     <div class="grid-stack-item-content card-datatables" >
         <input type="hidden" name="current" value="{{ id }}" />        
         <div class="card__edit-view">
