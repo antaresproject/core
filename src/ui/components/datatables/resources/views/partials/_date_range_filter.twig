@@ -1,0 +1,19 @@
+<li class="ddown__sgl ddown__sgl--range filter-config" column="{{ column }}" data-classname="{{classname|raw}}">    
+    <div class="input-field input-field--group">
+        <input id="daterangepicker_{{ random(5)|raw}}" 
+               data-daterangepicker--filter="true"
+               data-start="{{ start|raw }}" 
+               data-end="{{ end|raw }}" 
+               class="daterangepicker-filter" 
+               data-format="yy-mm-dd"               
+               data-placeholder="{{ trans('antares/automation::messages.select_date_range') }}" 
+               name="daterange" 
+               required="required" />
+    </div>
+    <a class="btn btn--md btn--default mdl-js-button mdl-js-ripple-effect add-filter add-daterange-button" >
+        {{ trans('antares/automation::messages.confirm') }}
+        <span class="mdl-button__ripple-container">
+            <span class="mdl-ripple"></span>
+        </span>
+    </a>
+</li>
