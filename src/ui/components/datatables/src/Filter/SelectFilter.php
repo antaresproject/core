@@ -56,7 +56,9 @@ class SelectFilter extends AbstractFilter
         if (is_null($params) or ! isset($params['column']) or ! $params['column'] == $this->column) {
             return [];
         }
-
+        if (!isset($params['value'])) {
+            return [];
+        }
         if (empty((array) $params['value'])) {
             $params = $this->session->get($uri);
             unset($params[get_called_class()]);
