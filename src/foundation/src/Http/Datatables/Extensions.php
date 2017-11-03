@@ -147,9 +147,9 @@ class Extensions extends DataTable
                         ->addGroupSelect($this->getTypes(), $this->typeColumnIndex, Types::TYPE_ADDITIONAL, $options)
                         ->parameters([
                             'aoColumnDefs' => [
-                                ['width' => '15%', 'targets' => 0],
-                                ['width' => '40%', 'targets' => 1],
-                                ['width' => '22%', 'targets' => 2],
+                                ['width' => '12%', 'targets' => 0],
+                                ['width' => '42%', 'targets' => 1],
+                                ['width' => '20%', 'targets' => 2],
                                 ['width' => '7%', 'targets' => 3],
                                 ['width' => '10%', 'targets' => 4],
                                 ['width' => '10%', 'targets' => 5],
