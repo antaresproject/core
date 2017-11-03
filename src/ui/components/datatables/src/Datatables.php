@@ -45,6 +45,16 @@ class Datatables extends SupportDatatables
     protected static $classname;
 
     /**
+     * Datatables constructor.
+     *
+     * @param \Antares\Datatables\Request $request
+     */
+    public function __construct(Request $request)
+    {
+        $this->request = $request->request->count() ? $request : Request::capture();
+    }
+
+    /**
      * Gets query and returns instance of class.
      *
      * @param  mixed $builder
