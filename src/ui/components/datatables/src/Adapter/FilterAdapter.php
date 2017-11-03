@@ -79,9 +79,11 @@ class FilterAdapter
     protected $route;
 
     /**
-     * constructing
-     * 
+     * FilterAdapter constructor.
      * @param Application $app
+     * @param Router $router
+     * @param Request $request
+     * @param UrlGenerator $url
      */
     public function __construct(Application $app, Router $router, Request $request, UrlGenerator $url)
     {
@@ -89,6 +91,7 @@ class FilterAdapter
         $this->router  = $router;
         $this->request = $request;
         $this->url     = $url;
+
         if (!$request->hasSession()) {
             return;
         }
@@ -175,7 +178,10 @@ class FilterAdapter
         if (!$this->filters) {
             return false;
         }
+
         $this->filters = array_unique($this->filters);
+
+        //$this->filters = array_unique($this->filters);
         $renderable    = false;
         foreach ($this->filters as $filter) {
             if ($filter->renderable) {
@@ -188,7 +194,6 @@ class FilterAdapter
         }
 
         $this->attachScripts();
-
 
         return view(($view) ? $view : 'datatables-helpers::filters', [
                     'filters'  => $this->filters,

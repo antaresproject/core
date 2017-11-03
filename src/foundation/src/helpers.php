@@ -535,6 +535,8 @@ if (!function_exists('lang')) {
 
     /**
      * Get current language id
+     *
+     * @return \Antares\Translations\Models\Languages
      */
     function lang($locale = null)
     {
@@ -543,7 +545,7 @@ if (!function_exists('lang')) {
         \Cache::store('array');
 
         return \Cache::get('lang-' . $code, function() use($code) {
-            return \Antares\Translations\Models\Languages::where('code', $code)->first();
+            return \Antares\Translations\Models\Languages::query()->where('code', $code)->first();
         });
 
     }
@@ -553,6 +555,8 @@ if (!function_exists('langs')) {
 
     /**
      * Get languages list
+     *
+     * @returns \Antares\Translations\Models\Languages[]
      */
     function langs()
     {

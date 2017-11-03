@@ -334,6 +334,10 @@ abstract class AbstractType implements Attributable
      */
     public function renderControl()
     {
+        if($this->hasAttribute('v-model')) {
+            $this->value = null;
+        }
+
         return view('antares/foundation::form.controls.' . $this->type, ['control' => $this]);
     }
 
