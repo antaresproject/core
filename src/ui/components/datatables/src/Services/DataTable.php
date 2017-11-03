@@ -184,9 +184,8 @@ abstract class DataTable extends BaseDataTableService
      */
     public function render($view, $data = [], $mergeData = [])
     {
-        view()->share('content_class', 'side-menu');
+        view()->share('content_class', 'app-content app-content--gridstack page-datatables');
         $this->addFilters();
-
         return parent::render($view, $data, $mergeData);
     }
 

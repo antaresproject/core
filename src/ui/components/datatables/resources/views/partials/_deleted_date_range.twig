@@ -1,17 +1,22 @@
-<div class="ddown ddown--filter-edit ddown--left mr24 ddown__shorty ">
-    <div class = "card-filter__sgl ddown__init datatables-card-filter" column="{{ column }}" data-classname="{{classname|raw}}">
-        <span>{{ name|raw }}</span>
-        {% if name|length>0 %}
-            <i class="zmdi zmdi-close" data-url="{{ handles('antares/foundation::datatables/filters/delete') }}"></i>
-        {% endif %}
-    </div>
-    <div class="ddown__content ">
-        <div class="ddown__arrow "></div>
-        <ul class="ddown__menu ddown__menu--innerpadd">
-            <li class="ddown__label ">
-                <span>Filter By</span>
-            </li>
-            {{ subview|raw }}                                  
-        </ul>
+<div class="swiper-slide">
+    <div class="filter filter-type--date-picker antares-dropjs-filter" data-type="{{ type|default('status')|raw }}">
+        <div class="card-filter__sgl ddown__init dropjs-target dropjs--no-active"  data-filter-value="{{ column }}" column="{{ column }}" data-classname="{{classname|raw}}">
+            <span>{{ start|raw }} - {{ end|raw }}</span>
+            <i class="zmdi zmdi-close datatable-disable-selected-filter" data-url="{{ handles('antares/foundation::datatables/filters/delete') }}"></i>
+        </div>
+        <div class="dropjs-wrapper">
+            <div class="filter-content filter--date-picker" 
+                 data-type="{{ type|default('status')|raw }}"
+                 data-daterangepicker-text="{{ start|raw }} - {{ end|raw }}">
+                <span>
+                    Filter By Date                    
+                </span>
+                <div class="slider-box">
+                    <ul>
+                        {{ subview|raw }} 
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

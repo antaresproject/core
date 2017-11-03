@@ -19,43 +19,43 @@
  * @link       http://antaresproject.io
  */
 return [
-    'use_gravatar'                => 'Use gravatar instead',
-    'extensions' => [
-        'modal_title' => [
-            'install'       => 'Extension installation',
-            'activate'      => 'Extension activation',
-            'deactivate'    => 'Extension deactivation',
-            'uninstall'     => 'Extension uninstallation',
+    'use_gravatar'                   => 'Use gravatar instead',
+    'extensions'                     => [
+        'modal_title'   => [
+            'install'    => 'Extension installation',
+            'activate'   => 'Extension activation',
+            'deactivate' => 'Extension deactivation',
+            'uninstall'  => 'Extension uninstallation',
         ],
         'modal_content' => [
-            'install'       => 'The :name extension will be installed. Do you want to proceed?',
-            'activate'      => 'The :name extension will be activated. Do you want to proceed?',
-            'deactivate'    => 'The :name extension will be deactivated. Do you want to proceed?',
-            'uninstall'     => 'The :name extension will be uninstalled. Do you want to proceed?',
+            'install'    => 'The :name extension will be installed. Do you want to proceed?',
+            'activate'   => 'The :name extension will be activated. Do you want to proceed?',
+            'deactivate' => 'The :name extension will be deactivated. Do you want to proceed?',
+            'uninstall'  => 'The :name extension will be uninstalled. Do you want to proceed?',
         ],
     ],
-    'confirm'                     => 'Confirm',
-    'select_placeholder_default'  => 'select :name...',
-    'select_extension_type'       => 'Type',
-    'extension_type_all'          => 'All',
-    'sidebar'                     => [
+    'confirm'                        => 'Confirm',
+    'select_placeholder_default'     => 'select :name...',
+    'select_extension_type'          => 'Type',
+    'extension_type_all'             => 'All',
+    'sidebar'                        => [
         'notifications'  => 'Notifications',
         'alerts'         => 'Alerts',
         'no_alerts'      => 'No alerts available...',
         'no_items_found' => 'No items found...'
     ],
-    'logged_out_from_user'        => 'You have been logout successfully from user session.',
-    'logged_as_user'              => 'You have been login into user :name session.',
-    'yes'                         => 'Yes',
-    'no'                          => 'No',
-    'statuses'                    => [
+    'logged_out_from_user'           => 'You have been logout successfully from user session.',
+    'logged_as_user'                 => 'You have been login into user :name session.',
+    'yes'                            => 'Yes',
+    'no'                             => 'No',
+    'statuses'                       => [
         'all'      => 'All',
         'active'   => 'Active (:count)',
         'disabled' => 'Disabled (:count)'
     ],
-    'notifier_mail_has_been_sent' => 'An e-mail notification has been sent to recipient.',
-    'are_you_sure'                => 'Are you sure?',
-    'form'                        => [
+    'notifier_mail_has_been_sent'    => 'An e-mail notification has been sent to recipient.',
+    'are_you_sure'                   => 'Are you sure?',
+    'form'                           => [
         'help' => [
             'driver'           => '*Mail drivers such as SMTP and sendmail, allowing to sending mail through a local or cloud based service of your choice.',
             'email_address'    => '*Outgoing email address (sender email).',
@@ -66,7 +66,10 @@ return [
             'email_encryption' => 'Encryption of email messages to protect the content from being read by other entities than the intended recipients.',
             'email_sendmail'   => 'Sendmail is a most popular SMTP server used in most of Linux/Unix distribution. Sendmail allows sending email as simple command.'
         ]
-    ]
+    ],
+    'dashboard'                      => 'Dashboard',
+    'datatables_no_data_title'       => 'No data available.',
+    'datatables_no_data_description' => 'There are no records to show right now. <br />There may be no entries or your filters may be too tightly defined.',
 ];
 
 

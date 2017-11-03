@@ -40,7 +40,7 @@ class Settings extends FormBuilder implements Presenter
      */
     public function __construct($model)
     {
-        view()->share('grid_container_class', 'grid-container--footer');
+        //view()->share('grid_container_class', 'grid-container--footer');
         parent::__construct(app(HtmlGrid::class), app(ClientScript::class), app(Container::class));
         Event::fire('antares.forms', 'foundation.settings');
         $this->grid->name('General configuration');
@@ -70,7 +70,8 @@ class Settings extends FormBuilder implements Presenter
                             ->options([
                                 'production'  => trans('antares/foundation::global.modes.production'),
                                 'development' => trans('antares/foundation::global.modes.development'),
-                            ])->wrapper(['class' => 'w220']);
+                            ])
+                            ->labelWrapper(['class' => 'col-mb-8 col-6 col-dt-4 col-ld-4']);
 
                     $fieldset->control('button', 'cancel')
                             ->field(function() {

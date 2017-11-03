@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Datatables\Filter;
 
 class DateRangeFilter extends AbstractFilter
@@ -39,6 +38,13 @@ class DateRangeFilter extends AbstractFilter
     protected $attributes = [
         'row_title' => 'antares/automation::messages.executed_at'
     ];
+
+    /**
+     * Type of filter for frontend issues
+     *
+     * @var String 
+     */
+    protected $type = 'datePicker';
 
     /**
      * Values getter
@@ -76,7 +82,7 @@ class DateRangeFilter extends AbstractFilter
         $params     = app('request')->session()->get($uri);
         $classname  = get_called_class();
         $attributes = array_get($params, $classname);
-        if (!empty($attributes) and $attributes['column'] == $this->column) {
+        if (!empty($attributes) and $attributes['column'] == $this->column && isset($attributes['value'])) {
             $value   = json_decode($attributes['value'], true);
             $start   = array_get($value, 'start');
             $end     = array_get($value, 'end');
@@ -88,7 +94,10 @@ class DateRangeFilter extends AbstractFilter
                         'instance'  => $this,
                         'route'     => uri(),
                         'name'      => $name,
+                        'start'     => $start,
+                        'end'       => $end,
                         'classname' => $classname,
+                        'type'      => $this->type,
                         'subview'   => $subview
                     ])->render();
         }
@@ -103,8 +112,17 @@ class DateRangeFilter extends AbstractFilter
      */
     public function render($start = null, $end = null)
     {
+
         publish('automation', ['js/automation_date_range_filter.js']);
-        return view('antares/automation::admin.partials._date_range_filter', ['start' => $start, 'end' => $end])->render();
+        $classname = get_called_class();
+
+        return view('datatables-helpers::partials._date_range_filter', [
+                    'classname' => $classname,
+                    'column'    => $this->column,
+                    'start'     => $start,
+                    'end'       => $end,
+                    'type'      => $this->type
+                ])->render();
     }
 
 }

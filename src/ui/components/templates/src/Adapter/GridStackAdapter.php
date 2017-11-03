@@ -54,9 +54,8 @@ class GridStackAdapter implements GridStack
     public function scripts()
     {
         $assets = app('antares.asset');
-        $assets->container('antares/foundation::application')
-                ->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache'])
-                ->add('webpack_gridstack', '/webpack/view_gridstack.js', ['app_cache']);
+//        $assets->container('antares/foundation::application')
+//                ->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache'])->add('webpack_gridstack', '/webpack/view_gridstack.js', ['app_cache']);
         $assets->container('antares/foundation::scripts')
                 ->add('ui_components', '/packages/core/js/ui_components.js', ['webpack_gridstack'])->inlineScript('grid-stack', $this->inline());
     }
