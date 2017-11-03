@@ -34,14 +34,11 @@ class NotificationTypesSeeder extends Seeder
     {
         $this->down();
         $types = [
-                ['name' => 'email', 'title' => 'Email'],
-                ['name' => 'sms', 'title' => 'Sms']
+                ['name' => 'mail', 'title' => 'Mail'],
+                ['name' => 'sms', 'title' => 'Sms'],
+                ['name' => 'notification', 'title' => 'Notification'],
         ];
-        $areas = config('areas.areas');
-        foreach ($areas as $key => $value) {
-            $types[] = ['name' => $key, 'title' => $value];
-        }
-        $types[] = ['name' => config('antares/foundation::handles'), 'title' => config('antares/foundation::application.name')];
+
         DB::table('tbl_notification_types')->insert($types);
         DB::table('tbl_notification_categories')->insert([
                 ['name' => 'default', 'title' => 'System'],

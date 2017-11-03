@@ -51,7 +51,7 @@ class DatatableMassActionsDependableActions extends DatatableDependableActions
      * @param Closure $element
      * @return boolean
      */
-    protected function resolveDatatableAction(&$actions, $row, $element)
+    protected function resolveDatatableAction($actions, $row, $element)
     {
         if (!$element instanceof Closure) {
             return false;
