@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types = 1);
-
 namespace Antares\Extension\Processors;
 
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
@@ -9,8 +7,6 @@ use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Events\Activating;
-use Antares\Extension\Events\Activated;
-use Antares\Memory\Model\DeferedEvent;
 use Antares\Extension\Model\Operation;
 use Antares\Extension\Events\Failed;
 use Illuminate\Container\Container;
