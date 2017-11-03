@@ -58,6 +58,7 @@ class CreateNotificationsTable extends Migration
             $table->unsignedInteger('category_id')->index();
             $table->unsignedInteger('type_id')->index();
             $table->string('event')->index()->nullable();
+            $table->text('recipients')->nullable();
             $table->boolean('active')->default(1);
             $table->string('checksum', 500)->nullable();
             $table->timestamps();
