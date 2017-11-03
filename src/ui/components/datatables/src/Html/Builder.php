@@ -138,6 +138,10 @@ class Builder extends BaseBuilder
         'bInfo'          => false,
         'rowReorder'     => false,
         "columnDefs"     => [
+            [
+                'width'   => '20%',
+                'targets' => 0
+            ]
         ],
         "serverSide"     => true,
         "dom"            => '<"dt-area-top"i>rt<"dt-area-bottom pagination pagination--type2" fpL><"clear">',
@@ -348,11 +352,12 @@ class Builder extends BaseBuilder
 EOD;
 
 
-        $url                  = $this->getTargetUrl();
-        $args['ajax']         = new JavaScriptExpression(sprintf($ajax, $this->method, $url));
-        $args['columnDefs'][] = new JavaScriptExpression('{ responsivePriority:0, targets: -1 }');
-        $javascript           = file_get_contents(sandbox_path('packages/core/js/datatables.js'));
-        $parameters           = JavaScriptDecorator::decorate(['options' => $args]);
+        $url          = $this->getTargetUrl();
+        $args['ajax'] = new JavaScriptExpression(sprintf($ajax, $this->method, $url));
+        //$args['columnDefs'][] = new JavaScriptExpression('{ responsivePriority:0, targets: -1 }');
+        //$javascript   = file_get_contents(sandbox_path('packages/core/js/datatables.js'));
+        $javascript   = file_get_contents(sandbox_path('packages/core/js/datatables.js'));
+        $parameters   = JavaScriptDecorator::decorate(['options' => $args]);
         return str_replace(['$params = null,', '$instanceName = null;'], ['$params = ' . $parameters . ',', '$instanceName = "' . $this->tableAttributes['id'] . '";'], $javascript);
     }
 
@@ -634,6 +639,23 @@ EOD;
      */
     public function tableDeferred(array $attributes = [])
     {
+//        ['width' => '15%', 'targets' => 0],
+//                                ['width' => '40%', 'targets' => 1],
+//                                ['width' => '22%', 'targets' => 2],
+//                                ['width' => '7%', 'targets' => 3],
+//                                ['width' => '10%', 'targets' => 4],
+//                                ['width' => '10%', 'targets' => 5],
+//                                ['width' => '1%', 'targets' => 6],
+//        $string='<colgroup class="ui-selectee" style="">'
+//                . '<col style="width: 15%;" class="ui-selectee"> '
+//                . '<col style="width: 40%;" class="ui-selectee"> '
+//                . '<col style="width: 22%;" class="ui-selectee"> '
+//                . '<col style="width: 7%;" class="ui-selectee"> '
+//                . '<col style="width: 10%;" class="ui-selectee"> '
+//                . '<col style="width: 10%;" class="ui-selectee"> '
+//                . '<col style="width: 1%;" class="ui-selectee"> '
+//                . '</colgroup>';
+
         $string = '<thead><tr>';
         foreach ($this->collection as $collectedItem) {
             $columnAttributes          = array_only($collectedItem->toArray(), ['class', 'id', 'width', 'style', 'data-class', 'data-hide']);
