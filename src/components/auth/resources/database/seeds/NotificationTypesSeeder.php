@@ -34,7 +34,7 @@ class NotificationTypesSeeder extends Seeder
     {
         $this->down();
         $types = [
-                ['name' => 'email', 'title' => 'Mail'],
+                ['name' => 'mail', 'title' => 'Mail'],
                 ['name' => 'sms', 'title' => 'Sms'],
                 ['name' => 'notification', 'title' => 'Notification'],
         ];
