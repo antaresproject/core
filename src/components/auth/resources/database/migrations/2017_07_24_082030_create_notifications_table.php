@@ -33,76 +33,78 @@ class CreateNotificationsTable extends Migration
     {
         $this->down();
 
-        Schema::create('tbl_notifications', function(Blueprint $table) {
-            $table->increments('id');
-            $table->integer('severity_id')->unsigned()->nullable()->index('severity_id_idx');
-            $table->integer('category_id')->unsigned()->nullable()->index('category_id_id_1');
-            $table->integer('type_id')->unsigned()->nullable()->index('type_id_1');
-            $table->boolean('active')->default(1);
-            $table->string('classname', 500)->nullable();
-            $table->string('checksum', 500)->nullable();
-        });
         Schema::create('tbl_notification_categories', function(Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->unique('name');
+            $table->string('name')->unique();
             $table->string('title');
         });
+
         Schema::create('tbl_notification_types', function(Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->unique('name');
+            $table->string('name')->unique();
             $table->string('title');
         });
+
         Schema::create('tbl_notification_severity', function(Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->unique('name');
+            $table->string('name')->unique();
         });
+
+        Schema::create('tbl_notifications', function(Blueprint $table) {
+            $table->increments('id');
+            $table->string('name')->unique();
+            $table->string('source')->index()->nullable();
+            $table->unsignedInteger('severity_id')->index();
+            $table->unsignedInteger('category_id')->index();
+            $table->unsignedInteger('type_id')->index();
+            $table->string('event')->index()->nullable();
+            $table->boolean('active')->default(1);
+            $table->string('checksum', 500)->nullable();
+            $table->timestamps();
+
+            $table->foreign('severity_id')->references('id')->on('tbl_notification_severity')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('tbl_notification_categories')->onDelete('cascade');
+            $table->foreign('type_id')->references('id')->on('tbl_notification_types')->onDelete('cascade');
+        });
+
         Schema::create('tbl_notification_contents', function(Blueprint $table) {
             $table->increments('id');
-            $table->integer('notification_id')->unsigned()->nullable()->index('notification_id_1');
-            $table->integer('lang_id')->unsigned()->index('notification_contents_lang_id');
-            $table->string('title', 500);
+            $table->unsignedInteger('notification_id')->index();
+            $table->unsignedInteger('lang_id')->index();
+            $table->string('title', 500)->nullable();
             $table->text('content');
+
+            $table->foreign('notification_id')->references('id')->on('tbl_notifications')->onDelete('cascade');
+            $table->foreign('lang_id')->references('id')->on('tbl_languages')->onDelete('cascade');
         });
+
         Schema::create('tbl_notifications_stack', function(Blueprint $table) {
             $table->increments('id');
-            $table->integer('notification_id')->unsigned()->nullable()->index('notification_stack_idx');
-            $table->integer('author_id')->unsigned()->nullable()->index('notification_stack_author_idx');
+            $table->unsignedInteger('notification_id')->index();
+            $table->unsignedInteger('author_id')->index();
             $table->text('variables')->nullable();
             $table->timestamps();
+
+            $table->foreign('notification_id')->references('id')->on('tbl_notifications')->onDelete('cascade');
+            $table->foreign('author_id')->references('id')->on('tbl_users')->onDelete('cascade');
         });
+
         Schema::create('tbl_notifications_stack_params', function(Blueprint $table) {
             $table->increments('id');
-            $table->integer('stack_id')->unsigned()->nullable()->index('stack_params_stack_id_idx');
-            $table->integer('model_id')->unsigned()->nullable()->index('stack_params_model_id_idx');
+            $table->unsignedInteger('stack_id')->index();
+            $table->unsignedInteger('model_id')->nullable()->index('stack_params_model_id_idx');
+
+            $table->foreign('stack_id')->references('id')->on('tbl_notifications_stack')->onDelete('cascade');
         });
 
         Schema::create('tbl_notifications_stack_read', function(Blueprint $table) {
             $table->increments('id');
-            $table->integer('stack_id')->unsigned()->nullable()->index('stack_id_idx');
-            $table->integer('user_id')->unsigned()->nullable()->index('user_id_idx');
+            $table->unsignedInteger('stack_id')->index();
+            $table->unsignedInteger('user_id')->index();
             $table->softDeletes();
-        });
-        Schema::table('tbl_notifications', function(Blueprint $table) {
-            $table->foreign('severity_id', 'fk_severity_id')->references('id')->on('tbl_notification_severity')->onUpdate('NO ACTION')->onDelete('CASCADE');
-            $table->foreign('category_id', 'fk_not_category_id')->references('id')->on('tbl_notification_categories')->onUpdate('NO ACTION')->onDelete('CASCADE');
-            $table->foreign('type_id', 'fk_not_type_id')->references('id')->on('tbl_notification_types')->onUpdate('NO ACTION')->onDelete('CASCADE');
-        });
-        Schema::table('tbl_notification_contents', function(Blueprint $table) {
-            $table->foreign('notification_id', 'fk_notification_id')->references('id')->on('tbl_notifications')->onUpdate('NO ACTION')->onDelete('CASCADE');
-            $table->foreign('lang_id', 'fk_notification_contents_lang')->references('id')->on('tbl_languages')->onUpdate('NO ACTION')->onDelete('CASCADE');
-        });
-        Schema::table('tbl_notifications_stack', function(Blueprint $table) {
-            $table->foreign('notification_id', 'fk_notification_stack')->references('id')->on('tbl_notifications')->onUpdate('NO ACTION')->onDelete('CASCADE');
-            $table->foreign('author_id', 'fk_notification_stack_author_id')->references('id')->on('tbl_users')->onUpdate('NO ACTION')->onDelete('CASCADE');
-        });
-        Schema::table('tbl_notifications_stack_params', function(Blueprint $table) {
-            $table->foreign('stack_id', 'fk_notifications_stack_read_stack_id')->references('id')->on('tbl_notifications_stack')->onUpdate('NO ACTION')->onDelete('CASCADE');
-        });
-        Schema::table('tbl_notifications_stack_read', function(Blueprint $table) {
 
-            //$table->foreign('stack_id', 'fk_notifications_stack_read_stack_id')->references('id')->on('tbl_notifications_stack')->onUpdate('NO ACTION')->onDelete('CASCADE');
-
-            $table->foreign('user_id', 'fk_notification_stack_read_user_id')->references('id')->on('tbl_users')->onUpdate('NO ACTION')->onDelete('CASCADE');
+            $table->foreign('stack_id')->references('id')->on('tbl_notifications_stack')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('tbl_users')->onDelete('cascade');
         });
     }
 

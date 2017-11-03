@@ -36,17 +36,13 @@ class Datatables extends SupportDatatables
      * @var \Yajra\Datatables\Request
      */
     public $request;
-    protected static $classname;
 
     /**
-     * Datatables constructor.
+     * Datatable Class Name.
      *
-     * @param \Antares\Datatables\Request $request
+     * @var string|null
      */
-    public function __construct(Request $request)
-    {
-        $this->request = $request->request->count() ? $request : Request::capture();
-    }
+    protected static $classname;
 
     /**
      * Gets query and returns instance of class.
@@ -70,7 +66,7 @@ class Datatables extends SupportDatatables
      * @param String $classname
      * @return $this
      */
-    public static function setCalledClass($classname): Datatables
+    public function setCalledClass($classname): Datatables
     {
         self::$classname = $classname;
         return $this;
