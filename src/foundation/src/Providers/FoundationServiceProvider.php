@@ -342,24 +342,6 @@ class FoundationServiceProvider extends ServiceProvider
         if (!app('antares.installed')) {
             return;
         }
-//        $registry = app('antares.memory')->make('registry');
-//        $vars     = [
-//            'brand.name' => [
-//                'value'       => brand_name(),
-//                'description' => 'Brand name'
-//            ],
-//        ];
-//        $emails   = $registry->get('email');
-//        if (!empty($emails)) {
-//            foreach (array_except($emails, ['password']) as $name => $value) {
-//                $vars['email.' . $name] = ['value' => $value];
-//            }
-//        }
-//        $this->app->make('antares.notifications')->push([
-//            'foundation' => [
-//                'variables' => array_merge($vars, config('antares/foundation::notification.variables'))
-//            ]
-//        ]);
 
         /* @var $notification VariablesService */
         $notification = app()->make(VariablesService::class);
