@@ -70,10 +70,10 @@ class AssetPublisher
      */
     public function __construct(Factory $assetFactory, AssetSymlinker $symlinker, Manager $extensionsManager)
     {
-        $this->assetFactory         = $assetFactory;
-        $this->symlinker            = $symlinker;
-        $this->extensionsManager    = $extensionsManager;
-        $this->position             = "antares/foundation::scripts";
+        $this->assetFactory      = $assetFactory;
+        $this->symlinker         = $symlinker;
+        $this->extensionsManager = $extensionsManager;
+        $this->position          = "antares/foundation::scripts";
     }
 
     /**
@@ -82,7 +82,8 @@ class AssetPublisher
      * @param string $position
      * @return AssetPublisher
      */
-    public function setPosition(string $position) : self {
+    public function setPosition(string $position): self
+    {
         $this->position = $position;
 
         return $this;
@@ -143,8 +144,9 @@ class AssetPublisher
      */
     public function publishAndPropagate(array $files = array(), $extension = null, $before = [])
     {
-        $container              = $this->assetFactory->container($this->position);
-        $applicationContainer   = $this->assetFactory->container('antares/foundation::application');
+
+        $container            = $this->assetFactory->container($this->position);
+        $applicationContainer = $this->assetFactory->container('antares/foundation::application');
 
         if (empty($files)) {
             return $container;
@@ -167,8 +169,8 @@ class AssetPublisher
                 $published = $file->getRelativePathname();
             }
 
-            $basename           = str_replace('\\', '/', $published);
-            $sluggedBaseName    = str_slug($file->getBasename());
+            $basename        = str_replace('\\', '/', $published);
+            $sluggedBaseName = str_slug($file->getBasename());
 
             if ($file->getExtension() === 'css') {
                 $applicationContainer->style($sluggedBaseName, $basename);
@@ -179,15 +181,39 @@ class AssetPublisher
         return $container;
     }
 
-    /**
-     * publish assets depends on extension name
-     * 
-     * @param String $extension
-     * @param mixed $options
-     * @param array $before
-     * @return Asset
-     */
-    public function publish($extension, $options = null, $before = [])
+    public function link($extension, $options = null, $before = [])
+    {
+        $files = $this->files($extension, $options, $before);
+        if (empty($files)) {
+            return [];
+        }
+        if (!is_null($extension)) {
+            $this->extension = $extension;
+        }
+        $return = [];
+        foreach ($files as $file) {
+            $fileRealPath = $file->getRealPath();
+
+            if ($fileRealPath !== false) {
+                $name      = $this->extension . DIRECTORY_SEPARATOR . $file->getRelativePathname();
+                $published = $this->symlinker->publish($name, $fileRealPath);
+
+                if (!in_array($file->getExtension(), ['css', 'js']) or $published === false) {
+                    continue;
+                }
+            } else {
+                $published = $file->getRelativePathname();
+            }
+
+            $basename        = str_replace('\\', '/', $published);
+            $sluggedBaseName = str_slug($file->getBasename());
+
+            array_set($return, $sluggedBaseName, $basename);
+        }
+        return $return;
+    }
+
+    protected function files($extension, $options = null, $before = [])
     {
         $this->extension = $extension;
 
@@ -205,6 +231,20 @@ class AssetPublisher
                 $files[] = new SplFileInfo($realPath, str_replace(public_path(), '', $realPath), last(explode('/', $realPath)));
             }
         }
+        return $files;
+    }
+
+    /**
+     * publish assets depends on extension name
+     * 
+     * @param String $extension
+     * @param mixed $options
+     * @param array $before
+     * @return Asset
+     */
+    public function publish($extension, $options = null, $before = [])
+    {
+        $files = $this->files($extension, $options, $before);
         return $this->publishAndPropagate($files, null, $before);
     }
 
