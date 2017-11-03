@@ -71,7 +71,7 @@ class VueFormBuilder {
      * @return FormBuilder
      */
     public function build(string $name, Closure $callback) : FormBuilder {
-        publish('billevio_base', ['js/select2.js', 'js/form_errors.js', 'js/form_mixin.js', 'js/vue-the-mask.js', 'js/v-money.js']);
+        publish('foundation', ['js/select2.js', 'js/form_errors.js', 'js/form_mixin.js']);
 
         $form = $this->form()->of($name, function(FormGrid $formGrid) use($name, $callback) {
             $formAttributes = [
