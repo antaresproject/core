@@ -150,9 +150,9 @@ class HtmlServiceProvider extends ServiceProvider
             $handler    = new MemoryConfig('forms-config', $config->get('antares/html::form.memory.form-config'), $app, $driver);
             return new Provider($handler);
         });
-        listen('antares.form: ready', function() {
-            app('antares.asset')->container('antares/foundation::application')->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
-        });
+//        listen('antares.form: ready', function() {
+//            app('antares.asset')->container('antares/foundation::application')->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
+//        });
     }
 
     /**

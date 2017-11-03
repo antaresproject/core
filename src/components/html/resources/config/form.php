@@ -40,9 +40,6 @@ return [
     'view'       => 'antares/foundation::layouts.antares.partials.form.horizontal',
     /** when form does not have any of control * */
     'empty_form' => 'antares/foundation::layouts.antares.partials.form.empty',
-    'dropzone'   => [
-        'dropzone-js' => '/js/dropzone.js',
-    ],
     'templates'  => [
         'input'         => ['class' => 'form-control'],
         'checkbox'      => ['class' => '', 'data-icheck' => 'true'],

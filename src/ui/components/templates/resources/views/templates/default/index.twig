@@ -1,6 +1,6 @@
 {% extends 'antares/ui-components::templates.layouts.template' %}
 {% block content %}
-    <div class="card {{ card_class ? card_class : 'card--logs card--padding24'  }}">
+    <div class="card {{ card_class ? card_class : 'card--logs card--padding24'  }}" data-preload>
         {% if titlable %}
             <div class="card__header">
                 <div class="card__header-left">

@@ -101,7 +101,7 @@ class FormBuilder extends BaseBuilder implements BuilderContract
      */
     public function render()
     {
-        app('antares.asset')->container('antares/foundation::application')->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
+        //app('antares.asset')->container('antares/foundation::application')->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
         $grid   = $this->grid;
         $action = '';
         if ($grid->row instanceof Model) {

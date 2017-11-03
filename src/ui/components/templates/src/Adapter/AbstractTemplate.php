@@ -25,6 +25,7 @@ use Antares\UI\UIComponents\Contracts\UiComponent;
 use Antares\UI\UIComponents\Service\Service;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Log;
+use ReflectionClass;
 use Exception;
 
 abstract class AbstractTemplate implements UiComponent
@@ -211,7 +212,7 @@ abstract class AbstractTemplate implements UiComponent
      */
     public function fill()
     {
-        $params            = array_merge($this->attributes, [
+        $params          = array_merge($this->attributes, [
             'id'            => $this->id,
             'widget'        => $this->model,
             'name'          => $this->name,
@@ -222,7 +223,11 @@ abstract class AbstractTemplate implements UiComponent
             'template'      => $this->template,
             'only_template' => $this->renderOnlyWithTemplate
         ]);
-        $params['content'] = $this->templateAdapter->share($params)->decorate($this->render());
+        $reflectionClass = new ReflectionClass(get_called_class());
+        if ($reflectionClass->getParentClass()->getName() === "Antares\UI\UIComponents\Templates\Datatables") {
+            array_set($params, 'datatable', true);
+        }
+        array_set($params, 'content', $this->templateAdapter->share($params)->decorate($this->render()));
         return $params;
     }
 

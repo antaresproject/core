@@ -1,6 +1,6 @@
 {% extends 'antares/ui-components::templates.layouts.template' %}
 {% block content %}
-    <div class="card {{ class }}" widget-name="{{ name|str_snake }}">
+    <div class="card {{ class }}" widget-name="{{ name|str_snake }}" data-preload>
         {% if titlable or enlargeable %}
             <div class="card__header">
                 {% if titlable %}

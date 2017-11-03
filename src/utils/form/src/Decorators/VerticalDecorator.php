@@ -26,19 +26,19 @@ use Antares\Form\Controls\AbstractType;
 class VerticalDecorator extends AbstractDecorator
 {
 
-	/** @var string */
-	protected $name = 'vertical';
+    /** @var string */
+    protected $name = 'vertical';
 
-	/**
-	 * @param AbstractType $control
-	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-	 */
-	public function render(AbstractType $control)
-	{
-		$this->labelWrapper['class'] = 'child-align-top col-16 mb2';
-		$this->inputWrapper['class'] = 'form-block col-dt-16 col-16 col-mb-16';
+    /**
+     * @param AbstractType $control
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function render(AbstractType $control)
+    {
+        $this->labelWrapper['class'] = 'child-align-top col-24 mb2';
+        $this->inputWrapper['class'] = 'form-block col-dt-24 col-24 col-mb-24';
 
-		return parent::render($control);
-	}
-    
+        return parent::render($control);
+    }
+
 }

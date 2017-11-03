@@ -78,7 +78,10 @@ return [
             'removable'         => true,
             'disabled'          => true,
             'manually_disabled' => false,
-            'actions'           => false
+            'actions'           => false,
+            'desktop'           => [],
+            'tablet'            => [],
+            'mobile'            => []
         ]
     ],
     /**

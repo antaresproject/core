@@ -11,14 +11,12 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Antares Core
- * @version    0.9.0
- * @author     Original Orchestral https://github.com/orchestral
+ * @version    0.9.2
  * @author     Antares Team
  * @license    BSD License (3-clause)
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
-
 
 namespace Antares\Html\Control;
 
@@ -124,7 +122,7 @@ CBALL;
                      $('#{$id}').dropzone(Dropzone.options.$id);
 CBALL;
         $inlineScript = sprintf($cball, $id, JavaScriptDecorator::decorate(array_except($params, ['view', 'container', 'onSuccess'])), $attach);
-        $this->scripts()->inlineScript('dropzone-' . $id, $inlineScript);
+        $this->asset->container('antares/foundation::scripts')->inlineScript('dropzone-' . $id, $inlineScript);
         $attributes   = $this->html->decorate($this->field->get('attributes'), ['class' => 'form-control']);
         $input        = $this->form->input('hidden', $params['paramName'], $this->field->get('value'), ['id' => $id . 'Container']);
         return view($view, ['field' => $this->field, 'attributes' => $attributes, 'params' => $params, 'input' => $input, 'id' => $id]);
@@ -202,21 +200,6 @@ EOD;
             }
             $('#{$id}').find("button[type=submit]").removeClass('btn-disabled').removeAttr('disabled');        
 CBALL;
-    }
-
-    /**
-     * add dropzone scripts
-     * 
-     * @return \Antares\Asset\Asset
-     */
-    protected function scripts()
-    {
-        $container   = $this->asset->container('antares/foundation::scripts');
-        $scriptsPath = config('antares/html::form.dropzone', []);
-        foreach ($scriptsPath as $key => $script) {
-            $container->add($key, $script);
-        }
-        return $container;
     }
 
 }
