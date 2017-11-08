@@ -36,6 +36,12 @@ class Datatables extends SupportDatatables
      * @var \Yajra\Datatables\Request
      */
     public $request;
+
+    /**
+     * Datatable Class Name.
+     *
+     * @var string|null
+     */
     protected static $classname;
 
     /**
@@ -70,7 +76,7 @@ class Datatables extends SupportDatatables
      * @param String $classname
      * @return $this
      */
-    public static function setCalledClass($classname): Datatables
+    public function setCalledClass($classname): Datatables
     {
         self::$classname = $classname;
         return $this;

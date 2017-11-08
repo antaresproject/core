@@ -75,6 +75,8 @@ class DashboardController extends AdminController implements Listener
      */
     public function show()
     {
+
+
         app(\Antares\UI\UIComponents\Adapter\GridStackAdapter::class)->scripts();
         view()->share('content_class', 'app-content--gridstack page-dashboard page-dashboard-html widgets-html-page');
         return $this->processor->show($this);

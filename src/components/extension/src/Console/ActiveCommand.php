@@ -35,13 +35,8 @@ class ActiveCommand extends ExtensionCommand
      */
     public function handle(Activator $activator)
     {
-//		if (! $this->confirm('Do you wish to continue? [y|N]')) {
-//			return;
-//		}
-
         $name      = $this->argument('name');
         $extension = $this->manager->getAvailableExtensions()->findByName($name);
-
         if ($extension instanceof ExtensionContract) {
             $activator->run($this, $extension);
         } else {

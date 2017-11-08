@@ -108,6 +108,8 @@ class Validator implements ValidatorContract
             }
         }
         $rules = $this->grid->rules;
+
+
         if (!empty($rules)) {
             $validation = ValidatorFacade::make($inputs, $rules, $this->grid->phrases);
 
