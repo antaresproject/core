@@ -68,6 +68,13 @@ class AreaManager implements AreaManagerContract
     protected $default;
 
     /**
+     * Manually set current area.
+     *
+     * @var string|null
+     */
+    protected $currentArea;
+
+    /**
      * @var array
      */
     protected static $fallbackAreas = [
@@ -136,13 +143,23 @@ class AreaManager implements AreaManagerContract
     }
 
     /**
+     * Sets manually current area.
+     *
+     * @param string|null $area
+     */
+    public function setCurrentArea(string $area = null)
+    {
+        $this->currentArea = $area;
+    }
+
+    /**
      * Gets an area object based on the current authentication and URI.
      * 
      * @return AreaContract
      */
     public function getCurrentArea(): AreaContract
     {
-        $segment = $this->request->segment(1);
+        $segment = $this->currentArea ?: $this->request->segment(1);
         $area    = $segment ? $this->getById($segment) : null;
 
         if (!$area && $this->auth->check()) {
