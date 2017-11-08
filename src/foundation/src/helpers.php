@@ -132,8 +132,14 @@ if (!function_exists('user_from_route')) {
      */
     function user_from_route($default = false)
     {
-        $current    = Route::current();
+        $current = Route::current();
+
+        if($current === null) {
+            return $default;
+        }
+
         $parameters = $current->parameters();
+
         foreach ($parameters as $name => $parameter) {
             if ($parameter instanceof Authenticatable) {
                 return $parameter->id;
