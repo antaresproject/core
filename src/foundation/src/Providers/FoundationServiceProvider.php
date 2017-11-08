@@ -249,7 +249,6 @@ class FoundationServiceProvider extends ServiceProvider
         $router->aliasMiddleware('antares.forms', FormMiddleware::class);
         $router->aliasMiddleware('antares.ui-components', UIComponentsMiddleware::class);
         $this->runtime();
-        $this->bootNotificationVariables();
 
 
         $this->app->make('events')->fire('antares.ready');
@@ -271,6 +270,10 @@ class FoundationServiceProvider extends ServiceProvider
         $this->app->make('view')->composer('antares/foundation::breadcrumbs.bootstrap3', function($view) {
             view()->share('breadcrumbs_data', array_get($view->getData(), 'breadcrumbs', []));
         });
+    }
+
+    public function booted() {
+        $this->bootNotificationVariables();
     }
 
     /**
