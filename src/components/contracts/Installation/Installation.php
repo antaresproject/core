@@ -51,8 +51,9 @@ interface Installation
     /**
      * Sets queue for installation of components.
      *
+     * @param array $extensions
      * @return void
      */
-    public function runComponentsInstallation();
+    public function runComponentsInstallation(array $extensions = []);
 
 }
