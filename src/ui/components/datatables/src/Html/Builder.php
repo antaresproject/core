@@ -653,6 +653,23 @@ EOD;
      */
     public function tableDeferred(array $attributes = [])
     {
+//        ['width' => '15%', 'targets' => 0],
+//                                ['width' => '40%', 'targets' => 1],
+//                                ['width' => '22%', 'targets' => 2],
+//                                ['width' => '7%', 'targets' => 3],
+//                                ['width' => '10%', 'targets' => 4],
+//                                ['width' => '10%', 'targets' => 5],
+//                                ['width' => '1%', 'targets' => 6],
+//        $string='<colgroup class="ui-selectee" style="">'
+//                . '<col style="width: 15%;" class="ui-selectee"> '
+//                . '<col style="width: 40%;" class="ui-selectee"> '
+//                . '<col style="width: 22%;" class="ui-selectee"> '
+//                . '<col style="width: 7%;" class="ui-selectee"> '
+//                . '<col style="width: 10%;" class="ui-selectee"> '
+//                . '<col style="width: 10%;" class="ui-selectee"> '
+//                . '<col style="width: 1%;" class="ui-selectee"> '
+//                . '</colgroup>';
+
         $string = '<thead><tr>';
         foreach ($this->collection as $collectedItem) {
             $columnAttributes          = array_only($collectedItem->toArray(), ['class', 'id', 'width', 'style', 'data-class', 'data-hide']);
