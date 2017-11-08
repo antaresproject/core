@@ -138,6 +138,10 @@ class Builder extends BaseBuilder
         'bInfo'          => false,
         'rowReorder'     => false,
         "columnDefs"     => [
+            [
+                'width'   => '20%',
+                'targets' => 0
+            ]
         ],
         "serverSide"     => true,
         "dom"            => '<"dt-area-top"i>rt<"dt-area-bottom pagination pagination--type2" fpL><"clear">',
@@ -225,6 +229,13 @@ class Builder extends BaseBuilder
      * @var boolean
      */
     protected $orderable = false;
+
+    /**
+     * Zero data config container
+     *
+     * @var array
+     */
+    protected $zeroDataConfig = [];
 
     /**
      * Constructing
@@ -348,17 +359,25 @@ class Builder extends BaseBuilder
 EOD;
 
 
-        $url                  = $this->getTargetUrl();
-        $args['ajax']         = new JavaScriptExpression(sprintf($ajax, $this->method, $url));
-        $args['columnDefs'][] = new JavaScriptExpression('{ responsivePriority:0, targets: -1 }');
-        $javascript           = file_get_contents(sandbox_path('packages/core/js/datatables.js'));
-        $parameters           = JavaScriptDecorator::decorate(['options' => $args]);
+        $url          = $this->getTargetUrl();
+        $args['ajax'] = new JavaScriptExpression(sprintf($ajax, $this->method, $url));
+        //$args['columnDefs'][] = new JavaScriptExpression('{ responsivePriority:0, targets: -1 }');
+        //$javascript   = file_get_contents(sandbox_path('packages/core/js/datatables.js'));
+        $javascript   = file_get_contents(sandbox_path('packages/core/js/datatables.js'));
+        $parameters   = JavaScriptDecorator::decorate(['options' => $args]);
         return str_replace(['$params = null,', '$instanceName = null;'], ['$params = ' . $parameters . ',', '$instanceName = "' . $this->tableAttributes['id'] . '";'], $javascript);
     }
 
     protected function zeroData()
     {
-        return view('datatables-helpers::zero_data')->render();
+        return view('datatables-helpers::zero_data', $this->zeroDataConfig)->render();
+    }
+
+    public function zeroDataLink($title, $url)
+    {
+        array_set($this->zeroDataConfig, 'title', $title);
+        array_set($this->zeroDataConfig, 'url', $url);
+        return $this;
     }
 
     protected function onReorder($oTable, $url, $data)

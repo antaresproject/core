@@ -8,8 +8,8 @@
          data-gs-min-height="1"
          data-gs-width="24" 
          data-gs-height="4">
-        <div class="grid-stack-item-content card-datatables ">
-            <div class="card card--pagination {{ app('antares.widget').make('pane.left')|length>0?'noboxshadow':'' }}" data-preload>
+        <div class="grid-stack-item-content">
+            <div class="card card--pagination card-datatables pb0 {{ app('antares.widget').make('pane.left')|length>0?'noboxshadow':'' }}" data-preload>
                 <div class="tbl-c">  
                     {{ table|raw }}
                 </div>
