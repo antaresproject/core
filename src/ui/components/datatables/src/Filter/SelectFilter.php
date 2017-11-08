@@ -103,7 +103,9 @@ class SelectFilter extends AbstractFilter
     public function render()
     {
         $classname   = get_called_class();
-        publish('automation', ['js/automation_status_filter.js']);
+        //publish('automation', ['js/automation_status_filter.js']);
+        //app('antares.asset')->container('antares/foundation::application')->add('status_filter', '//10.10.10.35:71/js/status_filter.js', ['webpack_gridstack', 'app_cache']);
+        app('antares.asset')->container('antares/foundation::application')->add('status_filter', '/packages/core/js/status_filter.js', ['webpack_gridstack', 'app_cache']);
         $selected    = $this->getValues();
         $placeholder = is_null($this->placeholder) ? trans('antares/foundation::messages.select_placeholder_default', ['name' => strtolower($this->name)]) : $this->placeholder;
         return view('datatables-helpers::partials._filter_select', [
