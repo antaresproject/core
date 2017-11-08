@@ -1,7 +1,7 @@
 <div class="swiper-slide">
     <div class="filter filter-type--date-picker antares-dropjs-filter" data-type="{{ type|default('status')|raw }}">
         <div class="card-filter__sgl ddown__init dropjs-target dropjs--no-active"  data-filter-value="{{ column }}" column="{{ column }}" data-classname="{{classname|raw}}">
-            <span>{{ start|raw }} - {{ end|raw }}</span>
+            <span>{{ name|raw }}</span>
             <i class="zmdi zmdi-close datatable-disable-selected-filter" data-url="{{ handles('antares/foundation::datatables/filters/delete') }}"></i>
         </div>
         <div class="dropjs-wrapper">

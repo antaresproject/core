@@ -1012,8 +1012,12 @@ EOD;
         }
         $container = app('antares.asset')->container('antares/foundation::scripts');
         $container
-                ->add('context_menu', '/packages/core/js/contextMenu.js')
-                ->add('context_menu', '/packages/core/js/filters_mdl.js');
+                ->add('context_menu', '/packages/core/js/contextMenu.js');
+        //->add('context_menu', '/packages/core/js/filters_mdl.js');
+
+        app('antares.asset')->container('antares/foundation::application')->add('filters', '//10.10.10.35:71/js/filters.js', ['webpack_gridstack', 'app_cache']);
+
+
 
         $script = $script ?: $this->generateScripts();
 
