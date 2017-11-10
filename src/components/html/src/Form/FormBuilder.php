@@ -251,6 +251,7 @@ class FormBuilder extends BaseBuilder implements BuilderContract
         app(\Antares\Html\Adapter\CustomfieldAdapter::class)->adapt($this->grid);
         $decryptedKey = is_null($key          = Input::get('key')) ? null : Crypt::decrypt($key);
 
+
         if ($this->grid->ajaxable !== false && !$this->container->make('antares.request')->shouldMakeApiResponse()) {
             $clientScript = $this->clientScript->addClientValidation($this->grid);
             $fieldsets    = $clientScript['fieldsets'];
@@ -261,6 +262,7 @@ class FormBuilder extends BaseBuilder implements BuilderContract
 
             $fieldsets = $this->grid->fieldsets();
             $this->fieldPermissionAdapter->resolveFields($fieldsets, $decryptedKey);
+
             $this->rules($fieldsets);
         }
         $validator        = $this->validator->with($this->grid);

@@ -524,8 +524,6 @@ class Fieldset extends BaseGrid implements FieldsetContract
      */
     public function render($row = null)
     {
-        //vdump($this);
-
         if (is_null($this->layout)) {
             throw new Exception('Unable to render fieldset layout. Layout is empty.');
         }
