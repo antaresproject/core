@@ -345,7 +345,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
             return false;
         }
 
-        foreach ($di['di'] as $contract => $class) {
+        foreach (array_get($di, 'di', []) as $contract => $class) {
             $this->app->bind($contract, $class);
         }
     }
