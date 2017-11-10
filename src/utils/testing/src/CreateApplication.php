@@ -29,10 +29,18 @@ trait CreatesApplication
      * Creates the application.
      *
      * @return \Illuminate\Foundation\Application
+     * @throws \Exception
      */
     public function createApplication()
     {
-        $app = require __DIR__.'/../../../../../../bootstrap/app.php';
+        $defaultPath    = __DIR__.'/../../../../../../bootstrap/app.php';
+        $path           = __DIR__ . env('APP_BOOTSTRAP_FILE', $defaultPath);
+
+        if( ! file_exists($path)) {
+            throw new \Exception('File [' . $path . '] does not exist.');
+        }
+
+        $app = require $path;
         $app->make(Kernel::class)->bootstrap();
 
         return $app;
