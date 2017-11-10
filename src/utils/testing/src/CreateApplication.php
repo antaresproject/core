@@ -34,7 +34,7 @@ trait CreatesApplication
     public function createApplication()
     {
         $defaultPath    = __DIR__.'/../../../../../../bootstrap/app.php';
-        $path           = __DIR__ . env('APP_BOOTSTRAP_FILE', $defaultPath);
+        $path           = env('APP_BOOTSTRAP_FILE', $defaultPath);
 
         if( ! file_exists($path)) {
             throw new \Exception('File [' . $path . '] does not exist.');
