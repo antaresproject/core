@@ -32,13 +32,7 @@ trait CreatesApplication
      */
     public function createApplication()
     {
-        $path = '/../../../bootstrap/app.php';
-
-        while( ! file_exists(__DIR__ . $path) ) {
-            $path = '/..' . $path;
-        }
-
-        $app = require(__DIR__ . $path);
+        $app = require __DIR__.'/../../../../../../bootstrap/app.php';
         $app->make(Kernel::class)->bootstrap();
 
         return $app;
