@@ -21,6 +21,8 @@
 
 namespace Antares\Foundation\Support\Providers;
 
+use Antares\Notifications\Helpers\NotificationsEventHelper;
+use Antares\Notifications\Services\VariablesService;
 use Antares\UI\Navigation\MenuAssigner;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Antares\Foundation\Support\Providers\Traits\RouteProviderTrait;
@@ -374,6 +376,24 @@ abstract class ModuleServiceProvider extends ServiceProvider
             $menu = $this->app->make(MenuAssigner::class);
             require_once $path;
         }
+    }
+
+    /**
+     * Returns service for definiting notification variables.
+     *
+     * @return VariablesService
+     */
+    protected function variablesService() : VariablesService {
+        return app()->make(VariablesService::class);
+    }
+
+    /**
+     * Returns the helper object to build notifiable events.
+     *
+     * @return NotificationsEventHelper
+     */
+    protected function notificationsEventHelper() : NotificationsEventHelper {
+        return NotificationsEventHelper::make();
     }
 
 }
