@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\View\Console;
 
 use Antares\Automation\Model\Jobs;
@@ -211,7 +210,7 @@ abstract class Command extends BaseCommand
                     $form->hidden('id');
 
                     $form->fieldset('', function (Fieldset $fieldset) use($configuration) {
-
+                        $fieldset->legend('Command Configuration Form');
                         $launch  = $configuration['launch'];
                         $options = [];
                         foreach ($configuration['launchTimes'] as $option => $value) {
