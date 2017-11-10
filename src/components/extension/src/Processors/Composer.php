@@ -67,9 +67,10 @@ class Composer
         }
         $names   = implode(' ', $modules);
         $command = 'composer require ' . $names . ' --no-progress';
+
+
         try {
             $handler->operationInfo(new Operation('Running composer command.'));
-
             $process = $this->composerHandler->run($command, function(Process $process, $type, $buffer) use($handler) {
 
 

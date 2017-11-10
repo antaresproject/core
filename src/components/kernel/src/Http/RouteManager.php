@@ -100,6 +100,7 @@ abstract class RouteManager
         if (!is_null($callback)) {
             $this->app->make('router')->group($attributes, $callback);
         }
+
         return $attributes;
     }
 

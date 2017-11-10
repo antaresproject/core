@@ -251,7 +251,6 @@ class RouteGenerator implements RouteGeneratorContract
         }
 
         $this->prefix = app('antares.areas')->getUserArea();
-
         return $this;
     }
 
