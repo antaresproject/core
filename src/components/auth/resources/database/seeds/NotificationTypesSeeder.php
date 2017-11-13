@@ -41,10 +41,6 @@ class NotificationTypesSeeder extends Seeder
         ];
 
         DB::table('tbl_notification_types')->insert($types);
-        DB::table('tbl_notification_categories')->insert([
-                ['name' => 'default', 'title' => 'System'],
-                ['name' => 'users', 'title' => 'Users']
-        ]);
     }
 
     /**
@@ -54,9 +50,6 @@ class NotificationTypesSeeder extends Seeder
     {
         if (Schema::hasTable('tbl_notification_types')) {
             DB::table('tbl_notification_types')->delete();
-        }
-        if (Schema::hasTable('tbl_notification_categories')) {
-            DB::table('tbl_notification_categories')->delete();
         }
     }
 
