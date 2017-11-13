@@ -246,6 +246,7 @@ class FoundationServiceProvider extends ServiceProvider
         if (!$this->app->routesAreCached()) {
             require "{$path}/src/routes.php";
         }
+
         $router->aliasMiddleware('antares.forms', FormMiddleware::class);
         $router->aliasMiddleware('antares.ui-components', UIComponentsMiddleware::class);
         $this->runtime();
@@ -272,7 +273,8 @@ class FoundationServiceProvider extends ServiceProvider
         });
     }
 
-    public function booted() {
+    public function booted()
+    {
         $this->bootNotificationVariables();
     }
 

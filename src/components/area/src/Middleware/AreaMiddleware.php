@@ -36,7 +36,8 @@ class AreaMiddleware
      * AreaMiddleware constructor.
      * @param AreaManagerContract $areaManager
      */
-    public function __construct(AreaManagerContract $areaManager) {
+    public function __construct(AreaManagerContract $areaManager)
+    {
         $this->areaManager = $areaManager;
     }
 
@@ -49,7 +50,7 @@ class AreaMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if( ! $this->areaManager->hasAreaInUri() ) {
+        if (!$this->areaManager->hasAreaInUri()) {
             return $next($request);
         }
 

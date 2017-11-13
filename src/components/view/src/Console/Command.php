@@ -210,6 +210,7 @@ abstract class Command extends BaseCommand
                     $form->hidden('id');
 
                     $form->fieldset('', function (Fieldset $fieldset) use($configuration) {
+
                         $fieldset->legend('Command Configuration Form');
                         $launch  = $configuration['launch'];
                         $options = [];
