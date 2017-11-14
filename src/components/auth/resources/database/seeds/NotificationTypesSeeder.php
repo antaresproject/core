@@ -37,6 +37,7 @@ class NotificationTypesSeeder extends Seeder
                 ['name' => 'mail', 'title' => 'Mail'],
                 ['name' => 'sms', 'title' => 'Sms'],
                 ['name' => 'notification', 'title' => 'Notification'],
+                ['name' => 'alert', 'title' => 'Alert'],
         ];
 
         DB::table('tbl_notification_types')->insert($types);

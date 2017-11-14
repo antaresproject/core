@@ -197,7 +197,7 @@ class Authorization implements AuthorizationContract
      */
     public function sync()
     {
-//        $name    = $this->name;
+        $name = $this->name;
 //        $current = $this->memory->get("acl_{$name}");
 //        $same    = array_get($current, 'actions') == $this->actions->get() && array_get($current, 'roles') == $this->roles->get() && array_get($current, 'acl') == $this->acl;
 //        if (!$same && !in_array($name, ['app', 'antares/licensing'])) {

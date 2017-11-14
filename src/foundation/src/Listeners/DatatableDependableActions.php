@@ -48,6 +48,7 @@ class DatatableDependableActions extends AbstractDependableActions
             }
         }
 
+
         return count($return) ? array_merge(...$return) : [];
     }
 
@@ -77,9 +78,12 @@ class DatatableDependableActions extends AbstractDependableActions
             return false;
         }
         $action = call_user_func($element, $row);
-        $url    = handles(array_get($action, 'url', '#'));
-        $title  = array_get($action, 'title');
-        $link   = app('html')->link($url, $title, array_get($action, 'attributes', []));
+        if (empty($action)) {
+            return false;
+        }
+        $url   = handles(array_get($action, 'url', '#'));
+        $title = array_get($action, 'title');
+        $link  = app('html')->link($url, $title, array_get($action, 'attributes', []));
         ($actions instanceof Collection) ? $actions->push($link) : array_push($actions, $link);
         return $actions;
     }

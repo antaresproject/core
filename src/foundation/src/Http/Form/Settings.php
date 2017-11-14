@@ -47,9 +47,7 @@ class Settings extends FormBuilder implements Presenter
 
         $this->grid->setup($this, 'antares::settings/index', $model);
         $this->application();
-        $this->grid->rules([
-            'site_name' => ['required']
-        ]);
+        $this->grid->rules([]);
         Event::fire("antares.form: foundation.settings", [$model, $this->grid, "foundation.settings"]);
     }
 

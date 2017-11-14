@@ -222,10 +222,9 @@ class Extensions extends DataTable
                 return '';
             }
 
-            $section    = HTML::create('div', HTML::raw(implode('', $buttons)), ['class' => 'mass-actions-menu', 'style' => 'display:none;'])->get();
-            $indicators = HTML::create('i', '', ['class' => 'ma-trigger'])->get();
+            $section = HTML::create('div', HTML::raw(implode('', $buttons)), ['class' => 'mass-actions-menu', 'style' => 'display:none;'])->get();
 
-            return '<i class="zmdi zmdi-more"></i>' . HTML::raw(implode('', [$section, $indicators]))->get();
+            return '<i class="zmdi zmdi-more"></i>' . $section;
         };
     }
 

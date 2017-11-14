@@ -31,7 +31,12 @@ class Breadcrumb
      */
     public function onSecurity()
     {
+        Breadcrumbs::register('general-config', function($breadcrumbs) {
+            $breadcrumbs->push('General configuration');
+        });
+
         Breadcrumbs::register('security', function($breadcrumbs) {
+            $breadcrumbs->parent('general-config');
             $breadcrumbs->push('Security', handles('antares/foundation::settings/security'));
         });
         view()->share('breadcrumbs', Breadcrumbs::render('security'));
@@ -42,7 +47,11 @@ class Breadcrumb
      */
     public function onMailConfiguration()
     {
+        Breadcrumbs::register('general-config', function($breadcrumbs) {
+            $breadcrumbs->push('General configuration');
+        });
         Breadcrumbs::register('mail_configuration', function($breadcrumbs) {
+            $breadcrumbs->parent('general-config');
             $breadcrumbs->push('Mail configuration', handles('antares/foundation::settings/mail'));
         });
         view()->share('breadcrumbs', Breadcrumbs::render('mail_configuration'));
@@ -84,8 +93,12 @@ class Breadcrumb
         Breadcrumbs::register('general-system', function($breadcrumbs) {
             $breadcrumbs->push('General configuration', handles('antares::settings/index'));
         });
+        Breadcrumbs::register('system', function($breadcrumbs) {
+            $breadcrumbs->parent('general-system');
+            $breadcrumbs->push('System');
+        });
 
-        view()->share('breadcrumbs', Breadcrumbs::render('general-system'));
+        view()->share('breadcrumbs', Breadcrumbs::render('system'));
     }
 
 }

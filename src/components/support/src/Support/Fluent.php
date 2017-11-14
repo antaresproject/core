@@ -11,7 +11,7 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Antares Core
- * @version    0.9.0
+ * @version    0.9.2
  * @author     Original Orchestral https://github.com/orchestral
  * @author     Antares Team
  * @license    BSD License (3-clause)
@@ -22,6 +22,7 @@
 namespace Antares\Support;
 
 use Illuminate\Support\Fluent as SupportFluent;
+use Antares\Registry\Registry;
 
 class Fluent extends SupportFluent
 {
@@ -39,7 +40,20 @@ class Fluent extends SupportFluent
      * @var String
      */
     protected $moduleControllerUrl = null;
-    protected $segments            = [];
+
+    /**
+     * Route segments collection
+     *
+     * @var array 
+     */
+    protected $segments = [];
+
+    /**
+     * Active menu route container
+     *
+     * @var String 
+     */
+    protected $activeMenuRoute = null;
 
     /**
      * Create a new fluent container instance.
@@ -59,12 +73,26 @@ class Fluent extends SupportFluent
     }
 
     /**
+     * Active menu getter
+     * 
+     * @return String
+     */
+    protected function getActiveMenuRoute()
+    {
+        if (is_null($this->activeMenuRoute)) {
+            $this->activeMenuRoute = Registry::get('active_menu_route');
+        }
+        return $this->activeMenuRoute;
+    }
+
+    /**
      * check whether element has same request url and link attribute
      * 
      * @return boolean
      */
     public function isActive()
     {
+
         if (!isset($this->attributes['link'])) {
             return false;
         }
@@ -91,8 +119,8 @@ class Fluent extends SupportFluent
      */
     protected function compare($url)
     {
-
-        if ($this->url == $url) {
+        $activeMenuRouteUrl = $this->getActiveMenuRoute();
+        if ($this->url == $url or $url == $activeMenuRouteUrl) {
             return true;
         }
         $segments = $this->segments;
@@ -113,31 +141,6 @@ class Fluent extends SupportFluent
     }
 
     /**
-     * Whether menu item is active
-     * 
-     * @param String $url
-     * @return boolean
-     */
-//    protected function compare($url)
-//    {
-//
-//        if ($this->url == $url) {
-//            return true;
-//        }
-//        $segments  = $this->segments;
-//        $count     = count($segments);
-//        $segmented = url('/') . '/' . implode('/', array_slice($segments, 0, $count - 1));
-//        if (count($segments) > 2 && starts_with($url, $segmented)) {
-//            return true;
-//        }
-//        @list($domain, $area, $module, $action) = explode('/', str_replace('http://', '', $url));
-//        if (!isset($segments[1])) {
-//            return false;
-//        }
-//        return ($segments[1] == $module && isset($segments[2]) && (in_array($segments[2], ['index', 'edit']) or is_numeric($segments[2])));
-//    }
-
-    /**
      * Whether child is active
      * 
      * @return boolean
@@ -156,6 +159,9 @@ class Fluent extends SupportFluent
     public function isFirstChildActive()
     {
         $url = array_get($this->attributes, 'link', '');
+        if ($this->getActiveMenuRoute() == $url) {
+            return true;
+        }
         @list($domain, $area, $module, $action) = explode('/', str_replace('http://', '', $url));
         if ($this->url == $url) {
             return true;
