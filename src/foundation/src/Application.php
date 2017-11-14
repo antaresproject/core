@@ -54,7 +54,7 @@ class Application extends BaseApplication implements ApplicationContract
     {
         parent::bootProvider($provider);
 
-        if( is_subclass_of($provider, ModuleServiceProvider::class) && method_exists($provider, 'booted')) {
+        if(method_exists($provider, 'booted')) {
             Event::listen('antares.extension: booted', function() use($provider) {
                 $this->call([$provider, 'booted']);
             });

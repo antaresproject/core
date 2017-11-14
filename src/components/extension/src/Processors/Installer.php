@@ -102,7 +102,6 @@ class Installer extends AbstractOperation
 
             $this->dispatcher->fire(new Installing($extension));
             $this->extensionValidator->validateAssetsPath($extension);
-
             if (in_array('skip-composer', $flags, false) === false) {
                 $command = 'composer require ' . $name . ':' . $this->componentsRepository->getTargetBranch($name);
 
@@ -128,7 +127,6 @@ class Installer extends AbstractOperation
                 'options'  => $extension->getSettings()->getData(),
                 'required' => $this->componentsRepository->isRequired($name),
             ]);
-
             $this->dispatcher->fire(new Installed($extension));
 
             $operation = new Operation('The package [' . $name . '] has been successfully installed.');

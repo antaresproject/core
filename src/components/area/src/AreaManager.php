@@ -68,25 +68,20 @@ class AreaManager implements AreaManagerContract
     protected $default;
 
     /**
-     * Manually set current area.
-     *
-     * @var string|null
-     */
-    protected $currentArea;
-
-    /**
      * @var array
      */
     protected static $fallbackAreas = [
-        'admin'    => 'Admin',
-        'client'   => 'Client',
+        'admin'  => 'Admin',
+        'client' => 'Client',
+        'user'   => 'User',
+        'users'  => 'User',
     ];
 
     /**
      * @var array
      */
     protected static $fallbackFrontendRoutes = [
-        'client',
+        'client', 'user', 'users'
     ];
 
     /**
@@ -108,6 +103,7 @@ class AreaManager implements AreaManagerContract
         $this->request = $request;
         $this->config  = $config;
         $this->areas   = new AreasCollection();
+
 
         $areas   = Arr::get($this->config, 'areas', self::$fallbackAreas);
         $default = Arr::get($this->config, 'default', 'client');
@@ -143,38 +139,24 @@ class AreaManager implements AreaManagerContract
     }
 
     /**
-     * Sets manually current area.
-     *
-     * @param string|null $area
-     */
-    public function setCurrentArea(string $area = null)
-    {
-        $this->currentArea = $area;
-    }
-
-    /**
      * Gets an area object based on the current authentication and URI.
      * 
      * @return AreaContract
      */
     public function getCurrentArea(): AreaContract
     {
-        $segment = $this->currentArea ?: $this->request->segment(1);
+        $segment = $this->request->segment(1);
         $area    = $segment ? $this->getById($segment) : null;
 
         if (!$area && $this->auth->check()) {
-            /* @var $user User */
-            $user   = $this->auth->user();
-            $areas  = $user->getArea();
-
-            if(is_array($areas)) {
-                $area = $this->areas->getById( reset($areas) );
-            }
-            else {
+            $user  = $this->auth->user();
+            $areas = $user->getArea();
+            if (is_array($areas)) {
+                $area = $this->areas->getById(reset($areas));
+            } else {
                 $area = $this->areas->getById($areas);
             }
         }
-
         return $area ?: $this->getDefault();
     }
 
@@ -195,7 +177,6 @@ class AreaManager implements AreaManagerContract
                 $collection->add($area);
             }
         }
-
         return $collection;
     }
 

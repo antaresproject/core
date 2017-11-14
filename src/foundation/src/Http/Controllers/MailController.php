@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Controllers;
 
 use Antares\Foundation\Processor\Mail as Processor;

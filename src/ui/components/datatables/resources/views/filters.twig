@@ -1,7 +1,7 @@
 {% for name,url in urls %}
     <input type="hidden" value="{{ url }}" name="{{ name }}" class="datatables-filter-{{name}}" />
 {% endfor %}
-<div class="swiper-filters--box">
+<div class="swiper-filters--box swiper-filters--no-active">
     <div class="swiper-container swiper-filters">
         <div class="swiper-wrapper card-filters--swiper card-filter">
             {% for item in selected %}

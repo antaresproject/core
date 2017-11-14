@@ -42,8 +42,8 @@ Foundation::namespaced('Antares\Foundation\Http\Controllers', function (Router $
 
     $router->get('settings/mail', 'MailController@index');
     $router->match(['POST', 'PUT'], 'settings/mail', 'MailController@update');
-
     $router->match(['GET', 'HEAD'], '/', 'DashboardController@show')->name('antares.dashboard')->middleware('auth');
+
 
     $router->any('missing', 'DashboardController@missing')->name('antares.404');
     $router->get('not-allowed', 'DashboardController@notAllowed')->name('antares.not-allowed');

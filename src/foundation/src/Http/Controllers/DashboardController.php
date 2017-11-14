@@ -24,6 +24,7 @@ namespace Antares\Foundation\Http\Controllers;
 use Antares\Contracts\Foundation\Listener\Account\ProfileDashboard as Listener;
 use Antares\Users\Processor\Account\ProfileDashboard as Processor;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Antares\UI\UIComponents\Adapter\GridStackAdapter;
 use Illuminate\Foundation\Application;
 use Illuminate\View\View;
 
@@ -71,13 +72,12 @@ class DashboardController extends AdminController implements Listener
      * Show User Dashboard.
      *
      * GET (:antares)/
+     * @param GridStackAdapter $gridStackAdapter
      * @return mixed
      */
-    public function show()
+    public function show(GridStackAdapter $gridStackAdapter)
     {
-
-
-        app(\Antares\UI\UIComponents\Adapter\GridStackAdapter::class)->scripts();
+        $gridStackAdapter->scripts();
         view()->share('content_class', 'app-content--gridstack page-dashboard page-dashboard-html widgets-html-page');
         return $this->processor->show($this);
     }
