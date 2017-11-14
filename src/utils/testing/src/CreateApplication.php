@@ -33,14 +33,14 @@ trait CreatesApplication
      */
     public function createApplication()
     {
-        $defaultPath    = __DIR__.'/../../../../../../bootstrap/app.php';
-        $path           = env('APP_BOOTSTRAP_FILE', $defaultPath);
+        $path = __DIR__.'/../../../../../../bootstrap/app.php';
 
         if( ! file_exists($path)) {
             throw new \Exception('File [' . $path . '] does not exist.');
         }
 
         $app = require $path;
+
         $app->make(Kernel::class)->bootstrap();
 
         return $app;

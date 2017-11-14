@@ -33,12 +33,6 @@ class CreateNotificationsTable extends Migration
     {
         $this->down();
 
-        Schema::create('tbl_notification_categories', function(Blueprint $table) {
-            $table->increments('id');
-            $table->string('name')->unique();
-            $table->string('title');
-        });
-
         Schema::create('tbl_notification_types', function(Blueprint $table) {
             $table->increments('id');
             $table->string('name')->unique();
@@ -54,8 +48,8 @@ class CreateNotificationsTable extends Migration
             $table->increments('id');
             $table->string('name')->unique();
             $table->string('source')->index()->nullable();
+            $table->string('category')->index()->default('system');
             $table->unsignedInteger('severity_id')->index();
-            $table->unsignedInteger('category_id')->index();
             $table->unsignedInteger('type_id')->index();
             $table->string('event')->index()->nullable();
             $table->text('recipients')->nullable();
@@ -64,7 +58,6 @@ class CreateNotificationsTable extends Migration
             $table->timestamps();
 
             $table->foreign('severity_id')->references('id')->on('tbl_notification_severity')->onDelete('cascade');
-            $table->foreign('category_id')->references('id')->on('tbl_notification_categories')->onDelete('cascade');
             $table->foreign('type_id')->references('id')->on('tbl_notification_types')->onDelete('cascade');
         });
 
@@ -121,7 +114,6 @@ class CreateNotificationsTable extends Migration
             'tbl_notifications_stack',
             'tbl_notification_contents',
             'tbl_notifications',
-            'tbl_notification_categories',
             'tbl_notification_types',
             'tbl_notification_severity',
         ];
@@ -140,7 +132,6 @@ class CreateNotificationsTable extends Migration
             'tbl_notification_contents',
             'tbl_notifications',
             'tbl_notification_types',
-            'tbl_notification_categories'
         ];
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         foreach ($orderToDelete as $tablename) {
