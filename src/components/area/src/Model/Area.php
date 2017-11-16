@@ -18,50 +18,53 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Area\Model;
 
 use Antares\Area\Contracts\AreaContract;
 
-class Area implements AreaContract {
-    
+class Area implements AreaContract
+{
+
     /**
      *
      * @var string
      */
     protected $id;
-    
+
     /**
      *
      * @var string
      */
     protected $label;
-    
+
     /**
      * 
      * @param string $id
      * @param string $label
      */
-    public function __construct($id, $label) {
-        $this->id       = (string) $id;
-        $this->label    = (string) $label;
+    public function __construct($id, $label)
+    {
+        $this->id    = (string) $id;
+        $this->label = (string) $label;
     }
-    
+
     /**
      * Return an area ID.
      * 
      * @return string
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
-    
+
     /**
      * Return a user-friendly name.
      * 
      * @return string
      */
-    public function getLabel() {
+    public function getLabel()
+    {
         return $this->label;
     }
 
@@ -71,7 +74,8 @@ class Area implements AreaContract {
      * @param AreaContract $area
      * @return boolean
      */
-    public function isEquals(AreaContract $area) {
+    public function isEquals(AreaContract $area)
+    {
         return $this->getId() === $area->getId();
     }
 
@@ -79,7 +83,8 @@ class Area implements AreaContract {
      * 
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->getLabel();
     }
 
@@ -87,7 +92,8 @@ class Area implements AreaContract {
      * 
      * @return string
      */
-    public function getRouteKey() {
+    public function getRouteKey()
+    {
         return $this->getId();
     }
 
@@ -95,8 +101,21 @@ class Area implements AreaContract {
      * 
      * @return string
      */
-    public function getRouteKeyName() {
+    public function getRouteKeyName()
+    {
         return 'area';
+    }
+
+    /**
+     * Retrieve the model for a bound value.
+     *
+     * @param  mixed  $value
+     * @return void
+     * @throws \Exception
+     */
+    public function resolveRouteBinding($value)
+    {
+        throw new Exception('Resources may not be implicitly resolved from route bindings.');
     }
 
 }
