@@ -167,6 +167,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
         $routerAdapter = $this->app->make(Adapter::class);
         $routes        = [];
 
+
         /* @var $route \Illuminate\Routing\Route */
         foreach ($router->getRoutes()->getRoutes() as $route) {
             $routeActionName = $route->getActionName();
@@ -175,6 +176,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
                 $routes[] = $route;
             }
         }
+
 
         $routerAdapter->adaptRoutes($routes, $this->namespace);
     }
@@ -211,7 +213,6 @@ abstract class ModuleServiceProvider extends ServiceProvider
                 $path . DIRECTORY_SEPARATOR . 'frontend.php',
             ]
         ];
-
         foreach ($routes as $area => $routePaths) {
             foreach ($routePaths as $route) {
                 if (!file_exists($route)) {
@@ -241,7 +242,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
         }
 
         $this->app->make('antares.acl')->make($this->routeGroup)->attach(
-            $this->app->make('antares.platform.memory')
+                $this->app->make('antares.platform.memory')
         );
     }
 
@@ -272,6 +273,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
     protected function bootExtensionRouting()
     {
         if (!$this->app->routesAreCached()) {
+
 
             $this->afterExtensionLoaded(function () {
 
@@ -383,7 +385,8 @@ abstract class ModuleServiceProvider extends ServiceProvider
      *
      * @return VariablesService
      */
-    protected function variablesService() : VariablesService {
+    protected function variablesService(): VariablesService
+    {
         return app()->make(VariablesService::class);
     }
 
@@ -392,7 +395,8 @@ abstract class ModuleServiceProvider extends ServiceProvider
      *
      * @return NotificationsEventHelper
      */
-    protected function notificationsEventHelper() : NotificationsEventHelper {
+    protected function notificationsEventHelper(): NotificationsEventHelper
+    {
         return NotificationsEventHelper::make();
     }
 
