@@ -115,12 +115,13 @@ abstract class AbstractType implements Attributable
     /**
      * @param AbstractLabel|string $label
      * @param string $info
+     * @param array $attributes
      * @return AbstractType
      */
-    public function setLabel($label, $info = ''): AbstractType
+    public function setLabel($label, $info = '', array $attributes = []): AbstractType
     {
         if (!$label instanceof AbstractLabel) {
-            $label = new Label($label, $this, $info);
+            $label = new Label($label, $this, $info, $attributes);
         }
         if (!$label->hasControl()) {
             $label->setControl($this);
