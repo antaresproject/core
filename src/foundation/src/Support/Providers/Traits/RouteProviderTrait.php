@@ -37,13 +37,11 @@ trait RouteProviderTrait
      */
     protected function loadBackendRoutesFrom($path, $namespace = null)
     {
-
         if (AreasManager::manager()->isFrontendArea()) {
             return;
         }
 
         if (!$this->isPathIncluded($path)) {
-
             $foundation = $this->app->make('antares.app');
             $namespace  = $namespace ?: $this->namespace;
             $foundation->namespaced($namespace, $this->getRouteLoader($path));
@@ -60,6 +58,7 @@ trait RouteProviderTrait
      */
     protected function loadFrontendRoutesFrom($path, $namespace = '', array $attributes = [])
     {
+
         if (AreasManager::manager()->isBackendArea()) {
             return;
         }
