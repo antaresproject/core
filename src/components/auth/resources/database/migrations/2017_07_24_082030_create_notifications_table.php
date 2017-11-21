@@ -74,12 +74,15 @@ class CreateNotificationsTable extends Migration
 
         Schema::create('tbl_notifications_stack', function(Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('notification_id')->index();
+            $table->unsignedInteger('type_id')->index();
+            $table->unsignedInteger('severity_id')->index();
             $table->unsignedInteger('author_id')->index();
-            $table->text('variables')->nullable();
+            $table->string('title');
+            $table->text('content');
             $table->timestamps();
 
-            $table->foreign('notification_id')->references('id')->on('tbl_notifications')->onDelete('cascade');
+            $table->foreign('type_id')->references('id')->on('tbl_notification_types')->onDelete('cascade');
+            $table->foreign('severity_id')->references('id')->on('tbl_notification_severity')->onDelete('cascade');
             $table->foreign('author_id')->references('id')->on('tbl_users')->onDelete('cascade');
         });
 
