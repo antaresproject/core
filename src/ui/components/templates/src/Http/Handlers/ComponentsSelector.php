@@ -105,6 +105,9 @@ class ComponentsSelector extends MenuHandler
         $handler    = $this->createMenu();
         $handler->uri($uri);
         $components = app('ui-components')->findAllByResource($uri);
+
+
+
         foreach ($components as $component) {
             if (array_get($component, 'data.dispatchable') === false) {
                 continue;
@@ -112,7 +115,6 @@ class ComponentsSelector extends MenuHandler
             if (!$component['name']) {
                 continue;
             }
-
             $this->createItem($component);
         }
     }
@@ -133,6 +135,7 @@ class ComponentsSelector extends MenuHandler
         }
         $id   = $component['id'];
         $attr = array_get($component, 'data', []);
+
         $this->handler->add($id, '^:ui-components-selector')
                 ->title($attr['name'])
                 ->link(handles("antares/ui-components::ui-components/view/{$id}", ['csrf' => true]))

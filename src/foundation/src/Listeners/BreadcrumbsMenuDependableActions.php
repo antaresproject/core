@@ -91,8 +91,7 @@ class BreadcrumbsMenuDependableActions extends AbstractDependableActions
             $childs['dependable-action-' . $index] = $fluent;
             ++$index;
         }
-        array_set($attributes, 'childs', array_merge($childs, $attributes['childs']));
-        $this->menu->offsetSet('attributes', $attributes);
+        $this->menu->offsetSet('childs', array_merge($childs, $attributes['childs']));
     }
 
     /**
