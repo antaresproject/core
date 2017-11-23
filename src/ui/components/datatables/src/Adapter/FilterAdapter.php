@@ -92,15 +92,16 @@ class FilterAdapter
         $this->request = $request;
         $this->url     = $url;
 
+
         if (!$request->hasSession()) {
             return;
         }
 
         $session     = $request->session();
         $this->route = uri();
-
-        if ($session->has($this->route)) {
-            $params = $session->get($this->route);
+        $key         = $session->has($this->route) ? $this->route : $request->path();
+        if ($session->has($key)) {
+            $params = $session->get($key);
             foreach ($params as $column => $config) {
                 if (class_exists($column)) {
                     $this->selected[] = app($column)->sidebar($config);
@@ -182,7 +183,7 @@ class FilterAdapter
         $this->filters = array_unique($this->filters);
 
         //$this->filters = array_unique($this->filters);
-        $renderable    = false;
+        $renderable = false;
         foreach ($this->filters as $filter) {
             if ($filter->renderable) {
                 $renderable = true;

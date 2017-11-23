@@ -51,8 +51,10 @@ class SelectFilter extends AbstractFilter
      */
     protected function getValues()
     {
-        $uri    = uri();
-        $params = $this->session->get($uri . '.' . get_called_class());
+        $uri = uri();
+        $key = $this->session->has($uri) ? $uri : request()->path();
+
+        $params = $this->session->get($key . '.' . get_called_class());
         if (is_null($params) or ! isset($params['column']) or ! $params['column'] == $this->column) {
             return [];
         }
@@ -62,12 +64,11 @@ class SelectFilter extends AbstractFilter
         if (empty((array) $params['value'])) {
             $params = $this->session->get($uri);
             unset($params[get_called_class()]);
-            $this->session->put($uri, $params);
+            $this->session->put($key, $params);
             $this->session->save();
         } else {
             return $params['value'];
         }
-
         return [];
     }
 
@@ -76,8 +77,10 @@ class SelectFilter extends AbstractFilter
      */
     public function sidebar(array $data = array())
     {
+
         $subview = $this->render();
         $values  = $this->getValues();
+
 
         if (empty((array) $values)) {
             return '';

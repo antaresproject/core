@@ -25,6 +25,7 @@ use Antares\Auth\Notifications\PasswordReset;
 
 trait CanResetPassword
 {
+
     /**
      * Get the e-mail address where password reset links are sent.
      *
@@ -51,8 +52,7 @@ trait CanResetPassword
             'expire' => config('auth.passwords.users.expire', 60)
         ];
 
-
-
         $this->notify(new PasswordReset($data));
     }
+
 }
