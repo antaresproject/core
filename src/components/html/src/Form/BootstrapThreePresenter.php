@@ -228,10 +228,14 @@ class BootstrapThreePresenter implements Template
         if ($scripts) {
             $id        = isset($field->attributes['id']) ? $field->attributes['id'] : $field->get('name');
             $container = $this->asset->container('antares/foundation::scripts');
-            app('antares.asset')->container('antares/foundation::application')->add('ckeditor-js', '/packages/ckeditor/ckeditor.js', ['webpack_forms_basic']);
+            app('antares.asset')->container('antares/foundation::application')->add('ckeditor-js', '//cdn.ckeditor.com/4.6.2/standard/ckeditor.js', ['webpack_forms_basic']);
             $init      = <<<EOD
             CKEDITOR.replace('$id',{
-                width:'100%'
+                height: '100%',
+                width:'100%',
+                fullPage: true,
+                allowedContent: true,
+                skin: 'antares,/ckeditor/skins/antares-theme/'
             });
 EOD;
             $container->inlineScript('ckeditor', $init);

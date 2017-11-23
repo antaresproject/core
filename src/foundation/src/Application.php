@@ -22,6 +22,7 @@
 namespace Antares\Foundation;
 
 use Antares\Contracts\Foundation\Application as ApplicationContract;
+use Antares\Foundation\Support\Providers\ModuleServiceProvider;
 use Illuminate\Foundation\Application as BaseApplication;
 use Illuminate\Events\EventServiceProvider;
 use Antares\Routing\RoutingServiceProvider;
@@ -39,9 +40,25 @@ class Application extends BaseApplication implements ApplicationContract
      */
     protected function registerBaseServiceProviders()
     {
-
         $this->register(new EventServiceProvider($this));
         $this->register(new RoutingServiceProvider($this));
+    }
+
+    /**
+     * Boot the given service provider.
+     *
+     * @param  \Illuminate\Support\ServiceProvider  $provider
+     * @return mixed
+     */
+    protected function bootProvider(ServiceProvider $provider)
+    {
+        parent::bootProvider($provider);
+
+        if(method_exists($provider, 'booted')) {
+            Event::listen('antares.extension: booted', function() use($provider) {
+                $this->call([$provider, 'booted']);
+            });
+        }
     }
 
     /**
@@ -86,11 +103,6 @@ class Application extends BaseApplication implements ApplicationContract
         $this->hasBeenBootstrapped = false;
     }
 
-    public function bootProvider(ServiceProvider $provider)
-    {
-        return parent::bootProvider($provider);
-    }
-
     /**
      * Boot the application's service providers.
      *
@@ -121,6 +133,7 @@ class Application extends BaseApplication implements ApplicationContract
      *
      * @param  string  $provider
      * @return \Illuminate\Support\ServiceProvider
+     * @throws Exception
      */
     public function resolveProviderClass($provider)
     {

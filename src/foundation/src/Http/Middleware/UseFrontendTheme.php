@@ -57,10 +57,9 @@ class UseFrontendTheme
      */
     public function handle($request, Closure $next)
     {
-        if (!auth()->guest() && !user()->hasRoles(['client', 'memeber'])) {
+        if (auth()->guest() || !user()->hasRoles(['client', 'member'])) {
             return $next($request);
         }
-
         $this->beforeSendingThroughPipeline();
         $response = $next($request);
         $this->afterSendingThroughPipeline();

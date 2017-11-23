@@ -19,13 +19,12 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Foundation\Http\Controllers;
 
-use Illuminate\Support\Facades\Input;
-use Antares\Foundation\Processor\Setting as Processor;
-use Antares\Contracts\Foundation\Listener\SystemUpdater;
 use Antares\Contracts\Foundation\Listener\SettingUpdater;
+use Antares\Contracts\Foundation\Listener\SystemUpdater;
+use Antares\Foundation\Processor\Setting as Processor;
+use Illuminate\Support\Facades\Input;
 
 class SettingsController extends AdminController implements SystemUpdater, SettingUpdater
 {

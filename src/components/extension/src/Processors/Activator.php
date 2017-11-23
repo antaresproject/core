@@ -11,7 +11,6 @@ use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
 use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Antares\Extension\Contracts\ExtensionContract;
-use Antares\Memory\Model\DeferedEvent;
 use Antares\Extension\Model\Operation;
 use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;

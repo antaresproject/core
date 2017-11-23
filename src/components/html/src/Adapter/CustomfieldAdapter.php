@@ -62,9 +62,11 @@ class CustomfieldAdapter
                 if (!is_object($instance)) {
                     continue;
                 }
+
                 $this->addToForm($instance);
             }
         }
+
 
 
         if (extension_active('customfields')) {
@@ -72,13 +74,17 @@ class CustomfieldAdapter
             $types = [];
             foreach ($map as $type => $classnames) {
                 foreach ($classnames as $classname) {
+
+
                     if (!$this->grid->row instanceof $classname) {
                         continue;
                     }
                     array_push($types, $type);
                 }
             }
-            $this->getFields($types);
+            if (!empty($types)) {
+                $this->getFields($types);
+            }
         }
     }
 
@@ -99,8 +105,11 @@ class CustomfieldAdapter
         $this->grid->fieldset(function (Fieldset $fieldset) use($field) {
             $fieldset->add($field);
         });
+
         $this->grid->rules(array_merge($this->grid->rules, $field->getRules()));
+
         $this->grid->row->saved(function($row) use($field) {
+
             $field->onSave($row);
         });
 
@@ -126,14 +135,13 @@ class CustomfieldAdapter
                 $fieldset->add($customfield);
             });
 
-            $rules[] = $customfield->getRules();
+            $rules = array_merge($rules, $customfield->getRules());
 
             $this->grid->row->saved(function($row) use($customfield) {
                 $customfield->onSave($row);
             });
         }
-
-        $this->grid->rules( count($rules) ? array_merge(...$rules) : []);
+        $this->grid->rules(count($rules) ? array_merge($this->grid->rules, $rules) : []);
     }
 
 }

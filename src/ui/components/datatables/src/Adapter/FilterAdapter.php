@@ -79,9 +79,11 @@ class FilterAdapter
     protected $route;
 
     /**
-     * constructing
-     * 
+     * FilterAdapter constructor.
      * @param Application $app
+     * @param Router $router
+     * @param Request $request
+     * @param UrlGenerator $url
      */
     public function __construct(Application $app, Router $router, Request $request, UrlGenerator $url)
     {
@@ -89,15 +91,17 @@ class FilterAdapter
         $this->router  = $router;
         $this->request = $request;
         $this->url     = $url;
+
+
         if (!$request->hasSession()) {
             return;
         }
 
         $session     = $request->session();
         $this->route = uri();
-
-        if ($session->has($this->route)) {
-            $params = $session->get($this->route);
+        $key         = $session->has($this->route) ? $this->route : $request->path();
+        if ($session->has($key)) {
+            $params = $session->get($key);
             foreach ($params as $column => $config) {
                 if (class_exists($column)) {
                     $this->selected[] = app($column)->sidebar($config);
@@ -175,8 +179,11 @@ class FilterAdapter
         if (!$this->filters) {
             return false;
         }
+
         $this->filters = array_unique($this->filters);
-        $renderable    = false;
+
+        //$this->filters = array_unique($this->filters);
+        $renderable = false;
         foreach ($this->filters as $filter) {
             if ($filter->renderable) {
                 $renderable = true;
@@ -188,7 +195,6 @@ class FilterAdapter
         }
 
         $this->attachScripts();
-
 
         return view(($view) ? $view : 'datatables-helpers::filters', [
                     'filters'  => $this->filters,
@@ -213,7 +219,7 @@ class FilterAdapter
         if (is_string($classname) and ! class_exists($classname)) {
             throw new Exception(sprintf('Invalid filter object. Classname not exists %s.', $classname));
         }
-        app('antares.asset')->container('antares/foundation::application')->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
+        //app('antares.asset')->container('antares/foundation::application')->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
         $filter = is_object($classname) ? $classname : $this->app->make($classname);
         array_push($this->filters, $filter);
 

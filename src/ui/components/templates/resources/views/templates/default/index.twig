@@ -1,6 +1,6 @@
 {% extends 'antares/ui-components::templates.layouts.template' %}
 {% block content %}
-    <div class="card {{ card_class ? card_class : 'card--logs card--padding24'  }}">
+    <div class="card {{ card_class ? card_class : 'card--logs'  }}" data-preload>
         {% if titlable %}
             <div class="card__header">
                 <div class="card__header-left">
@@ -22,7 +22,7 @@
                 </div>
             </div>
         {% endif %}
-        <div class="card__content {{ card_content_class ? card_content_class : ''  }}" data-scrollable>
+        <div class="card__content {{ card_content_class ? card_content_class : ''  }}" >
             {{ content|raw }}
         </div>
     </div>

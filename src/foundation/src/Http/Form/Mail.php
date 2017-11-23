@@ -11,7 +11,7 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Antares Core
- * @version    0.9.0
+ * @version    0.9.2
  * @author     Original Orchestral https://github.com/orchestral
  * @author     Antares Team
  * @license    BSD License (3-clause)
@@ -73,8 +73,8 @@ class Mail extends FormBuilder implements Presenter
                                 return $return;
                             })
                             ->attributes(['class' => 'mail-change-driver'])
-                            ->fieldClass('w200')
                             ->help(trans('antares/foundation::messages.form.help.driver'));
+
                     $fields  = array_get($providers, 'smtp.fields');
                     $default = 'smtp';
                     foreach ($providers as $name => $provider) {
@@ -88,7 +88,7 @@ class Mail extends FormBuilder implements Presenter
                             if (!is_null($options = array_get($attributes, 'options'))) {
                                 $control->options($options);
                             }
-                            $control->fieldClass(array_get($attributes, 'fieldClass', 'w350'));
+                            $control->wrapper(['class' => array_get($attributes, 'class', 'col-mb-16 col-18 col-dt-12 col-ld-7')]);
 
 
                             if ($name !== $default) {

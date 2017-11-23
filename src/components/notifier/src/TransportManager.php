@@ -42,7 +42,7 @@ class TransportManager extends Manager
     {
 
         $config    = $this->getTransportConfig();
-        $transport = SmtpTransport::newInstance($config['host'], $config['port']);
+        $transport = new SmtpTransport($config['host'], $config['port']);
         if (isset($config['encryption'])) {
             $transport->setEncryption($config['encryption']);
         }

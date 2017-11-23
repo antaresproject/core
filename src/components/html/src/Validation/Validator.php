@@ -99,6 +99,7 @@ class Validator implements ValidatorContract
      */
     public function validate($sendHeaders = true)
     {
+
         app('events')->fire('antares.form: validate', $this->grid);
         app('events')->fire(new FormValidate($this->grid));
         $inputs          = Input::all();
@@ -109,7 +110,10 @@ class Validator implements ValidatorContract
                 $messages = $customValidator->getMessageBag();
             }
         }
+
         $rules = $this->grid->rules;
+
+
         if (!empty($rules)) {
             $validation = ValidatorFacade::make($inputs, $rules, $this->grid->phrases);
 

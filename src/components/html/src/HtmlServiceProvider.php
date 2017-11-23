@@ -123,6 +123,7 @@ class HtmlServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
         $path = realpath(__DIR__ . '/../resources');
 
         $this->addConfigComponent('antares/html', 'antares/html', $path . '/config');
@@ -151,11 +152,9 @@ class HtmlServiceProvider extends ServiceProvider
             $handler    = new MemoryConfig('forms-config', $config->get('antares/html::form.memory.form-config'), $app, $driver);
             return new Provider($handler);
         });
-        listen(FormReady::class, function() {
-            app('antares.asset')
-                ->container('antares/foundation::application')
-                ->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
-        });
+//        listen('antares.form: ready', function() {
+//            app('antares.asset')->container('antares/foundation::application')->add('webpack_forms_basic', '/webpack/forms_basic.js', ['app_cache']);
+//        });
     }
 
     /**

@@ -29,6 +29,8 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Twig_Loader_String;
+use Twig_Environment;
 use Exception;
 
 class Handler extends ExceptionHandler
@@ -84,14 +86,20 @@ class Handler extends ExceptionHandler
         }
 
         try {
-            $installed = app('antares.installed');
-
-            $ajax = app('request')->ajax();
+            $installed = app()->bound('antares.installed') ? app('antares.installed') : false;
+            $ajax      = app('request')->ajax();
             if ($ajax) {
                 $this->maxSourceLines      = 1;
                 $this->maxTraceSourceLines = 1;
             }
-            $factory = app('Illuminate\Contracts\View\Factory');
+            $factory = app()->bound('view') ? app('Illuminate\Contracts\View\Factory') : false;
+            if (!$factory) {
+                $loader   = new \Twig_Loader_Filesystem(base_path('resources/views/default/exception/'));
+                $twig     = new Twig_Environment($loader);
+                $template = $twig->load('500_forced.twig');
+                echo $template->render(['e' => $e]);
+                exit;
+            }
             $factory->getFinder()->addNamespace('antares/foundation', __DIR__ . '/../foundation/resources/views/');
             if ($e instanceof NotFoundHttpException) {
                 return response($factory->make('antares/foundation::exception.404'), 404);
@@ -201,8 +209,7 @@ class Handler extends ExceptionHandler
             }
             return response($factory->make($viewPath, $arguments), 500);
         } catch (Exception $e) {
-            vdump($e);
-            exit;
+            throw $e;
         }
     }
 

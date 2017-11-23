@@ -256,8 +256,8 @@ class Foundation extends Twig_Extension
             new Twig_SimpleFunction('dd', function () {
                         dd(func_get_args());
                     }),
-            new Twig_SimpleFunction('dump', function () {
-                        vdump(func_get_args());
+            new Twig_SimpleFunction('dump', function (...$args) {
+                        vdump($args[0]);
                     }),
             new Twig_SimpleFunction('isAjaxRequest', function () {
                         return (int) request()->ajax();
@@ -290,7 +290,9 @@ class Foundation extends Twig_Extension
                         }
                         return false;
                     }),
-            new Twig_SimpleFunction('error', function ($messageBag, $name) {
+			new Twig_SimpleFunction('is_translated', function ($key) {
+                        return $key !== trans($key);
+                    }),            new Twig_SimpleFunction('error', function ($messageBag, $name) {
                         if (!str_contains($name, ['[', ']'])) {
                             return $messageBag->first($name, ':message');
                         }
@@ -368,6 +370,7 @@ class Foundation extends Twig_Extension
             echo implode(' ', $return);
             return '';
         });
+
 
         return [$str, $array, $serializable, $stringify, $jsonable];
     }

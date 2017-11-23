@@ -82,6 +82,7 @@ class ColumnFilterAdapter
      */
     public function save(array $params = [])
     {
+
         $index      = array_get($params, 'index');
         $visibility = array_get($params, 'visible');
         $key        = array_get($params, 'key');

@@ -78,10 +78,10 @@ class Asset
      */
     public function __construct(string $name, Dispatcher $dispatcher, Manager $extensionsManager, AssetSymlinker $assetSymlinker)
     {
-        $this->name                 = $name;
-        $this->dispatcher           = $dispatcher;
-        $this->extensionsManager    = $extensionsManager;
-        $this->assetSymlinker       = $assetSymlinker;
+        $this->name              = $name;
+        $this->dispatcher        = $dispatcher;
+        $this->extensionsManager = $extensionsManager;
+        $this->assetSymlinker    = $assetSymlinker;
     }
 
     /**
@@ -152,14 +152,14 @@ class Asset
     {
         $from = array_get($attributes, 'from');
 
-        if($from !== null) {
+        if ($from !== null) {
             $availableExtensions = $this->extensionsManager->getAvailableExtensions();
 
             $path = null;
 
             /* @var $extension ExtensionContract */
-            foreach($availableExtensions->all() as $extension) {
-                if( Str::contains($extension->getPackageName(), $from) ) {
+            foreach ($availableExtensions->all() as $extension) {
+                if (Str::contains($extension->getPackageName(), $from)) {
                     $path = $extension->isActivated() ? $extension->getPath() : null;
                     break;
                 }
@@ -170,10 +170,10 @@ class Asset
             if (file_exists($realPath)) {
                 $sourceName = last(explode('/', $source));
 
-                $this->assetSymlinker->setPublishPath( public_path('packages/antares') );
+                $this->assetSymlinker->setPublishPath(public_path('packages/antares'));
                 $this->assetSymlinker->publish($sourceName, $realPath);
 
-                $source  = '/packages/antares/' . $sourceName;
+                $source = '/packages/antares/' . $sourceName;
             }
         }
 
@@ -332,7 +332,7 @@ class Asset
     public function webpack()
     {
 
-        $scripts = array_merge(['/packages/core/js/on-load.js', '/packages/core/js/datatable-helpers.js'], $this->dispatcher->scripts('script', $this->assets, $this->path));
+        $scripts = array_merge(['/packages/core/js/on-load.js'], $this->dispatcher->scripts('script', $this->assets, $this->path));
 
         $internals = [];
         $externals = [];
