@@ -4,6 +4,9 @@ declare(strict_types = 1);
 
 namespace Antares\Extension;
 
+use Antares\Events\Compontents\ComponentBooted;
+use Antares\Events\Compontents\ComponentsBooted;
+use Antares\Events\Compontents\ComponentStarted;
 use Antares\Extension\Collections\Extensions;
 use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Events\Booted;
@@ -118,9 +121,11 @@ class Dispatcher
 
                 $this->eventDispatcher->dispatch('extension.started', [$name, []]);
                 $this->eventDispatcher->dispatch('extension.started: {$name}', [[]]);
+                $this->eventDispatcher->dispatch(new ComponentStarted($name));
 
                 $this->eventDispatcher->dispatch('extension.booted', [$name, []]);
                 $this->eventDispatcher->dispatch('extension.booted: {$name}', [[]]);
+                $this->eventDispatcher->dispatch(new ComponentBooted($name));
             } catch (Exception $e) {
                 throw $e;
             }
@@ -128,6 +133,7 @@ class Dispatcher
 
         $this->eventDispatcher->dispatch(new BootedAll());
         $this->eventDispatcher->dispatch('antares.extension: booted');
+        $this->eventDispatcher->dispatch(new ComponentsBooted());
 
         $this->loader->writeManifest();
         $this->booted = true;
@@ -146,6 +152,7 @@ class Dispatcher
 
         $this->eventDispatcher->listen(BootedAll::class, $callback);
         $this->eventDispatcher->listen('antares.extension: booted', $callback);
+        $this->eventDispatcher->listen(ComponentsBooted::class, $callback);
     }
 
 }

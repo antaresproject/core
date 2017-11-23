@@ -22,6 +22,7 @@
 
 namespace Antares\View\Bootstrap;
 
+use Antares\Events\SystemReady\AdminStarted;
 use Illuminate\Contracts\Foundation\Application;
 
 class LoadCurrentTheme
@@ -57,7 +58,7 @@ class LoadCurrentTheme
 
         $events = $app->make('events');
 
-        $events->listen('antares.started: admin', function () use ($app, $memory, $events) {
+        $events->listen(AdminStarted::class, function () use ($app, $memory, $events) {
             $theme = $app->make('antares.theme');
             if (auth()->isAny(['member'])) {
                 $theme->setTheme($memory->get('site.theme.frontend'));

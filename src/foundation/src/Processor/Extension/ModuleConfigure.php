@@ -22,6 +22,9 @@
 
 namespace Antares\Foundation\Processor\Extension;
 
+use Antares\Events\Compontents\ComponentSaved;
+use Antares\Events\Compontents\ComponentSaving;
+use Antares\Events\Form\FormRender;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\Facades\Event;
 use Antares\Support\Facades\Extension;
@@ -131,11 +134,13 @@ class ModuleConfigure extends Processor implements Command
         unset($input['_token']);
 
         Event::fire("antares.saving: extension.{$extension->get('name')}", [& $input]);
+        Event::fire(new ComponentSaving($extension->get('name'), $input));
 
         $memory->put("extensions.active.{$extension->get('name')}.config", $input->getAttributes());
         $memory->put("extension_{$extension->get('name')}", $input->getAttributes());
 
         Event::fire("antares.saved: extension.{$extension->get('name')}", [$input]);
+        Event::fire(new ComponentSaved($extension->get('name'), $input));
 
         return $listener->configurationUpdated($extension);
     }
@@ -163,6 +168,7 @@ class ModuleConfigure extends Processor implements Command
         $eloquent = Foundation::make('antares.component');
         $form     = $this->presenter->create($eloquent, $category, $this->validator);
         Event::fire("antares.form: extension.create", [$eloquent, $form]);
+        Event::fire(new FormRender('extension', $form, 'create', $eloquent));
 
         return $listener->showModuleCreator(compact('form', 'category'));
     }

@@ -19,10 +19,10 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Html;
 
 use Closure;
+use Antares\Events\Form\Form;
 use Illuminate\Contracts\Container\Container;
 
 abstract class Factory
@@ -77,6 +77,7 @@ abstract class Factory
         }
         $form = $this->names[$name];
         event('form.' . $name, [&$form]);
+        event(new Form($name, $form));
         return $form;
     }
 

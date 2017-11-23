@@ -22,6 +22,7 @@
 namespace Antares\Auth;
 
 use Antares\Contracts\Authorization\Factory as FactoryContract;
+use Antares\Events\Authentication\AuthCheck;
 use Illuminate\Auth\AuthServiceProvider as ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Event;
@@ -82,7 +83,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Event::listen('antares.auth', 'Antares\Auth\Composers\MultiuserPlaceholder@onBootExtension');
+        Event::listen(AuthCheck::class, 'Antares\Auth\Composers\MultiuserPlaceholder@onBootExtension');
     }
 
 }

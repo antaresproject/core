@@ -4,14 +4,14 @@ declare(strict_types = 1);
 
 namespace Antares\Extension\Processors;
 
+use Antares\Events\Compontents\ComponentInstallationFailed;
+use Antares\Events\Compontents\ComponentInstalled;
+use Antares\Events\Compontents\ComponentInstalling;
 use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
-use Antares\Extension\Events\Failed;
 use Antares\Extension\Exception\ExtensionException;
 use Antares\Extension\Factories\SettingsFactory;
 use Antares\Extension\Model\Operation;
-use Antares\Extension\Events\Installed;
-use Antares\Extension\Events\Installing;
 use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Antares\Extension\Validators\ExtensionValidator;
@@ -100,7 +100,8 @@ class Installer extends AbstractOperation
 
             $handler->operationInfo(new Operation('Installing the [' . $name . '] extension.'));
 
-            $this->dispatcher->fire(new Installing($extension));
+            //$this->dispatcher->fire(new Installing($extension));
+            $this->dispatcher->fire(new ComponentInstalling($extension));
             $this->extensionValidator->validateAssetsPath($extension);
             if (in_array('skip-composer', $flags, false) === false) {
                 $command = 'composer require ' . $name . ':' . $this->componentsRepository->getTargetBranch($name);
@@ -127,14 +128,18 @@ class Installer extends AbstractOperation
                 'options'  => $extension->getSettings()->getData(),
                 'required' => $this->componentsRepository->isRequired($name),
             ]);
-            $this->dispatcher->fire(new Installed($extension));
+            //$this->dispatcher->fire(new Installed($extension));
+
+            //$this->dispatcher->fire(new Installed($extension));
+            $this->dispatcher->fire(new ComponentInstalled($extension));
 
             $operation = new Operation('The package [' . $name . '] has been successfully installed.');
 
             return $handler->operationSuccess($operation);
         } catch (\Exception $e) {
             Log::error($e);
-            $this->dispatcher->fire(new Failed($extension, $e));
+            //$this->dispatcher->fire(new Failed($extension, $e));
+            $this->dispatcher->fire(new ComponentInstallationFailed($extension, $e));
 
             return $handler->operationFailed(new Operation($e->getMessage()));
         }
