@@ -364,7 +364,7 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
      */
     public function getRoles()
     {
-        if( ! $this->relationLoaded('roles') ) {
+        if (!$this->relationLoaded('roles')) {
             $this->load('roles');
         }
 
