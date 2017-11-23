@@ -38,26 +38,37 @@ class SelectFilter extends AbstractFilter
     protected $placeholder = null;
 
     /**
+     * Type of filter for frontend issues
+     *
+     * @var String 
+     */
+    protected $type = 'status';
+
+    /**
      * Values getter
      * 
      * @return array
      */
     protected function getValues()
     {
-        $uri    = uri();
-        $params = $this->session->get($uri . '.' . get_called_class());
+        $uri = uri();
+        $key = $this->session->has($uri) ? $uri : request()->path();
+
+        $params = $this->session->get($key . '.' . get_called_class());
         if (is_null($params) or ! isset($params['column']) or ! $params['column'] == $this->column) {
             return [];
         }
-        if (empty($params['value'])) {
+        if (!isset($params['value'])) {
+            return [];
+        }
+        if (empty((array) $params['value'])) {
             $params = $this->session->get($uri);
             unset($params[get_called_class()]);
-            $this->session->put($uri, $params);
+            $this->session->put($key, $params);
             $this->session->save();
         } else {
             return $params['value'];
         }
-
         return [];
     }
 
@@ -66,14 +77,20 @@ class SelectFilter extends AbstractFilter
      */
     public function sidebar(array $data = array())
     {
+
         $subview = $this->render();
         $values  = $this->getValues();
-        if (empty($values)) {
+
+
+        if (empty((array) $values)) {
             return '';
         }
+
         $name      = str_replace('%value', implode(', ', array_only($this->options(), $values)), trans($this->pattern));
         $classname = get_called_class();
+
         return view('antares/automation::admin.partials._deleted')->with([
+                    'type'      => $this->type,
                     'column'    => $this->column,
                     'instance'  => $this,
                     'route'     => uri(),
@@ -88,13 +105,18 @@ class SelectFilter extends AbstractFilter
      */
     public function render()
     {
-        publish('automation', ['js/automation_status_filter.js']);
+        $classname   = get_called_class();
+        //publish('automation', ['js/automation_status_filter.js']);
+        //app('antares.asset')->container('antares/foundation::application')->add('status_filter', '//10.10.10.35:71/js/status_filter.js', ['webpack_gridstack', 'app_cache']);
+        app('antares.asset')->container('antares/foundation::application')->add('status_filter', '/packages/core/js/status_filter.js', ['webpack_gridstack', 'app_cache']);
         $selected    = $this->getValues();
         $placeholder = is_null($this->placeholder) ? trans('antares/foundation::messages.select_placeholder_default', ['name' => strtolower($this->name)]) : $this->placeholder;
-        return view('datatables-helpers::partials._filter_select_multiple', [
+        return view('datatables-helpers::partials._filter_select', [
+                    'type'        => $this->type,
                     'options'     => $this->options(),
                     'column'      => $this->column,
                     'placeholder' => $placeholder,
+                    'classname'   => $classname,
                     'selected'    => $selected
                 ])->render();
     }

@@ -29,10 +29,10 @@ class FastSmsAdapter extends AbstractAdapter
 
     /**
      * Sends sms message
-     * 
+     *
      * @param SmsMessage $message
-     * @param type $to
-     * @return boolean
+     * @param $to
+     * @return bool|mixed
      */
     public function send(SmsMessage $message, $to)
     {
@@ -47,12 +47,10 @@ class FastSmsAdapter extends AbstractAdapter
 
     /**
      * Sends sms message
-     * 
-     * @param String $from
-     * @param mixed $to
-     * @param String $text
-     * @return mixed
-     * @throws Exception
+     *
+     * @param $to
+     * @param $text
+     * @return array|mixed
      */
     protected function push($to, $text)
     {

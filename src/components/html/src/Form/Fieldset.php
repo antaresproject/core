@@ -320,6 +320,10 @@ class Fieldset extends BaseGrid implements FieldsetContract
     public function addType(AbstractType $type)
     {
         $this->controls[] = $type;
+
+        $name = $type->getName();
+
+        $this->keyMap[$name] = empty($this->keyMap) ? count($this->controls) - 1 : last($this->keyMap) + 1;
     }
 
     /**
@@ -465,7 +469,6 @@ class Fieldset extends BaseGrid implements FieldsetContract
      */
     public function field($name)
     {
-
         if (!isset($this->keyMap[$name])) {
             throw new Exception(sprintf('Unable to find %s named field.', $name));
         }
@@ -521,8 +524,6 @@ class Fieldset extends BaseGrid implements FieldsetContract
      */
     public function render($row = null)
     {
-        //vdump($this);
-
         if (is_null($this->layout)) {
             throw new Exception('Unable to render fieldset layout. Layout is empty.');
         }

@@ -18,7 +18,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Datatables\Filter;
 
 class DateRangeFilter extends AbstractFilter
@@ -29,7 +28,7 @@ class DateRangeFilter extends AbstractFilter
      *
      * @var String
      */
-    protected $pattern = '%value';
+    protected $pattern = '<span class="filter-label">Status:</span> %value';
 
     /**
      * Filter attributes
@@ -39,6 +38,13 @@ class DateRangeFilter extends AbstractFilter
     protected $attributes = [
         'row_title' => 'antares/automation::messages.executed_at'
     ];
+
+    /**
+     * Type of filter for frontend issues
+     *
+     * @var String 
+     */
+    protected $type = 'datePicker';
 
     /**
      * Values getter
@@ -76,19 +82,23 @@ class DateRangeFilter extends AbstractFilter
         $params     = app('request')->session()->get($uri);
         $classname  = get_called_class();
         $attributes = array_get($params, $classname);
-        if (!empty($attributes) and $attributes['column'] == $this->column) {
+        if (!empty($attributes) and $attributes['column'] == $this->column && isset($attributes['value'])) {
             $value   = json_decode($attributes['value'], true);
             $start   = array_get($value, 'start');
             $end     = array_get($value, 'end');
             $name    = trans(array_get($this->attributes, 'row_title'), ['start' => $start, 'end' => $end]);
             $subview = $this->render($start, $end);
 
+
             return view('datatables-helpers::partials._deleted_date_range')->with([
                         'column'    => $this->column,
                         'instance'  => $this,
                         'route'     => uri(),
                         'name'      => $name,
+                        'start'     => $start,
+                        'end'       => $end,
                         'classname' => $classname,
+                        'type'      => $this->type,
                         'subview'   => $subview
                     ])->render();
         }
@@ -103,8 +113,18 @@ class DateRangeFilter extends AbstractFilter
      */
     public function render($start = null, $end = null)
     {
-        publish('automation', ['js/automation_date_range_filter.js']);
-        return view('antares/automation::admin.partials._date_range_filter', ['start' => $start, 'end' => $end])->render();
+        //app('antares.asset')->container('antares/foundation::application')->add('range_filter', '//10.10.10.35:71/js/range_filter.js', ['webpack_gridstack', 'app_cache']);
+        app('antares.asset')->container('antares/foundation::application')->add('range_filter', '/packages/core/js/range_filter.js', ['webpack_gridstack', 'app_cache']);
+        //publish('automation', ['js/automation_date_range_filter.js']);
+        $classname = get_called_class();
+
+        return view('datatables-helpers::partials._date_range_filter', [
+                    'classname' => $classname,
+                    'column'    => $this->column,
+                    'start'     => $start,
+                    'end'       => $end,
+                    'type'      => $this->type
+                ])->render();
     }
 
 }

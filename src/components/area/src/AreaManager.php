@@ -71,15 +71,17 @@ class AreaManager implements AreaManagerContract
      * @var array
      */
     protected static $fallbackAreas = [
-        'admin'    => 'Admin',
-        'client'   => 'Client',
+        'admin'  => 'Admin',
+        'client' => 'Client',
+        'user'   => 'User',
+        'users'  => 'User',
     ];
 
     /**
      * @var array
      */
     protected static $fallbackFrontendRoutes = [
-        'client',
+        'client', 'user', 'users'
     ];
 
     /**
@@ -101,6 +103,7 @@ class AreaManager implements AreaManagerContract
         $this->request = $request;
         $this->config  = $config;
         $this->areas   = new AreasCollection();
+
 
         $areas   = Arr::get($this->config, 'areas', self::$fallbackAreas);
         $default = Arr::get($this->config, 'default', 'client');
@@ -146,18 +149,14 @@ class AreaManager implements AreaManagerContract
         $area    = $segment ? $this->getById($segment) : null;
 
         if (!$area && $this->auth->check()) {
-            /* @var $user User */
-            $user   = $this->auth->user();
-            $areas  = $user->getArea();
-
-            if(is_array($areas)) {
-                $area = $this->areas->getById( reset($areas) );
-            }
-            else {
+            $user  = $this->auth->user();
+            $areas = $user->getArea();
+            if (is_array($areas)) {
+                $area = $this->areas->getById(reset($areas));
+            } else {
                 $area = $this->areas->getById($areas);
             }
         }
-
         return $area ?: $this->getDefault();
     }
 
@@ -178,7 +177,6 @@ class AreaManager implements AreaManagerContract
                 $collection->add($area);
             }
         }
-
         return $collection;
     }
 

@@ -1,0 +1,16 @@
+<div class="zd zd--lg">
+    <div class="zd__header">
+        <i class="zmdi zmdi-block mdc-text-red"></i>
+    </div>
+    <div class="zd__content">
+        <div class="zd__title">{{ trans('antares/foundation::messages.datatables_no_data_title') }}</div>
+        <div class="zd__description">
+            {{ trans('antares/foundation::messages.datatables_no_data_description')|raw }}
+        </div>            
+    </div>
+    <div class="zd__footer">
+        <a href="{{ url|default('/') }}" class="btn btn--primary btn--zd mdl-js-button mdl-js-ripple-effect">
+            {{ title|default(trans('antares/foundation::messages.dashboard'))  }}
+        </a>
+    </div>
+</div>

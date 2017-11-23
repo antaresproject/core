@@ -1,45 +1,51 @@
 {% for name,url in urls %}
     <input type="hidden" value="{{ url }}" name="{{ name }}" class="datatables-filter-{{name}}" />
-{% endfor %}    
-<div class="card-ctrls__right">
-    <div class="card-filter">        
-        {% for item in selected %}
-            {{ item|raw }}
-        {% endfor %}           
+{% endfor %}
+<div class="swiper-filters--box swiper-filters--no-active">
+    <div class="swiper-container swiper-filters">
+        <div class="swiper-wrapper card-filters--swiper card-filter">
+            {% for item in selected %}
+                {{ item|raw }}
+            {% endfor %}
+        </div>
     </div>
+    <div class="swiper-filters-next"></div>
+    <div class="swiper-filters-prev"></div>
+    <div class="swiper-filters-next swiper-filters-next--gradient"></div>
+    <div class="swiper-filters-prev swiper-filters-prev--gradient swiper-button-disabled"></div>
 </div>
+
 <div class = "ddown ddown-multi">
-    <div class = "ddown-multi__init btn--dropdown btn btn--md btn--default mdl-js-button mdl-js-ripple-effect mr-24">
-        Filter
+    <div class = "mdl-js-button mdl-js-ripple-effect btn btn--md ddown-multi__init btn--dropdown btn--capitalize btn--default mr-24">
+        <span>Filter</span>
+        <i class="zmdi zmdi-filter-list"></i>
     </div>
-    <input type="hidden" name="route" value="{{ route }}" class="filter-group-route" />
-    <ul class="ddown-multi__menu">        
-        <li class="ddown-multi__label">
-            <span>Filter By</span>
-        </li>
-        {% for filter in filters %}                
-            <li class="has-submenu">                
-                <a data-target="{{ filter.get('name') }}" href="#">
-                    <span>
-                        {{ filter.get('name') }}
-                    </span>
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-    {% for filter in filters %}
-        <div class="filter-container">
-            <input type="hidden" name="column" value="{{ filter.get('column') }}" class="filter-group-column" />            
-            <ul data-name="{{ filter.get('name') }}" class="ddown-multi__submenu">
-                <li class="ddown-multi__label"><span>Filter By</span></li>        
-                <li class="ddown-multi__return">
-                    <a href="#">
-                        <i class="zmdi zmdi-chevron-left"></i>
+    <div class="ddown__content">
+        <ul class="ddown-multi__menu">
+            <li class="ddown-multi__label"><span>Filter By</span></li>
+                {% for filter in filters %}                
+                <li class="has-submenu">                
+                    <a data-target="{{ filter.get('name') }}" href="#">
                         <span>{{ filter.get('name') }}</span>
                     </a>
                 </li>
-                {{ filter|raw }}                
-            </ul> 
-        </div>    
+            {% endfor %}
+        </ul>
+    </div>
+    <input type="hidden" name="route" value="{{ route }}" class="filter-group-route" />
+    {% for filter in filters %}
+        <div class="filter-container ddown__content filter-content" data-type="{{ filter.get('name') }}">
+            <input type="hidden" name="column" value="{{ filter.get('column') }}" class="filter-group-column" />            
+            <ul data-name="{{ filter.get('name') }}" class="ddown-multi__submenu">
+                <li class="ddown-multi__label"><span>Filter By</span></li>
+                <li class="ddown-multi__return">
+                    <a>
+                        <i class="zmdi zmdi-chevron-left"></i>
+                        <span>Status</span>
+                    </a>
+                </li>
+                {{ filter|raw }}   
+            </ul>
+        </div>        
     {% endfor %}    
 </div>

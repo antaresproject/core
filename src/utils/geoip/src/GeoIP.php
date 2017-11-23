@@ -57,6 +57,9 @@ class GeoIP extends SupportGeoIP
 
     public function getLocation($ip = null)
     {
+        if (!class_exists(Client::class)) {
+            return;
+        }
         try {
             
         } catch (Exception $ex) {

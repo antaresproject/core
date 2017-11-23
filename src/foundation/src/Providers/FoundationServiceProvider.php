@@ -250,10 +250,10 @@ class FoundationServiceProvider extends ServiceProvider
         if (!$this->app->routesAreCached()) {
             require "{$path}/src/routes.php";
         }
+
         $router->aliasMiddleware('antares.forms', FormMiddleware::class);
         $router->aliasMiddleware('antares.ui-components', UIComponentsMiddleware::class);
         $this->runtime();
-        $this->bootNotificationVariables();
 
 
         $this->app->make('events')->fire('antares.ready');
@@ -273,6 +273,15 @@ class FoundationServiceProvider extends ServiceProvider
         });
 
         $this->app->make('events')->subscribe(AfterExtensionOperation::class);
+
+        $this->app->make('view')->composer('antares/foundation::breadcrumbs.bootstrap3', function($view) {
+            view()->share('breadcrumbs_data', array_get($view->getData(), 'breadcrumbs', []));
+        });
+    }
+
+    public function booted()
+    {
+        $this->bootNotificationVariables();
     }
 
     /**
@@ -344,24 +353,6 @@ class FoundationServiceProvider extends ServiceProvider
         if (!app('antares.installed')) {
             return;
         }
-//        $registry = app('antares.memory')->make('registry');
-//        $vars     = [
-//            'brand.name' => [
-//                'value'       => brand_name(),
-//                'description' => 'Brand name'
-//            ],
-//        ];
-//        $emails   = $registry->get('email');
-//        if (!empty($emails)) {
-//            foreach (array_except($emails, ['password']) as $name => $value) {
-//                $vars['email.' . $name] = ['value' => $value];
-//            }
-//        }
-//        $this->app->make('antares.notifications')->push([
-//            'foundation' => [
-//                'variables' => array_merge($vars, config('antares/foundation::notification.variables'))
-//            ]
-//        ]);
 
         /* @var $notification VariablesService */
         $notification = app()->make(VariablesService::class);

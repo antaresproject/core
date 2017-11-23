@@ -50,7 +50,7 @@ class BreadcrumbRenderer extends ListRenderer {
         $html = parent::renderList($item, $attributes, $options);
 
         if($shouldBeSubmenu) {
-            return view()->make('antares/billevio_base::navigations.breadcrumbs.submenu', [
+            return view()->make('antares/foundation::layouts.antares.partials._breadcrumbs_submenu', [
                 'label'     => $item->getLabel(),
                 'uri'       => $item->getUri(),
                 'submenu'   => $html,

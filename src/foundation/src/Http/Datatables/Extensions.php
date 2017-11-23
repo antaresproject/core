@@ -13,7 +13,7 @@ declare(strict_types = 1);
  * bundled with this package in the LICENSE file.
  *
  * @package    Antares Core
- * @version    0.9.0
+ * @version    0.9.2
  * @author     Antares Team
  * @license    BSD License (3-clause)
  * @copyright  (c) 2017, Antares
@@ -138,18 +138,18 @@ class Extensions extends DataTable
 
         return $this->setName('Extensions')
                         ->addColumn(['data' => 'friendlyName', 'name' => 'friendlyName', 'title' => trans('antares/foundation::label.extensions.header.name')])
-                        ->addColumn(['data' => 'description', 'name' => 'description', 'title' => trans('antares/foundation::label.extensions.header.description')])
-                        ->addColumn(['data' => 'authors', 'name' => 'authors', 'title' => trans('antares/foundation::label.extensions.header.authors'), 'orderable' => false])
-                        ->addColumn(['data' => 'version', 'name' => 'version', 'title' => trans('antares/foundation::label.extensions.header.version')])
+                        ->addColumn(['data' => 'description', 'name' => 'description', 'title' => trans('antares/foundation::label.extensions.header.description'), 'className' => 'tabletV laptop desktop',])
+                        ->addColumn(['data' => 'authors', 'name' => 'authors', 'title' => trans('antares/foundation::label.extensions.header.authors'), 'orderable' => false, 'className' => 'tabletV laptop desktop',])
+                        ->addColumn(['data' => 'version', 'name' => 'version', 'title' => trans('antares/foundation::label.extensions.header.version'), 'className' => 'tabletV laptop desktop',])
                         ->addColumn(['data' => 'status', 'name' => 'status', 'title' => trans('antares/foundation::label.extensions.header.status')])
-                        ->addColumn(['data' => 'type', 'name' => 'type', 'title' => trans('antares/foundation::label.extensions.header.type')])
-                        ->addAction(['name' => 'edit', 'title' => '', 'class' => 'dt-row-actions'])
+                        ->addColumn(['data' => 'type', 'name' => 'type', 'title' => trans('antares/foundation::label.extensions.header.type'), 'className' => 'tabletV laptop desktop',])
+                        ->addAction(['name' => 'edit', 'title' => '', 'class' => 'mass-actions dt-actions'])
                         ->addGroupSelect($this->getTypes(), $this->typeColumnIndex, Types::TYPE_ADDITIONAL, $options)
                         ->parameters([
                             'aoColumnDefs' => [
-                                ['width' => '15%', 'targets' => 0],
-                                ['width' => '40%', 'targets' => 1],
-                                ['width' => '22%', 'targets' => 2],
+                                ['width' => '12%', 'targets' => 0],
+                                ['width' => '42%', 'targets' => 1],
+                                ['width' => '20%', 'targets' => 2],
                                 ['width' => '7%', 'targets' => 3],
                                 ['width' => '10%', 'targets' => 4],
                                 ['width' => '10%', 'targets' => 5],
@@ -222,10 +222,9 @@ class Extensions extends DataTable
                 return '';
             }
 
-            $section    = HTML::create('div', HTML::raw(implode('', $buttons)), ['class' => 'mass-actions-menu', 'style' => 'display:none;'])->get();
-            $indicators = HTML::create('i', '', ['class' => 'ma-trigger'])->get();
+            $section = HTML::create('div', HTML::raw(implode('', $buttons)), ['class' => 'mass-actions-menu', 'style' => 'display:none;'])->get();
 
-            return '<i class="zmdi zmdi-more"></i>' . HTML::raw(implode('', [$section, $indicators]))->get();
+            return '<i class="zmdi zmdi-more"></i>' . $section;
         };
     }
 

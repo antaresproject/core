@@ -364,7 +364,7 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
      */
     public function getRoles()
     {
-        if( ! $this->relationLoaded('roles') ) {
+        if (!$this->relationLoaded('roles')) {
             $this->load('roles');
         }
 
@@ -607,6 +607,7 @@ class User extends Eloquent implements UserContract, CanResetPasswordContract, R
     public function getPhoneAttribute()
     {
         return '697274132';
+        //return $this->meta->pluck('value', 'name')->get('phone_number', '');
     }
 
     /**

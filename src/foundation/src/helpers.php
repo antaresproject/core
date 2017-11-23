@@ -25,6 +25,19 @@ use Illuminate\Support\Debug\Dumper;
 use Antares\Messages\SwalMessanger;
 use Antares\Html\Form\Field;
 
+if (!function_exists('active_menu_route')) {
+
+    /**
+     * Allows to save current menu route to registry
+     */
+    function active_menu_route($route)
+    {
+        return Antares\Registry\Registry::set('active_menu_route', url(area() . '/' . $route));
+    }
+
+}
+
+
 if (!function_exists('format_time')) {
 
     /**
@@ -132,8 +145,12 @@ if (!function_exists('user_from_route')) {
      */
     function user_from_route($default = false)
     {
-        $current    = Route::current();
+        $current = Route::current();
+        if (is_null($current)) {
+            return $default;
+        }
         $parameters = $current->parameters();
+
         foreach ($parameters as $name => $parameter) {
             if ($parameter instanceof Authenticatable) {
                 return $parameter->id;
@@ -535,6 +552,8 @@ if (!function_exists('lang')) {
 
     /**
      * Get current language id
+     *
+     * @return \Antares\Translations\Models\Languages
      */
     function lang($locale = null)
     {
@@ -543,9 +562,8 @@ if (!function_exists('lang')) {
         \Cache::store('array');
 
         return \Cache::get('lang-' . $code, function() use($code) {
-            return \Antares\Translations\Models\Languages::where('code', $code)->first();
-        });
-
+                    return \Antares\Translations\Models\Languages::query()->where('code', $code)->first();
+                });
     }
 
 }
@@ -553,14 +571,16 @@ if (!function_exists('langs')) {
 
     /**
      * Get languages list
+     *
+     * @returns \Antares\Translations\Models\Languages[]
      */
     function langs()
     {
         \Cache::store('array');
 
         return \Cache::get('langs', function() {
-            return \Antares\Translations\Models\Languages::all();
-        });
+                    return \Antares\Translations\Models\Languages::all();
+                });
     }
 
 }
@@ -851,14 +871,15 @@ if (!function_exists('brand_logo')) {
     {
         $registry = app('antares.memory')->make('registry');
         $logoPath = config('antares/brands::logo.default_path');
-
         try {
             if (in_array($param, ['logo', 'favicon'])) {
                 $logo    = $registry->get('brand.configuration.template.favicon');
                 $default = asset($logoPath . 'logo_default_tear.png');
                 return strlen($logo) <= 0 ? $default : asset('img/logos/' . $logo);
-            } elseif ($param == 'big') {
+            } elseif ($param === 'big') {
                 $logo = $registry->get('brand.configuration.template.logo');
+//                vdump($logo);
+//                exit;
                 return !is_null($logo) ? asset('img/logos/' . $logo) : $default;
             } elseif ($param == 'white') {
                 $logo = config('antares/brands::logo.default_white');
@@ -866,6 +887,8 @@ if (!function_exists('brand_logo')) {
             }
             return asset('img/logos/' . $param);
         } catch (Exception $ex) {
+            vdump($ex);
+            exit;
             return asset($logoPath . 'logo_default_tear.png');
         }
     }

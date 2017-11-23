@@ -28,7 +28,6 @@ use Antares\Contracts\Foundation\Command\SystemUpdater as SystemUpdateCommand;
 use Antares\Foundation\Http\Presenters\Setting as Presenter;
 use Antares\Foundation\Validation\Setting as Validator;
 use Antares\Support\Facades\Foundation;
-use Illuminate\Support\Facades\Config;
 use Antares\Memory\MemoryManager;
 use Illuminate\Support\Fluent;
 
@@ -92,6 +91,7 @@ class Setting extends Processor implements SystemUpdateCommand, SettingUpdateCom
         }
         $memory = $this->memory;
         $memory->put('site.mode', $input['mode']);
+
         $memory->finish();
         return $listener->settingHasUpdated();
     }
@@ -109,23 +109,6 @@ class Setting extends Processor implements SystemUpdateCommand, SettingUpdateCom
         Foundation::make('antares.publisher.migrate')->foundation();
 
         return $listener->systemHasUpdated();
-    }
-
-    /**
-     * Resolve value or grab from configuration.
-     *
-     * @param  mixed   $input
-     * @param  string  $alternative
-     *
-     * @return mixed
-     */
-    private function getValue($input, $alternative)
-    {
-        if (empty($input)) {
-            $input = Config::get($alternative);
-        }
-
-        return $input;
     }
 
 }

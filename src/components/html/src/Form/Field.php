@@ -19,7 +19,6 @@
  * @link       http://antaresproject.io
  */
 
-
 namespace Antares\Html\Form;
 
 use Illuminate\Support\Fluent;
@@ -215,6 +214,11 @@ class Field extends Fluent implements FieldContract
     public function hasOptions()
     {
         return !empty(array_get($this->attributes, 'options', []));
+    }
+
+    public function hasError($errors)
+    {
+        return strlen($errors->first($this->name)) > 0;
     }
 
 }
