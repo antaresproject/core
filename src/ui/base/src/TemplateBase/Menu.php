@@ -21,8 +21,10 @@
 
 namespace Antares\UI\TemplateBase;
 
-use Illuminate\Support\Facades\Event;
 use Antares\UI\Handler;
+use Illuminate\Support\Facades\Event;
+use Antares\Events\SystemReady\AfterMenu;
+use Antares\Events\SystemReady\BeforeMenu;
 
 class Menu extends Handler
 {
@@ -50,8 +52,10 @@ class Menu extends Handler
     public function add($id, $location = '#', $callback = null)
     {
         Event::fire('antares.ready: menu.before.' . $id, $this);
+        Event::fire(new BeforeMenu($id, $this));
         $return = $this->addItem($id, $location, $callback);
         Event::fire('antares.ready: menu.after.' . $id, $this);
+        Event::fire(new AfterMenu($id, $this));
         return $return;
     }
 

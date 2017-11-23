@@ -28,17 +28,13 @@ return [
     'email'   => [
         'adapters' => [
             'default'     => 'swiftMailer',
-            'swiftMailer' => [
-                'model' => EmailAdapter::class,
-            ]
+
         ]
     ],
     'system'  => [
         'adapters' => [
             'default'     => 'swiftMailer',
-            'swiftMailer' => [
-                'model' => EmailAdapter::class,
-            ]
+
         ]
     ],
     'sms'     => [
@@ -46,9 +42,9 @@ return [
             'default' => 'fastSms',
             'fastSms' => [
                 'api'         => [
-                    'token'    => '6kzF-p26E-xnPS-Y1bL',
-                    'login'    => 'mariusz@modulesgarden.com',
-                    'password' => 'ZAQ!2wsx',
+                    'token'    => '',
+                    'login'    => '',
+                    'password' => '',
                     'url'      => 'https://my.fastsms.co.uk/api',
                 ],
                 'name'        => 'Fast SMS',

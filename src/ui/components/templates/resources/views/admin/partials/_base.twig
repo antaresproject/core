@@ -49,16 +49,19 @@
                                             {{ trans('Refresh') }}
                                         </a>
                                     </li> 
-                                    {{ event('ui-components:render.widget-actions.'~name)|raw }}
+                                    {#{{ event('ui-components:render.widget-actions.'~name)|raw }}#}
+                                    {{ event('Antares\\Events\\Views\\WidgetActions', 'base', name)|raw }}
                                 </ul>
                             </div>
                         {% endif %}
                     </div>
                 </div>
-            </div>            
-            {{ event('ui-components:render.before.'~name)|raw }}
-            {{ content|raw }}           
-            {{ event('ui-components:render.after.'~name)|raw }}        
+            </div>
+            {#{{ event('ui-components:render.before.'~name)|raw }}#}
+            {{ event('Antares\\Events\\Views\\BeforeRenderComponent', 'base', name)|raw }}
+            {{ content|raw }}
+            {#{{ event('ui-components:render.after.'~name)|raw }}#}
+            {{ event('Antares\\Events\\Views\\AfterRenderComponent', 'base', name)|raw }}
         </div>   
         {% if app('request').ajax() %}    
             {% set asset = app('antares.asset').container('antares/foundation::scripts') %}

@@ -244,19 +244,59 @@ class Extensions extends DataTable
                     'csrf'   => true,
         ]);
 
-        $name  = $extension->getFriendlyName();
-        $url   = URL::route(area() . '.modules.progress.index');
+        $notWritablePaths = $this->getNotWritablePaths();
+
         $label = trans('antares/foundation::label.extensions.actions.' . $action);
 
-        $params = [
-            'class'            => 'bindable component-prompt-modal',
-            'data-title'       => trans('antares/foundation::messages.extensions.modal_title.' . $action),
-            'data-icon'        => $icon,
-            'data-action-url'  => $actionUrl,
-            'data-description' => trans('antares/foundation::messages.extensions.modal_content.' . $action, compact('name')),
-        ];
+        if( count($notWritablePaths) ) {
+            $url = '#';
+
+            $params = [
+                'class'            => 'bindable component-error-modal',
+                'data-title'       => trans('Not writable permissions for:'),
+                'data-icon'        => $icon,
+                'data-errors'      => json_encode($notWritablePaths),
+            ];
+        }
+        else {
+            $name  = $extension->getFriendlyName();
+            $url   = URL::route(area() . '.modules.progress.index');
+
+            $params = [
+                'class'            => 'bindable component-prompt-modal',
+                'data-title'       => trans('antares/foundation::messages.extensions.modal_title.' . $action),
+                'data-icon'        => $icon,
+                'data-action-url'  => $actionUrl,
+                'data-description' => trans('antares/foundation::messages.extensions.modal_content.' . $action, compact('name')),
+            ];
+        }
 
         return (string) HTML::link($url, $label, $params);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getNotWritablePaths() {
+        $writablePaths = [
+            'bootstrap/cache/extension.php',
+            'storage',
+            'composer.json',
+            'composer.lock',
+            'vendor',
+        ];
+
+        $invalidPermissionsPaths = [];
+
+        foreach($writablePaths as $writablePath) {
+            $fileName = base_path($writablePath);
+
+            if( ! is_writable($fileName)) {
+                $invalidPermissionsPaths[] = $fileName;
+            }
+        }
+
+        return $invalidPermissionsPaths;
     }
 
     /**

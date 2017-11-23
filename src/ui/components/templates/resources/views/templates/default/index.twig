@@ -7,7 +7,8 @@
                     <span>
                         {{ title }}
                     </span>
-                    {{ event('ui-components:render.header-left.'~name)|raw }}
+                    {#{{ event('ui-components:render.header-left.'~name)|raw }}#}
+                    {{ event('Antares\\Events\\Views\\TemplateHeaderLeft', 'default', name)|raw }}
                 </div>        
                 <div class="card__header-right">
                     {% if enlargeable %}
@@ -16,7 +17,8 @@
                     {% if zoomable %}
                         <i class="card-maximize zmdi zmdi-window-maximize"></i>
                     {% endif %}
-                    {{ event('ui-components:render.header-right.'~name)|raw }}
+                    {#{{ event('ui-components:render.header-right.'~name)|raw }}#}
+                    {{ event('Antares\\Events\\Views\\TemplateHeaderRight', 'default', name)|raw }}
                 </div>
             </div>
         {% endif %}
