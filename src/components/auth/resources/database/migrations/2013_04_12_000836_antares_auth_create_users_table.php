@@ -46,6 +46,8 @@ class AntaresAuthCreateUsersTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             $table->unique('email');
+
+            Event::fire(new \Antares\Events\Installation\SchemaInstalled('users', $table));
         });
         Schema::table('tbl_users', function (Blueprint $table) {
             $table->index(['creator_id']);

@@ -22,6 +22,10 @@
 
 namespace Antares\View\Theme;
 
+use Antares\Events\Views\ThemeBoot;
+use Antares\Events\Views\ThemeResolving;
+use Antares\Events\Views\ThemeSet;
+use Antares\Events\Views\ThemeUnset;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Container\Container;
@@ -142,11 +146,13 @@ class Theme implements ThemeContract
             $this->resolved && $this->resetViewPaths();
 
             $this->dispatcher->fire("antares.theme.unset: {$this->theme}");
+            $this->dispatcher->fire(new ThemeUnset($this->theme));
         }
 
 
         $this->theme = $theme;
         $this->dispatcher->fire("antares.theme.set: {$this->theme}");
+        $this->dispatcher->fire(new ThemeSet($this->theme));
 
         if ($this->resolved) {
             $this->resolved = false;
@@ -185,6 +191,7 @@ class Theme implements ThemeContract
         }
 
         $this->dispatcher->fire("antares.theme.boot: {$this->theme}");
+        $this->dispatcher->fire(new ThemeBoot($this->theme));
 
         return true;
     }
@@ -203,6 +210,7 @@ class Theme implements ThemeContract
         $this->resolved = true;
 
         $this->dispatcher->fire('antares.theme.resolving', [$this, $this->app]);
+        $this->dispatcher->fire(new ThemeResolving($this, $this->app));
 
         $this->setViewPaths();
 

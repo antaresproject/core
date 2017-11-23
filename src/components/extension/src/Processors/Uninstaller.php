@@ -4,13 +4,13 @@
 
 namespace Antares\Extension\Processors;
 
+use Antares\Events\Compontents\ComponentInstallationFailed;
+use Antares\Events\Compontents\ComponentUninstalled;
+use Antares\Events\Compontents\ComponentUninstalling;
 use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Contracts\Handlers\OperationHandlerContract;
-use Antares\Extension\Events\Failed;
 use Antares\Extension\Exception\ExtensionException;
 use Antares\Extension\Model\Operation;
-use Antares\Extension\Events\Uninstalled;
-use Antares\Extension\Events\Uninstalling;
 use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Antares\Extension\Composer\Handler as ComposerHandler;
@@ -91,7 +91,8 @@ class Uninstaller extends AbstractOperation {
 
             $handler->operationInfo(new Operation('Uninstalling the [' . $name . '] extension.'));
 
-            $this->dispatcher->fire(new Uninstalling($extension));
+            //$this->dispatcher->fire(new Uninstalling($extension));
+            $this->dispatcher->fire(new ComponentUninstalling($extension));
             $this->migrateManager->uninstall($name);
             $this->assetManager->delete(str_replace('/', '_', $name));
 
@@ -116,7 +117,8 @@ class Uninstaller extends AbstractOperation {
                 }
             }
 
-            $this->dispatcher->fire(new Uninstalled($extension));
+            //$this->dispatcher->fire(new Uninstalled($extension));
+            $this->dispatcher->fire(new ComponentUninstalled($extension));
 
             $operation = new Operation('The package [' . $name . '] has been successfully uninstalled.');
 
@@ -124,7 +126,7 @@ class Uninstaller extends AbstractOperation {
         }
         catch(\Exception $e) {
             Log::error($e);
-            $this->dispatcher->fire(new Failed($extension, $e));
+            $this->dispatcher->fire(new ComponentInstallationFailed($extension, $e));
 
             return $handler->operationFailed(new Operation($e->getMessage()));
         }

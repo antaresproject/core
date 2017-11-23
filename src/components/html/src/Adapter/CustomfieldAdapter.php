@@ -105,8 +105,11 @@ class CustomfieldAdapter
         $this->grid->fieldset(function (Fieldset $fieldset) use($field) {
             $fieldset->add($field);
         });
+
         $this->grid->rules(array_merge($this->grid->rules, $field->getRules()));
+
         $this->grid->row->saved(function($row) use($field) {
+
             $field->onSave($row);
         });
 
@@ -132,14 +135,13 @@ class CustomfieldAdapter
                 $fieldset->add($customfield);
             });
 
-            $rules[] = $customfield->getRules();
+            $rules = array_merge($rules, $customfield->getRules());
 
             $this->grid->row->saved(function($row) use($customfield) {
                 $customfield->onSave($row);
             });
         }
-
-        $this->grid->rules(count($rules) ? array_merge(...$rules) : []);
+        $this->grid->rules(count($rules) ? array_merge($this->grid->rules, $rules) : []);
     }
 
 }

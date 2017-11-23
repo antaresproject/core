@@ -20,6 +20,9 @@
 
 namespace Antares\Twig\Extension;
 
+use Antares\Events\Placeholder\After;
+use Antares\Events\Placeholder\Before;
+use Antares\Events\Views\BreadcrumbBeforeRender;
 use Illuminate\Support\Fluent as FluentSupport;
 use Antares\Asset\JavaScriptDecorator;
 use Illuminate\Support\Facades\Event;
@@ -170,10 +173,12 @@ class Foundation extends Twig_Extension
             new Twig_SimpleFunction('placeholder', function ($name) {
                         $__ps = $this->widgetManager->make("placeholder." . $name);
                         Event::fire("placeholder.before." . $name, [$__ps]);
+                        Event::fire(new Before($name, $__ps));
                         foreach ($__ps as $__p) {
                             echo value($__p->value ?: "");
                         }
                         Event::fire("placeholder.after." . $name, [$__ps]);
+                        Event::fire(new After($name, $__ps));
                     }),
             new Twig_SimpleFunction('stack', function ($name) {
                         echo $this->factory->yieldContent($name);
@@ -193,12 +198,22 @@ class Foundation extends Twig_Extension
                         }
                         return $errors->has($control->name);
                     }),
-            new Twig_SimpleFunction('event', function ($name) {
-                        $event     = snake_case(strtolower($name));
-                        $arguments = array_slice(func_get_args(), 1);
-                        Event::fire($event, $arguments);
-                        return '';
-                    }),
+            new Twig_SimpleFunction('event', function (...$args) {
+                $name = $args[0] ?? null;
+
+                if (class_exists($name)) {
+                    call_user_func_array('event', [
+                        (new \ReflectionClass($name))
+                            ->newInstanceArgs(array_slice($args, 1))
+                    ]);
+                    return '';
+                }
+
+                $event     = snake_case(strtolower($name));
+                $arguments = array_slice($args, 1);
+                Event::fire($event, $arguments);
+                return '';
+            }),
             new Twig_SimpleFunction('event_gridable', function () {
                         $path = \Illuminate\Support\Facades\Route::getCurrentRoute()->uri();
                         Event::fire('widgets:render.' . $path . '.right');

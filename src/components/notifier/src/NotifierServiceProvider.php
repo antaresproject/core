@@ -22,6 +22,7 @@
 namespace Antares\Notifier;
 
 use Antares\Support\Providers\ServiceProvider;
+use Illuminate\Mail\Mailer;
 use Swift_Mailer;
 
 class NotifierServiceProvider extends ServiceProvider
@@ -57,7 +58,7 @@ class NotifierServiceProvider extends ServiceProvider
         $this->app->singleton('antares.support.mail', function ($app) {
             $this->registerSwiftMailer();
 
-            $mailer = new Mail\Mailer(
+            $mailer = new Mailer(
                     $app->make('view'), $app->make('antares.swift.mailer'), $app->make('events')
             );
             if ($app->bound('queue')) {
@@ -65,6 +66,7 @@ class NotifierServiceProvider extends ServiceProvider
             }
             $from   = $app->make('antares.memory')->make('primary')->get('email.from');
             $config = $app->make('config')->get('mail.from');
+
 
             $mailer->alwaysFrom(array_get($from, 'address', array_get($config, 'address')), array_get($from, 'name', array_get($config, 'name')));
 
