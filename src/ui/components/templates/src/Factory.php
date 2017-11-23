@@ -20,6 +20,8 @@
 
 namespace Antares\UI\UIComponents;
 
+use Antares\Events\Compontents\ComponentsDetecting;
+use Antares\Events\Compontents\ComponentTemplatesDetecting;
 use Antares\UI\UIComponents\Traits\DispatchableTrait;
 use Antares\UI\UIComponents\Model\Components;
 use Illuminate\Contracts\Container\Container;
@@ -83,6 +85,7 @@ class Factory
     public function detect()
     {
         $this->app->make('events')->fire('antares.ui-components: detecting');
+        $this->app->make('events')->fire(new ComponentsDetecting());
 
         $components = $this->finder()->detect();
         $service    = app(Service::class);
@@ -104,6 +107,7 @@ class Factory
     public function detectTemplates()
     {
         $this->app->make('events')->fire('antares.ui-components.templates: detecting');
+        $this->app->make('events')->fire(new ComponentTemplatesDetecting());
         return $this->templateFinder()->detect()->toArray();
     }
 

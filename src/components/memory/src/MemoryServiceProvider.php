@@ -21,9 +21,11 @@
 
 namespace Antares\Memory;
 
-use Antares\Support\Providers\ServiceProvider;
-use Antares\Memory\Repository\Resource;
+use Antares\Events\Form\Form;
 use Antares\Model\Component;
+use Antares\Memory\Repository\Resource;
+use Antares\Support\Providers\ServiceProvider;
+use Antares\Events\SystemReady\LoadServiceProviders;
 
 class MemoryServiceProvider extends ServiceProvider
 {
@@ -82,8 +84,9 @@ class MemoryServiceProvider extends ServiceProvider
     {
         $app = $this->app;
         /** looking for forms * */
-        $app->make('events')->listen('antares.forms', function ($name) use ($app) {
-            $app->make('antares.memory')->make('registry.forms')->put('forms', $name);
+        //$app->make('events')->listen('antares.forms', function ($name) use ($app) {
+        $app->make('events')->listen(Form::class, function (Form $event) use ($app) {
+            $app->make('antares.memory')->make('registry.forms')->put('forms', $event->formName);
         });
         /** when application is terminating we collect all data from application * */
         $app->terminating(function () use ($app) {
@@ -91,7 +94,8 @@ class MemoryServiceProvider extends ServiceProvider
                 //$app->make('antares.memory')->finish();
             }
         });
-        $app->make('events')->listen('antares.after.load-service-providers', function() {
+        //$app->make('events')->listen('antares.after.load-service-providers', function() {
+        $app->make('events')->listen(LoadServiceProviders::class, function() {
             $this->app->make('antares.defered.service')->run();
         });
     }

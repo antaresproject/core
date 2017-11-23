@@ -60,6 +60,7 @@ class CreateTblBrandOptionsTable extends Migration
             $table->string('composition', 255)->nullable();
             $table->string('styleset', 255)->nullable();
             $table->text('colors')->nullable();
+            $table->text('stylesheet')->nullable();
         });
         Schema::table('tbl_brand_options', function(Blueprint $table) {
             $table->foreign('brand_id', 'tbl_brand_options_ibfk_1')->references('id')->on('tbl_brands')->onUpdate('NO ACTION')->onDelete('CASCADE');

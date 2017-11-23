@@ -22,6 +22,7 @@
 namespace Antares\Foundation\Http\Controllers;
 
 use Antares\Contracts\Foundation\Listener\Account\ProfileDashboard as Listener;
+use Antares\Events\SystemReady\VersionCheck;
 use Antares\Users\Processor\Account\ProfileDashboard as Processor;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Antares\UI\UIComponents\Adapter\GridStackAdapter;
@@ -127,6 +128,7 @@ class DashboardController extends AdminController implements Listener
     {
         set_meta('title', trans('antares/foundation::title.home'));
         $this->app->make('events')->fire('version.check');
+        $this->app->make('events')->fire(new VersionCheck());
         if (!auth()->guest() && auth()->user()->hasRoles('member')) {
             return view('antares/foundation::dashboard.member');
         }
