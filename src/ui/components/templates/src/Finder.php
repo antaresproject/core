@@ -94,9 +94,9 @@ class Finder implements FinderContract
     {
 
         /* @var $extensionsManager Manager */
-        $extensionsManager  = app()->make(Manager::class);
-        $components         = [];
-        $directories        = [];
+        $extensionsManager = app()->make(Manager::class);
+        $components        = [];
+        $directories       = [];
 
         foreach ($this->paths as $path) {
             try {
@@ -106,13 +106,13 @@ class Finder implements FinderContract
             }
         }
 
-        $directories    = count($directories) ? array_merge(...$directories) : [];
-        $inner          = [];
+        $directories = count($directories) ? array_merge(...$directories) : [];
+        $inner       = [];
 
         foreach ($directories as $index => $directory) {
             $classBasename = class_basename($directory);
 
-            if (!in_array($classBasename, ['Widgets', 'UiComponents'], true) || ! $extensionsManager->getActiveExtensionByPath($directory)) {
+            if (!in_array($classBasename, ['Widgets', 'UiComponents'], true) || !$extensionsManager->getActiveExtensionByPath($directory)) {
                 unset($directories[$index]);
                 continue;
             }
@@ -122,13 +122,12 @@ class Finder implements FinderContract
             }
         }
 
-        $inner          = count($inner) ? array_merge(...$inner) : [];
-        $directories    = array_merge($directories, $inner);
+        $inner       = count($inner) ? array_merge(...$inner) : [];
+        $directories = array_merge($directories, $inner);
 
         foreach ($directories as $directory) {
             $components[] = $this->files->files($directory);
         }
-
         return count($components) ? array_merge(...$components) : [];
     }
 
@@ -152,6 +151,7 @@ class Finder implements FinderContract
 
             $components[snake_case($name)] = $params;
         }
+
         return new Collection($components);
     }
 
@@ -188,7 +188,6 @@ class Finder implements FinderContract
         }
         $instance   = app($namespace . '\\' . $name);
         $hasWidgets = Registry::isRegistered('ui-components');
-
         if (!$hasWidgets) {
             $collection = new Collection([$instance]);
         } else {
@@ -198,8 +197,11 @@ class Finder implements FinderContract
 
         $this->resolveDisabledUIComponent($instance);
         $this->resolveViewedUIComponent($instance);
+
         Registry::set('ui-components', $collection);
         $attributes = $instance->getAttributes();
+
+
 
         return array_except($attributes, ['id']);
     }
@@ -213,11 +215,13 @@ class Finder implements FinderContract
     protected function resolveDisabledUIComponent(AbstractTemplate $component, $keyname = 'ui-components.disabled')
     {
         $disabled = $component->getDisabled();
+
+
+
         if (empty($disabled)) {
             return false;
         }
         $classname = get_class($component);
-
         view()->composer($disabled, function() use($keyname, $classname) {
             $hasWidgets = Registry::isRegistered($keyname);
             if (!$hasWidgets) {

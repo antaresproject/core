@@ -188,6 +188,7 @@ class Avatar extends Twig_Extension
     protected function response($filename)
     {
         Image::make($filename)->response('png', 100);
+
         return str_replace([public_path(), DIRECTORY_SEPARATOR], ['', '/'], $filename);
     }
 
