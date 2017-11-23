@@ -11,7 +11,7 @@ class ComponentSaved extends AbstractEvent
     protected static $name = 'Components: Component Booted';
 
     /** @var string */
-    protected static $description = 'Runs after component has booted';
+    protected static $description = 'Runs after component settings has been saved';
 
     /** @var string */
     public $componentName;

@@ -11,7 +11,7 @@ class AfterSearch extends AbstractEvent
     protected static $name = 'Custom Fields: After search';
 
     /** @var string */
-    protected static $description = 'Runs after custom fields search is being executed (????)';
+    protected static $description = 'Runs after custom fields search is being executed';
 
     /** @var mixed */
     public $return;
