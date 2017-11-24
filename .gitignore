@@ -1,1 +1,2 @@
-/nbproject/private/
+/nbproject/private/git filter-branch --force --index-filter \config.php
+notifier/resources/config/config.php
