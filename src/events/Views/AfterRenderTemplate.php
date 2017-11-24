@@ -2,7 +2,6 @@
 
 namespace Antares\Events\Views;
 
-use Antares\Html\Form\FormBuilder;
 use Antares\Foundation\Events\AbstractEvent;
 
 class AfterRenderTemplate extends AbstractEvent
@@ -20,9 +19,9 @@ class AfterRenderTemplate extends AbstractEvent
     /**
      * AfterRenderTemplate constructor
      *
-     * @param string $template
+     * @param mixed $template
      */
-    public function __construct(string $template)
+    public function __construct($template)
     {
         $this->template = $template;
 

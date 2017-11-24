@@ -21,7 +21,7 @@ class FormRender extends AbstractEvent
     /** @var FormBuilder */
     public $form;
 
-    /** @var Model|null */
+    /** @var mixed */
     public $model;
 
     /** @var string|null */
@@ -33,14 +33,14 @@ class FormRender extends AbstractEvent
      * @param string      $formName
      * @param FormBuilder $form
      * @param string|null $action
-     * @param Model|null  $model
+     * @param mixed  $model
      */
-    public function __construct(string $formName, FormBuilder $form, string $action = null, Model $model = null)
+    public function __construct(string $formName, FormBuilder $form, string $action = null, $model = null)
     {
         $this->formName = $formName;
-        $this->form = $form;
-        $this->action = $action;
-        $this->model = $model;
+        $this->form     = $form;
+        $this->action   = $action;
+        $this->model    = $model;
 
         parent::__construct();
     }

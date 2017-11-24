@@ -2,8 +2,8 @@
 
 namespace Antares\Events\Datatables;
 
-use Antares\Datatables\Engines\EloquentEngine;
 use Antares\Foundation\Events\AbstractEvent;
+use Antares\Datatables\Engines\BaseEngine;
 
 class Value extends AbstractEvent
 {
@@ -26,9 +26,9 @@ class Value extends AbstractEvent
      * @param string         $uri
      * @param EloquentEngine $datatable
      */
-    public function __construct(string $uri, EloquentEngine $datatable)
+    public function __construct(string $uri, BaseEngine $datatable)
     {
-        $this->uri = $uri;
+        $this->uri       = $uri;
         $this->datatable = $datatable;
 
         parent::__construct();

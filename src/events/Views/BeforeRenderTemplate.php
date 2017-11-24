@@ -20,9 +20,9 @@ class BeforeRenderTemplate extends AbstractEvent
     /**
      * BeforeRenderTemplate constructor
      *
-     * @param string $template
+     * @param mixed $template
      */
-    public function __construct(string $template)
+    public function __construct($template)
     {
         $this->template = $template;
 
