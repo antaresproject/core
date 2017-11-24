@@ -174,3 +174,4 @@ _ide_helper.php
 public/apidocs/*
 /nbproject
 /src/modules/src\components\notifier\resources\config\config.php
+src/components/notifier/resources/config/config.php
