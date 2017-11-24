@@ -80,53 +80,60 @@ class GridStackAdapter implements GridStack
             grid.on('dragstop', function(event, ui) {               
                 element = event.target;                                
             });
-            
-            container.on('change', function (e, items) { 
-                if(!$('#widgets-edit').length){
-                    return false;
-                }
-                if(items===undefined){
-                    return false;
-                }
-                var widgets = {};                        
-                for (i = 0; i < items.length; i++) {
-                    item = $.extend({}, items[i]);                        
-                    widgets[i]={
-                        widgetId: $(items[i].el).find('input[name=current]').val(),
-                        x: items[i].x,
-                        y: items[i].y,
-                        width: items[i].width,
-                        height: items[i].height,                            
-                    }
-                }   
-                current=(element!==undefined || element!==null)?$(element):null;
-                id=(current!==null)?current.attr('id'):null;                
-                ajax=$.ajax({
-                   url: "%s",
-                   type: "POST",
-                   data:{ 
-                       widgets:widgets,
-                       from:'%s',
-                       current:id
-                   },                    
-                   success:function(response,event, xhr){                        
-                        
-                        var ct = xhr.getResponseHeader("content-type") || "";                        
-                        if(response.length<=0){
-                            return;
-                        }
-                        if(ct==='application/json'){
+            enquire.register('screen and (min-width:1366px)', {
+                match:function(){
+                    container.on('change.dupa', function (e, items) { 
+                        if(!$('#widgets-edit').length){
                             return false;
                         }
-                        if(current!==null){
-                            current.find('.grid-stack-item-content .widget-content').html(response);
+                        if(items===undefined){
+                            return false;
                         }
-                   },
-                   complete:function(){                        
-                        element=null;
-                   } 
-                });
-            });
+                        var widgets = {};                        
+                        for (i = 0; i < items.length; i++) {
+                            item = $.extend({}, items[i]);                        
+                            widgets[i]={
+                                widgetId: $(items[i].el).find('input[name=current]').val(),
+                                x: items[i].x,
+                                y: items[i].y,
+                                width: items[i].width,
+                                height: items[i].height,                            
+                            }
+                        }   
+                        current=(element!==undefined || element!==null)?$(element):null;
+                        id=(current!==null)?current.attr('id'):null;                
+                        ajax=$.ajax({
+                           url: "%s",
+                           type: "POST",
+                           data:{ 
+                               widgets:widgets,
+                               from:'%s',
+                               current:id
+                           },                    
+                           success:function(response,event, xhr){                        
+
+                                var ct = xhr.getResponseHeader("content-type") || "";                        
+                                if(response.length<=0){
+                                    return;
+                                }
+                                if(ct==='application/json'){
+                                    return false;
+                                }
+                                if(current!==null){
+                                    current.find('.grid-stack-item-content .widget-content').html(response);
+                                }
+                           },
+                           complete:function(){                        
+                                element=null;
+                           } 
+                        });
+                    });
+                },
+                unmatch:function(){
+                    container.off('change.dupa')
+                }
+            });    
+            
         });
 EOD;
         return sprintf($inline, handles('antares/ui-components::ui-components/grid', ['csrf' => true]), uri());
