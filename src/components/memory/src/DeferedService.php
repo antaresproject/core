@@ -35,29 +35,28 @@ class DeferedService
      */
     public function run()
     {
-        return $this->validate();
+        if (!$this->validate()) {
+            return false;
+        }
 
-//        if (!$this->validate()) {
-//            return false;
-//        }
-//
-//        return DB::transaction(function() {
-//                    $events = $this->getDeferedEvents();
-//                    foreach ($events as $event) {
-//                        if (!empty($event->value)) {
-//                            continue;
-//                        }
-//                        $return       = Event::fire($event->name);
-//                        $event->value = $return;
-//                        $event->save();
-//                    }
-//                });
+        return DB::transaction(function() {
+            $events = $this->getDeferedEvents();
+
+            foreach ($events as $event) {
+                if (!empty($event->value)) {
+                    continue;
+                }
+
+                $event->value = Event::fire($event->name);
+                $event->save();
+            }
+        });
     }
 
     /**
      * get all defered events
      * 
-     * @return \Illuminate\Support\Collection
+     * @return \Illuminate\Support\Collection|DeferedEvent[]
      */
     public function getDeferedEvents()
     {

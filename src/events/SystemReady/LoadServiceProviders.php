@@ -31,12 +31,4 @@ class LoadServiceProviders extends AbstractEvent
     /** @var string */
     protected static $description = 'Runs after all service providers are loaded';
 
-    /**
-     * LoadServiceProviders constructor
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
 }

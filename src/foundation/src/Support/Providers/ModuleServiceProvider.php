@@ -400,4 +400,25 @@ abstract class ModuleServiceProvider extends ServiceProvider
         return NotificationsEventHelper::make();
     }
 
+    /**
+     * Imports notifications after activation of the given extension.
+     *
+     * @param string $extension Ex. antaresproject/module-sample_module
+     */
+    protected function importNotifications(string $extension) {
+        $this->afterActivated($extension, function() use($extension) {
+            \Artisan::call('notifications:import', compact('extension'));
+        });
+    }
+
+    /**
+     * Runs operations after activation of the given extension.
+     *
+     * @param string $extension Ex. antaresproject/module-sample_module
+     * @param \Closure $operation
+     */
+    protected function afterActivated(string $extension, \Closure $operation) {
+        listen('after.activated.' . $extension, $operation);
+    }
+
 }

@@ -260,18 +260,6 @@ class FoundationServiceProvider extends ServiceProvider
         $this->app->make('events')->fire(new AntaresReady());
         $this->app->make('view')->composer(['antares/foundation::account.index', 'antares/logger::admin.devices.*'], \Antares\Users\Http\Handlers\AccountPlaceholder::class);
 
-        //$this->app->make('events')->listen('antares.after.load-service-providers', function() {
-        $this->app->make('events')->listen(LoadServiceProviders::class, function() {
-            $widgets = $this->app->make('antares.ui-components.finder')->detectRoutes();
-
-            $widgets->each(function($widget) {
-                if (class_exists($widget)) {
-                    $widget::routes();
-                }
-            });
-            return true;
-        });
-
         $this->app->make('events')->subscribe(AfterExtensionOperation::class);
 
         $this->app->make('view')->composer('antares/foundation::breadcrumbs.bootstrap3', function($view) {
