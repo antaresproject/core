@@ -48,6 +48,7 @@ class AntaresMemoryCreateSchemasTable extends Migration
             $this->createOptionsTbl();
             $this->createPermissionsView();
             $this->createInstallationProgressTable();
+            $this->createEventsTbl();
         } catch (\Exception $ex) {
             Log::emergency($ex);
             $error = $ex;
@@ -75,7 +76,22 @@ class AntaresMemoryCreateSchemasTable extends Migration
         Schema::dropIfExists('tbl_brands');
         Schema::dropIfExists('tbl_antares_options');
         Schema::dropIfExists('tbl_antares_installation');
+        Schema::dropIfExists('tbl_events');
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+    }
+
+    /**
+     * EVENTS TABLE
+     */
+    private function createEventsTbl()
+    {
+        Schema::create('tbl_events', function (Blueprint $table) {
+            $table->increments('id')->unsigned();
+            $table->text('namespace');
+            $table->integer('fire_count');
+            $table->text('details');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -239,7 +255,8 @@ class AntaresMemoryCreateSchemasTable extends Migration
     /**
      * CREATE SCHEMAS FOR INSTALLATION PROGRESS
      */
-    public function createInstallationProgressTable() {
+    public function createInstallationProgressTable()
+    {
         Schema::create('tbl_antares_installation', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->unique();
