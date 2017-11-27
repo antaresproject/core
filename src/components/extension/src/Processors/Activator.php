@@ -12,6 +12,7 @@ use Antares\Extension\Repositories\ComponentsRepository;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Antares\Extension\Contracts\ExtensionContract;
 use Antares\Extension\Model\Operation;
+use Antares\Memory\Model\DeferedEvent;
 use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
 use Antares\Console\Kernel;
@@ -73,9 +74,9 @@ class Activator extends AbstractOperation
             ]);
 
             try {
-                //DeferedEvent::query()->firstOrCreate(['name' => 'after.activated.' . $name]);
+                DeferedEvent::query()->firstOrCreate(['name' => 'after.activated.' . $name]);
             } catch (Exception $ex) {
-                
+                \Log::error($ex);
             }
 
             app(\Antares\Installation\Listeners\IncrementProgress::class)->advanceProgress();

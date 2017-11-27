@@ -9,7 +9,7 @@ use Antares\Events\Model\Event as EventModel;
  * Class AbstractEvent
  * @package Antares\Events\Events
  */
-abstract class AbstractEvent implements GlobalEventInterface
+abstract class AbstractEvent
 {
 
 	/**

@@ -22,6 +22,7 @@
 namespace Antares\Foundation;
 
 use Antares\Contracts\Foundation\Application as ApplicationContract;
+use Antares\Events\SystemReady\LoadServiceProviders;
 use Antares\Foundation\Support\Providers\ModuleServiceProvider;
 use Illuminate\Foundation\Application as BaseApplication;
 use Illuminate\Events\EventServiceProvider;
@@ -56,6 +57,7 @@ class Application extends BaseApplication implements ApplicationContract
 
         if(method_exists($provider, 'booted')) {
             Event::listen('antares.extension: booted', function() use($provider) {
+                Event::fire(new LoadServiceProviders());
                 $this->call([$provider, 'booted']);
             });
         }
