@@ -1,5 +1,5 @@
 <div class="grid-stack-item"          
-     id="{{ id }}"
+     id="{{ id }}" 
      data-gs-x="{{ x }}" 
      data-gs-y="{{ y }}" 
      data-gs-auto-position=false
@@ -15,7 +15,7 @@
      data-desktop="{{ desktop ? desktop|json_encode() : ''  }}"
      data-tablet="{{ tablet ? tablet|json_encode() : ''  }}"
      data-mobile="{{ mobile ? mobile|json_encode() : ''  }}"
-     >
+     >     
     <div class="grid-stack-item-content" >                        
         <input type="hidden" name="current" value="{{ id }}" />
         {% if(editable) %}
@@ -38,23 +38,19 @@
                                     {{ trans('Refresh') }}
                                 </a>
                             </li> 
-                            {#{{ event('ui-components:render.widget-actions.'~name)|raw }}#}
-                            {{ event('Antares\\Events\\Views\\WidgetActions', 'forced', name)|raw }}
+                            {{ event('ui-components:render.widget-actions.'~name)|raw }}
                         </ul>
                     </div>
 
                 </div>
-            </div>
+            </div>   
         {% endif %}
         {{ event('ui-components:render.before.'~name)|raw }}
         {{ event('Antares\\Events\\Views\\BeforeRenderComponent', 'forced', name)|raw }}
         {{ content|raw }}                                
-        {{ event('ui-components:render.after.'~name)|raw }}
+        {{ event('ui-components:render.after.'~name)|raw }}        
         {{ event('Antares\\Events\\Views\\AfterRenderComponent', 'forced', name)|raw }}
-                {% endif %}
-            </div>
-        </div>
-    </div>
+    </div>   
     {% if app('request').ajax() %}    
         {% set asset = app('antares.asset').container('antares/foundation::scripts') %}
         {{ asset.styles()|raw }}

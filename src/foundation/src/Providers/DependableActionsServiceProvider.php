@@ -54,6 +54,7 @@ class DependableActionsServiceProvider extends ServiceProvider
         //$events->listen('datatables:*:after.massactions.action.delete', DatatableMassActionsDependableActions::class);
         $events->listen(AfterMassActionsAction::class, DatatableMassActionsDependableActions::class);
         //$events->listen('breadcrumb.before.render.*', BreadcrumbsMenuDependableActions::class);
+
         $events->listen(BreadcrumbBeforeRender::class, BreadcrumbsMenuDependableActions::class);
     }
 

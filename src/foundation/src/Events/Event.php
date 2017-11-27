@@ -22,22 +22,29 @@ abstract class AbstractEvent implements Event
      */
     public function __construct()
     {
-        $model = $this->model();
+        if (!app()->bound('antares.installed')) {
+            return;
+        }
+        if (!app('antares.installed')) {
+            return;
+        }
+
+        $model     = $this->model();
         $fireCount = $model->fire_count ?? 0;
 
         if (static::isCountable()) {
             $fireCount++;
         }
 
-        $details = debug_backtrace()[1] ?? null;
+        $details       = debug_backtrace()[1] ?? null;
         $listenersData = $this->collectListenersData($model->namespace);
 
-        $model->details = $details ? serialize([
-            'file'      => $details['file'] ?? null,
-            'line'      => $details['line'] ?? null,
-            'function'  => $details['function'] ?? null,
-            'listeners' => $listenersData
-        ]) : null;
+        $model->details    = $details ? serialize([
+                    'file'      => $details['file'] ?? null,
+                    'line'      => $details['line'] ?? null,
+                    'function'  => $details['function'] ?? null,
+                    'listeners' => $listenersData
+                ]) : null;
         $model->fire_count = $fireCount;
         $model->save();
     }
@@ -71,12 +78,11 @@ abstract class AbstractEvent implements Event
      */
     protected function model(): EventModel
     {
-        $model = app(EventModel::class);
-        $namespace = get_class($this);
+        $model            = app(EventModel::class);
+        $namespace        = get_class($this);
         $model->namespace = $namespace;
 
-        return ($event = $model->where('namespace', $namespace)->first()) instanceof EventModel
-            ? $event : $model;
+        return ($event = $model->where('namespace', $namespace)->first()) instanceof EventModel ? $event : $model;
     }
 
     /**
@@ -86,7 +92,7 @@ abstract class AbstractEvent implements Event
     private function collectListenersData(string $event): array
     {
         $listenersData = [];
-        $listeners = app('events')->getListeners($event);
+        $listeners     = app('events')->getListeners($event);
 
         if (!empty($listeners)) {
             foreach ($listeners as $listener) {
@@ -95,7 +101,7 @@ abstract class AbstractEvent implements Event
                 }
 
                 $reflection = new \ReflectionFunction($listener);
-                $uses = $reflection->getStaticVariables();
+                $uses       = $reflection->getStaticVariables();
 
                 if (!isset($uses['listener'])) {
                     continue;
@@ -107,24 +113,24 @@ abstract class AbstractEvent implements Event
                     $reflection = new \ReflectionFunction($listenerParameter);
 
                     $this->addListener([
-                        'type' => 'Closure',
-                        'file' => $reflection->getFileName(),
+                        'type'  => 'Closure',
+                        'file'  => $reflection->getFileName(),
                         'lines' => sprintf('%s-%s', $reflection->getStartLine(), $reflection->getEndLine()),
-                    ], $listenersData);
+                            ], $listenersData);
                 } else if (is_string($listenerParameter)) {
                     if (strpos($listenerParameter, '@') === false) {
                         $namespace = $listenerParameter;
                     } else {
-                        $parts = explode('@', $listenerParameter);
+                        $parts     = explode('@', $listenerParameter);
                         $namespace = $parts[0];
-                        $function = $parts[1];
+                        $function  = $parts[1];
                     }
 
                     $this->addListener([
                         'type'      => 'Class',
                         'namespace' => $namespace,
                         'function'  => $function ?? 'handle'
-                    ], $listenersData);
+                            ], $listenersData);
                 }
             }
         }
