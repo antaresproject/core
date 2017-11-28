@@ -66,12 +66,22 @@ class ProcessMonitor {
      * @return ProcessInfo[]
      */
     public function getProcessesInfo() : array {
-        $processes = [];
+        $processIds = [];
+        $processes  = [];
+        $data       = [];
+
+        exec('pgrep php', $processIds);
         exec('ps ahxwwo pid:1,command:1 | grep php | grep -v grep | grep -v emacs', $processes);
 
-        return array_map(function(string $process) {
-            return new ProcessInfo($process);
-        }, $processes);
+        foreach($processes as $process) {
+            $pid = explode(' ', trim($process), 2)[0];
+
+            if( in_array($pid, $processIds) ) {
+                $data[] = new ProcessInfo($process);
+            }
+        }
+
+        return $data;
     }
 
     /**
@@ -94,18 +104,27 @@ class ProcessMonitor {
 
     /**
      * @param string $command
+     * @return Process
      */
-    public function run(string $command) {
-        if( Str::startsWith($command, 'artisan') ) {
-            $command = str_replace('artisan ', '', $command);
-        }
+    public function run(string $command) : Process {
+        $mutedCommand = Str::startsWith($command, 'artisan')
+            ? str_replace('artisan ', '', $command)
+            : $command;
 
         ignore_user_abort();
 
-        $log        = storage_path('logs' . DIRECTORY_SEPARATOR . snake_case(Str::slug($command)) . '.log');
+        $logName    = explode(' -', $mutedCommand, 2)[0];
+        $log        = storage_path('logs' . DIRECTORY_SEPARATOR . snake_case(Str::slug($logName)) . '.log');
         $rootPath   = base_path();
 
-        shell_exec("cd $rootPath && php artisan $command >> " . $log . " &");
+        shell_exec("cd $rootPath && php artisan $mutedCommand >> " . $log . " &");
+
+        exec('pgrep php', $processIds);
+        exec('ps ahxwwo pid:1,command:1 | grep php | grep -v grep | grep -v emacs', $processes);
+
+        $this->check();
+
+        return $this->getProcessByCommand($command);
     }
 
 }
