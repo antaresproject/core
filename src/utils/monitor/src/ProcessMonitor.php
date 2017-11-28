@@ -66,12 +66,22 @@ class ProcessMonitor {
      * @return ProcessInfo[]
      */
     public function getProcessesInfo() : array {
-        $processes = [];
+        $processIds = [];
+        $processes  = [];
+        $data       = [];
+
+        exec('pgrep php', $processIds);
         exec('ps ahxwwo pid:1,command:1 | grep php | grep -v grep | grep -v emacs', $processes);
 
-        return array_map(function(string $process) {
-            return new ProcessInfo($process);
-        }, $processes);
+        foreach($processes as $process) {
+            $pid = explode(' ', trim($process), 2)[0];
+
+            if( in_array($pid, $processIds) ) {
+                $data[] = new ProcessInfo($process);
+            }
+        }
+
+        return $data;
     }
 
     /**
