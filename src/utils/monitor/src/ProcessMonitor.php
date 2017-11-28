@@ -104,18 +104,26 @@ class ProcessMonitor {
 
     /**
      * @param string $command
+     * @return Process
      */
-    public function run(string $command) {
-        if( Str::startsWith($command, 'artisan') ) {
-            $command = str_replace('artisan ', '', $command);
-        }
+    public function run(string $command) : Process {
+        $mutedCommand = Str::startsWith($command, 'artisan')
+            ? str_replace('artisan ', '', $command)
+            : $command;
 
         ignore_user_abort();
 
-        $log        = storage_path('logs' . DIRECTORY_SEPARATOR . snake_case(Str::slug($command)) . '.log');
+        $log        = storage_path('logs' . DIRECTORY_SEPARATOR . snake_case(Str::slug($mutedCommand)) . '.log');
         $rootPath   = base_path();
 
-        shell_exec("cd $rootPath && php artisan $command >> " . $log . " &");
+        shell_exec("cd $rootPath && php artisan $mutedCommand >> " . $log . " &");
+
+        exec('pgrep php', $processIds);
+        exec('ps ahxwwo pid:1,command:1 | grep php | grep -v grep | grep -v emacs', $processes);
+
+        $this->check();
+
+        return $this->getProcessByCommand($command);
     }
 
 }
