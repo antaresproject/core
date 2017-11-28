@@ -76,8 +76,10 @@ class ConnectionTester extends ResponseAdapter implements Tester
         // The Swift SMTP transport instance will allow us to use any SMTP backend
         // for delivering mail such as Sendgrid, Amazon SES, or a custom server
         // a developer has available. We will just pass this configured host.
-        $transport = SmtpTransport::newInstance(
-                        $data['email_host'], $data['email_port']
+        //return new \Swift_Mailer($this->getTransport());
+
+        $transport = new SmtpTransport(
+                $data['email_host'], $data['email_port']
         );
 
         if (isset($data['email_encryption'])) {
