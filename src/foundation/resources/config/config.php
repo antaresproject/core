@@ -89,5 +89,6 @@ return [
             'firstname', 'lastname'
         ]
     ],
-    'mail'               => require 'mail.php'
+    'mail'               => require 'mail.php',
+    'log_events'         => false
 ];

@@ -28,6 +28,9 @@ abstract class AbstractEvent implements Event
         if (!app('antares.installed')) {
             return;
         }
+        if (!config('antares/foundation::log_events')) {
+            return;
+        }
 
         $model     = $this->model();
         $fireCount = $model->fire_count ?? 0;
