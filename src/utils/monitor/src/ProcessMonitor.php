@@ -113,7 +113,8 @@ class ProcessMonitor {
 
         ignore_user_abort();
 
-        $log        = storage_path('logs' . DIRECTORY_SEPARATOR . snake_case(Str::slug($mutedCommand)) . '.log');
+        $logName    = explode(' -', $mutedCommand, 2)[0];
+        $log        = storage_path('logs' . DIRECTORY_SEPARATOR . snake_case(Str::slug($logName)) . '.log');
         $rootPath   = base_path();
 
         shell_exec("cd $rootPath && php artisan $mutedCommand >> " . $log . " &");
