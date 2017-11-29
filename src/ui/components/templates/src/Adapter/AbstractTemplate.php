@@ -165,7 +165,10 @@ abstract class AbstractTemplate implements UiComponent
 
         $attributes = app(Service::class)->findOne(array_merge($defaults, $this->attributes), uri());
 
-        return $this->attributes = array_merge($this->attributes, $attributes);
+        $this->attributes            = array_merge($this->attributes, $attributes);
+        $this->attributes['desktop'] = array_only($this->attributes, ['x', 'y', 'width', 'height']);
+
+        return $this->attributes;
     }
 
     /**
