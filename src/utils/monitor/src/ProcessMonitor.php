@@ -103,6 +103,8 @@ class ProcessMonitor {
     }
 
     /**
+     * Runs new process and return info about it.
+     *
      * @param string $command
      * @return Process
      */

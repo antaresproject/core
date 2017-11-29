@@ -7,11 +7,15 @@ use Illuminate\Contracts\Support\Arrayable;
 class Process implements Arrayable {
 
     /**
+     * Process command.
+     *
      * @var string
      */
     protected $command;
 
     /**
+     * Info about running process.
+     *
      * @var ProcessInfo|null
      */
     protected $info;
@@ -73,5 +77,14 @@ class Process implements Arrayable {
             'running'   => $this->isRunning(),
             'info'      => $this->getInfo() ? $this->getInfo()->toArray() : null,
         ];
+    }
+
+    /**
+     * Kill running process.
+     */
+    public function kill() {
+        if($this->isRunning() && $pid = $this->getInfo()->getPid()) {
+            exec('kill ' . $pid);
+        }
     }
 }
