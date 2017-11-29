@@ -265,6 +265,16 @@ class FoundationServiceProvider extends ServiceProvider
         $this->app->make('view')->composer('antares/foundation::breadcrumbs.bootstrap3', function($view) {
             view()->share('breadcrumbs_data', array_get($view->getData(), 'breadcrumbs', []));
         });
+
+        $this->app->make('events')->listen(LoadServiceProviders::class, function() {
+            $widgets = $this->app->make('antares.ui-components.finder')->detectRoutes();
+
+            $widgets->each(function($widget) {
+                if (class_exists($widget)) {
+                    $widget::routes();
+                }
+            });
+         });
     }
 
     public function booted()
