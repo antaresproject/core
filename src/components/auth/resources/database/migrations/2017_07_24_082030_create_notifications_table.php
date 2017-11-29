@@ -46,14 +46,14 @@ class CreateNotificationsTable extends Migration
 
         Schema::create('tbl_notifications', function(Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->unique();
+            $table->string('name')->index();
             $table->string('source')->index()->nullable();
             $table->string('category')->index()->default('system');
             $table->unsignedInteger('severity_id')->index();
             $table->unsignedInteger('type_id')->index();
             $table->string('event')->index()->nullable();
             $table->text('recipients')->nullable();
-            $table->boolean('active')->default(1);
+            $table->boolean('active')->index()->default(1);
             $table->string('checksum', 500)->nullable();
             $table->timestamps();
 
