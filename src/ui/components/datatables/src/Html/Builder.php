@@ -287,7 +287,7 @@ class Builder extends BaseBuilder
      */
     public function generateScripts()
     {
-        app('antares.asset')->container('antares/foundation::application')->add('gridstack', '//10.10.10.35:71/js/view_datatables.js', ['webpack_gridstack', 'app_cache']);
+        app('antares.asset')->container('antares/foundation::application')->add('gridstack', '/_dist/js/view_datatables.js', ['webpack_gridstack', 'app_cache']);
 
         if ($this->orderable) {
             array_set($this->attributes, 'rowReorder', true);
@@ -884,16 +884,16 @@ EOD;
     {
         $model             = $this->getQuery()->getModel();
         $this->massActions = array_merge($this->massActions, (array)
-            //event('datatables:' . uri() . ':before.massactions.action.' . $name, [$this->massActions, $model], true)
-            event(new BeforeMassActionsAction(uri(), $name, $model, $this->massActions), [], true)
+                //event('datatables:' . uri() . ':before.massactions.action.' . $name, [$this->massActions, $model], true)
+                event(new BeforeMassActionsAction(uri(), $name, $model, $this->massActions), [], true)
         );
         if (empty($this->massActions)) {
             $this->massActions = [];
         }
         array_push($this->massActions, $massAction);
         $this->massActions = array_merge($this->massActions, (array)
-            //event('datatables:' . uri() . ':after.massactions.action.' . $name, [$this->massActions, $model], true);
-            event(new AfterMassActionsAction(uri(), $name, $model, $this->massActions), [], true)
+                //event('datatables:' . uri() . ':after.massactions.action.' . $name, [$this->massActions, $model], true);
+                event(new AfterMassActionsAction(uri(), $name, $model, $this->massActions), [], true)
         );
         $this->massActions = array_unique($this->massActions);
         return $this;
@@ -1032,7 +1032,7 @@ EOD;
 //                ->add('context_menu', '/packages/core/js/contextMenu.js');
         //->add('context_menu', '/packages/core/js/filters_mdl.js');
 
-        app('antares.asset')->container('antares/foundation::application')->add('filters', '//10.10.10.35:71/js/filters.js', ['webpack_gridstack', 'app_cache']);
+        app('antares.asset')->container('antares/foundation::application')->add('filters', '/_dist/js/filters.js', ['webpack_gridstack', 'app_cache']);
 
         $script = $script ?: $this->generateScripts();
 

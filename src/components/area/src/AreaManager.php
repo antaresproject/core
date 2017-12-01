@@ -148,6 +148,7 @@ class AreaManager implements AreaManagerContract
         $segment = $this->request->segment(1);
         $area    = $segment ? $this->getById($segment) : null;
 
+
         if (!$area && $this->auth->check()) {
             $user  = $this->auth->user();
             $areas = $user->getArea();
@@ -157,6 +158,7 @@ class AreaManager implements AreaManagerContract
                 $area = $this->areas->getById($areas);
             }
         }
+
         return $area ?: $this->getDefault();
     }
 

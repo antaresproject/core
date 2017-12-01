@@ -113,7 +113,7 @@ class DateRangeFilter extends AbstractFilter
      */
     public function render($start = null, $end = null)
     {
-        //app('antares.asset')->container('antares/foundation::application')->add('range_filter', '//10.10.10.35:71/js/range_filter.js', ['webpack_gridstack', 'app_cache']);
+        //app('antares.asset')->container('antares/foundation::application')->add('range_filter', '/_dist/js/range_filter.js', ['webpack_gridstack', 'app_cache']);
         app('antares.asset')->container('antares/foundation::application')->add('range_filter', '/packages/core/js/range_filter.js', ['webpack_gridstack', 'app_cache']);
         //publish('automation', ['js/automation_date_range_filter.js']);
         $classname = get_called_class();
