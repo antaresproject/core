@@ -56,6 +56,7 @@ class Menu extends Handler
         $return = $this->addItem($id, $location, $callback);
         Event::fire('antares.ready: menu.after.' . $id, $this);
         Event::fire(new AfterMenu($id, $this));
+
         return $return;
     }
 

@@ -52,12 +52,12 @@ class AfterFilters extends AbstractEvent
      * @param FilterAdapter $filterAdapter
      * @param               $query
      */
-    public function __construct(string $uri, string $filter, FilterAdapter $filterAdapter, $query)
+    public function __construct($uri, $filter, FilterAdapter $filterAdapter, $query)
     {
-        $this->uri = $uri;
-        $this->filter = $filter;
+        $this->uri           = $uri;
+        $this->filter        = $filter;
         $this->filterAdapter = $filterAdapter;
-        $this->query = $query;
+        $this->query         = $query;
 
         parent::__construct();
     }

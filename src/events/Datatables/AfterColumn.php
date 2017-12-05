@@ -48,11 +48,11 @@ class AfterColumn extends AbstractEvent
      * @param string  $columnName
      * @param Builder $builder
      */
-    public function __construct(string $uri, string $columnName, Builder $builder)
+    public function __construct($uri, $columnName, Builder $builder)
     {
-        $this->uri = $uri;
+        $this->uri        = $uri;
         $this->columnName = $columnName;
-        $this->builder = $builder;
+        $this->builder    = $builder;
 
         parent::__construct();
     }
