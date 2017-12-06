@@ -333,4 +333,14 @@ abstract class DataTable extends BaseDataTableService
         return $return;
     }
 
+    /**
+     * Checks whether user has access to view datatable
+     * 
+     * @return boolean
+     */
+    public function authorize()
+    {
+        return true;
+    }
+
 }
