@@ -707,7 +707,7 @@ EOD;
         $massable = (int) $this->hasMassActions();
         $attrs    = $this->html->attributes($this->containerAttributes);
 
-        return view('datatables-helpers::datatable', ['attributes' => $attrs, 'gridstack' => array_get($attributes, 'gridstack', true), 'table' => $this->beforeTable() . '<table data-massable="' . $massable . '" ' . $scrollable . ' data-table-init = "true" ' . $this->html->attributes($this->tableAttributes) . '>' . $string . '</table>']);
+        return view('datatables-helpers::datatable', ['massable' => $massable, 'attributes' => $attrs, 'gridstack' => array_get($attributes, 'gridstack', true), 'table' => $this->beforeTable() . '<table data-massable="' . $massable . '" ' . $scrollable . ' data-table-init = "true" ' . $this->html->attributes($this->tableAttributes) . '>' . $string . '</table>']);
     }
 
     /**
