@@ -85,6 +85,8 @@ class Primary extends DefaultHandler
         if ($changed && $this->cache instanceof Repository) {
             $this->cache->forget($this->cacheKey);
         }
+        event('memory.finish.' . $this->storage);
+
 
         return true;
     }

@@ -288,6 +288,7 @@ class Builder extends BaseBuilder
     public function generateScripts()
     {
         app('antares.asset')->container('antares/foundation::application')->add('gridstack', '/_dist/js/view_datatables.js', ['webpack_gridstack', 'app_cache']);
+        //app('antares.asset')->container('antares/foundation::application')->add('gridstack', '//10.10.10.35:71/js/view_datatables.js', ['webpack_gridstack', 'app_cache']);
 
         if ($this->orderable) {
             array_set($this->attributes, 'rowReorder', true);

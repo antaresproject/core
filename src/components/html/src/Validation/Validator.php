@@ -21,10 +21,10 @@
 
 namespace Antares\Html\Validation;
 
-use Antares\Events\Form\FormValidate;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Antares\Html\Validation\SupportValidator;
 use Illuminate\Support\Facades\Response;
+use Antares\Events\Form\FormValidate;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Http\Request;
 
@@ -193,6 +193,7 @@ class Validator implements ValidatorContract
             $this->messageBag = $messageBag;
             return false;
         }
+
         return true;
     }
 

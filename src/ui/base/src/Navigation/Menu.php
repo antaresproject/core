@@ -54,6 +54,7 @@ class Menu
      */
     public function __construct(ItemInterface $menuItem, Dispatcher $dispatcher, RendererInterface $renderer)
     {
+
         $this->menuItem   = $menuItem;
         $this->dispatcher = $dispatcher;
         $this->renderer   = $renderer;
@@ -148,6 +149,7 @@ class Menu
      */
     public function render(array $options = []): string
     {
+        ;
         return $this->renderer->render($this->menuItem, $options);
     }
 

@@ -21,16 +21,18 @@
 
 namespace Antares\UI\Navigation;
 
-use Antares\UI\Navigation\Events\MenuCreated;
+use Antares\UI\Navigation\Renderers\JsonBreadcrumbRenderer;
 use Antares\UI\Navigation\Renderers\BreadcrumbRenderer;
 use Antares\UI\Navigation\Renderers\ListRenderer;
+use Antares\UI\Navigation\Events\MenuCreated;
 use Illuminate\Contracts\Events\Dispatcher;
 use Knp\Menu\Matcher\Matcher;
 use Knp\Menu\MenuFactory;
 use Knp\Menu\MenuItem;
 use Knp\Menu\Renderer\RendererInterface;
 
-class Factory {
+class Factory
+{
 
     /**
      * @var MenuFactory
@@ -64,38 +66,43 @@ class Factory {
      * @param Dispatcher $dispatcher
      * @param array $renderOptions
      */
-    public function __construct(MenuFactory $menuFactory, Matcher $matcher, Dispatcher $dispatcher, array $renderOptions = []) {
-        $this->menuFactory      = $menuFactory;
-        $this->matcher          = $matcher;
-        $this->dispatcher       = $dispatcher;
-        $this->renderOptions    = $renderOptions;
+    public function __construct(MenuFactory $menuFactory, Matcher $matcher, Dispatcher $dispatcher, array $renderOptions = [])
+    {
+        $this->menuFactory   = $menuFactory;
+        $this->matcher       = $matcher;
+        $this->dispatcher    = $dispatcher;
+        $this->renderOptions = $renderOptions;
     }
 
     /**
      * @return Menu
      */
-    public function primaryMenu() : Menu {
+    public function primaryMenu(): Menu
+    {
         return $this->create('primary-menu', new ListRenderer($this->matcher, $this->renderOptions));
     }
 
     /**
      * @return Menu
      */
-    public function secondaryMenu() : Menu {
+    public function secondaryMenu(): Menu
+    {
         return $this->create('secondary-menu', new ListRenderer($this->matcher, $this->renderOptions));
     }
 
     /**
      * @return Menu
      */
-    public function page() : Menu {
+    public function page(): Menu
+    {
         return $this->create('page-menu', new ListRenderer($this->matcher, $this->renderOptions));
     }
 
     /**
      * @return Menu
      */
-    public function breadcrumb() : Menu {
+    public function breadcrumb(): Menu
+    {
         return $this->create('breadcrumb', new BreadcrumbRenderer($this->matcher, $this->renderOptions));
     }
 
@@ -106,10 +113,11 @@ class Factory {
      * @return Menu
      * @throws \InvalidArgumentException
      */
-    public function of(string $name, RendererInterface $renderer = null, array $options = []) : Menu {
+    public function of(string $name, RendererInterface $renderer = null, array $options = []): Menu
+    {
         $methods = get_class_methods($this);
 
-        if( in_array($name, $methods, true) ) {
+        if (in_array($name, $methods, true)) {
             throw new \InvalidArgumentException('The name is already reserved.');
         }
 
@@ -122,11 +130,12 @@ class Factory {
      * @param array $options
      * @return Menu
      */
-    protected function create(string $name, RendererInterface $renderer = null, array $options = []) : Menu {
+    protected function create(string $name, RendererInterface $renderer = null, array $options = []): Menu
+    {
         if (!array_key_exists($name, $this->menus)) {
             $renderer = $renderer ?: new ListRenderer($this->matcher, $this->renderOptions);
             $menuItem = $this->menuFactory->createItem($name, $options);
-            $menu = new Menu($menuItem, $this->dispatcher, $renderer);
+            $menu     = new Menu($menuItem, $this->dispatcher, $renderer);
 
             $this->dispatcher->dispatch(new MenuCreated($menu));
 
