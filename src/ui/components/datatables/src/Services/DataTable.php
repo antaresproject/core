@@ -235,7 +235,7 @@ abstract class DataTable extends BaseDataTableService
     {
         $of         = is_null($query) ? $this->getQuery() : $query;
         $datatables = $this->datatables->of($of, get_class($this));
-        $path       = uri();
+        $path       = str_replace(url('/'), '', url()->current());
         Event::fire("datatables.value.{$path}", [$datatables]);
         Event::fire(new Value($path, $datatables));
 

@@ -21,15 +21,15 @@
 
 namespace Antares\UI\Navigation;
 
-use Antares\UI\Navigation\Renderers\JsonBreadcrumbRenderer;
+use Antares\UI\Navigation\Renderers\BreadcrumbJsonRenderer;
 use Antares\UI\Navigation\Renderers\BreadcrumbRenderer;
 use Antares\UI\Navigation\Renderers\ListRenderer;
 use Antares\UI\Navigation\Events\MenuCreated;
 use Illuminate\Contracts\Events\Dispatcher;
+use Knp\Menu\Renderer\RendererInterface;
 use Knp\Menu\Matcher\Matcher;
 use Knp\Menu\MenuFactory;
 use Knp\Menu\MenuItem;
-use Knp\Menu\Renderer\RendererInterface;
 
 class Factory
 {
@@ -103,7 +103,11 @@ class Factory
      */
     public function breadcrumb(): Menu
     {
-        return $this->create('breadcrumb', new BreadcrumbRenderer($this->matcher, $this->renderOptions));
+        $request  = request();
+        $api      = !$request->ajax() && ($request->isJson() OR $request->wantsJson());
+        $renderer = $api ? new BreadcrumbJsonRenderer($this->matcher, $this->renderOptions) : new BreadcrumbRenderer($this->matcher, $this->renderOptions);
+
+        return $this->create('breadcrumb', $renderer);
     }
 
     /**
