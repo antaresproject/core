@@ -58,7 +58,6 @@ trait RouteProviderTrait
      */
     protected function loadFrontendRoutesFrom($path, $namespace = '', array $attributes = [])
     {
-
         if (AreasManager::manager()->isBackendArea()) {
             return;
         }
