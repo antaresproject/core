@@ -50,8 +50,7 @@ class CustomfieldAdapter
         }
         foreach ($customfields as $classname => $customfield) {
 
-
-            if (!$grid->row instanceof $classname) {
+            if (get_class($grid->row) !== $classname) {
                 continue;
             }
             if (!is_array($customfield)) {
@@ -76,7 +75,7 @@ class CustomfieldAdapter
                 foreach ($classnames as $classname) {
 
 
-                    if (!$this->grid->row instanceof $classname) {
+                    if (get_class($this->grid->row) !== $classname) {
                         continue;
                     }
                     array_push($types, $type);
