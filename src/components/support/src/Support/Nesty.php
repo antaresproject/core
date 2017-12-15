@@ -111,6 +111,7 @@ class Nesty
      */
     protected function addAfter($id, $after)
     {
+
         $items = [];
 
         $item = $this->toFluent($id);

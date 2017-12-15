@@ -68,7 +68,7 @@ class ComponentParams extends Model
     public function save(array $options = [])
     {
         $ignored    = config('antares/ui-components::defaults.ignored', []);
-        $this->data = array_except( (array) $this->data, $ignored);
+        $this->data = array_except((array) $this->data, $ignored);
 
         return parent::save();
     }

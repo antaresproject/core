@@ -86,10 +86,13 @@ abstract class MenuHandler
         Event::fire('antares.ready: menu.before.' . $id);
         Event::fire(new BeforeMenu($id, $this));
 
+
         if (!$this->passesAuthorization()) {
             return;
         }
         $args = func_get_args();
+
+
         if (isset($args[0]) && ($args[0] instanceof AfterMenu || $args[0] instanceof Handler)) {
             $menu = $args[0] instanceof AfterMenu ? $args[0]->menu : $args[0];
 

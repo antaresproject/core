@@ -12,7 +12,6 @@
  *
  * @package    UI
  * @version    0.9.2
- * @author     Original Orchestral https://github.com/orchestral
  * @author     Antares Team
  * @license    BSD License (3-clause)
  * @copyright  (c) 2017, Antares
@@ -23,7 +22,8 @@ namespace Antares\UI\Navigation\Renderers;
 
 use Knp\Menu\ItemInterface;
 
-class BreadcrumbRenderer extends ListRenderer {
+class BreadcrumbRenderer extends ListRenderer
+{
 
     /**
      * @param ItemInterface $item
@@ -31,17 +31,18 @@ class BreadcrumbRenderer extends ListRenderer {
      * @param array $options
      * @return string
      */
-    protected function renderList(ItemInterface $item, array $attributes, array $options) {
-        if($item->getLevel() === 0) {
+    protected function renderList(ItemInterface $item, array $attributes, array $options)
+    {
+        if ($item->getLevel() === 0) {
             $attributes['class'] = 'breadcrumbs';
         }
 
         $shouldBeSubmenu = $this->shouldBeSubmenu($item);
 
-        if($shouldBeSubmenu) {
+        if ($shouldBeSubmenu) {
             $attributes['class'] = 'ddown__menu';
 
-            foreach($item->getChildren() as $child) {
+            foreach ($item->getChildren() as $child) {
                 $child->setLinkAttribute('class', 'mdl-js-button mdl-js-ripple-effect');
                 $child->setLabelAttribute('class', 'mdl-js-button mdl-js-ripple-effect');
             }
@@ -49,11 +50,11 @@ class BreadcrumbRenderer extends ListRenderer {
 
         $html = parent::renderList($item, $attributes, $options);
 
-        if($shouldBeSubmenu) {
+        if ($shouldBeSubmenu) {
             return view()->make('antares/foundation::layouts.antares.partials._breadcrumbs_submenu', [
-                'label'     => $item->getLabel(),
-                'uri'       => $item->getUri(),
-                'submenu'   => $html,
+                        'label'   => $item->getLabel(),
+                        'uri'     => $item->getUri(),
+                        'submenu' => $html,
             ]);
         }
 
@@ -65,8 +66,9 @@ class BreadcrumbRenderer extends ListRenderer {
      * @param array $options
      * @return string
      */
-    protected function renderLink(ItemInterface $item, array $options = array()) {
-        if($this->shouldBeSubmenu($item)) {
+    protected function renderLink(ItemInterface $item, array $options = array())
+    {
+        if ($this->shouldBeSubmenu($item)) {
             return '';
         }
 
@@ -77,7 +79,8 @@ class BreadcrumbRenderer extends ListRenderer {
      * @param ItemInterface $item
      * @return bool
      */
-    protected function shouldBeSubmenu(ItemInterface $item) : bool {
+    protected function shouldBeSubmenu(ItemInterface $item): bool
+    {
         return $item->getLevel() === 1 && $item->hasChildren();
     }
 

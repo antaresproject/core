@@ -274,7 +274,7 @@ class FoundationServiceProvider extends ServiceProvider
                     $widget::routes();
                 }
             });
-         });
+        });
     }
 
     public function booted()

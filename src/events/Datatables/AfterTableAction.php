@@ -52,11 +52,11 @@ class AfterTableAction extends AbstractEvent
      * @param mixed      $row
      * @param Collection $tableActions
      */
-    public function __construct(string $uri, string $actionName, $row, $tableActions)
+    public function __construct($uri, $actionName, $row, $tableActions)
     {
-        $this->uri = $uri;
-        $this->actionName = $actionName;
-        $this->row = $row;
+        $this->uri          = $uri;
+        $this->actionName   = $actionName;
+        $this->row          = $row;
         $this->tableActions = $tableActions;
 
         parent::__construct();

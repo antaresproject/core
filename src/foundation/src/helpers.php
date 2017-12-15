@@ -760,6 +760,8 @@ if (!function_exists('from_route')) {
             return null;
         }
         $current = Route::current();
+        is_null($current) ? $current = request()->route() : $current;
+
         return !is_null($current) ? $current->parameter($key, $default) : $default;
     }
 

@@ -67,12 +67,21 @@ class GridStackAdapter implements GridStack
      */
     protected function inline()
     {
+
+//            
+
+
         $inline = <<<EOD
            $(document).ready(function(){                         
+            
             var 
                 element = null,
                 grid = $('.grid-stack'),
-                container = grid.first(); 
+                container = grid.first(),
+                resized=false; 
+              window.onresize = function(event) {
+                    resized=true
+              };           
             
             grid.on('resizestop', function(event, ui) {                               
                 element = event.target;                
@@ -82,7 +91,13 @@ class GridStackAdapter implements GridStack
             });
             enquire.register('screen and (min-width:1366px)', {
                 match:function(){
+                    if(resized){
+                        return location.reload();
+                    }
+                
+                
                     container.on('change.dupa', function (e, items) { 
+                        
                         if(!$('#widgets-edit').length){
                             return false;
                         }

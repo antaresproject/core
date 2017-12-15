@@ -222,7 +222,7 @@ class Extensions extends DataTable
                 return '';
             }
 
-            $section = HTML::create('div', HTML::raw(implode('', $buttons)), ['class' => 'mass-actions-menu', 'style' => 'display:none;'])->get();
+            $section = HTML::create('div', HTML::raw(implode('', $buttons)), ['class' => 'mass-actions-menu disable-dbclick', 'style' => 'display:none;'])->get();
 
             return '<i class="zmdi zmdi-more"></i>' . $section;
         };
@@ -248,19 +248,18 @@ class Extensions extends DataTable
 
         $label = trans('antares/foundation::label.extensions.actions.' . $action);
 
-        if( count($notWritablePaths) ) {
+        if (count($notWritablePaths)) {
             $url = '#';
 
             $params = [
-                'class'            => 'bindable component-error-modal',
-                'data-title'       => trans('Not writable permissions for:'),
-                'data-icon'        => $icon,
-                'data-errors'      => json_encode($notWritablePaths),
+                'class'       => 'bindable component-error-modal',
+                'data-title'  => trans('Not writable permissions for:'),
+                'data-icon'   => $icon,
+                'data-errors' => json_encode($notWritablePaths),
             ];
-        }
-        else {
-            $name  = $extension->getFriendlyName();
-            $url   = URL::route(area() . '.modules.progress.index');
+        } else {
+            $name = $extension->getFriendlyName();
+            $url  = URL::route(area() . '.modules.progress.index');
 
             $params = [
                 'class'            => 'bindable component-prompt-modal',
@@ -277,7 +276,8 @@ class Extensions extends DataTable
     /**
      * @return array
      */
-    protected function getNotWritablePaths() {
+    protected function getNotWritablePaths()
+    {
         $writablePaths = [
             'bootstrap/cache/extension.php',
             'storage',
@@ -288,10 +288,10 @@ class Extensions extends DataTable
 
         $invalidPermissionsPaths = [];
 
-        foreach($writablePaths as $writablePath) {
+        foreach ($writablePaths as $writablePath) {
             $fileName = base_path($writablePath);
 
-            if( ! is_writable($fileName)) {
+            if (!is_writable($fileName)) {
                 $invalidPermissionsPaths[] = $fileName;
             }
         }

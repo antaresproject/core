@@ -28,7 +28,6 @@ use Antares\Events\Datatables\AfterFilters;
 use Antares\Events\Datatables\AfterMassActionsAction;
 use Antares\Events\Datatables\BeforeFilters;
 use Antares\Events\Datatables\BeforeMassActionsAction;
-use Antares\Events\Datatables\TopCenterContent;
 use Yajra\Datatables\Html\Builder as BaseBuilder;
 use Antares\Datatables\Adapter\FilterAdapter;
 use Antares\Datatables\Adapter\OrderAdapter;
@@ -287,7 +286,8 @@ class Builder extends BaseBuilder
      */
     public function generateScripts()
     {
-        app('antares.asset')->container('antares/foundation::application')->add('gridstack', '//10.10.10.35:71/js/view_datatables.js', ['webpack_gridstack', 'app_cache']);
+        app('antares.asset')->container('antares/foundation::application')->add('gridstack', '/_dist/js/view_datatables.js', ['webpack_gridstack', 'app_cache']);
+        //app('antares.asset')->container('antares/foundation::application')->add('gridstack', '//10.10.10.35:71/js/view_datatables.js', ['webpack_gridstack', 'app_cache']);
 
         if ($this->orderable) {
             array_set($this->attributes, 'rowReorder', true);
@@ -661,23 +661,6 @@ EOD;
      */
     public function tableDeferred(array $attributes = [])
     {
-//        ['width' => '15%', 'targets' => 0],
-//                                ['width' => '40%', 'targets' => 1],
-//                                ['width' => '22%', 'targets' => 2],
-//                                ['width' => '7%', 'targets' => 3],
-//                                ['width' => '10%', 'targets' => 4],
-//                                ['width' => '10%', 'targets' => 5],
-//                                ['width' => '1%', 'targets' => 6],
-//        $string='<colgroup class="ui-selectee" style="">'
-//                . '<col style="width: 15%;" class="ui-selectee"> '
-//                . '<col style="width: 40%;" class="ui-selectee"> '
-//                . '<col style="width: 22%;" class="ui-selectee"> '
-//                . '<col style="width: 7%;" class="ui-selectee"> '
-//                . '<col style="width: 10%;" class="ui-selectee"> '
-//                . '<col style="width: 10%;" class="ui-selectee"> '
-//                . '<col style="width: 1%;" class="ui-selectee"> '
-//                . '</colgroup>';
-
         $string = '<thead><tr>';
         foreach ($this->collection as $collectedItem) {
             $columnAttributes          = array_only($collectedItem->toArray(), ['class', 'id', 'width', 'style', 'data-class', 'data-hide']);
@@ -707,7 +690,7 @@ EOD;
         $massable = (int) $this->hasMassActions();
         $attrs    = $this->html->attributes($this->containerAttributes);
 
-        return view('datatables-helpers::datatable', ['attributes' => $attrs, 'gridstack' => array_get($attributes, 'gridstack', true), 'table' => $this->beforeTable() . '<table data-massable="' . $massable . '" ' . $scrollable . ' data-table-init = "true" ' . $this->html->attributes($this->tableAttributes) . '>' . $string . '</table>']);
+        return view('datatables-helpers::datatable', ['massable' => $massable, 'attributes' => $attrs, 'gridstack' => array_get($attributes, 'gridstack', true), 'table' => $this->beforeTable() . '<table data-massable="' . $massable . '" ' . $scrollable . ' data-table-init = "true" ' . $this->html->attributes($this->tableAttributes) . '>' . $string . '</table>']);
     }
 
     /**
@@ -884,16 +867,16 @@ EOD;
     {
         $model             = $this->getQuery()->getModel();
         $this->massActions = array_merge($this->massActions, (array)
-            //event('datatables:' . uri() . ':before.massactions.action.' . $name, [$this->massActions, $model], true)
-            event(new BeforeMassActionsAction(uri(), $name, $model, $this->massActions), [], true)
+                //event('datatables:' . uri() . ':before.massactions.action.' . $name, [$this->massActions, $model], true)
+                event(new BeforeMassActionsAction(uri(), $name, $model, $this->massActions), [], true)
         );
         if (empty($this->massActions)) {
             $this->massActions = [];
         }
         array_push($this->massActions, $massAction);
         $this->massActions = array_merge($this->massActions, (array)
-            //event('datatables:' . uri() . ':after.massactions.action.' . $name, [$this->massActions, $model], true);
-            event(new AfterMassActionsAction(uri(), $name, $model, $this->massActions), [], true)
+                //event('datatables:' . uri() . ':after.massactions.action.' . $name, [$this->massActions, $model], true);
+                event(new AfterMassActionsAction(uri(), $name, $model, $this->massActions), [], true)
         );
         $this->massActions = array_unique($this->massActions);
         return $this;
@@ -1032,7 +1015,7 @@ EOD;
 //                ->add('context_menu', '/packages/core/js/contextMenu.js');
         //->add('context_menu', '/packages/core/js/filters_mdl.js');
 
-        app('antares.asset')->container('antares/foundation::application')->add('filters', '//10.10.10.35:71/js/filters.js', ['webpack_gridstack', 'app_cache']);
+        app('antares.asset')->container('antares/foundation::application')->add('filters', '/_dist/js/filters.js', ['webpack_gridstack', 'app_cache']);
 
         $script = $script ?: $this->generateScripts();
 
@@ -1055,6 +1038,11 @@ EOD;
     {
         $this->orderable = true;
         return $this;
+    }
+
+    public function config()
+    {
+        return array_except(get_object_vars($this), ['massActions', 'filterAdapter', 'router', 'validCallbacks']);
     }
 
 }

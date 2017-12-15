@@ -15,6 +15,7 @@
      data-desktop="{{ desktop ? desktop|json_encode() : ''  }}"
      data-tablet="{{ tablet ? tablet|json_encode() : ''  }}"
      data-mobile="{{ mobile ? mobile|json_encode() : ''  }}"
+     data-autoresize="{{ autoresize }}"
      >     
     <div class="grid-stack-item-content" >                        
         <input type="hidden" name="current" value="{{ id }}" />

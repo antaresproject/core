@@ -81,7 +81,8 @@ return [
             'actions'           => false,
             'desktop'           => [],
             'tablet'            => [],
-            'mobile'            => []
+            'mobile'            => [],
+            'autoresize'        => false
         ]
     ],
     /**

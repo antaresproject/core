@@ -84,6 +84,10 @@ class Handler extends ExceptionHandler
         if ($e instanceof ValidationException) {
             return parent::render($request, $e);
         }
+         if ($e instanceof NotFoundHttpException && request()->segment(1) === 'install' && app()->bound('antares.installed')) {
+            return redirect('login');
+        }
+    
 
         try {
             $installed = app()->bound('antares.installed') ? app('antares.installed') : false;

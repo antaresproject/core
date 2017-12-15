@@ -90,11 +90,6 @@ abstract class AbstractTemplate implements UiComponent
     private $widgets = [];
 
     /**
-     * @var String
-     */
-    public $view = 'antares/ui-components::admin.partials._childable';
-
-    /**
      *
      * @var type 
      */
@@ -165,7 +160,10 @@ abstract class AbstractTemplate implements UiComponent
 
         $attributes = app(Service::class)->findOne(array_merge($defaults, $this->attributes), uri());
 
-        return $this->attributes = array_merge($this->attributes, $attributes);
+        $this->attributes            = array_merge($this->attributes, $attributes);
+        $this->attributes['desktop'] = array_only($this->attributes, ['x', 'y', 'width', 'height']);
+
+        return $this->attributes;
     }
 
     /**
@@ -188,7 +186,7 @@ abstract class AbstractTemplate implements UiComponent
     {
         try {
             $params = $this->fill();
-            return View::make($this->view)->with($params)->render();
+            return View::make('antares/ui-components::admin.partials._childable')->with($params)->render();
         } catch (Exception $e) {
             Log::emergency($e);
             return $e->getMessage();
@@ -322,6 +320,16 @@ abstract class AbstractTemplate implements UiComponent
     public function getSnakedName()
     {
         return snake_case(array_get($this->attributes, 'name'));
+    }
+
+    /**
+     * View getter
+     * 
+     * @return String
+     */
+    public function getView()
+    {
+        return $this->view;
     }
 
 }

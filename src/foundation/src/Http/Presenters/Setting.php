@@ -55,6 +55,7 @@ class Setting extends Presenter
      */
     public function form($model)
     {
+
         $this->breadcrumb->onSettings($model);
         return new SettingsForm($model);
     }

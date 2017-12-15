@@ -25,7 +25,8 @@ use Illuminate\Routing\Router;
 use Exception;
 use Illuminate\Support\Str;
 
-class CurrentRoute {
+class CurrentRoute
+{
 
     /**
      * @var Router
@@ -41,7 +42,8 @@ class CurrentRoute {
      * CurrentRoute constructor.
      * @param Router $router
      */
-    public function __construct(Router $router) {
+    public function __construct(Router $router)
+    {
         $this->router = $router;
     }
 
@@ -49,29 +51,33 @@ class CurrentRoute {
      * @return array
      * @throws Exception
      */
-    public function get() : array
+    public function get(): array
     {
         if ($this->route) {
             return $this->route;
         }
+        $route = ($this->isApi()) ? request()->route() : $this->router->current();
 
-        $route = $this->router->current();
 
-        if($route === null) {
+        if ($route === null) {
             return ['', []];
         }
 
         $name = $route->getName();
+
+
         $area = area();
 
-        if($name === null) {
+        if ($name === null) {
             return ['', []];
             $uri = head($route->methods()) . ' /' . $route->uri();
             throw new Exception("The current route ($uri) is not named - please check routes.php for an \"as\" parameter.");
-        }
-        elseif( Str::startsWith($name, $area . '.')) {
+        } elseif (Str::startsWith($name, $area . '.')) {
             $name = substr($name, strlen($area) + 1);
+        } elseif ($this->isApi() && str_start($name, 'api.' . $area)) {
+            $name = substr($name, strlen($area) + 5);
         }
+
 
         $params = array_values($route->parameters());
 
@@ -79,14 +85,27 @@ class CurrentRoute {
     }
 
     /**
+     * Whether request is an api request
+     * 
+     * @return boolean
+     */
+    protected function isApi()
+    {
+        $request = request();
+        return $request->isJson() OR $request->wantsJson();
+    }
+
+    /**
      * @param string $name
      * @param array $params
      */
-    public function set(string $name, array $params = []) : void {
+    public function set(string $name, array $params = []): void
+    {
         $this->route = [$name, $params];
     }
 
-    public function clear() : void {
+    public function clear(): void
+    {
         $this->route = null;
     }
 

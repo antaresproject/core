@@ -51,11 +51,11 @@ class AfterMassActionsAction extends AbstractEvent
      * @param mixed  $model
      * @param array  $massActions
      */
-    public function __construct(string $uri, string $actionName, $model, array $massActions = [])
+    public function __construct($uri, $actionName, $model, array $massActions = [])
     {
-        $this->uri = $uri;
-        $this->actionName = $actionName;
-        $this->model = $model;
+        $this->uri         = $uri;
+        $this->actionName  = $actionName;
+        $this->model       = $model;
         $this->massActions = $massActions;
 
         parent::__construct();

@@ -54,6 +54,7 @@ class Menu
      */
     public function __construct(ItemInterface $menuItem, Dispatcher $dispatcher, RendererInterface $renderer)
     {
+
         $this->menuItem   = $menuItem;
         $this->dispatcher = $dispatcher;
         $this->renderer   = $renderer;
@@ -81,15 +82,14 @@ class Menu
      */
     public function addItem(string $id, string $label, string $uri = null, string $icon = null, array $attributes = []): Menu
     {
-        $attributes = Arr::except($attributes, ['label', 'uri', 'icon']);
+        $attributes = Arr::except($attributes, ['label', 'uri']);
 
         $this->dispatcher->dispatch(new ItemAdding($id, $this->generateMenuItem($this->menuItem)));
 
         if ($icon && Str::startsWith($icon, 'zmdi-')) {
             $icon = 'zmdi ' . $icon;
         }
-
-        if ($icon) {
+        if ($icon && !app('antares.request')->shouldMakeApiResponse()) {
             $label = sprintf('<i class="%s"></i> %s', $icon, $label);
         }
 
@@ -98,6 +98,7 @@ class Menu
             'uri'   => $uri,
             'icon'  => $icon,
         ]));
+        $item->setAttributes(array_merge($attributes, ['icon' => $icon]));
 
         $item->setExtra('safe_label', true);
 
@@ -148,6 +149,7 @@ class Menu
      */
     public function render(array $options = []): string
     {
+        ;
         return $this->renderer->render($this->menuItem, $options);
     }
 

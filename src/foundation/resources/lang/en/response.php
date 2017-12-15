@@ -18,19 +18,17 @@
  * @copyright  (c) 2017, Antares
  * @link       http://antaresproject.io
  */
-
-
 return
 
         array(
             'extensions' => [
-                'activate'  => 'Extension has been activated',
-                'migrate'   => 'Extension migrations has been down',
-                'uninstall' => [
+                'activate'              => 'Extension has been activated',
+                'migrate'               => 'Extension migrations has been down',
+                'uninstall'             => [
                     'success' => 'Extension has been uninstalled.'
                 ],
                 'configuration-success' => 'The extensions has been configured successfully.',
-                'configuration-failed' => 'An error occurred during updating the extension configuration.',
+                'configuration-failed'  => 'An error occurred during updating the extension configuration.',
             ],
             'safe-mode'  => 'Antares is running on safe mode.',
             'account'    =>

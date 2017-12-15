@@ -29,7 +29,8 @@ use Exception;
 use Illuminate\Routing\UrlGenerator;
 use App;
 
-class Generator implements Arrayable {
+class Generator implements Arrayable
+{
 
     /**
      * @var Factory
@@ -54,7 +55,7 @@ class Generator implements Arrayable {
     /**
      * @var array
      */
-    protected $callbacks   = [];
+    protected $callbacks = [];
 
     /**
      * Generator constructor.
@@ -62,7 +63,8 @@ class Generator implements Arrayable {
      * @param AuthFactory $authFactory
      * @param UrlGenerator $urlGenerator
      */
-    public function __construct(Factory $factory, AuthFactory $authFactory, UrlGenerator $urlGenerator) {
+    public function __construct(Factory $factory, AuthFactory $authFactory, UrlGenerator $urlGenerator)
+    {
         $this->factory      = $factory;
         $this->authFactory  = $authFactory;
         $this->urlGenerator = $urlGenerator;
@@ -71,14 +73,16 @@ class Generator implements Arrayable {
     /**
      * @return AuthFactory
      */
-    public function acl() : AuthFactory {
+    public function acl(): AuthFactory
+    {
         return $this->authFactory;
     }
 
     /**
      * @return UrlGenerator
      */
-    public function url() : UrlGenerator {
+    public function url(): UrlGenerator
+    {
         return $this->urlGenerator;
     }
 
@@ -88,7 +92,8 @@ class Generator implements Arrayable {
      * @param array $params
      * @return array|Menu[]
      */
-    public function generate(array $callbacks, string $name, array $params) : array {
+    public function generate(array $callbacks, string $name, array $params): array
+    {
         $this->breadcrumbs = [];
         $this->callbacks   = $callbacks;
 
@@ -102,7 +107,8 @@ class Generator implements Arrayable {
      * @param array $params
      * @throws Exception
      */
-    protected function call(string $name, array $params) : void {
+    protected function call(string $name, array $params): void
+    {
         if (!isset($this->callbacks[$name])) {
             return;
             //throw new Exception("Breadcrumb not found with name \"{$name}\".");
@@ -112,10 +118,10 @@ class Generator implements Arrayable {
 
         $callback = $this->callbacks[$name];
 
-        if( is_string($callback) ) {
+        if (is_string($callback)) {
             $class = App::make($callback);
 
-            if(method_exists($class, 'handle')) {
+            if (method_exists($class, 'handle')) {
                 $callback = [$class, 'handle'];
             }
         }
@@ -127,7 +133,8 @@ class Generator implements Arrayable {
      * @param string $name
      * @param array ...$params
      */
-    public function parent(string $name, ...$params) : void {
+    public function parent(string $name, ...$params):  void
+    {
         $this->call($name, $params);
     }
 
@@ -139,8 +146,9 @@ class Generator implements Arrayable {
      * @param array $data
      * @return Menu
      */
-    public function push(string $id, string $title = null, string $url = null, string $icon = null, array $data = []) : Menu {
-        if($title === null) {
+    public function push(string $id, string $title = null, string $url = null, string $icon = null, array $data = []): Menu
+    {
+        if ($title === null) {
             $title = $id;
         }
 
@@ -154,7 +162,8 @@ class Generator implements Arrayable {
     /**
      * @return array|Menu[]
      */
-    public function toArray() : array {
+    public function toArray(): array
+    {
         return $this->breadcrumbs;
     }
 

@@ -62,10 +62,16 @@ class UseBackendTheme
         if (!auth()->guest() && user()->hasRoles(['client', 'memeber'])) {
             return $next($request);
         }
+
+
+
+
         app()->setLocale(user_meta('language', 'en'));
+
         $this->beforeSendingThroughPipeline();
 
         $response = $next($request);
+
         $this->afterSendingThroughPipeline();
         return $response;
     }
@@ -80,6 +86,7 @@ class UseBackendTheme
         $this->dispatcher->fire('antares.started: admin');
         $this->dispatcher->fire('antares.ready: admin');
         $this->dispatcher->fire('antares.ready: menu');
+
         $this->dispatcher->fire(new AdminStarted());
         $this->dispatcher->fire(new AdminReady());
         $this->dispatcher->fire(new MenuReady());
