@@ -1,4 +1,4 @@
-<div class="grid-stack">
+<div class="grid-stack">    
     <div class="grid-stack-item" 
          data-gs-no-resize="1" 
          data-gs-no-move="1" 
@@ -8,9 +8,9 @@
          data-gs-min-height="1"
          data-gs-width="24" 
          data-gs-height="24">
-        <div class="grid-stack-item-content">
+        <div class="grid-stack-item-content">   
             <div class="card card--pagination card-datatables pb0 {{ app('antares.widget').make('pane.left')|length>0?'noboxshadow':'' }}" data-preload>
-                <div class="tbl-c">  
+                <div class="tbl-c {{ massable is sameas(1) ? '' : 'no-selected-mode' }}" >  
                     {{ table|raw }}
                 </div>
             </div>

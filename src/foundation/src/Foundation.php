@@ -198,6 +198,7 @@ class Foundation extends RouteManager implements FoundationContract
      */
     protected function createAdminMenu()
     {
+
         $config = config('menu');
         $events = $this->app->make('events');
         foreach ($config as $event => $ordered) {

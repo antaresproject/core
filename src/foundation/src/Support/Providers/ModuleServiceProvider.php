@@ -359,10 +359,11 @@ abstract class ModuleServiceProvider extends ServiceProvider
      */
     private function loadBreadcrumbsFile()
     {
+
         $path = $this->extensionPath . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'breadcrumbs.php';
 
         if (file_exists($path)) {
-            $manager = $this->app->make(Manager::class);
+            $manager = $this->app->instance(Manager::class, $this->app->make(Manager::class));
             require_once $path;
         }
     }
@@ -405,7 +406,8 @@ abstract class ModuleServiceProvider extends ServiceProvider
      *
      * @param string $extension Ex. antaresproject/module-sample_module
      */
-    protected function importNotifications(string $extension) {
+    protected function importNotifications(string $extension)
+    {
         $this->afterActivated($extension, function() use($extension) {
             \Artisan::call('notifications:import', compact('extension'));
         });
@@ -417,7 +419,8 @@ abstract class ModuleServiceProvider extends ServiceProvider
      * @param string $extension Ex. antaresproject/module-sample_module
      * @param \Closure $operation
      */
-    protected function afterActivated(string $extension, \Closure $operation) {
+    protected function afterActivated(string $extension, \Closure $operation)
+    {
         listen('after.activated.' . $extension, $operation);
     }
 

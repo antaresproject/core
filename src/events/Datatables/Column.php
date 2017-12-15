@@ -47,9 +47,9 @@ class Column extends AbstractEvent
      * @param string $columnName
      * @param array  $attributes
      */
-    public function __construct(string $uri, string $columnName, array &$attributes)
+    public function __construct($uri, $columnName, array &$attributes)
     {
-        $this->uri = $uri;
+        $this->uri        = $uri;
         $this->columnName = $columnName;
         $this->attributes = $attributes;
 

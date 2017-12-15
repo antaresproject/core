@@ -33,15 +33,15 @@ class AfterFind extends AbstractEvent
     /** @var string */
     protected static $description = 'Runs after finding model from database';
 
-    /** @var Model */
+    /** @var Model|null */
     public $model;
 
     /**
      * AfterFind constructor
      *
-     * @param Model $model
+     * @param Model|null $model
      */
-    public function __construct(Model $model)
+    public function __construct(Model $model = null)
     {
         $this->model = $model;
 

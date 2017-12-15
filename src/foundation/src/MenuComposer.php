@@ -87,9 +87,11 @@ final class MenuComposer
         $instance = $this->app->make($classname);
         $params   = $instance->getAttribute('boot');
         $group    = array_get($params, 'group');
+
         $this->app->instance($group, app('antares.widget')->make($group));
 
         app('view')->composer(array_get($params, 'on'), function() use($instance, $group, $params) {
+
             if (!Registry::isRegistered('menu.' . $group)) {
                 $instance->__construct($this->app, $group);
                 $instance->handle();

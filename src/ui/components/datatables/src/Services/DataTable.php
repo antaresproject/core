@@ -235,7 +235,7 @@ abstract class DataTable extends BaseDataTableService
     {
         $of         = is_null($query) ? $this->getQuery() : $query;
         $datatables = $this->datatables->of($of, get_class($this));
-        $path       = uri();
+        $path       = str_replace(url('/'), '', url()->current());
         Event::fire("datatables.value.{$path}", [$datatables]);
         Event::fire(new Value($path, $datatables));
 
@@ -331,6 +331,16 @@ abstract class DataTable extends BaseDataTableService
             array_set($return, 'url', str_replace('{id}', $id, $pattern));
         }
         return $return;
+    }
+
+    /**
+     * Checks whether user has access to view datatable
+     * 
+     * @return boolean
+     */
+    public function authorize()
+    {
+        return true;
     }
 
 }

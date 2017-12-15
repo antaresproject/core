@@ -75,25 +75,25 @@ class UIServiceProvider extends ServiceProvider
         });
 
 
+        $request = request();
+        if (!$request->ajax() && !($request->isJson() OR $request->wantsJson())) {
+            /* @var $manager Manager */
+            $this->app->singleton(Manager::class);
+            $manager = $this->app->make(Manager::class);
+            View::composer('antares/foundation::layouts/antares/partials/_head_webpack', function() use($manager) {
+                if ($manager->isEnabled()) {
+                    $manager->generate();
+                    $manager->setupMeta();
+                }
+            });
 
-        $this->app->singleton(Manager::class);
-
-        /* @var $manager Manager */
-        $manager = $this->app->make(Manager::class);
-
-        View::composer('antares/foundation::layouts/antares/partials/_head_webpack', function() use($manager) {
-            if ($manager->isEnabled()) {
-                $manager->generate();
-                $manager->setupMeta();
-            }
-        });
-
-        View::composer('antares/foundation::layouts.antares.partials._breadcrumbs', function(\Illuminate\View\View $view) use($manager) {
-            if ($manager->isEnabled()) {
-                $manager->generate();
-                $view->with('new_breadcrumbs', true)->with('breadcrumbs', $manager->render());
-            }
-        });
+            View::composer('antares/foundation::layouts.antares.partials._breadcrumbs', function(\Illuminate\View\View $view) use($manager) {
+                if ($manager->isEnabled()) {
+                    $manager->generate();
+                    $view->with('new_breadcrumbs', true)->with('breadcrumbs', $manager->render());
+                }
+            });
+        }
     }
 
     /**
