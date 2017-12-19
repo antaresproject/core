@@ -1,19 +1,23 @@
-<div class="grid-stack">    
-    <div class="grid-stack-item" 
-         data-gs-no-resize="1" 
-         data-gs-no-move="1" 
-         data-gs-x="0" 
-         data-gs-y="0" 
-         data-gs-min-width="13" 
-         data-gs-min-height="1"
-         data-gs-width="24" 
-         data-gs-height="24">
-        <div class="grid-stack-item-content">   
+{% if gridstack %}
+    <div class="grid-stack">    
+        <div class="grid-stack-item" 
+             data-gs-no-resize="1" 
+             data-gs-no-move="1" 
+             data-gs-x="0" 
+             data-gs-y="0" 
+             data-gs-min-width="13" 
+             data-gs-min-height="1"
+             data-gs-width="24" 
+             data-gs-height="24">
+            <div class="grid-stack-item-content">   
+            {% endif %}            
             <div class="card card--pagination card-datatables pb0 {{ app('antares.widget').make('pane.left')|length>0?'noboxshadow':'' }}" data-preload>
                 <div class="tbl-c {{ massable is sameas(1) ? '' : 'no-selected-mode' }}" >  
                     {{ table|raw }}
                 </div>
             </div>
+            {% if gridstack %}                
+            </div>
         </div>
     </div>
-</div>
+{% endif %}            

@@ -243,6 +243,13 @@ class Builder extends BaseBuilder
     protected $zeroDataConfig = [];
 
     /**
+     * Whether use gridstack container
+     *
+     * @var boolean
+     */
+    protected $useGridstack = true;
+
+    /**
      * Constructing
      * 
      * @param Repository $config
@@ -689,8 +696,7 @@ EOD;
         }
         $massable = (int) $this->hasMassActions();
         $attrs    = $this->html->attributes($this->containerAttributes);
-
-        return view('datatables-helpers::datatable', ['massable' => $massable, 'attributes' => $attrs, 'gridstack' => array_get($attributes, 'gridstack', true), 'table' => $this->beforeTable() . '<table data-massable="' . $massable . '" ' . $scrollable . ' data-table-init = "true" ' . $this->html->attributes($this->tableAttributes) . '>' . $string . '</table>']);
+        return view('datatables-helpers::datatable', ['massable' => $massable, 'attributes' => $attrs, 'gridstack' => array_get($attributes, 'gridstack', $this->useGridstack), 'table' => $this->beforeTable() . '<table data-massable="' . $massable . '" ' . $scrollable . ' data-table-init = "true" ' . $this->html->attributes($this->tableAttributes) . '>' . $string . '</table>']);
     }
 
     /**
@@ -1043,6 +1049,13 @@ EOD;
     public function config()
     {
         return array_except(get_object_vars($this), ['massActions', 'filterAdapter', 'router', 'validCallbacks']);
+    }
+
+    public function useGridstack($use)
+    {
+        $this->useGridstack                 = $use;
+        $this->tableAttributes['gridstack'] = $use;
+        return $this;
     }
 
 }

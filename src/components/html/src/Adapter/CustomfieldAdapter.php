@@ -50,6 +50,9 @@ class CustomfieldAdapter
         }
         foreach ($customfields as $classname => $customfield) {
 
+            if (is_array($grid->row)) {
+                continue;
+            }
             if (get_class($grid->row) !== $classname) {
                 continue;
             }
@@ -74,7 +77,9 @@ class CustomfieldAdapter
             foreach ($map as $type => $classnames) {
                 foreach ($classnames as $classname) {
 
-
+                    if (is_array($this->grid->row)) {
+                        continue;
+                    }
                     if (get_class($this->grid->row) !== $classname) {
                         continue;
                     }
