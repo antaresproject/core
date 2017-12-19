@@ -34,8 +34,8 @@ return [
         'member'   => '/'
     ],
     'roles'              => [
-        'admin'  => 1,
-        'member' => 2,
+        'admin'  => 2,
+        'member' => 3,
     ],
     'throttle'           => [
         /*
