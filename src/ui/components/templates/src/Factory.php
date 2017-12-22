@@ -26,9 +26,11 @@ use Antares\UI\UIComponents\Traits\DispatchableTrait;
 use Antares\UI\UIComponents\Model\Components;
 use Illuminate\Contracts\Container\Container;
 use Antares\UI\UIComponents\Service\Service;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Collection;
 use Antares\Memory\ContainerTrait;
 use Illuminate\Http\Response;
+use Exception;
 
 class Factory
 {
@@ -84,6 +86,9 @@ class Factory
      */
     public function detect()
     {
+        if (!$this->isValidRoute()) {
+            return;
+        }
         $this->app->make('events')->fire('antares.ui-components: detecting');
         $this->app->make('events')->fire(new ComponentsDetecting());
 
@@ -97,6 +102,27 @@ class Factory
             $this->app->make('ui-components')->save(array_get($component, 'name'), $component);
         }
         return $components;
+    }
+
+    /**
+     * Whether route is valid to view widgets
+     * 
+     * @return boolean
+     */
+    protected function isValidRoute()
+    {
+        try {
+
+            $current = Route::current();
+            if (!$current) {
+                return false;
+            }
+            $action = $current->action;
+            $as     = array_get($action, 'as');
+            return str_contains($as, 'show') or str_contains($as, 'dashboard');
+        } catch (Exception $ex) {
+            return false;
+        }
     }
 
     /**
