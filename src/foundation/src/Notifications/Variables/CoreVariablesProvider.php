@@ -8,6 +8,7 @@ use Antares\Notifications\Contracts\ModelVariablesResoluble;
 use Antares\Notifications\Services\ModuleVariables;
 use Carbon\Carbon;
 use Closure;
+use Faker\Factory as Faker;
 
 class CoreVariablesProvider implements ModelVariablesResoluble {
 
@@ -54,7 +55,18 @@ class CoreVariablesProvider implements ModelVariablesResoluble {
      */
     public static function defaultUser() : Closure {
         return function() {
-            return auth()->user();
+            if($user = auth()->user()) {
+                return $user;
+            }
+
+            $faker = Faker::create();
+
+            return new User([
+                'email'     => $faker->email,
+                'firstname' => $faker->firstName,
+                'lastname'  => $faker->lastName,
+                'status'    => User::UNVERIFIED,
+            ]);
         };
     }
 
