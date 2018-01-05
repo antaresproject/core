@@ -41,12 +41,12 @@ class BeforeRenderComponent extends AbstractEvent
     /**
      * BeforeRenderComponent constructor
      *
-     * @param string $template
-     * @param string $componentName
+     * @param mixed $template
+     * @param mixed $componentName
      */
-    public function __construct(string $template, string $componentName)
+    public function __construct($template, $componentName)
     {
-        $this->template = $template;
+        $this->template      = $template;
         $this->componentName = $componentName;
 
         parent::__construct();

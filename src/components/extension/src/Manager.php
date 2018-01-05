@@ -11,7 +11,7 @@ use Antares\Extension\Factories\SettingsFactory;
 use Antares\Extension\Model\ExtensionModel;
 use Antares\Extension\Repositories\ExtensionsRepository;
 use Antares\Support\Collection;
-use Dingo\Api\Facade\Route;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;

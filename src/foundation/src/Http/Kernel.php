@@ -73,6 +73,7 @@ class Kernel extends HttpKernel
         'antares' => [
             'web',
             'backend',
+            'frontend',
             \Antares\Users\Http\Middleware\LoginAs::class,
         ],
         'api'     => [
@@ -91,6 +92,7 @@ class Kernel extends HttpKernel
         'auth'       => Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'backend'    => \Antares\Foundation\Http\Middleware\UseBackendTheme::class,
+        'frontend'   => \Antares\Foundation\Http\Middleware\UseFrontendTheme::class,
         'can'        => \Antares\Users\Http\Middleware\Can::class,
         'guest'      => \Antares\Users\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle'   => \Illuminate\Routing\Middleware\ThrottleRequests::class,

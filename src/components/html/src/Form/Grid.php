@@ -163,7 +163,11 @@ class Grid extends BaseGrid implements GridContract
     public function initiate(Repository $config)
     {
         if (extension_active('tester')) {
-            $this->generator = app(\Antares\Tester\Builder\Generator::class);
+            try {
+                $this->generator = app(\Antares\Tester\Builder\Generator::class);
+            } catch (Exception $ex) {
+                
+            }
         }
         $this->fieldsets = new Collection();
         foreach ($config->get('antares/html::form', []) as $key => $value) {
