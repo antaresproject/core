@@ -91,7 +91,6 @@ class Setting extends Processor implements SystemUpdateCommand, SettingUpdateCom
         }
         $memory = $this->memory;
         $memory->put('site.mode', $input['mode']);
-
         $memory->finish();
         return $listener->settingHasUpdated();
     }

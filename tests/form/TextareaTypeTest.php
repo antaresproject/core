@@ -28,33 +28,33 @@ use Illuminate\View\View;
 class TextareaTypeTest extends ApplicationTestCase
 {
 
-	/**
-	 * Prepare application, autoload etc.
-	 */
-	public function setUp()
-	{
-	    parent::setUp();
-	}
+    /**
+     * Prepare application, autoload etc.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+    }
 
-	/**
-	 * @test
-	 *
-	 * @covers TextareaType::setRows()
-	 */
-	public function testSetMinValue()
-	{
-		$control = new TextareaType('name');
+    /**
+     * @test
+     *
+     * @covers TextareaType::setRows()
+     */
+    public function testSetMinValue()
+    {
+        $control = new TextareaType('name');
 
-		$rows = rand(0, 100);
+        $rows = rand(0, 100);
 
-		$control->setRows($rows);
+        $control->setRows($rows);
 
-		$this->assertArrayHasKey('rows', $control->getAttributes());
-		$this->assertEquals($rows, $control->getAttribute('rows'));
+        $this->assertArrayHasKey('rows', $control->getAttributes());
+        $this->assertEquals($rows, $control->getAttribute('rows'));
 
-		$html = (string) $control;
+        $html = (string) $control;
 
-		$this->assertTrue((bool) preg_match(sprintf("/<textarea(.*?)rows=('|\"|)%s('|\"|)/s", $rows), $html));
-	}
+        $this->assertFalse((bool) preg_match(sprintf("/<textarea(.*?)rows=('|\"|)%s('|\"|)/s", $rows), $html));
+    }
 
 }

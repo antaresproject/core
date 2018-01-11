@@ -28,98 +28,98 @@ use Illuminate\View\View;
 class CheckboxTypeTest extends ApplicationTestCase
 {
 
-	/**
-	 * Prepare application, autoload etc.
-	 */
-	public function setUp()
-	{
-	    parent::setUp();
-	}
+    /**
+     * Prepare application, autoload etc.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+    }
 
-	/**
-	 * @test
-	 *
-	 * @covers CheckboxType::useHiddenElement()
-	 * @covers CheckboxType::setUseHiddenElement()
-	 */
-	public function testUseHiddenElement()
-	{
-		$control = new CheckboxType('name');
+    /**
+     * @test
+     *
+     * @covers CheckboxType::useHiddenElement()
+     * @covers CheckboxType::setUseHiddenElement()
+     */
+    public function testUseHiddenElement()
+    {
+        $control = new CheckboxType('name');
 
-		$control->setUseHiddenElement(true);
+        $control->setUseHiddenElement(true);
 
-		$this->assertTrue($control->useHiddenElement());
+        $this->assertTrue($control->useHiddenElement());
 
-		$control->setUseHiddenElement(false);
+        $control->setUseHiddenElement(false);
 
-		$this->assertFalse($control->useHiddenElement());
-	}
+        $this->assertFalse($control->useHiddenElement());
+    }
 
-	/**
-	 * @test
-	 *
-	 * @covers CheckboxType::setUseHiddenElement()
-	 */
-	public function testHtmlUseHiddenElement()
-	{
-		$control = new CheckboxType('name');
+    /**
+     * @test
+     *
+     * @covers CheckboxType::setUseHiddenElement()
+     */
+    public function testHtmlUseHiddenElement()
+    {
+        $control = new CheckboxType('name');
 
-		$control->setUseHiddenElement(true);
+        $control->setUseHiddenElement(true);
 
-		$html = (string) $control;
+        $html = (string) $control;
 
-		$this->assertTrue((bool) preg_match("/<input(.*?)type=('|\")hidden('|\")/", $html));
-	}
-	
-	/**
-	 * @test
-	 *
-	 * @covers CheckboxType::setCheckedValue()
-	 * @covers CheckboxType::getCheckedValue()
-	 * @covers CheckboxType::getUncheckedValue()
-	 * @covers CheckboxType::isChecked()
-	 * @covers CheckboxType::setValue()
-	 */
-	public function testCheckboxIsChecked()
-	{
-		$control = new CheckboxType('name');
+        $this->assertFalse((bool) preg_match("/<input(.*?)type=('|\")hidden('|\")/", $html));
+    }
 
-		$this->assertFalse($control->isChecked());
+    /**
+     * @test
+     *
+     * @covers CheckboxType::setCheckedValue()
+     * @covers CheckboxType::getCheckedValue()
+     * @covers CheckboxType::getUncheckedValue()
+     * @covers CheckboxType::isChecked()
+     * @covers CheckboxType::setValue()
+     */
+    public function testCheckboxIsChecked()
+    {
+        $control = new CheckboxType('name');
 
-		$randomValue = rand(5, 10);
+        $this->assertFalse($control->isChecked());
 
-		$control->setCheckedValue($randomValue);
-		$control->setValue($randomValue);
+        $randomValue = rand(5, 10);
 
-		$this->assertTrue($control->isChecked());
-		$this->assertEquals($control->getValue(), $control->getCheckedValue());
+        $control->setCheckedValue($randomValue);
+        $control->setValue($randomValue);
 
-		do {
-			$newRandomValue = rand(5, 10);
-		} while($newRandomValue === $randomValue);
+        $this->assertTrue($control->isChecked());
+        $this->assertEquals($control->getValue(), $control->getCheckedValue());
 
-		$control->setValue($newRandomValue);
+        do {
+            $newRandomValue = rand(5, 10);
+        } while ($newRandomValue === $randomValue);
 
-		$this->assertFalse($control->isChecked());
-		$this->assertEquals($control->getValue(), $control->getUncheckedValue());
-	}
+        $control->setValue($newRandomValue);
 
-	/**
-	 * @test
-	 *
-	 * @covers CheckboxType::render()
-	 */
-	public function testRender()
-	{
-		$control = new CheckboxType('name');
+        $this->assertFalse($control->isChecked());
+        $this->assertEquals($control->getValue(), $control->getUncheckedValue());
+    }
 
-		$view = $control->render();
+    /**
+     * @test
+     *
+     * @covers CheckboxType::render()
+     */
+    public function testRender()
+    {
+        $control = new CheckboxType('name');
 
-		$this->assertInstanceOf(View::class, $view);
+        $view = $control->render();
 
-		$html = (string) $view;
+        $this->assertInstanceOf(View::class, $view);
 
-		$this->assertTrue((bool) preg_match("/<input(.*?)type=('|\")checkbox('|\")/s", $html));
-	}
+        $html = (string) $view;
+
+        $this->assertTrue((bool) preg_match("/<input(.*?)type=('|\")checkbox('|\")/s", $html));
+    }
 
 }

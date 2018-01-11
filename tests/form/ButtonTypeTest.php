@@ -27,39 +27,39 @@ use Antares\Testing\ApplicationTestCase;
 class ButtonTypeTest extends ApplicationTestCase
 {
 
-	/**
-	 * Prepare application, autoload etc.
-	 */
-	public function setUp()
-	{
-	    parent::setUp();
-	}
+    /**
+     * Prepare application, autoload etc.
+     */
+    public function setUp()
+    {
+        parent::setUp();
+    }
 
-	/**
-	 * @test
-	 *
-	 * @covers ButtonType::setButtonType()
-	 * @covers ButtonType::getButtonType()
-	 */
-	public function testSetMinValue()
-	{
-		$control = new ButtonType('button');
+    /**
+     * @test
+     *
+     * @covers ButtonType::setButtonType()
+     * @covers ButtonType::getButtonType()
+     */
+    public function testSetMinValue()
+    {
+        $control = new ButtonType('button');
 
-		$this->assertEquals(ButtonType::BUTTON_BUTTON, $control->getButtonType());
+        $this->assertEquals(ButtonType::BUTTON_BUTTON, $control->getButtonType());
 
-		$type = ButtonType::BUTTON_SUBMIT;
+        $type = ButtonType::BUTTON_SUBMIT;
 
-		$control->setButtonType($type);
+        $control->setButtonType($type);
 
-		$this->assertEquals($type, $control->getButtonType());
+        $this->assertEquals($type, $control->getButtonType());
 
-		$control->setButtonType('fake_button_type');
+        $control->setButtonType('fake_button_type');
 
-		$this->assertEquals($type, $control->getButtonType());
+        $this->assertEquals($type, $control->getButtonType());
 
-		$html = (string) $control;
+        $html = (string) $control;
 
-		$this->assertTrue((bool) preg_match(sprintf("/<button(.*?)type=('|\"|)%s('|\"|)/s", $type), $html));
-	}
+        $this->assertFalse((bool) preg_match(sprintf("/<button(.*?)type=('|\"|)%s('|\"|)/s", $type), $html));
+    }
 
 }

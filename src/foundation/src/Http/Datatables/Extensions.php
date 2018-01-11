@@ -296,6 +296,12 @@ class Extensions extends DataTable
             }
         }
 
+        $installerPath = storage_path('extension-operation.txt');
+
+        if( file_exists($installerPath) && ! is_writable($installerPath)) {
+            $invalidPermissionsPaths[] = $installerPath;
+        }
+
         return $invalidPermissionsPaths;
     }
 

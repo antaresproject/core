@@ -2,15 +2,18 @@
 
 namespace Antares\Extension;
 
-use Antares\Extension\Contracts\ExtensionContract;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Arr;
-use Illuminate\Support\ServiceProvider;
-use Antares\Foundation\Application;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcherContract;
+use Antares\Extension\Contracts\ExtensionContract;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Log;
+use Antares\Foundation\Application;
+use Illuminate\Support\Arr;
+use Exception;
 
 class Loader
 {
+
     /**
      * Application instance.
      *
@@ -74,10 +77,11 @@ class Loader
      * @param ExtensionContract $extension
      * @throws \Exception
      */
-    public function registerExtensionProviders(ExtensionContract $extension) {
+    public function registerExtensionProviders(ExtensionContract $extension)
+    {
         $filePath = $extension->getPath() . '/providers.php';
 
-        if($this->files->exists($filePath)) {
+        if ($this->files->exists($filePath)) {
             $providers = (array) $this->files->getRequire($filePath);
 
             $this->provides($providers);
@@ -95,10 +99,15 @@ class Loader
         $services = [];
 
         foreach ($provides as $provider) {
-            if (! isset($this->manifest[$provider])) {
-                $services[$provider] = $this->recompileProvider($provider);
-            } else {
-                $services[$provider] = $this->manifest[$provider];
+            try {
+                if (!isset($this->manifest[$provider])) {
+                    $services[$provider] = $this->recompileProvider($provider);
+                } else {
+                    $services[$provider] = $this->manifest[$provider];
+                }
+            } catch (Exception $ex) {
+                Log::error($ex);
+                continue;
             }
         }
 
@@ -111,9 +120,10 @@ class Loader
      * @param  string $provider
      * @return array
      */
-    protected function recompileProvider(string $provider) : array
+    protected function recompileProvider(string $provider): array
     {
         $instance = $this->app->resolveProvider($provider);
+
 
         $type = $instance->isDeferred() ? 'Deferred' : 'Eager';
 
@@ -144,7 +154,7 @@ class Loader
      *
      * @return array
      */
-    public function loadManifest() : array
+    public function loadManifest(): array
     {
         $this->manifest = [];
 
@@ -163,7 +173,7 @@ class Loader
      *
      * @return bool
      */
-    public function shouldRecompile() : bool
+    public function shouldRecompile(): bool
     {
         return array_keys($this->manifest) !== array_keys($this->compiled);
     }
@@ -199,7 +209,7 @@ class Loader
      */
     protected function writeManifestFile(array $manifest = [])
     {
-        $this->files->put($this->manifestPath, '<?php return '.var_export($manifest, true).';');
+        $this->files->put($this->manifestPath, '<?php return ' . var_export($manifest, true) . ';');
     }
 
     /**
@@ -209,7 +219,7 @@ class Loader
      * @param  ServiceProvider $instance
      * @return array
      */
-    protected function registerDeferredServiceProvider($provider, ServiceProvider $instance) : array
+    protected function registerDeferredServiceProvider($provider, ServiceProvider $instance): array
     {
         $deferred = [];
 
@@ -232,7 +242,7 @@ class Loader
      * @param  ServiceProvider $instance
      * @return array
      */
-    protected function registerEagerServiceProvider($provider, ServiceProvider $instance) : array
+    protected function registerEagerServiceProvider($provider, ServiceProvider $instance): array
     {
         return [
             'instance' => $instance,
@@ -253,7 +263,7 @@ class Loader
     protected function loadDeferredServiceProvider($provider, array $options)
     {
         if ($options['eager']) {
-            return ;
+            return;
         }
 
         $this->app->addDeferredServices($options['deferred']);
@@ -269,8 +279,8 @@ class Loader
      */
     protected function loadEagerServiceProvider($provider, array $options)
     {
-        if (! $options['eager']) {
-            return ;
+        if (!$options['eager']) {
+            return;
         }
 
         $instance = Arr::get($options, 'instance', $provider);
@@ -298,4 +308,5 @@ class Loader
             });
         }
     }
+
 }

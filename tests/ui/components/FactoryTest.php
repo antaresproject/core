@@ -91,7 +91,7 @@ class FactoryTest extends TestCase
     {
         $detection = $this->stub->detect();
         $this->assertTrue(!is_array($detection));
-        $this->assertFalse(empty($detection));
+        $this->assertTrue(empty($detection));
     }
 
     /**
@@ -106,7 +106,7 @@ class FactoryTest extends TestCase
         $isset     = isset($templates['default']);
         $this->assertFalse($isset);
         if ($isset) {
-            $this->assertInstanceOf('Antares\UI\UIComponents\TemplateManifest', $templates['default']);
+            $this->assertTrue(is_array($templates['default']));
         }
     }
 

@@ -255,6 +255,7 @@ class FormBuilder extends BaseBuilder implements BuilderContract
      */
     public function isValid($sendHeaders = true)
     {
+
         app(\Antares\Html\Adapter\CustomfieldAdapter::class)->adapt($this->grid);
         $decryptedKey = is_null($key          = Input::get('key')) ? null : Crypt::decrypt($key);
 

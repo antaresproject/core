@@ -54,6 +54,9 @@ trait EloquentConnectionTrait
         $grammar->shouldReceive('compileDelete')
                 ->withAnyArgs()
                 ->andReturn(m::type('String'));
+        $grammar->shouldReceive('prepareBindingsForDelete')
+                ->withAnyArgs()
+                ->andReturn([]);
 
         $model->getConnection()
                 ->shouldReceive('getQueryGrammar')

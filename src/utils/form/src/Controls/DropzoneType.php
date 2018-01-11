@@ -38,17 +38,40 @@ class DropzoneType extends AbstractType
     protected $currentImagePath;
 
     /**
+     * Is type of configurable?
+     *
+     * @var bool
+     */
+    protected $configurable = false;
+
+    /**
      * Rendering this very control
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function renderControl()
     {
-        return view('antares/foundation::form.controls.dropzone', [
+        $path = $this->configurable
+            ? 'antares/foundation::form.controls.configured_dropzone'
+            : 'antares/foundation::form.controls.dropzone';
+
+        return view($path, [
             'control' => $this,
             'current_image_path' => $this->currentImagePath,
             'options' =>  (object) $this->options,
         ]);
+    }
+
+    /**
+     * Sets the control as configurable.
+     *
+     * @param bool $state
+     * @return $this
+     */
+    public function setAsConfigurable(bool $state = true) {
+        $this->configurable = $state;
+
+        return $this;
     }
 
     /**

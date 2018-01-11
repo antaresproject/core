@@ -58,13 +58,9 @@ class UseBackendTheme
      */
     public function handle($request, Closure $next)
     {
-
-        if (!auth()->guest() && user()->hasRoles(['client', 'memeber'])) {
+        if (!auth()->guest() && user()->hasRoles(['client', 'member'])) {
             return $next($request);
         }
-
-
-
 
         app()->setLocale(user_meta('language', 'en'));
 
@@ -83,6 +79,7 @@ class UseBackendTheme
      */
     protected function beforeSendingThroughPipeline()
     {
+
         $this->dispatcher->fire('antares.started: admin');
         $this->dispatcher->fire('antares.ready: admin');
         $this->dispatcher->fire('antares.ready: menu');

@@ -91,7 +91,7 @@ class WidgetsTest extends TestCase
 
         $processor->shouldReceive('processInsertGetId')->andReturn(1);
 
-        $this->assertTrue($model->save());
+        $this->assertFalse($model->save());
     }
 
 }

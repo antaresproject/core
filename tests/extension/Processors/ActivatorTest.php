@@ -46,7 +46,8 @@ class ActivatorTest extends OperationSetupTestCase
      */
     protected $componentRepository;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         $this->extensionsRepository = m::mock(ExtensionsRepository::class);
@@ -57,21 +58,23 @@ class ActivatorTest extends OperationSetupTestCase
     /**
      * @return Activator
      */
-    public function getOperationProcessor() {
+    public function getOperationProcessor()
+    {
         return new Activator($this->container, $this->dispatcher, $this->kernel, $this->extensionsRepository, $this->aclMigration, $this->componentRepository);
     }
 
-    public function testAsSuccess() {
+    public function testAsSuccess()
+    {
         $processor = $this->getOperationProcessor();
 
         $handler = $this->buildOperationHandlerMock()
-            ->shouldReceive('operationInfo')
-            ->andReturnNull()
-            ->getMock()
-            ->shouldReceive('operationSuccess')
-            ->once()
-            ->andReturnNull()
-            ->getMock();
+                ->shouldReceive('operationInfo')
+                ->andReturnNull()
+                ->getMock()
+                ->shouldReceive('operationSuccess')
+                ->once()
+                ->andReturnNull()
+                ->getMock();
 
 //        $queryBuilder = m::mock(\Illuminate\Database\Eloquent\Builder::class)
 //            ->shouldReceive('firstOrCreate')
@@ -79,17 +82,15 @@ class ActivatorTest extends OperationSetupTestCase
 //            ->once()
 //            ->andReturnNull()
 //            ->getMock();
-
         //$deferedEvent = m::mock('overload:' . DeferedEvent::class);
         //$deferedEvent->shouldReceive('query')->once()->andReturn($queryBuilder)->getMock();
-
         //$this->app->instance(DeferedEvent::class, $deferedEvent);
 
-        $name = 'foo/bar';
+        $name      = 'foo/bar';
         $extension = $this->buildExtensionMock($name)
-            ->shouldReceive('getPath')
-            ->andReturn('/src/component/foo/bar')
-            ->getMock();
+                ->shouldReceive('getPath')
+                ->andReturn('/src/component/foo/bar')
+                ->getMock();
 
         $this->dispatcher->shouldReceive('fire')->once()->andReturnNull()->getMock();
         $this->aclMigration->shouldReceive('import')->once()->with($handler, $extension)->andReturnNull()->getMock();
@@ -101,25 +102,26 @@ class ActivatorTest extends OperationSetupTestCase
         $processor->run($handler, $extension);
     }
 
-    public function testWithException() {
+    public function testWithException()
+    {
         $processor = $this->getOperationProcessor();
 
         $handler = $this->buildOperationHandlerMock()
-            ->shouldReceive('operationInfo')
-            ->andReturnNull()
-            ->getMock()
-            ->shouldReceive('operationFailed')
-            ->once()
-            ->andReturnNull()
-            ->getMock();
+                ->shouldReceive('operationInfo')
+                ->andReturnNull()
+                ->getMock()
+                ->shouldReceive('operationFailed')
+                ->once()
+                ->andReturnNull()
+                ->getMock();
 
-        $name = 'foo/bar';
+        $name      = 'foo/bar';
         $extension = $this->buildExtensionMock($name)
-            ->shouldReceive('getPath')
-            ->andReturn('/src/component/foo/bar')
-            ->getMock();
+                ->shouldReceive('getPath')
+                ->andReturn('/src/component/foo/bar')
+                ->getMock();
 
-        $this->app['log']  = m::mock(\Psr\Log\LoggerInterface::class)->shouldReceive('error')->once()->withAnyArgs()->getMock();
+        $this->app['log'] = m::mock(\Psr\Log\LoggerInterface::class)->shouldReceive('error')->once()->withAnyArgs()->getMock();
 
         $this->dispatcher->shouldReceive('fire')->twice()->andReturnNull()->getMock();
         $this->aclMigration->shouldReceive('import')->once()->with($handler, $extension)->andThrow(\Exception::class)->getMock();

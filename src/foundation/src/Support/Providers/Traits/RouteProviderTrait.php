@@ -62,7 +62,6 @@ trait RouteProviderTrait
             return;
         }
 
-
         if (!$this->isPathIncluded($path)) {
             $foundation = $this->app->make('antares.app');
             $namespace  = $namespace ?: $this->namespace;
