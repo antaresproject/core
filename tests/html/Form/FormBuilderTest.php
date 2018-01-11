@@ -69,52 +69,6 @@ class FormBuilderTest extends ApplicationTestCase
     }
 
     /**
-     * test Antares\Html\Form\FormBuilder::render() method.
-     *
-     * @test
-     */
-    public function testRenderMethod()
-    {
-        $grid = new Grid($this->app);
-        $grid->layout('form');
-
-
-
-        $data = new \Illuminate\Support\Fluent([
-            'id'   => 1,
-            'name' => 'Laravel',
-        ]);
-
-        $stub1 = new FormBuilder($grid);
-        $stub1->extend(function ($form) use ($data) {
-            $form->with($data);
-            $form->attributes([
-                'method' => 'POST',
-                'url'    => 'http://localhost',
-                'class'  => 'foo',
-            ]);
-        });
-
-        $stub2 = new FormBuilder($grid);
-        $stub2->extend(function ($form) use ($data) {
-            $form->with($data);
-            $form->attributes = [
-                'method' => 'POST',
-                'url'    => 'http://localhost',
-                'class'  => 'foo',
-            ];
-        });
-        ob_start();
-        echo $stub1;
-        $output = ob_get_contents();
-        ob_end_clean();
-
-
-        $this->assertEquals('mocked', $output);
-        $this->assertEquals('mocked', $stub2->render());
-    }
-
-    /**
      * Get app container.
      *
      * @return Container

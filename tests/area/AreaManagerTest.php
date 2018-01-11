@@ -49,13 +49,14 @@ class AreaManagerTest extends TestCase
      */
     protected $auth;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         $this->app = $this->createApplication();
 
-        $this->request  = m::mock(Request::class);
-        $this->auth     = m::mock(AuthFactory::class);
+        $this->request = m::mock(Request::class);
+        $this->auth    = m::mock(AuthFactory::class);
 
         $this->app['translator'] = m::mock('\Illuminate\Translation\Translator')->makePartial();
     }
@@ -71,7 +72,8 @@ class AreaManagerTest extends TestCase
      * @param array $config
      * @return AreaManager
      */
-    protected function getManager(array $config = []) {
+    protected function getManager(array $config = [])
+    {
         return new AreaManager($this->request, $this->auth, $config);
     }
 
@@ -86,15 +88,15 @@ class AreaManagerTest extends TestCase
         $areas       = $areaManager->getAreas();
 
         $this->assertInstanceOf(AreasCollection::class, $areas);
-        $this->assertCount(2, $areas);
+        $this->assertCount(4, $areas);
     }
 
     public function testAreas()
     {
         $config = [
             'areas'   => [
-                'admin'    => 'Admin',
-                'client'   => 'Client',
+                'admin'  => 'Admin',
+                'client' => 'Client',
             ],
             'default' => 'client',
         ];
@@ -111,15 +113,15 @@ class AreaManagerTest extends TestCase
     {
         $config = [
             'areas'   => [
-                'admin'    => 'Admin',
-                'client'   => 'Client',
+                'admin'  => 'Admin',
+                'client' => 'Client',
             ],
             'default' => 'client',
         ];
 
         $areaManager = $this->getManager($config);
-        $adminArea  = new Area('admin', 'Admin');
-        $client     = new Area('client', 'Client');
+        $adminArea   = new Area('admin', 'Admin');
+        $client      = new Area('client', 'Client');
 
         $this->assertEquals($adminArea, $areaManager->getById('admin'));
         $this->assertEquals($client, $areaManager->getById('client'));
@@ -130,8 +132,8 @@ class AreaManagerTest extends TestCase
     {
         $config = [
             'areas'   => [
-                'admin'    => 'Admin',
-                'client'   => 'Client',
+                'admin'  => 'Admin',
+                'client' => 'Client',
             ],
             'default' => 'client',
         ];
@@ -145,8 +147,8 @@ class AreaManagerTest extends TestCase
     {
         $config = [
             'areas'   => [
-                'admin'    => 'Admin',
-                'client'   => 'Client',
+                'admin'  => 'Admin',
+                'client' => 'Client',
             ],
             'default' => 'client',
         ];
@@ -161,8 +163,8 @@ class AreaManagerTest extends TestCase
     {
         $config = [
             'areas'   => [
-                'admin'    => 'Admin',
-                'client'   => 'Client',
+                'admin'  => 'Admin',
+                'client' => 'Client',
             ],
             'default' => 'client',
         ];
@@ -178,8 +180,8 @@ class AreaManagerTest extends TestCase
     {
         $config = [
             'areas'   => [
-                'admin'    => 'Admin',
-                'client'   => 'Client',
+                'admin'  => 'Admin',
+                'client' => 'Client',
             ],
             'default' => 'client',
         ];
@@ -195,8 +197,8 @@ class AreaManagerTest extends TestCase
     {
         $config = [
             'areas'   => [
-                'admin'    => 'Admin',
-                'client'   => 'Client',
+                'admin'  => 'Admin',
+                'client' => 'Client',
             ],
             'default' => 'client',
         ];
@@ -212,8 +214,8 @@ class AreaManagerTest extends TestCase
     {
         $config = [
             'areas'   => [
-                'admin'    => 'Admin',
-                'client'   => 'Client',
+                'admin'  => 'Admin',
+                'client' => 'Client',
             ],
             'default' => 'client',
         ];
@@ -229,8 +231,8 @@ class AreaManagerTest extends TestCase
     {
         $config = [
             'areas'   => [
-                'admin'    => 'Admin',
-                'client'   => 'Client',
+                'admin'  => 'Admin',
+                'client' => 'Client',
             ],
             'default' => 'client',
         ];
@@ -251,12 +253,11 @@ class AreaManagerTest extends TestCase
     {
         $config = [
             'areas'   => [
-                'admin'    => 'Admin',
-                'client'   => 'Client',
+                'admin'  => 'Admin',
+                'client' => 'Client',
             ],
             'default' => 'client',
-
-            'routes'  => [
+            'routes' => [
                 'frontend' => [
                     'client',
                 ],
@@ -278,15 +279,15 @@ class AreaManagerTest extends TestCase
         $this->assertEquals('client', $areaManager->getCurrentArea()->getId());
     }
 
-    public function testGetFrontendAreas() {
+    public function testGetFrontendAreas()
+    {
         $config = [
             'areas'   => [
-                'admin'    => 'Admin',
-                'client'   => 'Client',
+                'admin'  => 'Admin',
+                'client' => 'Client',
             ],
             'default' => 'client',
-
-            'routes'  => [
+            'routes' => [
                 'frontend' => [
                     'client',
                 ],
@@ -298,20 +299,20 @@ class AreaManagerTest extends TestCase
 
         $areaManager = $this->getManager($config);
 
-        foreach($areaManager->getFrontendAreas()->all() as $area) {
+        foreach ($areaManager->getFrontendAreas()->all() as $area) {
             $this->assertEquals('client', $area->getId());
         }
     }
 
-    public function testGetBackendAreas() {
+    public function testGetBackendAreas()
+    {
         $config = [
             'areas'   => [
-                'admin'    => 'Admin',
-                'client'   => 'Client',
+                'admin'  => 'Admin',
+                'client' => 'Client',
             ],
             'default' => 'client',
-
-            'routes'  => [
+            'routes' => [
                 'frontend' => [
                     'client',
                 ],
@@ -325,7 +326,7 @@ class AreaManagerTest extends TestCase
 
         $this->assertCount(1, $areaManager->getFrontendAreas()->all()); // reseller area is not signed
 
-        foreach($areaManager->getBackendAreas()->all() as $area) {
+        foreach ($areaManager->getBackendAreas()->all() as $area) {
             $this->assertEquals('admin', $area->getId());
         }
     }

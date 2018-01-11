@@ -77,6 +77,7 @@ class UserTest extends ApplicationTestCase
         $model = User::query()->where(['id' => 1])->first();
         $this->addMockConnection($model);
         $model->attachRole(1);
+        sleep(2);
         $this->assertNull($model->detachRole(1));
     }
 
@@ -87,14 +88,16 @@ class UserTest extends ApplicationTestCase
      */
     public function testIsMethod()
     {
+        sleep(2);
         $model        = User::query()->where(['id' => 1])->first();
         $memberRoleId = \Antares\Model\Role::query()->where('name', 'member')->first()->id;
         $model->detachRole($memberRoleId);
+
         $this->assertTrue($model->hasRoles('super-administrator'));
         $this->assertFalse($model->hasRoles('member'));
 
         $model->attachRole($memberRoleId);
-
+        sleep(2);
 
         $this->assertTrue($model->hasRoles(['super-administrator', 'member']));
         $this->assertFalse($model->hasRoles(['admin', 'user']));
@@ -123,6 +126,7 @@ class UserTest extends ApplicationTestCase
      */
     public function testIsNotMethod()
     {
+        sleep(2);
         /* @var $model User */
         $model = User::query()->where(['id' => 1])->first();
         $this->assertTrue($model->isNotAn('user'));
@@ -216,8 +220,8 @@ class UserTest extends ApplicationTestCase
      */
     public function testGetRolesMethod()
     {
-        $model = User::query()->where(['id' => 1])->first();
-
+        $model   = User::query()->where(['id' => 1])->first();
+        sleep(2);
         $roles   = \Antares\Model\Role::query()->whereIn('name', ['member', 'administrator'])->get();
         $roleIds = $roles->pluck('id');
         foreach ($roleIds as $roleId) {
