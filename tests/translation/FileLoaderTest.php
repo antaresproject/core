@@ -37,7 +37,6 @@ class FileLoaderTest extends \PHPUnit_Framework_TestCase
         $stub  = new FileLoader($files, '/var/app/langs');
 
         $this->assertInstanceOf('Illuminate\Translation\FileLoader', $stub);
-        $this->assertInstanceOf('Illuminate\Translation\LoaderInterface', $stub);
     }
 
     /**

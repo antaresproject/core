@@ -86,14 +86,16 @@ class Factory
      */
     public function detect()
     {
+        
+        $components = $this->finder()->detect();
         if (!$this->isValidRoute()) {
-            return;
+            return $components;
         }
         $this->app->make('events')->fire('antares.ui-components: detecting');
         $this->app->make('events')->fire(new ComponentsDetecting());
-
-        $components = $this->finder()->detect();
-        $service    = app(Service::class);
+        
+        
+        $service = app(Service::class);
         foreach ($components as $component) {
             $result = $service->findOne($component, uri());
             if (!empty($result)) {
@@ -101,6 +103,7 @@ class Factory
             }
             $this->app->make('ui-components')->save(array_get($component, 'name'), $component);
         }
+        
         return $components;
     }
 
@@ -161,7 +164,7 @@ class Factory
     /**
      * get instance of ui components base model
      * 
-     * @return \Antares\UI\UIComponents\Model\Widgets
+     * @return Components
      */
     public function model()
     {

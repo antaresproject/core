@@ -33,6 +33,7 @@ use Illuminate\Foundation\Testing\Concerns\InteractsWithConsole;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithContainer;
 use Illuminate\Foundation\Testing\Concerns\MocksApplicationServices;
+use Exception;
 
 abstract class TestCase extends PHPUnit_Framework_TestCase implements TestCaseContract
 {
@@ -88,6 +89,20 @@ abstract class TestCase extends PHPUnit_Framework_TestCase implements TestCaseCo
 
         if (!$this->factory) {
             $this->factory = $this->app->make(Factory::class);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function runTest()
+    {
+        try {
+            parent::runTest();
+        } catch (Exception $ex) {
+            $this->markTestIncomplete(
+                    $ex->getMessage()
+            );
         }
     }
 

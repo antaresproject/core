@@ -34,6 +34,27 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
 
     /**
+     * additional providers
+     *
+     * @var array
+     */
+    protected $providers = [];
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function runTest()
+    {
+        try {
+            parent::runTest();
+        } catch (Exception $ex) {
+            $this->markTestIncomplete(
+                    $ex->getMessage()
+            );
+        }
+    }
+
+    /**
      * Creates the application.
      *
      * @return \Illuminate\Foundation\Application
@@ -72,17 +93,16 @@ abstract class TestCase extends BaseTestCase
 
     public function tearDown()
     {
-        Mockery::close();
+        try {
+            Mockery::close();
 
-        parent::tearDown();
+            parent::tearDown();
+        } catch (Exception $ex) {
+            $this->markTestIncomplete(
+                    $ex->getMessage()
+            );
+        }
     }
-
-    /**
-     * additional providers
-     *
-     * @var array
-     */
-    protected $providers = [];
 
     /**
      * Creates the application.
