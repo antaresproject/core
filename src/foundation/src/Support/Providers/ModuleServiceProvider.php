@@ -386,9 +386,12 @@ abstract class ModuleServiceProvider extends ServiceProvider
      *
      * @return VariablesService
      */
-    protected function variablesService(): VariablesService
+    protected function variablesService()
     {
-        return app()->make(VariablesService::class);
+        if (class_exists(VariablesService::class)) {
+            return app()->make(VariablesService::class);
+        }
+        return;
     }
 
     /**

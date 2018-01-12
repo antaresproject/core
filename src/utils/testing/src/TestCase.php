@@ -62,22 +62,15 @@ abstract class TestCase extends BaseTestCase
      */
     public function app()
     {
-        $path = __DIR__ . '/../../../../../../bootstrap/app.php';
-
-
-        if (!file_exists($path)) {
-            throw new Exception('File [' . $path . '] does not exist.');
-        }
-
         $app = new \Antares\Foundation\Application(realpath($this->getBasePath()));
 
 
         $app->singleton(
-                \Illuminate\Contracts\Http\Kernel::class, \App\Http\Kernel::class
+                \Illuminate\Contracts\Http\Kernel::class, class_exists(\App\Http\Kernel::class) ? \App\Http\Kernel::class : \Antares\Foundation\Http\Kernel::class
         );
 
         $app->singleton(
-                \Illuminate\Contracts\Console\Kernel::class, \App\Console\Kernel::class
+                \Illuminate\Contracts\Console\Kernel::class, class_exists(\App\Console\Kernel::class) ? \App\Console\Kernel::class : \Antares\Foundation\Console\Kernel::class
         );
 
 

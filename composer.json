@@ -11,6 +11,7 @@
     "minimum-stability": "dev",    
     "require": {        
         "php": ">=7.0.1",
+        "laravel/framework": "5.5.*",
         "yajra/laravel-datatables-oracle": "6.15.2",
         "aarondfrancis/urlcrypt": "0.2.*",        
         "torann/geoip": "0.2.*@dev",

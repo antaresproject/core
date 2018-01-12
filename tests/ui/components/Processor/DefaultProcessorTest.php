@@ -79,19 +79,6 @@ class DefaultProcessorTest extends TestCase
     }
 
     /**
-     * Test Antares\UI\UIComponents\Processor\DefaultProcessor::show() method.
-     *
-     * @test
-     */
-    public function testShow()
-    {
-        $adapter = m::mock(GridStack::class);
-        $stub    = new Stub($adapter, $this->app->make(Container::class));
-        $show    = $stub->show(1);
-        $this->assertSame("Session store not set on request.", $show);
-    }
-
-    /**
      * Test positions method
      * 
      * @test

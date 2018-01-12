@@ -355,9 +355,11 @@ class FoundationServiceProvider extends ServiceProvider
         }
 
         /* @var $notification VariablesService */
-        $notification = app()->make(VariablesService::class);
+        if (class_exists(VariablesService::class)) {
+            $notification = app()->make(VariablesService::class);
 
-        $notification->register('foundation', new CoreVariablesProvider());
+            $notification->register('foundation', new CoreVariablesProvider());
+        }
     }
 
 }

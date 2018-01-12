@@ -55,7 +55,7 @@ class Application extends BaseApplication implements ApplicationContract
     {
         parent::bootProvider($provider);
 
-        if(method_exists($provider, 'booted')) {
+        if (method_exists($provider, 'booted')) {
             Event::listen('antares.extension: booted', function() use($provider) {
                 Event::fire(new LoadServiceProviders());
                 $this->call([$provider, 'booted']);
@@ -143,6 +143,28 @@ class Application extends BaseApplication implements ApplicationContract
             throw new Exception(sprintf('Unable to find provider %s', $provider));
         }
         return new $provider($this);
+    }
+
+    /**
+     * Run the given array of bootstrap classes.
+     *
+     * @param  array  $bootstrappers
+     * @return void
+     */
+    public function bootstrapWith(array $bootstrappers)
+    {
+        $this->hasBeenBootstrapped = true;
+
+        foreach ($bootstrappers as $bootstrapper) {
+            if (!class_exists($bootstrapper)) {
+                continue;
+            }
+            $this['events']->fire('bootstrapping: ' . $bootstrapper, [$this]);
+
+            $this->make($bootstrapper)->bootstrap($this);
+
+            $this['events']->fire('bootstrapped: ' . $bootstrapper, [$this]);
+        }
     }
 
 }
