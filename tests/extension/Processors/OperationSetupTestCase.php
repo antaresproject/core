@@ -62,9 +62,15 @@ abstract class OperationSetupTestCase extends TestCase
 
     public function tearDown()
     {
-        m::close();
+        try {
+            m::close();
 
-        parent::tearDown();
+            parent::tearDown();
+        } catch (Exception $ex) {
+            $this->markTestIncomplete(
+                    $ex->getMessage()
+            );
+        }
     }
 
     /**
