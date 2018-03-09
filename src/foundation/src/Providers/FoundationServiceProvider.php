@@ -39,6 +39,7 @@ use Illuminate\Support\Facades\Log;
 use Antares\Foundation\Foundation;
 use Antares\UI\UIComponents\Factory;
 use Antares\UI\UIComponents\Finder;
+use Antares\Translations\Languages;
 use Antares\Foundation\Request;
 use Illuminate\Routing\Router;
 use Antares\Foundation\Areas;
@@ -276,6 +277,9 @@ class FoundationServiceProvider extends ServiceProvider
                     $widget::routes();
                 }
             });
+        });
+        $this->app->bind('languages', function($app) {
+            return new Languages($app);
         });
     }
 
